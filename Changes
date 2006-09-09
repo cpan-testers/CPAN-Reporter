@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.15
+0.15 Wed Sep  6 19:23:32 EDT 2006
 
     - fixed broken test() -- all tests were reporting failed
 
