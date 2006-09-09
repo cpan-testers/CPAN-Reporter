@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.12.
+This documentation describes version 0.13.
 
 =head1 SYNOPSIS
 
@@ -161,6 +161,15 @@ C<<< send_report = yes/no/ask >>> -- should test reports be sent at all
 (default: askE<sol>yes)
 
 =back
+
+Note that if C<<< send_report >>> is set to "no", CPAN::Reporter will still go through
+the motions of preparing a report, but will discard it rather than send it.
+This is used for testing CPAN::Reporter.
+
+A better way to disable CPAN::Reporter temporarily is with the CPAN option
+C<<< test_report >>>:
+
+  cpan> o conf test_report 0
 
 =head2 Additional Options
 

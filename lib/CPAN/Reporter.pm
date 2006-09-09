@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.12";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.13";
 
 # use warnings; # only for Perl >= 5.6
 use Config::Tiny ();
@@ -168,7 +168,7 @@ EMAIL_REQUIRED
     $result->{prereq_pm} = _prereq_report( $result );
     
     # Setup the test report
-    print "Preparing to send a test report\n";
+    print "Preparing a test report for $result->{dist_name}\n";
     my $tr = Test::Reporter->new;
     $tr->debug( $config->{debug} ) if defined $config->{debug};
     $tr->from( $config->{email_from} );
@@ -220,8 +220,11 @@ EMAIL_REQUIRED
     
     if ( _prompt( $config, "send_report" ) =~ /^y/ ) {
         print "Sending test report with '" . $tr->grade . 
-              "' to " . $tr->address . "\n";
+              "' to " . join(q{, }, $tr->address, @cc) . "\n";
         $tr->send( @cc ) or warn $tr->errstr. "\n";
+    }
+    else {
+        print "Test report discarded.\n";
     }
 
     return;
@@ -255,7 +258,6 @@ sub _report_text {
     
     # generate report
     my $output = << "ENDREPORT";
-
 Dear $data->{author},
     
 This is a computer-generated test report for $data->{dist_name}.
@@ -276,6 +278,7 @@ ENDREPORT
     }
     $output .= << "ENDREPORT";
 Additional comments from tester: 
+
 [none provided]
 
 --
@@ -415,6 +418,15 @@ the test report at their {author@cpan.org} address (default: ask/no)
 * {send_report = yes/no/ask} -- should test reports be sent at all 
 (default: ask/yes)
 
+Note that if {send_report} is set to "no", CPAN::Reporter will still go through
+the motions of preparing a report, but will discard it rather than send it.
+This is used for testing CPAN::Reporter.
+
+A better way to disable CPAN::Reporter temporarily is with the CPAN option
+{test_report}:
+
+ cpan> o conf test_report 0
+ 
 == Additional Options
 
 These additional options are only necessary in special cases, such as for

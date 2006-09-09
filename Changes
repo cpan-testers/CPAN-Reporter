@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+0.13
+    - added slightly more verbose progress messages, including for CC's and 
+      for reports not sent
+    - minor documentation improvements
+
 0.12 Sat Aug 26 19:05:54 EDT 2006
     - updated docs to indicate that CPAN 1.87_57 supports CPAN::Reporter
 
