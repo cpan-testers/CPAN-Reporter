@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.13
+0.13 Tue Aug 29 06:31:38 EDT 2006
     - added slightly more verbose progress messages, including for CC's and 
       for reports not sent
     - minor documentation improvements

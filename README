@@ -2,7 +2,7 @@ NAME
     CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 VERSION
-    This documentation describes version 0.12.
+    This documentation describes version 0.13.
 
 SYNOPSIS
     1.  Install a version of CPAN.pm that supports CPAN::Reporter
@@ -112,6 +112,15 @@ CONFIG FILE OPTIONS
 
     *   "send_report = yes/no/ask" -- should test reports be sent at all
         (default: ask/yes)
+
+    Note that if "send_report" is set to "no", CPAN::Reporter will still go
+    through the motions of preparing a report, but will discard it rather
+    than send it. This is used for testing CPAN::Reporter.
+
+    A better way to disable CPAN::Reporter temporarily is with the CPAN
+    option "test_report":
+
+      cpan> o conf test_report 0
 
   Additional Options
     These additional options are only necessary in special cases, such as
