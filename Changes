@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+0.16
+
+    - fixed file mode bug in t/02_config_file_t (Slaven Rezic)
+
+    - added first regression tests for pass/fail
+    
 0.15 Wed Sep  6 19:23:32 EDT 2006
 
     - fixed broken test() -- all tests were reporting failed

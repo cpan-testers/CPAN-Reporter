@@ -114,12 +114,12 @@ is_deeply( CPAN::Reporter::_get_config_options(), $default_options,
 # check error handling if not readable
 #--------------------------------------------------------------------------#
 
-my $original_mode = (stat $config_file)[2] && 07777;
-chmod 0, $config_file;
+my $original_mode = (stat $config_file)[2] & 07777;
+chmod 0, $config_file ;
 
 SKIP:
 {
-    skip "Couldn't set config file unreadable; skipping related tests", 3
+    skip "Couldn't set config file unreadable; skipping related tests", 2
         if -r $config_file;
 
     {
@@ -148,7 +148,6 @@ ok( -r $config_file,
 # check error handling if not writeable 
 #--------------------------------------------------------------------------#
 
-$original_mode = (stat $config_file)[2] && 07777;
 chmod 0444, $config_file;
 
 SKIP:
@@ -182,53 +181,59 @@ ok( -w $config_file,
 # confirm configure() preserves existing
 #--------------------------------------------------------------------------#
 
-my $bogus_email = 'johndoe@nowhere.com';
-my $bogus_smtp = 'mail.mail.com';
-my $bogus_debug = 1;
-
-my $tiny = Config::Tiny->read( $config_file );
-$tiny->{_}{email_from} = $bogus_email;
-$tiny->{_}{smtp_server} = $bogus_smtp;
-$tiny->{_}{debug} = $bogus_debug;
-
-ok( $tiny->write( $config_file ),
-    "updated config file with a new email address and smtp server"
-);
-
+SKIP:
 {
-    local $ENV{PERL_MM_USE_DEFAULT} = 1;  # use prompt defaults
-    $stderr->start;
-    $stdout->start;
-    ok( CPAN::Reporter::configure(),
-        "configure() ran again successfully"
+    skip "Couldn't set config file writable again; skipping related tests", 8
+        if ! -w $config_file;
+
+    my $bogus_email = 'nobody@nowhere.com';
+    my $bogus_smtp = 'mail.mail.com';
+    my $bogus_debug = 1;
+
+    my $tiny = Config::Tiny->read( $config_file );
+    $tiny->{_}{email_from} = $bogus_email;
+    $tiny->{_}{smtp_server} = $bogus_smtp;
+    $tiny->{_}{debug} = $bogus_debug;
+
+    ok( $tiny->write( $config_file ),
+        "updated config file with a new email address and smtp server"
     );
-    $stdout->stop;
-    $stderr->stop;
+
+    {
+        local $ENV{PERL_MM_USE_DEFAULT} = 1;  # use prompt defaults
+        $stderr->start;
+        $stdout->start;
+        ok( CPAN::Reporter::configure(),
+            "configure() ran again successfully"
+        );
+        $stdout->stop;
+        $stderr->stop;
+    }
+
+    $output_text = join (q{}, $stdout->read);
+
+    like( $output_text, "/$bogus_email/",
+        "pre-existing email address was seen during configuration prompts"
+    );
+
+    like( $output_text, "/$bogus_smtp/",
+        "pre-existing smtp server was seen during configuration prompts"
+    );
+
+    like( $output_text, "/debug/",
+        "pre-existing debug prompt was seen during configuration prompts"
+    );
+
+    is( $tiny->{_}{email_from}, $bogus_email,
+        "updated config file preserved email address"
+    );
+
+    is( $tiny->{_}{smtp_server}, $bogus_smtp,
+        "updated config file preserved smtp server"
+    );
+
+    is( $tiny->{_}{debug}, $bogus_debug,
+        "updated config file preserved debug value"
+    );
 }
-
-$output_text = join (q{}, $stdout->read);
-
-like( $output_text, "/$bogus_email/",
-    "pre-existing email address was seen during configuration prompts"
-);
-
-like( $output_text, "/$bogus_smtp/",
-    "pre-existing smtp server was seen during configuration prompts"
-);
-
-like( $output_text, "/debug/",
-    "pre-existing debug prompt was seen during configuration prompts"
-);
-
-is( $tiny->{_}{email_from}, $bogus_email,
-    "updated config file preserved email address"
-);
-
-is( $tiny->{_}{smtp_server}, $bogus_smtp,
-    "updated config file preserved smtp server"
-);
-
-is( $tiny->{_}{debug}, $bogus_debug,
-    "updated config file preserved debug value"
-);
 
