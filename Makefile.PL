@@ -8,11 +8,13 @@ WriteMakefile
           'EXE_FILES' => [],
           'VERSION_FROM' => 'lib/CPAN/Reporter.pm',
           'PREREQ_PM' => {
+                           'File::pushd' => '0.32',
                            'File::HomeDir' => '0.58',
                            'File::Spec' => '3.19',
                            'ExtUtils::MakeMaker' => 0,
                            'Tee' => '0.13',
                            'Test::More' => '0.45',
+                           'Probe::Perl' => 0,
                            'File::Temp' => '0.16',
                            'Test::Reporter' => '1.27',
                            'File::Path' => 0,

@@ -15,7 +15,9 @@ requires:
   File::Path: 0
   File::Spec: 3.19
   File::Temp: 0.16
+  File::pushd: 0.32
   IO::Capture: 0.05
+  Probe::Perl: 0
   Tee: 0.13
   Test::More: 0.45
   Test::Reporter: 1.27
