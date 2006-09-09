@@ -12,6 +12,10 @@ README
 t/01_CPAN_Reporter.t
 t/02_config_file.t
 t/03_test_report.t
+t/dist/Bogus-Fail/Build.PL
+t/dist/Bogus-Fail/lib/Bogus/Pass.pm
+t/dist/Bogus-Fail/Makefile.PL
+t/dist/Bogus-Fail/t/01_Bogus_Fail.t
 t/dist/Bogus-Pass/Build.PL
 t/dist/Bogus-Pass/lib/Bogus/Pass.pm
 t/dist/Bogus-Pass/Makefile.PL
