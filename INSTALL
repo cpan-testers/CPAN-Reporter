@@ -1,0 +1,19 @@
+CPAN::Reporter - Module abstract (<= 44 characters) goes here 
+
+INSTALLATION 
+
+If Module::Build is installed (preferred):
+
+    perl Build.PL
+    perl Build
+    perl Build test
+    perl Build install
+
+Otherwise, using a Makefile:
+
+    perl Makefile.PL
+    make
+    make test
+    make install
+
+If you are on a windows box you should use 'nmake' rather than 'make'.

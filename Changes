@@ -1,0 +1,4 @@
+Revision history for Perl module CPAN::Reporter
+
+0.01 Tue Aug  1 18:23:04 2006
+    - original skeleton created with ExtUtils::ModuleMaker::TT

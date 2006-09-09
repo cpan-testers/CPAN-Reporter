@@ -1,0 +1,14 @@
+MANIFEST
+README
+LICENSE
+Todo
+Changes
+MANIFEST.SKIP
+t/pod-coverage.t
+t/pod.t
+Build.PL
+lib/CPAN/Reporter.pm
+t/01_CPAN_Reporter.t
+lib/CPAN/Reporter.pod
+Makefile.PL
+META.yml

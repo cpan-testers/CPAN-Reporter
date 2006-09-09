@@ -1,0 +1,16 @@
+TODO list for Perl module CPAN::Reporter
+
+- Write a full description; note that email address could/should be
+  subscribed to cpan-testers
+
+- Add a "create_config" function that prompts a user through config
+  file setup.  Add it to synopsis.
+  
+- Write some real test for coverage.  Would likely need to mock a bunch of
+  things -- CPAN::Distribution, Test::Reporter
+
+- Check email address for validity
+
+- Consider checking failed tests for prerequisite failures -- this could
+  occur if tests were forced.  Such failures should be marked N/A.
+
