@@ -1,9 +1,6 @@
 # CPAN::Reporter tests
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
-use File::Spec;
-use File::Temp;
-use Probe::Perl;
 use Test::More;
 
 #--------------------------------------------------------------------------#
@@ -16,21 +13,14 @@ select($stdout);
 $|++;
 
 #--------------------------------------------------------------------------#
-# declarations
-#--------------------------------------------------------------------------#
 
-my $perl = Probe::Perl->find_perl_interpreter;
-my $pass_pl = File::Spec->catfile(qw/ t pass.pl /);
-my $got;
+my @api = qw/test configure/;
 
-#--------------------------------------------------------------------------#
+plan tests =>  1 + @api ;
 
-plan 'no_plan'; #tests =>  2 ;
-
-require_ok( 'CPAN' );
 require_ok( 'CPAN::Reporter' );
 
-$CPAN::Be_Silent = 1 unless $CPAN::Be_Silent; # stop 'used once' warnings
-
-can_ok( 'CPAN::Reporter', 'test' );
+for my $fcn ( @api ) {
+    can_ok( 'CPAN::Reporter', $fcn );
+}
 

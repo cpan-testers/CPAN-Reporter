@@ -13,8 +13,8 @@ use IO::Capture::Stderr;
 use File::pushd qw/tempd/;
 use File::Spec;
 
-#plan tests => 1;
-plan 'no_plan';
+plan tests => 22;
+#plan 'no_plan';
 
 #--------------------------------------------------------------------------#
 # Fixtures

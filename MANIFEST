@@ -10,6 +10,9 @@ MANIFEST.SKIP
 META.yml
 README
 t/01_CPAN_Reporter.t
+t/02_config_file.t
+t/03_test_report.t
+t/MockCPANDist.pm
 t/pod-coverage.t
 t/pod.t
 Todo
