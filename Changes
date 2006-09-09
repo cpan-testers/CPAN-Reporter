@@ -1,5 +1,14 @@
 Revision history for Perl module CPAN::Reporter
 
+0.11 
+    - fail-safe test.pl files -- can't determine success for "make test"
+      when teed and can't parse for Test::Harness output
+    - fail-safe output parsing -- if the expected failure string from 
+      Test::Harness is not found, report "unknown" instead of fail
+    - added compatibility for CPAN.pm "reload cpan" command (Andreas Konig)
+    - added options "debug" and "editor" (Andreas Konig)
+    - bumped Tee version requirement
+
 0.10 Tue Aug  8 23:56:07 EDT 2006
     - first public release -- support not yet available in CPAN.pm
       main branch

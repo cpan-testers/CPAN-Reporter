@@ -2,7 +2,7 @@ NAME
     CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 VERSION
-    This documentation describes version 0.10.
+    This documentation describes version 0.11.
 
 SYNOPSIS
     1.  Install a version of CPAN.pm that supports CPAN::Reporter
@@ -153,6 +153,12 @@ CONFIG FILE OPTIONS
     *   "email_to = <email address>" -- alternate destination for reports
         instead of "cpan-testers@perl.org"; used for testing (default: none)
 
+    *   "editor = <editor>" -- editor to use to edit the test report; if not
+        set, Test::Reporter will use environment variables "VISUAL",
+        "EDITOR" or "EDIT" (in that order) to find an editor (default: none)
+
+    *   "debug = <boolean>" -- turns debugging on/off (default: off)
+
 FUNCTIONS
     "CPAN::Reporter" provides one public function for use within CPAN.pm. It
     is not imported during "use". Ordinary users will never need it.
@@ -167,11 +173,14 @@ FUNCTIONS
     report. It returns true if the captured output indicates that all tests
     passed and false, otherwise.
 
+KNOWN ISSUES
+    *   Does not (yet?) support reporting on "test.pl" files
+
 BUGS
     Please report any bugs or feature using the CPAN Request Tracker. Bugs
     can be submitted by email to bug-CPAN-Reporter@rt.cpan.org or through
     the web interface at
-    <http://rt.cpan.org/Public/Dist/Display.html?Name=CPAN-Reporter>
+    <http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter>
 
     When submitting a bug or request, please include a test-file or a patch
     to an existing test-file that illustrates the bug or desired feature.

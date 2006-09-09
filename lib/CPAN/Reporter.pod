@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.10.
+This documentation describes version 0.11.
 
 =head1 SYNOPSIS
 
@@ -215,14 +215,25 @@ that restricts outbound email.
 
 =item *
 
-C<<< smtp_server = <server list> >>> -- one or more alternate outbound mail servers if the 
-default perl.org mail servers cannot be reached (e.g. users behind a firewall);
-multiple servers may be given, separated with a space (default: none)
+C<<< smtp_server = <server list> >>> -- one or more alternate outbound mail servers
+if the default perl.org mail servers cannot be reached (e.g. users behind a 
+firewall); multiple servers may be given, separated with a space 
+(default: none)
 
 =item *
 
 C<<< email_to = <email address> >>> -- alternate destination for reports instead of
 C<<< cpan-testers@perl.org >>>; used for testing (default: none)
+
+=item *
+
+C<<< editor = <editor> >>> -- editor to use to edit the test report; if not set,
+Test::Reporter will use environment variables C<<< VISUAL >>>, C<<< EDITOR >>> or C<<< EDIT >>>
+(in that order) to find an editor (default: none)
+
+=item *
+
+C<<< debug = <boolean> >>> -- turns debugging onE<sol>off (default: off)
 
 =back
 
@@ -241,12 +252,22 @@ teeing the output to a file.  Based on the output captured in the file,
 C<<< test() >>> generates and sends a L<Test::Reporter> report.  It returns true if the
 captured output indicates that all tests passed and false, otherwise.
 
+=head1 KNOWN ISSUES
+
+=over
+
+=item *
+
+Does not (yet?) support reporting on C<<< test.pl >>> files
+
+=back
+
 =head1 BUGS
 
 Please report any bugs or feature using the CPAN Request Tracker.  
 Bugs can be submitted by email to bug-CPAN-Reporter@rt.cpan.org or 
 through the web interface at 
-L<http://rt.cpan.org/Public/Dist/Display.html?Name=CPAN-Reporter>
+L<http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter>
 
 When submitting a bug or request, please include a test-file or a patch to an
 existing test-file that illustrates the bug or desired feature.

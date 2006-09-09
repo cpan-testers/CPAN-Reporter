@@ -1,7 +1,7 @@
 TODO list for Perl module CPAN::Reporter
 
-- Write a full description; note that email address could/should be
-  subscribed to cpan-testers
+- Handle test.pl -- need to call system. Question is whether or not to report
+test success/failures
 
 - Add a "create_config" function that prompts a user through config
   file setup.  Add it to synopsis.

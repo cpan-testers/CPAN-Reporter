@@ -1,6 +1,6 @@
 ---
 name: CPAN-Reporter
-version: 0.10
+version: 0.11
 author:
   - 'David A. Golden <dagolden@cpan.org>'
 abstract: Provides Test::Reporter support for CPAN.pm
@@ -15,13 +15,13 @@ requires:
   File::Path: 0
   File::Temp: 0.16
   IO::File: 0
-  Tee: 0.01
+  Tee: 0.13
   Test::More: 0.45
   Test::Reporter: 1.27
 provides:
   CPAN::Reporter:
     file: lib/CPAN/Reporter.pm
-    version: 0.10
+    version: 0.11
 generated_by: Module::Build version 0.2804
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

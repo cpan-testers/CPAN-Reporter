@@ -1,18 +1,18 @@
 package CPAN::Reporter;
-
-$VERSION     = "0.10";
-
 use strict;
+
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.11";
+
 # use warnings; # only for Perl >= 5.6
-use Config::Tiny;
+use Config::Tiny ();
 use ExtUtils::MakeMaker qw/prompt/;
 use File::Basename qw/basename/;
-use File::HomeDir;
+use File::HomeDir ();
 use File::Path qw/mkpath/;
-use File::Temp;
-use IO::File;
-use Tee;
-use Test::Reporter;
+use File::Temp ();
+use IO::File ();
+use Tee qw/tee/;
+use Test::Reporter ();
 
 #--------------------------------------------------------------------------#
 # public API
@@ -21,6 +21,16 @@ use Test::Reporter;
 sub test {
     my ($dist, $system_command) = @_;
     my $temp_out = File::Temp->new;
+    
+    # XXX FAIL SAFE: can't get the result from teeing test.pl
+    # May change this later to report based on result, but with
+    # no detail
+    if ( -f "test.pl" ) {
+        warn "CPAN::Reporter can't report results for test.pl; continuing\n";
+        my $rc = system($system_command);
+        return $rc == 0;
+    }
+    
     tee($system_command, { stderr => 1 }, $temp_out);
     my $temp_in = IO::File->new( $temp_out );
     if ( not defined $temp_in ) {
@@ -40,6 +50,8 @@ sub test {
 #--------------------------------------------------------------------------#
 # defaults and prompts
 #--------------------------------------------------------------------------#
+
+# undef defaults are not written to the starter configuration file
 
 my %defaults = (
     email_from => {
@@ -63,6 +75,12 @@ my %defaults = (
     smtp_server => {
         default => undef, # not written to starter config
     },
+    editor => {
+        default => undef, # not written to starter config
+    },
+    debug => {
+        default => undef, # not written to starter config
+    }
 );
 
 #--------------------------------------------------------------------------#
@@ -152,6 +170,7 @@ EMAIL_REQUIRED
     # Setup the test report
     print "Preparing to send a test report\n";
     my $tr = Test::Reporter->new;
+    $tr->debug( $config->{debug} ) if defined $config->{debug};
     $tr->from( $config->{email_from} );
     $tr->address( $config->{email_to} ) if $config->{email_to};
     if ( $config->{smtp_server} ) {
@@ -162,15 +181,26 @@ EMAIL_REQUIRED
     # Populate the test report
     
     # CPAN.pm won't normally test a failed 'make', so that should
-    # catch prereq failures that would normally be N/A.
+    # catch prereq failures that would normally be "unknown".
+    #
+    # Output strings taken from Test::Harness::
+    # _show_results()  -- for versions < 2.57_03 
+    # get_results()    -- for versions >= 2.57_03
+    
     if ( $result->{tests_ok} ) {
         $tr->grade( 'pass' );
+    }
+    elsif ( $result->{output} =~ m{^Failed }ms ) {  # must be lowercase
+        $tr->grade( 'fail' );
     }
     elsif ( $result->{output} =~ m{^FAILED--no tests were run}ms ) {
         $tr->grade( 'unknown' );
     }
-    else {
+    elsif ( $result->{output} =~ m{^FAILED--.*--no output}ms ) {
         $tr->grade( 'fail' );
+    }
+    else { # Fail safely if can't match any result string
+        $tr->grade( 'unknown' );
     }
     $tr->distribution( $result->{dist_name}  );
     $tr->comments( _report_text( $result ) );
@@ -178,16 +208,17 @@ EMAIL_REQUIRED
     my @cc;
 
     # User prompts for action
-    if ( _prompt( $config, "cc_author") =~ 'y' ) {
+    if ( _prompt( $config, "cc_author") =~ /^y/ ) {
         push @cc, "$result->{author_id}\@cpan.org";
     }
     
-    if ( _prompt( $config, "edit_report" ) =~ 'y' ) {
-        $ENV{VISUAL} ||= $ENV{EDITOR};
+    if ( _prompt( $config, "edit_report" ) =~ /^y/ ) {
+        my $editor = $config->{editor};
+        local $ENV{VISUAL} = $editor if $editor;
         $tr->edit_comments;
     }
     
-    if ( _prompt( $config, "send_report" ) =~ 'y' ) {
+    if ( _prompt( $config, "send_report" ) =~ /^y/ ) {
         print "Sending test report with '" . $tr->grade . 
               "' to " . $tr->address . "\n";
         $tr->send( @cc ) or warn $tr->errstr. "\n";
@@ -196,6 +227,10 @@ EMAIL_REQUIRED
     return;
 }
 
+#--------------------------------------------------------------------------#
+# _prompt
+#
+# Note: always returns lowercase
 #--------------------------------------------------------------------------#
 
 sub _prompt {
@@ -411,11 +446,16 @@ These additional options are only necessary in special cases, such as for
 testing or for configuring {CPAN::Reporter} to work from behind a firewall
 that restricts outbound email.
 
-* {smtp_server = <server list>} -- one or more alternate outbound mail servers if the 
-default perl.org mail servers cannot be reached (e.g. users behind a firewall);
-multiple servers may be given, separated with a space (default: none)
+* {smtp_server = <server list>} -- one or more alternate outbound mail servers
+if the default perl.org mail servers cannot be reached (e.g. users behind a 
+firewall); multiple servers may be given, separated with a space 
+(default: none)
 * {email_to = <email address>} -- alternate destination for reports instead of
 {cpan-testers@perl.org}; used for testing (default: none)
+* {editor = <editor>} -- editor to use to edit the test report; if not set,
+Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
+(in that order) to find an editor (default: none)
+* {debug = <boolean>} -- turns debugging on/off (default: off)
 
 = FUNCTIONS
 
@@ -432,12 +472,16 @@ teeing the output to a file.  Based on the output captured in the file,
 {test()} generates and sends a [Test::Reporter] report.  It returns true if the
 captured output indicates that all tests passed and false, otherwise.
 
+= KNOWN ISSUES
+
+* Does not (yet?) support reporting on {test.pl} files
+
 = BUGS
 
 Please report any bugs or feature using the CPAN Request Tracker.  
 Bugs can be submitted by email to bug-CPAN-Reporter@rt.cpan.org or 
 through the web interface at 
-[http://rt.cpan.org/Public/Dist/Display.html?Name=CPAN-Reporter]
+[http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter]
 
 When submitting a bug or request, please include a test-file or a patch to an
 existing test-file that illustrates the bug or desired feature.
