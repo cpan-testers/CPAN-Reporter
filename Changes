@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.11 
+0.11 Sat Aug 26 12:20:32 EDT 2006
     - fail-safe test.pl files -- can't determine success for "make test"
       when teed and can't parse for Test::Harness output
     - fail-safe output parsing -- if the expected failure string from 
