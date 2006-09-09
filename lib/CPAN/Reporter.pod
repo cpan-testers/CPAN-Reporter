@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.15.
+This documentation describes version 0.16.
 
 =head1 SYNOPSIS
 
