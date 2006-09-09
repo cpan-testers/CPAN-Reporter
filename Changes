@@ -1,9 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
-0.17
+0.17 Sat Sep  9 07:11:08 EDT 2006
 
-    - changed t/03_test_report.t to skip Module::Build tests if M::B 
-      is not installed
+    - changed t/03_test_report.t to skip Module::Build tests if 
+      Module::Build is not installed
 
 0.16 Fri Sep  8 07:19:25 EDT 2006
 
