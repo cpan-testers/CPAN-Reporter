@@ -8,11 +8,11 @@ license: perl
 resources:
   license: http://dev.perl.org/licenses/
 requires:
-  Carp: 0
   Config::Tiny: 2.08
   ExtUtils::MakeMaker: 0
   File::Basename: 0
   File::HomeDir: 0.58
+  File::Path: 0
   File::Temp: 0.16
   IO::File: 0
   Tee: 0.01

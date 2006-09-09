@@ -12,10 +12,10 @@ WriteMakefile
                            'File::HomeDir' => '0.58',
                            'ExtUtils::MakeMaker' => 0,
                            'Tee' => '0.01',
-                           'Carp' => 0,
                            'Test::More' => '0.45',
                            'File::Temp' => '0.16',
                            'Test::Reporter' => '1.27',
+                           'File::Path' => 0,
                            'File::Basename' => 0,
                            'Config::Tiny' => '2.08'
                          }

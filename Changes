@@ -1,4 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.01 Tue Aug  1 18:23:04 2006
-    - original skeleton created with ExtUtils::ModuleMaker::TT
+0.10 Tue Aug  8 23:56:07 EDT 2006
+    - first public release -- support not yet available in CPAN.pm
+      main branch
+
