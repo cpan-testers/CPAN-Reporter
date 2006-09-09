@@ -122,8 +122,8 @@ separated by an "=" sign
    email_from = "John Doe" <johndoe@nowhere.org>
    cc_author = no
 
-Options shown as taking "yesE<sol>noE<sol>ask" should be set to one of the following
-values; the result of each is indicated below:
+Options shown below as taking "yesE<sol>noE<sol>ask" should be set to one of
+four values; the result of each is as follows:
 
 =over
 
@@ -151,7 +151,7 @@ a true value.
 
 Descriptions for each option follow.
 
-=head2 Email Address (*required*)
+=head2 Email Address (required)
 
 C<<< CPAN::Reporter >>> requires users to provide an email address that will be used
 in the "From" header of the email to cpan-testers@perl.org.
@@ -168,6 +168,18 @@ test report; it should be a valid address format, e.g.:
   user@domain
   John Doe <user@domain>
   "John Q. Public" <user@domain>
+
+Because C<<< cpan-testers >>> uses a mailing list to collect test reports, it is
+helpful if the email address provided is subscribed to the list.  Otherwise,
+test reports will be held until manually reviewed and approved.  
+
+To keep cpan-testers email separate from everyday email, it may be worthwhile
+to use email program filters or to set up a free email account somewhere to use
+as the cpan-testers address.
+
+Subscribing an account to the cpan-testers list is as easy as sending a blank
+email to cpan-testers-subscribe@perl.org and replying to the confirmation
+email.
 
 =head2 Standard Options
 
@@ -232,7 +244,7 @@ captured output indicates that all tests passed and false, otherwise.
 =head1 BUGS
 
 Please report any bugs or feature using the CPAN Request Tracker.  
-Bugs can be submitted by email to C<<< bug-CPAN-Reporter@rt.cpan.org >>> or 
+Bugs can be submitted by email to bug-CPAN-Reporter@rt.cpan.org or 
 through the web interface at 
 L<http://rt.cpan.org/Public/Dist/Display.html?Name=CPAN-Reporter>
 
