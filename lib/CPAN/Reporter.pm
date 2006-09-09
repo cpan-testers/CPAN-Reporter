@@ -9,7 +9,6 @@ use File::Basename qw/basename/;
 use File::HomeDir ();
 use File::Path qw/mkpath/;
 use File::Temp ();
-use IO::File ();
 use Tee qw/tee/;
 use Test::Reporter ();
 
@@ -147,15 +146,14 @@ sub test {
     }
     
     tee($system_command, { stderr => 1 }, $temp_out);
-    my $temp_in = IO::File->new( $temp_out );
-    if ( not defined $temp_in ) {
+    if ( ! open(TEST_RESULT, "<", $temp_out) ) {
         warn "CPAN::Reporter couldn't read test results\n";
         return;
     }
     my $result = {
         dist => $dist,
         command => $system_command,
-        output => do { local $/; <$temp_in> }
+        output => do { local $/; <TEST_RESULT>; close TEST_RESULT; }
     };
     $result->{tests_ok} = $result->{output} =~ m{^All tests successful}ms;
     _process_report( $result );

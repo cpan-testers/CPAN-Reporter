@@ -72,8 +72,8 @@ $class->new(
         'File::HomeDir'         => 0.58, 
         'File::Path'            => 0,
         'File::Temp'            => 0.16,
-        'IO::File'              => 0,
         'Tee'                   => 0.13,
+        'Test::MockObject'      => 1.06,
         'Test::More'            => 0.45,   # thread-safe
         'Test::Reporter'        => 1.27,
     },
