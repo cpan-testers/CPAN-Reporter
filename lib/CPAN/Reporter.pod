@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.13.
+This documentation describes version 0.14.
 
 =head1 SYNOPSIS
 
@@ -83,8 +83,8 @@ separated by an "=" sign
    email_from = "John Doe" <johndoe@nowhere.org>
    cc_author = no
 
-Options shown below as taking "yesE<sol>noE<sol>ask" should be set to one of
-four values; the result of each is as follows:
+Options shown below as taking "yesE<sol>noE<sol>failE<sol>ask" should be set to one of
+five values; the result of each is as follows:
 
 =over
 
@@ -95,6 +95,10 @@ C<<< yes >>> -- automatic yes
 =item *
 
 C<<< no >>> -- automatic no
+
+=item *
+
+C<<< fail >>> -- yes if the test result was failureE<sol>unknown; no otherwise
 
 =item *
 
@@ -147,17 +151,17 @@ automatically created.
 
 =item *
 
-C<<< cc_author = yes/no/ask >>> -- should module authors should be sent a copy of 
-the test report at their C<<< author@cpan.org >>> address (default: askE<sol>no)
+C<<< cc_author = yes/no/fail/ask >>> -- should module authors should be sent a copy of 
+the test report at their C<<< author@cpan.org >>> address (default: fail)
 
 =item *
 
-C<<< edit_report = yes/no/ask >>> -- edit the test report before sending 
+C<<< edit_report = yes/no/fail/ask >>> -- edit the test report before sending 
 (default: askE<sol>no)
 
 =item *
 
-C<<< send_report = yes/no/ask >>> -- should test reports be sent at all 
+C<<< send_report = yes/no/fail/ask >>> -- should test reports be sent at all 
 (default: askE<sol>yes)
 
 =back
@@ -205,8 +209,17 @@ C<<< debug = <boolean> >>> -- turns debugging onE<sol>off (default: off)
 
 =head1 FUNCTIONS
 
-C<<< CPAN::Reporter >>> provides one public function for use within CPAN.pm.
-It is not imported during C<<< use >>>.  Ordinary users will never need it.  
+C<<< CPAN::Reporter >>> provides i few public function for use within CPAN.pm.
+They are not imported during C<<< use >>>.  Ordinary users will never need to
+use them.
+
+=head2 C<<< configure() >>>
+
+  CPAN::Reporter::configure();
+
+Prompts the user to edit configuration settings stored in the CPAN::Reporter
+C<<< config.ini >>> file.  Will create the configuration file if it does not 
+exist;
 
 =head2 C<<< test() >>>
 

@@ -1,6 +1,6 @@
 # CPAN::Reporter tests
 use strict;
-use warnings;
+BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 use File::Spec;
 use File::Temp;
 use Probe::Perl;

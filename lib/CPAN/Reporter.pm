@@ -1,9 +1,8 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.13";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.14";
 
-# use warnings; # only for Perl >= 5.6
 use Config::Tiny ();
 use ExtUtils::MakeMaker qw/prompt/;
 use File::Basename qw/basename/;
@@ -15,8 +14,124 @@ use Tee qw/tee/;
 use Test::Reporter ();
 
 #--------------------------------------------------------------------------#
+# defaults and prompts
+#--------------------------------------------------------------------------#
+
+# undef defaults are not written to the starter configuration file
+
+my @config_order = qw/ email_from cc_author edit_report send_report
+                       smtp_server /;
+my %defaults = (
+    email_from => {
+        default => '',
+        prompt => 'What email address will be used for sending reports?',
+        info => <<'HERE',
+CPAN::Reporter requires a valid email address as the return address
+for test reports sent to cpan-testers\@perl.org.  Either provide just
+an email address, or put your real name in double-quote marks followed 
+by your email address in angle marks, e.g. "John Doe" <jdoe@nowhere.com>
+HERE
+    },
+    cc_author => {
+        default => 'fail',
+        prompt => "Do you want to CC the the module author?",
+        info => <<'HERE',
+If you would like, CPAN::Reporter will copy the module author with
+the results of your tests.  By default, authors are copied only on 
+failed/unknown results. This option takes a "yes/no/fail/ask" value.  
+HERE
+    },
+    edit_report => {
+        default => 'ask/no',
+        prompt => "Do you want to edit the test report?",
+        info => <<'HERE',
+Before test reports are sent, you may want to edit the test report
+and add additional comments about the result or about your system or
+Perl configuration.  By default, CPAN::Reporter will ask after
+each report is generated whether or not you would like to edit the 
+report. This option takes a "yes/no/fail/ask" value.
+HERE
+    },
+    send_report => {
+        default => 'ask/yes',
+        prompt => "Do you want to send the test report?",
+        info => <<'HERE',
+By default, CPAN::Reporter will prompt you for confirmation that
+the test report should be sent before actually emailing the 
+report.  This gives the opportunity to bypass sending particular
+reports if you need to (e.g. a duplicate of an earlier result).
+This option takes a "yes/no/fail/ask" value.
+HERE
+    },
+    smtp_server => {
+        default => undef, # not written to starter config
+        info => <<'HERE',
+If your computer is behind a firewall or your ISP blocks
+outbound mail traffic, CPAN::Reporter will not be able to send
+test reports unless you provide an alternate outbound (SMTP) 
+email server.  Enter the full name of your outbound mail server
+(e.g. smtp.your-ISP.com) or leave this blank to send mail 
+directly to perl.org
+HERE
+    },
+    email_to => {
+        default => undef, # not written to starter config
+    },
+    editor => {
+        default => undef, # not written to starter config
+    },
+    debug => {
+        default => undef, # not written to starter config
+    }
+);
+#--------------------------------------------------------------------------#
 # public API
 #--------------------------------------------------------------------------#
+
+sub configure {
+    my $config_dir = _get_config_dir();
+    my $config_file = _get_config_file();
+
+    mkpath $config_dir if ! -d $config_dir;
+
+    my $config;
+    my $existing_options;
+    
+    # read or create
+    if ( -f $config_file ) {
+        $config = _open_config_file();
+        $existing_options = _get_config_options( $config );
+    }
+    else {
+        $config = Config::Tiny->new();
+    }
+    
+    # initialize options that have an info description
+    for my $k ( @config_order ) {
+        my $option_data = $defaults{$k};
+        next unless $option_data->{info};
+        print "\n" . $option_data->{info}. "\n";
+        if ( defined $defaults{$k}{default} ) {
+            $config->{_}{$k} = prompt( 
+                "$k = ", 
+                $existing_options->{$k} || $option_data->{default} 
+            );
+        }
+        else {
+            # only initialize options with undef default if
+            # answer matches non white space
+            my $answer = prompt( 
+                "$k = ", 
+                $existing_options->{$k} || q{} 
+            ); 
+            $config->{_}{$k} = $answer if $answer =~ /\S/;
+        }
+    }
+
+    $config->write( $config_file )
+        or warn "Couldn't write config file to '$config_file'";
+    return $config->{_};
+}
 
 sub test {
     my ($dist, $system_command) = @_;
@@ -47,73 +162,26 @@ sub test {
     return $result->{tests_ok};    
 }
 
-#--------------------------------------------------------------------------#
-# defaults and prompts
-#--------------------------------------------------------------------------#
-
-# undef defaults are not written to the starter configuration file
-
-my %defaults = (
-    email_from => {
-        default => '',
-    },
-    cc_author => {
-        default => 'ask/no',
-        prompt => "Do you want to CC the the module author?",
-    },
-    edit_report => {
-        default => 'ask/no',
-        prompt => "Do you want to edit the test report?",
-    },
-    send_report => {
-        default => 'ask/yes',
-        prompt => "Do you want to send the test report?",
-    },
-    email_to => {
-        default => undef, # not written to starter config
-    },
-    smtp_server => {
-        default => undef, # not written to starter config
-    },
-    editor => {
-        default => undef, # not written to starter config
-    },
-    debug => {
-        default => undef, # not written to starter config
-    }
-);
 
 #--------------------------------------------------------------------------#
 # private functions
 #--------------------------------------------------------------------------#
 
-sub _get_config_options {
-    # setup paths
-    my $config_dir = File::Spec->catdir( 
-        File::HomeDir->my_documents, ".cpanreporter"
-    );
-    my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
+sub _get_config_dir {
+    return File::Spec->catdir(File::HomeDir->my_documents, ".cpanreporter");
+}
 
-    # make directory and if it doesn't exist
-    mkpath $config_dir if ! -d $config_dir;
-    
-    # read or create config file
-    my $config;
-    if ( -e $config_file ) {
-        $config = Config::Tiny->read( $config_file )
-            or warn "Couldn't read CPAN::Reporter configuration file\n";
-    }
-    else {
-        $config = Config::Tiny->new();
-        # initialize with any defined default
-        for ( keys %defaults ) {
-            $config->{_}{$_} = $defaults{$_}{default} 
-                if defined $defaults{$_}{default};
-        }
-        $config->write( $config_file );
-    }
-       
-    # extract and return valid options
+#--------------------------------------------------------------------------#
+
+sub _get_config_file {
+    return File::Spec->catdir( _get_config_dir, "config.ini" );
+}
+
+#--------------------------------------------------------------------------#
+
+sub _get_config_options {
+    my $config = shift || _open_config_file();
+    # extract and return valid options, with fallback to defaults
     my %active;
     for my $option ( keys %defaults ) {
         if ( exists $config->{_}{$option} ) {
@@ -124,8 +192,17 @@ sub _get_config_options {
                 if defined $defaults{$option}{default};
         }
     }
-    
     return \%active;
+}
+
+#--------------------------------------------------------------------------#
+
+sub _open_config_file {
+    my $config_file = _get_config_file();
+    my $config = Config::Tiny->read( $config_file )
+        or warn "Couldn't read CPAN::Reporter configuration file " .
+                "'$config_file'\n";
+    return $config; 
 }
 
 #--------------------------------------------------------------------------#
@@ -208,23 +285,23 @@ EMAIL_REQUIRED
     my @cc;
 
     # User prompts for action
-    if ( _prompt( $config, "cc_author") =~ /^y/ ) {
+    if ( _prompt( $config, "cc_author", $tr->grade) =~ /^y/ ) {
         push @cc, "$result->{author_id}\@cpan.org";
     }
     
-    if ( _prompt( $config, "edit_report" ) =~ /^y/ ) {
+    if ( _prompt( $config, "edit_report", $tr->grade ) =~ /^y/ ) {
         my $editor = $config->{editor};
         local $ENV{VISUAL} = $editor if $editor;
         $tr->edit_comments;
     }
     
-    if ( _prompt( $config, "send_report" ) =~ /^y/ ) {
+    if ( _prompt( $config, "send_report", $tr->grade ) =~ /^y/ ) {
         print "Sending test report with '" . $tr->grade . 
               "' to " . join(q{, }, $tr->address, @cc) . "\n";
         $tr->send( @cc ) or warn $tr->errstr. "\n";
     }
     else {
-        print "Test report discarded.\n";
+        print "Test report not sent\n";
     }
 
     return;
@@ -237,13 +314,16 @@ EMAIL_REQUIRED
 #--------------------------------------------------------------------------#
 
 sub _prompt {
-    my ($config, $option) = @_;
+    my ($config, $option, $grade) = @_;
     my $prompt;
     if     ( lc $config->{$option} eq 'ask/yes' ) { 
         $prompt = prompt( $defaults{$option}{prompt} . " (yes/no)", "yes" );
     }
-    elsif  ( lc $config->{$option} =~ m{ask(/no)?} ) {
+    elsif  ( $config->{$option} =~ m{^ask(/no)?}i ) {
         $prompt = prompt( $defaults{$option}{prompt} . " (yes/no)", "no" );
+    }
+    elsif  ( lc $config->{$option} =~ 'fail' ) {
+        $prompt = ( $grade =~ m{^(fail|unknown)$}i ) ? 'yes' : 'no';
     }
     else { 
         $prompt = $config->{$option};
@@ -372,11 +452,12 @@ separated by an "=" sign
   email_from = "John Doe" <johndoe@nowhere.org>
   cc_author = no
 
-Options shown below as taking "yes/no/ask" should be set to one of
-four values; the result of each is as follows:
+Options shown below as taking "yes/no/fail/ask" should be set to one of
+five values; the result of each is as follows:
 
 * {yes} -- automatic yes
 * {no} -- automatic no
+* {fail} -- yes if the test result was failure/unknown; no otherwise
 * {ask/no} or just {ask} -- prompt each time, but default to no
 * {ask/yes} -- prompt each time, but default to yes
 
@@ -411,11 +492,11 @@ email.
 These options are included in the standard config file template that is
 automatically created.
 
-* {cc_author = yes/no/ask} -- should module authors should be sent a copy of 
-the test report at their {author@cpan.org} address (default: ask/no)
-* {edit_report = yes/no/ask} -- edit the test report before sending 
+* {cc_author = yes/no/fail/ask} -- should module authors should be sent a copy of 
+the test report at their {author@cpan.org} address (default: fail)
+* {edit_report = yes/no/fail/ask} -- edit the test report before sending 
 (default: ask/no)
-* {send_report = yes/no/ask} -- should test reports be sent at all 
+* {send_report = yes/no/fail/ask} -- should test reports be sent at all 
 (default: ask/yes)
 
 Note that if {send_report} is set to "no", CPAN::Reporter will still go through
@@ -446,8 +527,17 @@ Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
 
 = FUNCTIONS
 
-{CPAN::Reporter} provides one public function for use within CPAN.pm.
-It is not imported during {use}.  Ordinary users will never need it.  
+{CPAN::Reporter} provides i few public function for use within CPAN.pm.
+They are not imported during {use}.  Ordinary users will never need to
+use them.
+
+== {configure()}
+
+ CPAN::Reporter::configure();
+
+Prompts the user to edit configuration settings stored in the CPAN::Reporter
+{config.ini} file.  Will create the configuration file if it does not 
+exist;
 
 == {test()}
 

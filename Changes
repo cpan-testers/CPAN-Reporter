@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+0.14
+    - added interactive configuration
+    - added 'fail' config option that is 'yes' if test failed and
+      'no' otherwise
+    - refactored config file generation
+
 0.13 Tue Aug 29 06:31:38 EDT 2006
     - added slightly more verbose progress messages, including for CC's and 
       for reports not sent
