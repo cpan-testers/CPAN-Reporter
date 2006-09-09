@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.11.
+This documentation describes version 0.12.
 
 =head1 SYNOPSIS
 
@@ -34,14 +34,10 @@ TestE<sol>install modules as normal with C<<< cpan >>> or C<<< CPAN::Shell >>>
 
 =head1 DESCRIPTION
 
-I<Note: C<<< CPAN::Reporter >>> is not yet supported by the current development release
-of C<<< CPAN.pm >>>.  Advanced users who wish to experiment with C<<< CPAN::Reporter >>> may
-see L</"GETTING STARTED"> for instructions on installing a development branch
-that supports it.>
-
 C<<< CPAN::Reporter >>> is an add-on for the C<<< CPAN.pm >>> module that uses
 L<Test::Reporter> to send the results of module tests to the CPAN
-Testers project.  
+Testers project.  I<Support for C<<< CPAN::Reporter >>> is available in C<<< CPAN.pm >>> 
+version 1.87_57 or later.>
 
 The goal of the CPAN Testers project ( L<http://testers.cpan.org/> ) is to
 test as many CPAN packages as possible on as many platforms as
@@ -56,58 +52,23 @@ via C<<< CPAN.pm >>>.
 
 =head1 GETTING STARTED
 
-C<<< CPAN::Reporter >>> requires a version of C<<< CPAN.pm >>> that knows to look for it.
-The current development release of C<<< CPAN.pm >>> does not yet support
-C<<< CPAN::Reporter >>>.  However, a development branch with patches for
-C<<< CPAN::Reporter >>> is available from a subversion repository:
+C<<< CPAN::Reporter >>> requires version 1.87_57 or later of C<<< CPAN.pm >>>.  To install
+this development version, use the following commands from the CPAN shell:
 
-  https://pause.perl.org:5460/svn/cpanpm/branches/dagolden-cpan-reporter
-
-This branch roughly corresponds to CPAN 1.87_55 plus a few additional
-patches, including C<<< CPAN::Reporter >>> support.
-
-Advanced users may wish to install this branch and experiment with 
-C<<< CPAN::Reporter >>>.  Note -- there is no guarantee that this branch is
-stable.  Proceed with caution.
-
-To install the C<<< CPAN.pm >>> branch:
-
-=over
-
-=item *
-
-export the source code from the repository
-
-=back
-
-  $ svn export (repository url above)
-
-=over
-
-=item *
-
-inside the checkout directory, run "perl Makefile.PL".  Ignore errors
-
-=item *
-
-run "make"
-
-=item *
-
-run "make install"
-
-=back
+  cpan> install ANDK/CPAN-1.87_57.tar.gz
+  cpan> reload cpan
 
 Depending on the version of C<<< CPAN.pm >>> already installed, users may be prompted
-to renew their configuration settings when they next run C<<< cpan >>>.  This will
-include an option to enable C<<< CPAN::Reporter >>>.  To manually enable
-C<<< CPAN::Reporter >>>, type the following commands from the C<<< CPAN.pm >>> shell prompt:
+to renew their configuration settings.  This will include an option to enable
+C<<< CPAN::Reporter >>>.  To manually enable C<<< CPAN::Reporter >>>, type the following
+commands from the CPAN shell prompt:
 
   cpan> o conf test_report 1
   cpan> o conf commit
 
-After installation, users will need to edit their C<<< CPAN::Reporter >>>
-configuration file per the instructions below.
+Next, install C<<< CPAN::Reporter >>> if it is not already installed.  After
+installation, users will need to edit their C<<< CPAN::Reporter >>> configuration file
+per the instructions below.
 
 =head1 CONFIG FILE OPTIONS
 
@@ -172,10 +133,6 @@ test report; it should be a valid address format, e.g.:
 Because C<<< cpan-testers >>> uses a mailing list to collect test reports, it is
 helpful if the email address provided is subscribed to the list.  Otherwise,
 test reports will be held until manually reviewed and approved.  
-
-To keep cpan-testers email separate from everyday email, it may be worthwhile
-to use email program filters or to set up a free email account somewhere to use
-as the cpan-testers address.
 
 Subscribing an account to the cpan-testers list is as easy as sending a blank
 email to cpan-testers-subscribe@perl.org and replying to the confirmation
@@ -258,7 +215,8 @@ captured output indicates that all tests passed and false, otherwise.
 
 =item *
 
-Does not (yet?) support reporting on C<<< test.pl >>> files
+Does not (yet?) support reporting on C<<< test.pl >>> files; will issue a warning 
+and continue
 
 =back
 

@@ -1,5 +1,8 @@
 Revision history for Perl module CPAN::Reporter
 
+0.12 Sat Aug 26 19:05:54 EDT 2006
+    - updated docs to indicate that CPAN 1.87_57 supports CPAN::Reporter
+
 0.11 Sat Aug 26 12:20:32 EDT 2006
     - fail-safe test.pl files -- can't determine success for "make test"
       when teed and can't parse for Test::Harness output

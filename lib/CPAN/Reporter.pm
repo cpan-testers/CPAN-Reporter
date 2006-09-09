@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.11";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.12";
 
 # use warnings; # only for Perl >= 5.6
 use Config::Tiny ();
@@ -320,14 +320,10 @@ This documentation describes version %%VERSION%%.
 
 = DESCRIPTION
 
-~Note: {CPAN::Reporter} is not yet supported by the current development release
-of {CPAN.pm}.  Advanced users who wish to experiment with {CPAN::Reporter} may
-see [/"GETTING STARTED"] for instructions on installing a development branch
-that supports it.~
-
 {CPAN::Reporter} is an add-on for the {CPAN.pm} module that uses
 [Test::Reporter] to send the results of module tests to the CPAN
-Testers project.  
+Testers project.  ~Support for {CPAN::Reporter} is available in {CPAN.pm} 
+version 1.87_57 or later.~
 
 The goal of the CPAN Testers project ( [http://testers.cpan.org/] ) is to
 test as many CPAN packages as possible on as many platforms as
@@ -342,40 +338,23 @@ via {CPAN.pm}.
 
 = GETTING STARTED
 
-{CPAN::Reporter} requires a version of {CPAN.pm} that knows to look for it.
-The current development release of {CPAN.pm} does not yet support
-{CPAN::Reporter}.  However, a development branch with patches for
-{CPAN::Reporter} is available from a subversion repository:
+{CPAN::Reporter} requires version 1.87_57 or later of {CPAN.pm}.  To install
+this development version, use the following commands from the CPAN shell:
 
- https://pause.perl.org:5460/svn/cpanpm/branches/dagolden-cpan-reporter
- 
-This branch roughly corresponds to CPAN 1.87_55 plus a few additional
-patches, including {CPAN::Reporter} support.
-
-Advanced users may wish to install this branch and experiment with 
-{CPAN::Reporter}.  Note -- there is no guarantee that this branch is
-stable.  Proceed with caution.
-
-To install the {CPAN.pm} branch:
-
-* export the source code from the repository
-
- $ svn export (repository url above)
-
-* inside the checkout directory, run "perl Makefile.PL".  Ignore errors
-* run "make"
-* run "make install"
+ cpan> install ANDK/CPAN-1.87_57.tar.gz
+ cpan> reload cpan
 
 Depending on the version of {CPAN.pm} already installed, users may be prompted
-to renew their configuration settings when they next run {cpan}.  This will
-include an option to enable {CPAN::Reporter}.  To manually enable
-{CPAN::Reporter}, type the following commands from the {CPAN.pm} shell prompt:
+to renew their configuration settings.  This will include an option to enable
+{CPAN::Reporter}.  To manually enable {CPAN::Reporter}, type the following
+commands from the CPAN shell prompt:
 
  cpan> o conf test_report 1
  cpan> o conf commit
 
-After installation, users will need to edit their {CPAN::Reporter}
-configuration file per the instructions below.
+Next, install {CPAN::Reporter} if it is not already installed.  After
+installation, users will need to edit their {CPAN::Reporter} configuration file
+per the instructions below.
 
 = CONFIG FILE OPTIONS
 
@@ -419,10 +398,6 @@ test report; it should be a valid address format, e.g.:
 Because {cpan-testers} uses a mailing list to collect test reports, it is
 helpful if the email address provided is subscribed to the list.  Otherwise,
 test reports will be held until manually reviewed and approved.  
-
-To keep cpan-testers email separate from everyday email, it may be worthwhile
-to use email program filters or to set up a free email account somewhere to use
-as the cpan-testers address.
 
 Subscribing an account to the cpan-testers list is as easy as sending a blank
 email to cpan-testers-subscribe@perl.org and replying to the confirmation
@@ -474,7 +449,8 @@ captured output indicates that all tests passed and false, otherwise.
 
 = KNOWN ISSUES
 
-* Does not (yet?) support reporting on {test.pl} files
+* Does not (yet?) support reporting on {test.pl} files; will issue a warning 
+and continue
 
 = BUGS
 
