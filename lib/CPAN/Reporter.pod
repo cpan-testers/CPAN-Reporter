@@ -16,27 +16,27 @@ This documentation describes version 0.14.
 
 =item 1.
 
-Install a version of CPAN.pm that supports CPAN::Reporter
+Install CPAN::Reporter
 
 =item 2.
 
-Install CPAN::Reporter
+Install a version of CPAN.pm that supports CPAN::Reporter
 
 =item 3.
 
-Edit .cpanreporterE<sol>config.ini
+Enable and configure CPAN::Reporter
 
 =item 4.
 
-TestE<sol>install modules as normal with C<<< cpan >>> or C<<< CPAN::Shell >>>
+TestE<sol>install modules as normal with C<<< cpan >>> or CPAN::Shell
 
 =back
 
 =head1 DESCRIPTION
 
-C<<< CPAN::Reporter >>> is an add-on for the C<<< CPAN.pm >>> module that uses
+CPAN::Reporter is an add-on for the CPAN.pm module that uses
 L<Test::Reporter> to send the results of module tests to the CPAN
-Testers project.  I<Support for C<<< CPAN::Reporter >>> is available in C<<< CPAN.pm >>> 
+Testers project.  I<Support for CPAN::Reporter is available in CPAN.pm 
 version 1.87_57 or later.>
 
 The goal of the CPAN Testers project ( L<http://testers.cpan.org/> ) is to
@@ -46,36 +46,45 @@ potential users to identify bugs or platform compatibility issues and
 improves the overall quality and value of CPAN.
 
 One way individuals can contribute is to send test results for each module that
-they test or install.  Installing C<<< CPAN::Reporter >>> gives the option
+they test or install.  Installing CPAN::Reporter gives the option
 of automatically generating and emailing test reports whenever tests are run
-via C<<< CPAN.pm >>>.
+via CPAN.pm.
 
 =head1 GETTING STARTED
 
-C<<< CPAN::Reporter >>> requires version 1.87_57 or later of C<<< CPAN.pm >>>.  To install
-this development version, use the following commands from the CPAN shell:
+The first step in using CPAN::Reporter is to install it using whatever
+version of CPAN.pm is already installed.
 
-  cpan> install ANDK/CPAN-1.87_57.tar.gz
+  cpan> install CPAN::Reporter
+
+CPAN::Reporter requires a recent development version of CPAN.pm.  To
+install a development version, use the following commands from the CPAN shell
+(replace "1.87_59" with the latest development version number):
+
+  cpan> install ANDK/CPAN-1.87_59.tar.gz
   cpan> reload cpan
 
-Depending on the version of C<<< CPAN.pm >>> already installed, users may be prompted
-to renew their configuration settings.  This will include an option to enable
-C<<< CPAN::Reporter >>>.  To manually enable C<<< CPAN::Reporter >>>, type the following
-commands from the CPAN shell prompt:
+If upgrading from a very old version of CPAN.pm, users may be prompted to renew
+their configuration settings, including the 'test_report' option to enable
+CPAN::Reporter.  If not prompted automatically, users should request
+initialization of 'test_report' manually:
 
-  cpan> o conf test_report 1
-  cpan> o conf commit
+  cpan> o conf init test_report
 
-Next, install C<<< CPAN::Reporter >>> if it is not already installed.  After
-installation, users will need to edit their C<<< CPAN::Reporter >>> configuration file
-per the instructions below.
+Soon, CPAN.pm will automatically continue with interactive configuration of
+CPAN::Reporter.  Until then, users should should request configuration
+using this manual workaround:
+
+  cpan> !require CPAN::Reporter; CPAN::Reporter::configure()
+
+Once CPAN::Reporter is enabled and configured, test or install modules with
+CPAN.pm as usual.
 
 =head1 CONFIG FILE OPTIONS
 
-Default options for C<<< CPAN::Reporter >>> are read from a configuration file 
+Default options for CPAN::Reporter are read from a configuration file 
 C<<< .cpanreporter/config.ini >>> in the user's home directory (Unix) or "My 
-Documents" directory (Windows).  If CPAN::Reporter does not find a
-configuration file, it will attempt to create one with default values.
+Documents" directory (Windows).  
 
 The configuration file is in "ini" format, with the option name and value
 separated by an "=" sign
@@ -111,14 +120,14 @@ C<<< ask/yes >>> -- prompt each time, but default to yes
 =back
 
 For prompts, the default will be used if return is pressed immediately at
-the prompt or if the C<<< PERL_MM_USE_DEFAULTS >>> environment variable is set to
+the prompt or if the C<<< PERL_MM_USE_DEFAULT >>> environment variable is set to
 a true value.
 
 Descriptions for each option follow.
 
 =head2 Email Address (required)
 
-C<<< CPAN::Reporter >>> requires users to provide an email address that will be used
+CPAN::Reporter requires users to provide an email address that will be used
 in the "From" header of the email to cpan-testers@perl.org.
 
 =over
@@ -178,7 +187,7 @@ C<<< test_report >>>:
 =head2 Additional Options
 
 These additional options are only necessary in special cases, such as for
-testing or for configuring C<<< CPAN::Reporter >>> to work from behind a firewall
+testing or for configuring CPAN::Reporter to work from behind a firewall
 that restricts outbound email.
 
 =over
@@ -209,9 +218,8 @@ C<<< debug = <boolean> >>> -- turns debugging onE<sol>off (default: off)
 
 =head1 FUNCTIONS
 
-C<<< CPAN::Reporter >>> provides i few public function for use within CPAN.pm.
-They are not imported during C<<< use >>>.  Ordinary users will never need to
-use them.
+CPAN::Reporter provides only two public function for use within CPAN.pm.
+They are not imported during C<<< use >>>.  Ordinary users will never need them.
 
 =head2 C<<< configure() >>>
 
@@ -219,7 +227,7 @@ use them.
 
 Prompts the user to edit configuration settings stored in the CPAN::Reporter
 C<<< config.ini >>> file.  Will create the configuration file if it does not 
-exist;
+exist.
 
 =head2 C<<< test() >>>
 
@@ -237,7 +245,7 @@ captured output indicates that all tests passed and false, otherwise.
 
 =item *
 
-Does not (yet?) support reporting on C<<< test.pl >>> files; will issue a warning 
+Does not (yet) support reporting on C<<< test.pl >>> files; will issue a warning 
 and continue
 
 =back

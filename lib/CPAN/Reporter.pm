@@ -70,7 +70,8 @@ outbound mail traffic, CPAN::Reporter will not be able to send
 test reports unless you provide an alternate outbound (SMTP) 
 email server.  Enter the full name of your outbound mail server
 (e.g. smtp.your-ISP.com) or leave this blank to send mail 
-directly to perl.org
+directly to perl.org.  Use a space character to reset an existing
+default.
 HERE
     },
     email_to => {
@@ -98,38 +99,62 @@ sub configure {
     
     # read or create
     if ( -f $config_file ) {
-        $config = _open_config_file();
+        print "\nFound your CPAN::Reporter config file at '$config_file'.\n";
+        $config = _open_config_file() 
+            or return;
         $existing_options = _get_config_options( $config );
+        print "\nUpdating your CPAN::Reporter configuration settings:\n"
     }
     else {
+        print "\nNo CPAN::Reporter config file found; creating a new one.\n";
         $config = Config::Tiny->new();
     }
     
     # initialize options that have an info description
     for my $k ( @config_order ) {
         my $option_data = $defaults{$k};
-        next unless $option_data->{info};
         print "\n" . $option_data->{info}. "\n";
         if ( defined $defaults{$k}{default} ) {
             $config->{_}{$k} = prompt( 
-                "$k = ", 
+                "$k?", 
                 $existing_options->{$k} || $option_data->{default} 
             );
         }
         else {
             # only initialize options with undef default if
-            # answer matches non white space
+            # answer matches non white space, otherwise
+            # reset it
             my $answer = prompt( 
-                "$k = ", 
+                "$k?", 
                 $existing_options->{$k} || q{} 
             ); 
-            $config->{_}{$k} = $answer if $answer =~ /\S/;
+            if ( $answer =~ /\S/ ) {
+                $config->{_}{$k} = $answer;
+            }
+            else {
+                delete $config->{_}{$k};
+            }
         }
+        # delete existing as we proceed so we know what's left
+        delete $existing_options->{$k};
     }
 
-    $config->write( $config_file )
-        or warn "Couldn't write config file to '$config_file'";
-    return $config->{_};
+    # initialize remaining existing options
+    print "\nYour CPAN::Reporter config file also contains these advanced " .
+          "options:\n\n" if keys %$existing_options;
+    for my $k ( keys %$existing_options ) {
+        $config->{_}{$k} = prompt( "$k?", $existing_options->{$k} ); 
+    }
+
+    print "\nWriting CPAN::Reporter config file to '$config_file'.\n";    
+    if ( $config->write( $config_file ) ) {
+        return $config->{_};
+    }
+    else {
+        warn "\nError writing config file to '$config_file':" . 
+             Config::Tiny->errstr(). "\n";
+        return;
+    }
 }
 
 sub test {
@@ -178,7 +203,7 @@ sub _get_config_file {
 #--------------------------------------------------------------------------#
 
 sub _get_config_options {
-    my $config = shift || _open_config_file();
+    my $config = shift;
     # extract and return valid options, with fallback to defaults
     my %active;
     for my $option ( keys %defaults ) {
@@ -199,7 +224,7 @@ sub _open_config_file {
     my $config_file = _get_config_file();
     my $config = Config::Tiny->read( $config_file )
         or warn "Couldn't read CPAN::Reporter configuration file " .
-                "'$config_file'\n";
+                "'$config_file': " . Config::Tiny->errstr() . "\n";
     return $config; 
 }
 
@@ -223,7 +248,13 @@ sub _process_report {
     my ( $result ) = @_;
 
     # Get configuration options
-    my $config = _get_config_options;
+    my $config_obj = _open_config_file();
+    if ( not defined $config_obj ) {
+        warn "\nCPAN::Reporter config file not found. " .
+             "Skipping test report generation.\n";
+        return;
+    }
+    my $config = _get_config_options( $config_obj );
     
     if ( ! $config->{email_from} ) {
         warn << "EMAIL_REQUIRED";
@@ -394,16 +425,16 @@ This documentation describes version %%VERSION%%.
 
 = SYNOPSIS
 
-0 Install a version of CPAN.pm that supports CPAN::Reporter
 0 Install CPAN::Reporter
-0 Edit .cpanreporter/config.ini
-0 Test/install modules as normal with {cpan} or {CPAN::Shell}
+0 Install a version of CPAN.pm that supports CPAN::Reporter
+0 Enable and configure CPAN::Reporter
+0 Test/install modules as normal with {cpan} or CPAN::Shell
 
 = DESCRIPTION
 
-{CPAN::Reporter} is an add-on for the {CPAN.pm} module that uses
+CPAN::Reporter is an add-on for the CPAN.pm module that uses
 [Test::Reporter] to send the results of module tests to the CPAN
-Testers project.  ~Support for {CPAN::Reporter} is available in {CPAN.pm} 
+Testers project.  ~Support for CPAN::Reporter is available in CPAN.pm 
 version 1.87_57 or later.~
 
 The goal of the CPAN Testers project ( [http://testers.cpan.org/] ) is to
@@ -413,36 +444,45 @@ potential users to identify bugs or platform compatibility issues and
 improves the overall quality and value of CPAN.
 
 One way individuals can contribute is to send test results for each module that
-they test or install.  Installing {CPAN::Reporter} gives the option
+they test or install.  Installing CPAN::Reporter gives the option
 of automatically generating and emailing test reports whenever tests are run
-via {CPAN.pm}.
+via CPAN.pm.
 
 = GETTING STARTED
 
-{CPAN::Reporter} requires version 1.87_57 or later of {CPAN.pm}.  To install
-this development version, use the following commands from the CPAN shell:
+The first step in using CPAN::Reporter is to install it using whatever
+version of CPAN.pm is already installed.
 
- cpan> install ANDK/CPAN-1.87_57.tar.gz
+ cpan> install CPAN::Reporter
+
+CPAN::Reporter requires a recent development version of CPAN.pm.  To
+install a development version, use the following commands from the CPAN shell
+(replace "1.87_59" with the latest development version number):
+
+ cpan> install ANDK/CPAN-1.87_59.tar.gz
  cpan> reload cpan
 
-Depending on the version of {CPAN.pm} already installed, users may be prompted
-to renew their configuration settings.  This will include an option to enable
-{CPAN::Reporter}.  To manually enable {CPAN::Reporter}, type the following
-commands from the CPAN shell prompt:
+If upgrading from a very old version of CPAN.pm, users may be prompted to renew
+their configuration settings, including the 'test_report' option to enable
+CPAN::Reporter.  If not prompted automatically, users should request
+initialization of 'test_report' manually:
 
- cpan> o conf test_report 1
- cpan> o conf commit
+ cpan> o conf init test_report
 
-Next, install {CPAN::Reporter} if it is not already installed.  After
-installation, users will need to edit their {CPAN::Reporter} configuration file
-per the instructions below.
+Soon, CPAN.pm will automatically continue with interactive configuration of
+CPAN::Reporter.  Until then, users should should request configuration
+using this manual workaround:
+
+ cpan> !require CPAN::Reporter; CPAN::Reporter::configure()
+
+Once CPAN::Reporter is enabled and configured, test or install modules with
+CPAN.pm as usual.
 
 = CONFIG FILE OPTIONS
 
-Default options for {CPAN::Reporter} are read from a configuration file 
+Default options for CPAN::Reporter are read from a configuration file 
 {.cpanreporter/config.ini} in the user's home directory (Unix) or "My 
-Documents" directory (Windows).  If CPAN::Reporter does not find a
-configuration file, it will attempt to create one with default values.
+Documents" directory (Windows).  
 
 The configuration file is in "ini" format, with the option name and value
 separated by an "=" sign
@@ -460,14 +500,14 @@ five values; the result of each is as follows:
 * {ask/yes} -- prompt each time, but default to yes
 
 For prompts, the default will be used if return is pressed immediately at
-the prompt or if the {PERL_MM_USE_DEFAULTS} environment variable is set to
+the prompt or if the {PERL_MM_USE_DEFAULT} environment variable is set to
 a true value.
 
 Descriptions for each option follow.
 
 == Email Address (required)
 
-{CPAN::Reporter} requires users to provide an email address that will be used
+CPAN::Reporter requires users to provide an email address that will be used
 in the "From" header of the email to cpan-testers@perl.org.
 
 * {email_from = <email address>} -- email address of the user sending the
@@ -509,7 +549,7 @@ A better way to disable CPAN::Reporter temporarily is with the CPAN option
 == Additional Options
 
 These additional options are only necessary in special cases, such as for
-testing or for configuring {CPAN::Reporter} to work from behind a firewall
+testing or for configuring CPAN::Reporter to work from behind a firewall
 that restricts outbound email.
 
 * {smtp_server = <server list>} -- one or more alternate outbound mail servers
@@ -525,9 +565,8 @@ Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
 
 = FUNCTIONS
 
-{CPAN::Reporter} provides i few public function for use within CPAN.pm.
-They are not imported during {use}.  Ordinary users will never need to
-use them.
+CPAN::Reporter provides only two public function for use within CPAN.pm.
+They are not imported during {use}.  Ordinary users will never need them.
 
 == {configure()}
 
@@ -535,7 +574,7 @@ use them.
 
 Prompts the user to edit configuration settings stored in the CPAN::Reporter
 {config.ini} file.  Will create the configuration file if it does not 
-exist;
+exist.
 
 == {test()}
 
@@ -549,7 +588,7 @@ captured output indicates that all tests passed and false, otherwise.
 
 = KNOWN ISSUES
 
-* Does not (yet?) support reporting on {test.pl} files; will issue a warning 
+* Does not (yet) support reporting on {test.pl} files; will issue a warning 
 and continue
 
 = BUGS

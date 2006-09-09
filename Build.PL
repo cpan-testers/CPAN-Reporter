@@ -71,9 +71,10 @@ $class->new(
         'File::Basename'        => 0,
         'File::HomeDir'         => 0.58, 
         'File::Path'            => 0,
+        'File::Spec'            => 3.19,
         'File::Temp'            => 0.16,
+        'IO::Capture'           => 0.05,  # build_requires
         'Tee'                   => 0.13,
-        'Test::MockObject'      => 1.06,
         'Test::More'            => 0.45,   # thread-safe
         'Test::Reporter'        => 1.27,
     },

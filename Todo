@@ -8,9 +8,6 @@ TODO list for Perl module CPAN::Reporter
 - Check failed tests for prerequisite failures -- this could
   occur if tests were forced.  Such failures should be marked N/A.
 
-- Add a "create_config" function that prompts a user through config file setup.
-  Add it to synopsis.
-
 - Write some real tests and get some decent test coverage.  Would likely need
   to mock a bunch of things -- CPAN::Distribution, Test::Reporter
 

@@ -1,29 +1,49 @@
 Revision history for Perl module CPAN::Reporter
 
 0.14
-    - added interactive configuration
-    - added 'fail' config option that is 'yes' if test failed and
-      'no' otherwise
-    - refactored config file generation
+
+    - added configure() for config file generation and interactive config
+    
+    - removed automatic config file generation from the test() function
+    
+    - updated getting started documentation to reflect CPAN.pm 
+      'o conf init test_report' syntax (as of 1.87_59) and new
+      interactive config feature of CPAN::Reporter
+    
+    - added the 'fail' config value; equivalent to 'yes' if a test failed 
+      and 'no' otherwise 
+    
+    - changed "cc_author" default to "fail"
+    
+    - added error checks and testing for config file generation
 
 0.13 Tue Aug 29 06:31:38 EDT 2006
+
     - added slightly more verbose progress messages, including for CC's and 
       for reports not sent
+    
     - minor documentation improvements
 
 0.12 Sat Aug 26 19:05:54 EDT 2006
+
     - updated docs to indicate that CPAN 1.87_57 supports CPAN::Reporter
 
 0.11 Sat Aug 26 12:20:32 EDT 2006
+
     - fail-safe test.pl files -- can't determine success for "make test"
       when teed and can't parse for Test::Harness output
+    
     - fail-safe output parsing -- if the expected failure string from 
       Test::Harness is not found, report "unknown" instead of fail
+    
     - added compatibility for CPAN.pm "reload cpan" command (Andreas Konig)
+    
     - added options "debug" and "editor" (Andreas Konig)
+    
     - bumped Tee version requirement
 
 0.10 Tue Aug  8 23:56:07 EDT 2006
+
     - first public release -- support not yet available in CPAN.pm
       main branch
 
