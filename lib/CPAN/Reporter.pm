@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.14";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.15";
 
 use Config::Tiny ();
 use ExtUtils::MakeMaker qw/prompt/;
@@ -178,8 +178,9 @@ sub test {
     my $result = {
         dist => $dist,
         command => $system_command,
-        output => do { local $/; <TEST_RESULT>; close TEST_RESULT; }
+        output => do { local $/; <TEST_RESULT> }
     };
+    close TEST_RESULT;
     $result->{tests_ok} = $result->{output} =~ m{^All tests successful}ms;
     _process_report( $result );
     return $result->{tests_ok};    

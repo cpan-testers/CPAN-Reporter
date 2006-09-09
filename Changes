@@ -1,5 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+0.15
+
+    - fixed broken test() -- all tests were reporting failed
+
 0.14 Wed Sep  6 15:53:52 EDT 2006
 
     - added configure() for config file generation and interactive config
