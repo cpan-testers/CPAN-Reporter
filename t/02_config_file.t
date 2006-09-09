@@ -12,7 +12,7 @@ use IO::Capture::Stderr;
 use File::Spec;
 use File::Temp qw/tempdir/;
 
-plan tests => 31;
+plan tests => 30;
 #plan 'no_plan';
 
 #--------------------------------------------------------------------------#
@@ -122,10 +122,6 @@ SKIP:
     skip "Couldn't set config file unreadable; skipping related tests", 3
         if -r $config_file;
 
-    is(CPAN::Reporter::_open_config_file(), undef,
-        "opening unreadable file returns undef"
-    );
-
     {
         local $ENV{PERL_MM_USE_DEFAULT} = 1;  # use prompt defaults
         $stderr->start;
@@ -153,7 +149,7 @@ ok( -r $config_file,
 #--------------------------------------------------------------------------#
 
 $original_mode = (stat $config_file)[2] && 07777;
-chmod 0, $config_file;
+chmod 0444, $config_file;
 
 SKIP:
 {
@@ -173,7 +169,7 @@ SKIP:
     }
 
     like( $stderr->read, "/Error writing config file/",
-        "opening non-readable file gives a warning"
+        "opening non-writeable file gives a warning"
     );
 }
 

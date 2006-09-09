@@ -2,21 +2,21 @@ NAME
     CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 VERSION
-    This documentation describes version 0.13.
+    This documentation describes version 0.14.
 
 SYNOPSIS
-    1.  Install a version of CPAN.pm that supports CPAN::Reporter
+    1.  Install CPAN::Reporter
 
-    2.  Install CPAN::Reporter
+    2.  Install a version of CPAN.pm that supports CPAN::Reporter
 
-    3.  Edit .cpanreporter/config.ini
+    3.  Enable and configure CPAN::Reporter
 
-    4.  Test/install modules as normal with "cpan" or "CPAN::Shell"
+    4.  Test/install modules as normal with "cpan" or CPAN::Shell
 
 DESCRIPTION
-    "CPAN::Reporter" is an add-on for the "CPAN.pm" module that uses
+    CPAN::Reporter is an add-on for the CPAN.pm module that uses
     Test::Reporter to send the results of module tests to the CPAN Testers
-    project. *Support for "CPAN::Reporter" is available in "CPAN.pm" version
+    project. *Support for CPAN::Reporter is available in CPAN.pm version
     1.87_57 or later.*
 
     The goal of the CPAN Testers project ( <http://testers.cpan.org/> ) is
@@ -26,35 +26,43 @@ DESCRIPTION
     improves the overall quality and value of CPAN.
 
     One way individuals can contribute is to send test results for each
-    module that they test or install. Installing "CPAN::Reporter" gives the
+    module that they test or install. Installing CPAN::Reporter gives the
     option of automatically generating and emailing test reports whenever
-    tests are run via "CPAN.pm".
+    tests are run via CPAN.pm.
 
 GETTING STARTED
-    "CPAN::Reporter" requires version 1.87_57 or later of "CPAN.pm". To
-    install this development version, use the following commands from the
-    CPAN shell:
+    The first step in using CPAN::Reporter is to install it using whatever
+    version of CPAN.pm is already installed.
 
-      cpan> install ANDK/CPAN-1.87_57.tar.gz
+      cpan> install CPAN::Reporter
+
+    CPAN::Reporter requires a recent development version of CPAN.pm. To
+    install a development version, use the following commands from the CPAN
+    shell (replace "1.87_59" with the latest development version number):
+
+      cpan> install ANDK/CPAN-1.87_59.tar.gz
       cpan> reload cpan
 
-    Depending on the version of "CPAN.pm" already installed, users may be
-    prompted to renew their configuration settings. This will include an
-    option to enable "CPAN::Reporter". To manually enable "CPAN::Reporter",
-    type the following commands from the CPAN shell prompt:
+    If upgrading from a very old version of CPAN.pm, users may be prompted
+    to renew their configuration settings, including the 'test_report'
+    option to enable CPAN::Reporter. If not prompted automatically, users
+    should request initialization of 'test_report' manually:
 
-      cpan> o conf test_report 1
-      cpan> o conf commit
+      cpan> o conf init test_report
 
-    Next, install "CPAN::Reporter" if it is not already installed. After
-    installation, users will need to edit their "CPAN::Reporter"
-    configuration file per the instructions below.
+    Soon, CPAN.pm will automatically continue with interactive configuration
+    of CPAN::Reporter. Until then, users should should request configuration
+    using this manual workaround:
+
+      cpan> !require CPAN::Reporter; CPAN::Reporter::configure()
+
+    Once CPAN::Reporter is enabled and configured, test or install modules
+    with CPAN.pm as usual.
 
 CONFIG FILE OPTIONS
-    Default options for "CPAN::Reporter" are read from a configuration file
+    Default options for CPAN::Reporter are read from a configuration file
     ".cpanreporter/config.ini" in the user's home directory (Unix) or "My
-    Documents" directory (Windows). If CPAN::Reporter does not find a
-    configuration file, it will attempt to create one with default values.
+    Documents" directory (Windows).
 
     The configuration file is in "ini" format, with the option name and
     value separated by an "=" sign
@@ -62,25 +70,27 @@ CONFIG FILE OPTIONS
        email_from = "John Doe" <johndoe@nowhere.org>
        cc_author = no
 
-    Options shown below as taking "yes/no/ask" should be set to one of four
-    values; the result of each is as follows:
+    Options shown below as taking "yes/no/fail/ask" should be set to one of
+    five values; the result of each is as follows:
 
     *   "yes" -- automatic yes
 
     *   "no" -- automatic no
+
+    *   "fail" -- yes if the test result was failure/unknown; no otherwise
 
     *   "ask/no" or just "ask" -- prompt each time, but default to no
 
     *   "ask/yes" -- prompt each time, but default to yes
 
     For prompts, the default will be used if return is pressed immediately
-    at the prompt or if the "PERL_MM_USE_DEFAULTS" environment variable is
+    at the prompt or if the "PERL_MM_USE_DEFAULT" environment variable is
     set to a true value.
 
     Descriptions for each option follow.
 
   Email Address (required)
-    "CPAN::Reporter" requires users to provide an email address that will be
+    CPAN::Reporter requires users to provide an email address that will be
     used in the "From" header of the email to cpan-testers@perl.org.
 
     *   "email_from = <email address>" -- email address of the user sending
@@ -103,15 +113,15 @@ CONFIG FILE OPTIONS
     These options are included in the standard config file template that is
     automatically created.
 
-    *   "cc_author = yes/no/ask" -- should module authors should be sent a
-        copy of the test report at their "author@cpan.org" address (default:
-        ask/no)
+    *   "cc_author = yes/no/fail/ask" -- should module authors should be
+        sent a copy of the test report at their "author@cpan.org" address
+        (default: fail)
 
-    *   "edit_report = yes/no/ask" -- edit the test report before sending
-        (default: ask/no)
+    *   "edit_report = yes/no/fail/ask" -- edit the test report before
+        sending (default: ask/no)
 
-    *   "send_report = yes/no/ask" -- should test reports be sent at all
-        (default: ask/yes)
+    *   "send_report = yes/no/fail/ask" -- should test reports be sent at
+        all (default: ask/yes)
 
     Note that if "send_report" is set to "no", CPAN::Reporter will still go
     through the motions of preparing a report, but will discard it rather
@@ -124,7 +134,7 @@ CONFIG FILE OPTIONS
 
   Additional Options
     These additional options are only necessary in special cases, such as
-    for testing or for configuring "CPAN::Reporter" to work from behind a
+    for testing or for configuring CPAN::Reporter to work from behind a
     firewall that restricts outbound email.
 
     *   "smtp_server = <server list>" -- one or more alternate outbound mail
@@ -142,21 +152,28 @@ CONFIG FILE OPTIONS
     *   "debug = <boolean>" -- turns debugging on/off (default: off)
 
 FUNCTIONS
-    "CPAN::Reporter" provides one public function for use within CPAN.pm. It
-    is not imported during "use". Ordinary users will never need it.
+    CPAN::Reporter provides only two public function for use within CPAN.pm.
+    They are not imported during "use". Ordinary users will never need them.
+
+  "configure()"
+      CPAN::Reporter::configure();
+
+    Prompts the user to edit configuration settings stored in the
+    CPAN::Reporter "config.ini" file. Will create the configuration file if
+    it does not exist.
 
   "test()"
       CPAN::Reporter::test( $cpan_dist, $system_command );
 
-    Given a "CPAN::Distribution" object and a system command to run
-    distribution tests (e.g. "{make test}"), "test()" executes the command
-    via "system()" while teeing the output to a file. Based on the output
+    Given a CPAN::Distribution object and a system command to run
+    distribution tests (e.g. "make test"), "test()" executes the command via
+    "system()" while teeing the output to a file. Based on the output
     captured in the file, "test()" generates and sends a Test::Reporter
     report. It returns true if the captured output indicates that all tests
     passed and false, otherwise.
 
 KNOWN ISSUES
-    *   Does not (yet?) support reporting on "test.pl" files; will issue a
+    *   Does not (yet) support reporting on "test.pl" files; will issue a
         warning and continue
 
 BUGS

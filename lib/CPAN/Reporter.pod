@@ -233,8 +233,8 @@ exist.
 
   CPAN::Reporter::test( $cpan_dist, $system_command );
 
-Given a C<<< CPAN::Distribution >>> object and a system command to run distribution
-tests (e.g. "{make test}"), C<<< test() >>> executes the command via C<<< system() >>> while
+Given a CPAN::Distribution object and a system command to run distribution
+tests (e.g. "make test"), C<<< test() >>> executes the command via C<<< system() >>> while
 teeing the output to a file.  Based on the output captured in the file,
 C<<< test() >>> generates and sends a L<Test::Reporter> report.  It returns true if the
 captured output indicates that all tests passed and false, otherwise.
