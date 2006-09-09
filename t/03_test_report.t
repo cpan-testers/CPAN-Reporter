@@ -113,11 +113,7 @@ for my $d ( keys %distro_pass ) {
     my $makefile_rc = ! system("$perl Makefile.PL");
     my $test_make_rc = CPAN::Reporter::test( $dist, "$make test" );
     system("$make realclean");
-    
-    my $build_rc = ! system("$perl Build.PL");
-    my $test_build_rc = CPAN::Reporter::test( $dist, "$perl Build test" );
-    system("$perl Build realclean");
-
+     
     close(STDOUT); open(STDOUT, ">&OLDOUT");
     
     ok( $makefile_rc,
@@ -127,10 +123,31 @@ for my $d ( keys %distro_pass ) {
         "$d: test('make test') returned $pass"
     ); 
     
-    ok( $build_rc,
-        "$d: Build.PL returned true"
-    ); 
-    ok( $pass ? $test_build_rc : ! $test_build_rc, 
-        "$d: test('perl Build test') returned $pass"
-    ); 
+    SKIP: {
+
+        eval "require Module::Build";
+        skip "Module::Build not installed", 2
+            if $@;
+        
+        open( OLDOUT, ">&STDOUT" )
+            or die "Couldn't save STDOUT before testing";
+
+        open( STDOUT, ">$temp_stdout" )
+            or die "Couldn't redirect STDOUT before testing";
+        $|++;
+
+        my $build_rc = ! system("$perl Build.PL");
+        my $test_build_rc = CPAN::Reporter::test( $dist, "$perl Build test" );
+        system("$perl Build realclean");
+
+        close(STDOUT); open(STDOUT, ">&OLDOUT");
+        
+        ok( $build_rc,
+            "$d: Build.PL returned true"
+        ); 
+        ok( $pass ? $test_build_rc : ! $test_build_rc, 
+            "$d: test('perl Build test') returned $pass"
+        );
+    }
+    
 } 

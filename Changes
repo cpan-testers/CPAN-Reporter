@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+0.17
+
+    - changed t/03_test_report.t to skip Module::Build tests if M::B 
+      is not installed
+
 0.16 Fri Sep  8 07:19:25 EDT 2006
 
     - fixed file mode bug in t/02_config_file_t (Slaven Rezic)
