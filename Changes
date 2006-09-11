@@ -1,5 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+0.18
+
+    - added note about location of config files for Mac OS X (SKUO)
+
 0.17 Sat Sep  9 07:11:08 EDT 2006
 
     - changed t/03_test_report.t to skip Module::Build tests if 

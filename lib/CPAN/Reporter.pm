@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.17";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.18";
 
 use Config::Tiny ();
 use ExtUtils::MakeMaker qw/prompt/;
@@ -482,8 +482,10 @@ CPAN.pm as usual.
 = CONFIG FILE OPTIONS
 
 Default options for CPAN::Reporter are read from a configuration file 
-{.cpanreporter/config.ini} in the user's home directory (Unix) or "My 
-Documents" directory (Windows).  
+{.cpanreporter/config.ini} in the user's home directory (Unix), "My 
+Documents" directory (Windows) or "~/Documents" directory (OS X).  
+(See [File::HomeDir] and the {my_documents} method for config folder
+location on other operating systems.)
 
 The configuration file is in "ini" format, with the option name and value
 separated by an "=" sign
