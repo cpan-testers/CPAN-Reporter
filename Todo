@@ -8,8 +8,8 @@ TODO list for Perl module CPAN::Reporter
 - Check failed tests for prerequisite failures -- this could
   occur if tests were forced.  Such failures should be marked N/A.
 
-- Write some real tests and get some decent test coverage.  Would likely need
-  to mock a bunch of things -- CPAN::Distribution, Test::Reporter
+- Write some more tests and get some decent test coverage.  Add more 
+  test distributions
 
 - Check email addresses for validity (?)
 
