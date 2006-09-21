@@ -311,7 +311,7 @@ EMAIL_REQUIRED
     }
     $tr->distribution( $result->{dist_name}  );
     $tr->comments( _report_text( $result ) );
-    $tr->via( 'CPAN::Reporter ' . CPAN::Reporter->VERSION );
+    $tr->via( 'CPAN::Reporter ' . $CPAN::Reporter::VERSION );
     my @cc;
 
     # User prompts for action

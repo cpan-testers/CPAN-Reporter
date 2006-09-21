@@ -2,6 +2,9 @@ Revision history for Perl module CPAN::Reporter
 
 0.18
 
+    - added workaround for a bizarre VERSION() method confict when
+      Module::Signature is installed on older Perls (Andreas Konig)
+      
     - added note about location of config files for Mac OS X (SKUO)
 
 0.17 Sat Sep  9 07:11:08 EDT 2006
