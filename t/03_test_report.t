@@ -13,6 +13,7 @@ use File::pushd qw/pushd/;
 use File::Path qw/mkpath/;
 use File::Spec ();
 use File::Temp qw/tempdir/;
+use IO::CaptureOutput qw/capture/;
 use Probe::Perl ();
 
 
@@ -102,19 +103,13 @@ for my $d ( keys %distro_pass ) {
     my $wd = pushd( File::Spec->catdir( qw/t dist /, $d ) );
     my $dist = t::MockCPANDist->new( %mock_dist, pretty_id => "Bogus::Pass" );
     
-    local *OLDOUT;
-    open( OLDOUT, ">&STDOUT" )
-        or die "Couldn't save STDOUT before testing";
-
-    open( STDOUT, ">$temp_stdout" )
-        or die "Couldn't redirect STDOUT before testing";
-    $|++;
-
-    my $makefile_rc = ! system("$perl Makefile.PL");
-    my $test_make_rc = CPAN::Reporter::test( $dist, "$make test" );
-    system("$make realclean");
-     
-    close(STDOUT); open(STDOUT, ">&OLDOUT");
+    my ($stdout, $stderr, $makefile_rc, $test_make_rc);
+    
+    capture sub {
+        $makefile_rc = ! system("$perl Makefile.PL");
+        $test_make_rc = CPAN::Reporter::test( $dist, "$make test" );
+        system("$make realclean");
+    }, \$stdout, \$stderr;
     
     ok( $makefile_rc,
         "$d: Makefile.PL returned true"
@@ -129,19 +124,14 @@ for my $d ( keys %distro_pass ) {
         skip "Module::Build not installed", 2
             if $@;
         
-        open( OLDOUT, ">&STDOUT" )
-            or die "Couldn't save STDOUT before testing";
-
-        open( STDOUT, ">$temp_stdout" )
-            or die "Couldn't redirect STDOUT before testing";
-        $|++;
-
-        my $build_rc = ! system("$perl Build.PL");
-        my $test_build_rc = CPAN::Reporter::test( $dist, "$perl Build test" );
-        system("$perl Build realclean");
-
-        close(STDOUT); open(STDOUT, ">&OLDOUT");
+        my ($build_rc, $test_build_rc);
         
+        capture sub {
+            $build_rc = ! system("$perl Build.PL");
+            $test_build_rc = CPAN::Reporter::test( $dist, "$perl Build test" );
+            system("$perl Build realclean");
+        }, \$stdout, \$stderr;
+
         ok( $build_rc,
             "$d: Build.PL returned true"
         ); 

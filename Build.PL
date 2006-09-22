@@ -75,7 +75,7 @@ $class->new(
         'File::pushd'           => 0.32,
         'File::Spec'            => 3.19,
         'File::Temp'            => 0.16,
-        'IO::Capture'           => 0.05,  # build_requires
+        'IO::CaptureOutput'     => 1.03,  # build_requires
         'Probe::Perl'           => 0,
         'Tee'                   => 0.13,
         'Test::More'            => 0.45,   # thread-safe

@@ -7,8 +7,7 @@ select(STDOUT); $|=1;
 
 use Test::More;
 use Config::Tiny;
-use IO::Capture::Stdout;
-use IO::Capture::Stderr;
+use IO::CaptureOutput qw/capture/;
 use File::Spec;
 use File::Temp qw/tempdir/;
 
@@ -32,12 +31,12 @@ my $default_options = {
 };
 my @additional_prompts = qw/ smtp_server /;
 
+my ($rc, $stdout, $stderr);
+
 #--------------------------------------------------------------------------#
 # Mocking -- override support/system functions
 #--------------------------------------------------------------------------#
     
-my $stdout = IO::Capture::Stdout->new;
-my $stderr = IO::Capture::Stderr->new;
 
 BEGIN {
     $INC{"File/HomeDir.pm"} = 1; # fake load
@@ -64,37 +63,29 @@ ok( ! -f $config_file,
     "no config file yet"
 );
 
-$stderr->start;
-
-is(CPAN::Reporter::_open_config_file(), undef,
+is( capture(sub{CPAN::Reporter::_open_config_file()}, \$stdout, \$stderr),
+    undef,
     "opening non-existent file returns undef"
 );
 
-$stderr->stop;
-
-like( $stderr->read, "/^Couldn't read CPAN::Reporter configuration file/",
+like( $stderr, "/^Couldn't read CPAN::Reporter configuration file/",
     "opening non-existent file gives a warning"
 );
 
-my $configuration;
 {
     local $ENV{PERL_MM_USE_DEFAULT} = 1;  # use prompt defaults
-    $stdout->start;
-    ok( $configuration = CPAN::Reporter::configure(),
+    ok( $rc = capture(sub{CPAN::Reporter::configure()}, \$stdout, \$stderr),
         "configure() returned true"
     );
-    $stdout->stop;
 }
 
-my $output_text = join (q{}, $stdout->read);
-
 for my $option ( keys %$default_options, @additional_prompts) {
-    like( $output_text, "/$option/",
+    like( $stdout, "/$option/",
         "saw '$option' configuration prompt"
     );
 }
 
-is( ref $configuration, 'HASH',
+is( ref $rc, 'HASH',
     "configure() returned a hash reference"
 );
 
@@ -124,17 +115,13 @@ SKIP:
 
     {
         local $ENV{PERL_MM_USE_DEFAULT} = 1;  # use prompt defaults
-        $stderr->start;
-        $stdout->start;
-        $configuration = CPAN::Reporter::configure();
-        is( $configuration, undef,
+        is( capture(sub{CPAN::Reporter::configure()}, \$stdout, \$stderr),
+            undef,
             "configure() is undef if file not readable"
         );
-        $stdout->stop;
-        $stderr->stop;
     }
 
-    like( $stderr->read, "/Couldn't read CPAN::Reporter configuration file/",
+    like( $stderr, "/Couldn't read CPAN::Reporter configuration file/",
         "opening non-readable file gives a warning"
     );
 }
@@ -157,17 +144,13 @@ SKIP:
 
     {
         local $ENV{PERL_MM_USE_DEFAULT} = 1;  # use prompt defaults
-        $stderr->start;
-        $stdout->start;
-        $configuration = CPAN::Reporter::configure();
-        is( $configuration, undef,
+        is( capture(sub{CPAN::Reporter::configure()}, \$stdout, \$stderr),
+            undef,
             "configure() is undef if file not writeable"
         );
-        $stdout->stop;
-        $stderr->stop;
     }
 
-    like( $stderr->read, "/Error writing config file/",
+    like( $stderr, "/Error writing config file/",
         "opening non-writeable file gives a warning"
     );
 }
@@ -201,26 +184,20 @@ SKIP:
 
     {
         local $ENV{PERL_MM_USE_DEFAULT} = 1;  # use prompt defaults
-        $stderr->start;
-        $stdout->start;
-        ok( CPAN::Reporter::configure(),
+        ok( capture(sub{CPAN::Reporter::configure()}, \$stdout, \$stderr),
             "configure() ran again successfully"
         );
-        $stdout->stop;
-        $stderr->stop;
     }
 
-    $output_text = join (q{}, $stdout->read);
-
-    like( $output_text, "/$bogus_email/",
+    like( $stdout, "/$bogus_email/",
         "pre-existing email address was seen during configuration prompts"
     );
 
-    like( $output_text, "/$bogus_smtp/",
+    like( $stdout, "/$bogus_smtp/",
         "pre-existing smtp server was seen during configuration prompts"
     );
 
-    like( $output_text, "/debug/",
+    like( $stdout, "/debug/",
         "pre-existing debug prompt was seen during configuration prompts"
     );
 
