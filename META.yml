@@ -1,6 +1,6 @@
 ---
 name: CPAN-Reporter
-version: 0.17
+version: 0.18
 author:
   - 'David A. Golden <dagolden@cpan.org>'
 abstract: Provides Test::Reporter support for CPAN.pm
@@ -8,6 +8,7 @@ license: perl
 resources:
   license: http://dev.perl.org/licenses/
 requires:
+  CPAN: 1.88
   Config::Tiny: 2.08
   ExtUtils::MakeMaker: 0
   File::Basename: 0
@@ -24,7 +25,7 @@ requires:
 provides:
   CPAN::Reporter:
     file: lib/CPAN/Reporter.pm
-    version: 0.17
+    version: 0.18
 generated_by: Module::Build version 0.2805
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

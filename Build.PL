@@ -67,6 +67,7 @@ $class->new(
     requires        => {
         # module requirements here
         'Config::Tiny'          => 2.08,
+        'CPAN'                  => 1.88,
         'ExtUtils::MakeMaker'   => 0,
         'File::Basename'        => 0,
         'File::HomeDir'         => 0.58, 

@@ -426,17 +426,18 @@ This documentation describes version %%VERSION%%.
 
 = SYNOPSIS
 
-0 Install CPAN::Reporter
-0 Install a version of CPAN.pm that supports CPAN::Reporter
-0 Enable and configure CPAN::Reporter
-0 Test/install modules as normal with {cpan} or CPAN::Shell
+From the CPAN shell:
+
+ cpan> install CPAN::Reporter
+ cpan> reload cpan
+ cpan> o conf init test_report
 
 = DESCRIPTION
 
 CPAN::Reporter is an add-on for the CPAN.pm module that uses
 [Test::Reporter] to send the results of module tests to the CPAN
-Testers project.  ~Support for CPAN::Reporter is available in CPAN.pm 
-version 1.87_57 or later.~
+Testers project.  Support for CPAN::Reporter is available in CPAN.pm 
+version 1.88.
 
 The goal of the CPAN Testers project ( [http://testers.cpan.org/] ) is to
 test as many CPAN packages as possible on as many platforms as
@@ -445,36 +446,31 @@ potential users to identify bugs or platform compatibility issues and
 improves the overall quality and value of CPAN.
 
 One way individuals can contribute is to send test results for each module that
-they test or install.  Installing CPAN::Reporter gives the option
-of automatically generating and emailing test reports whenever tests are run
-via CPAN.pm.
+they test or install.  Installing CPAN::Reporter gives the option of
+automatically generating and emailing test reports whenever tests are run via
+CPAN.pm.
 
 = GETTING STARTED
 
 The first step in using CPAN::Reporter is to install it using whatever
-version of CPAN.pm is already installed.
+version of CPAN.pm is already installed.  CPAN.pm will be upgraded as
+a dependency if necessary.
 
  cpan> install CPAN::Reporter
 
-CPAN::Reporter requires a recent development version of CPAN.pm.  To
-install a development version, use the following commands from the CPAN shell
-(replace "1.87_59" with the latest development version number):
+If CPAN.pm was upgraded, it needs to be reloaded.
 
- cpan> install ANDK/CPAN-1.87_59.tar.gz
  cpan> reload cpan
 
 If upgrading from a very old version of CPAN.pm, users may be prompted to renew
 their configuration settings, including the 'test_report' option to enable
-CPAN::Reporter.  If not prompted automatically, users should request
-initialization of 'test_report' manually:
+CPAN::Reporter.  
+
+If not prompted automatically, users should manually initialize CPAN::Reporter
+support.  After enabling CPAN::Reporter,  CPAN.pm will automatically continue
+with interactive configuration of CPAN::Reporter options.
 
  cpan> o conf init test_report
-
-Soon, CPAN.pm will automatically continue with interactive configuration of
-CPAN::Reporter.  Until then, users should should request configuration
-using this manual workaround:
-
- cpan> !require CPAN::Reporter; CPAN::Reporter::configure()
 
 Once CPAN::Reporter is enabled and configured, test or install modules with
 CPAN.pm as usual.
@@ -505,6 +501,12 @@ five values; the result of each is as follows:
 For prompts, the default will be used if return is pressed immediately at
 the prompt or if the {PERL_MM_USE_DEFAULT} environment variable is set to
 a true value.
+
+Interactive configuration of required and standard options may be repeated at
+any time from the CPAN shell.  Interactive configuration will also includes 
+any additional options that already exist within the configuration file.
+
+ cpan> o conf init test_report
 
 Descriptions for each option follow.
 
@@ -539,6 +541,10 @@ the test report at their {author@cpan.org} address (default: fail)
 (default: ask/no)
 * {send_report = yes/no/fail/ask} -- should test reports be sent at all 
 (default: ask/yes)
+* {smtp_server = <server list>} -- one or more alternate outbound mail servers
+if the default perl.org mail servers cannot be reached (e.g. users behind a 
+firewall); multiple servers may be given, separated with a space 
+(default: none)
 
 Note that if {send_report} is set to "no", CPAN::Reporter will still go through
 the motions of preparing a report, but will discard it rather than send it.
@@ -552,13 +558,8 @@ A better way to disable CPAN::Reporter temporarily is with the CPAN option
 == Additional Options
 
 These additional options are only necessary in special cases, such as for
-testing or for configuring CPAN::Reporter to work from behind a firewall
-that restricts outbound email.
+testing, debugging or if a default editor cannot be found.
 
-* {smtp_server = <server list>} -- one or more alternate outbound mail servers
-if the default perl.org mail servers cannot be reached (e.g. users behind a 
-firewall); multiple servers may be given, separated with a space 
-(default: none)
 * {email_to = <email address>} -- alternate destination for reports instead of
 {cpan-testers@perl.org}; used for testing (default: none)
 * {editor = <editor>} -- editor to use to edit the test report; if not set,
@@ -577,7 +578,10 @@ They are not imported during {use}.  Ordinary users will never need them.
 
 Prompts the user to edit configuration settings stored in the CPAN::Reporter
 {config.ini} file.  Will create the configuration file if it does not 
-exist.
+exist.  Automatically called by CPAN.pm when initializing the 'test_report'
+option:
+
+ cpan> o conf init test_report
 
 == {test()}
 

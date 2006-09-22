@@ -18,6 +18,7 @@ WriteMakefile
                            'File::Temp' => '0.16',
                            'Test::Reporter' => '1.27',
                            'File::Path' => 0,
+                           'CPAN' => '1.88',
                            'File::Basename' => 0,
                            'Config::Tiny' => '2.08',
                            'IO::Capture' => '0.05'
