@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.19
+0.19 Fri Sep 22 16:54:02 EDT 2006
 
     - changed test IO capture to IO::CaptureOutput (fixes test issues
       for Perl < 5.8) (Andreas Konig)

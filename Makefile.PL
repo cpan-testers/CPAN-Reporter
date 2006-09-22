@@ -10,6 +10,7 @@ WriteMakefile
           'PREREQ_PM' => {
                            'File::pushd' => '0.32',
                            'File::HomeDir' => '0.58',
+                           'IO::CaptureOutput' => '1.03',
                            'File::Spec' => '3.19',
                            'ExtUtils::MakeMaker' => 0,
                            'Tee' => '0.13',
@@ -20,8 +21,7 @@ WriteMakefile
                            'File::Path' => 0,
                            'CPAN' => '1.88',
                            'File::Basename' => 0,
-                           'Config::Tiny' => '2.08',
-                           'IO::Capture' => '0.05'
+                           'Config::Tiny' => '2.08'
                          }
         )
 ;

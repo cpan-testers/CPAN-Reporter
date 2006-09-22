@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.18";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.19";
 
 use Config::Tiny ();
 use ExtUtils::MakeMaker qw/prompt/;
