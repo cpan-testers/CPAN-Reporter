@@ -422,16 +422,31 @@ there were some problems testing your distribution.
 ENDREPORT
     }
     $output .= << "ENDREPORT";
+
+Sections of this report:
+
+    * Tester comments
+    * Prerequisites
+    * Test output
+
+------------------------------
+TESTER COMMENTS
+------------------------------
+
 Additional comments from tester: 
 
 [none provided]
 
---
+------------------------------
+PREREQUISITES
+------------------------------
 
 Prerequisite modules loaded:
 
 $data->{prereq_pm}
---
+------------------------------
+TEST OUTPUT
+------------------------------
 
 Output from '$data->{command}':
 
@@ -472,7 +487,7 @@ From the CPAN shell:
 CPAN::Reporter is an add-on for the CPAN.pm module that uses
 [Test::Reporter] to send the results of module tests to the CPAN
 Testers project.  Support for CPAN::Reporter is available in CPAN.pm 
-version 1.88.
+as of version 1.88.
 
 The goal of the CPAN Testers project ( [http://testers.cpan.org/] ) is to
 test as many CPAN packages as possible on as many platforms as
@@ -612,9 +627,9 @@ They are not imported during {use}.  Ordinary users will never need them.
  CPAN::Reporter::configure();
 
 Prompts the user to edit configuration settings stored in the CPAN::Reporter
-{config.ini} file.  Will create the configuration file if it does not 
-exist.  Automatically called by CPAN.pm when initializing the 'test_report'
-option:
+{config.ini} file.  It will create the configuration file if it does not exist.
+It is automatically called by CPAN.pm when initializing the 'test_report'
+option, e.g.:
 
  cpan> o conf init test_report
 

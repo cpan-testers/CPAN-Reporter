@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.19.
+This documentation describes version 0.20.
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ From the CPAN shell:
 CPAN::Reporter is an add-on for the CPAN.pm module that uses
 L<Test::Reporter> to send the results of module tests to the CPAN
 Testers project.  Support for CPAN::Reporter is available in CPAN.pm 
-version 1.88.
+as of version 1.88.
 
 The goal of the CPAN Testers project ( L<http://testers.cpan.org/> ) is to
 test as many CPAN packages as possible on as many platforms as
@@ -214,9 +214,9 @@ They are not imported during C<<< use >>>.  Ordinary users will never need them.
   CPAN::Reporter::configure();
 
 Prompts the user to edit configuration settings stored in the CPAN::Reporter
-C<<< config.ini >>> file.  Will create the configuration file if it does not 
-exist.  Automatically called by CPAN.pm when initializing the 'test_report'
-option:
+C<<< config.ini >>> file.  It will create the configuration file if it does not exist.
+It is automatically called by CPAN.pm when initializing the 'test_report'
+option, e.g.:
 
   cpan> o conf init test_report
 
