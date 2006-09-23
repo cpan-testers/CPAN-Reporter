@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.19";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.20";
 
 use Config::Tiny ();
 use ExtUtils::MakeMaker qw/prompt/;
@@ -181,9 +181,8 @@ sub test {
         output => do { local $/; <TEST_RESULT> }
     };
     close TEST_RESULT;
-    $result->{tests_ok} = $result->{output} =~ m{^All tests successful}ms;
     _process_report( $result );
-    return $result->{tests_ok};    
+    return $result->{success};    
 }
 
 
@@ -217,6 +216,57 @@ sub _get_config_options {
         }
     }
     return \%active;
+}
+
+#--------------------------------------------------------------------------#
+
+sub _grade_msg {
+    my ($grade, $msg) = @_;
+    print "Test result is '$grade'";
+    print ": $msg" if defined $msg && length $msg;
+    print ".\n";
+    return;
+}
+
+#--------------------------------------------------------------------------#
+
+sub _grade_report {
+    my $result = shift;
+    my ($grade,$msg);
+
+    # CPAN.pm won't normally test a failed 'make', so that should
+    # catch prereq failures that would normally be "unknown".
+    # XXX really should check in case test was forced
+    #
+    # Output strings taken from Test::Harness::
+    # _show_results()  -- for versions < 2.57_03 
+    # get_results()    -- for versions >= 2.57_03
+    
+    if ( $result->{output} =~ m{^All tests successful}ms ) {
+        $grade = 'pass';
+    }
+    elsif ( $result->{output} =~ m{^.?No tests defined}ms ) {
+        $grade = 'unknown';
+        $msg = 'No tests provided';
+    }
+    elsif ( $result->{output} =~ m{^FAILED--no tests were run}ms ) {
+        $grade = 'unknown';
+        $msg = 'No tests were run';
+    }
+    elsif ( $result->{output} =~ m{^FAILED--.*--no output}ms ) {
+        $grade = 'fail';
+        $msg = 'Tests had no output';
+    }
+    elsif ( $result->{output} =~ m{^Failed }ms ) {  # must be lowercase
+        $grade = 'fail';
+        $msg = "Distribution had failing tests";
+    }
+    else { # Fail safely if can't match any result string
+        $grade = 'unknown';
+        $msg = "Couldn't identify an outcome";
+    }
+    _grade_msg( $grade, $msg );
+    return $grade;
 }
 
 #--------------------------------------------------------------------------#
@@ -273,10 +323,16 @@ EMAIL_REQUIRED
     $result->{author} = $result->{dist}->author->fullname;
     $result->{author_id} = $result->{dist}->author->id;
     $result->{prereq_pm} = _prereq_report( $result );
-    
-    # Setup the test report
+
+    # Determine result
     print "Preparing a test report for $result->{dist_name}\n";
+    $result->{grade} = _grade_report($result);
+    $result->{success} =  $result->{grade} eq 'pass'
+                       || $result->{grade} eq 'unknown';
+
+    # Setup the test report
     my $tr = Test::Reporter->new;
+    $tr->grade( $result->{grade} );
     $tr->debug( $config->{debug} ) if defined $config->{debug};
     $tr->from( $config->{email_from} );
     $tr->address( $config->{email_to} ) if $config->{email_to};
@@ -287,28 +343,6 @@ EMAIL_REQUIRED
     
     # Populate the test report
     
-    # CPAN.pm won't normally test a failed 'make', so that should
-    # catch prereq failures that would normally be "unknown".
-    #
-    # Output strings taken from Test::Harness::
-    # _show_results()  -- for versions < 2.57_03 
-    # get_results()    -- for versions >= 2.57_03
-    
-    if ( $result->{tests_ok} ) {
-        $tr->grade( 'pass' );
-    }
-    elsif ( $result->{output} =~ m{^Failed }ms ) {  # must be lowercase
-        $tr->grade( 'fail' );
-    }
-    elsif ( $result->{output} =~ m{^FAILED--no tests were run}ms ) {
-        $tr->grade( 'unknown' );
-    }
-    elsif ( $result->{output} =~ m{^FAILED--.*--no output}ms ) {
-        $tr->grade( 'fail' );
-    }
-    else { # Fail safely if can't match any result string
-        $tr->grade( 'unknown' );
-    }
     $tr->distribution( $result->{dist_name}  );
     $tr->comments( _report_text( $result ) );
     $tr->via( 'CPAN::Reporter ' . $CPAN::Reporter::VERSION );
@@ -370,13 +404,14 @@ sub _report_text {
     my $output = << "ENDREPORT";
 Dear $data->{author},
     
-This is a computer-generated test report for $data->{dist_name}.
+This is a computer-generated test report for $data->{dist_name}, created
+automatically by CPAN::Reporter, version $CPAN::Reporter::VERSION.
 
 ENDREPORT
     
     if ( $data->{tests_ok} ) { $output .= << "ENDREPORT"; 
 Thank you for uploading your work to CPAN.  Congratulations!
-All tests were successfully.
+All tests were successful.
 
 ENDREPORT
     }

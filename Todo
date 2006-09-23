@@ -11,5 +11,12 @@ TODO list for Perl module CPAN::Reporter
 - Write some more tests and get some decent test coverage.  Add more 
   test distributions
 
+- Include some/all of %ENV
+
+- Include some of Config (compiler, make, lib/inc paths, etc.) and
+  special variables like UID, EID, etc.
+
+- Add TOC to report
+
 - Check email addresses for validity (?)
 

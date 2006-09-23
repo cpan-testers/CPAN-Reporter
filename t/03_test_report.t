@@ -17,12 +17,34 @@ use IO::CaptureOutput qw/capture/;
 use Probe::Perl ();
 
 
-my %distro_pass = (
-    'Bogus-Pass' => 1,
-    'Bogus-Fail' => 0,
+my @test_distros = (
+    # pass
+    {
+        name => 'Bogus-Pass',
+        success => 1,
+        grade => "pass",
+    },
+    # fail
+    {
+        name => 'Bogus-Fail',
+        success => 0,
+        grade => "fail",
+    },
+    {
+        name => 'Bogus-NoTestOutput',
+        success => 0,
+        grade => "fail",
+    },
+    # unknown
+    {
+        name => 'Bogus-NoTests',
+        success => 1,
+        grade => "unknown"
+    },
+    # na -- TBD
 );
 
-plan tests => 4 + 4 * keys %distro_pass;
+plan tests => 4 + 5 * @test_distros;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -96,27 +118,30 @@ ok( $tiny->write( $config_file ),
 #   * dmake and Build with bad prereqs
 #--------------------------------------------------------------------------#
 
-for my $d ( keys %distro_pass ) {
+for my $case ( @test_distros ) {
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
-    my $pass = $distro_pass{$d};
     
-    my $wd = pushd( File::Spec->catdir( qw/t dist /, $d ) );
-    my $dist = t::MockCPANDist->new( %mock_dist, pretty_id => "Bogus::Pass" );
+    my $wd = pushd( File::Spec->catdir( qw/t dist /, $case->{name} ) );
+    my $dist = t::MockCPANDist->new( %mock_dist, pretty_id => "Bogus::Module" );
     
     my ($stdout, $stderr, $makefile_rc, $test_make_rc);
     
-    capture sub {
-        $makefile_rc = ! system("$perl Makefile.PL");
-        $test_make_rc = CPAN::Reporter::test( $dist, "$make test" );
-        system("$make realclean");
-    }, \$stdout, \$stderr;
-    
+    pass "Testing $case->{name}";
+    eval {
+        capture sub {
+            $makefile_rc = ! system("$perl Makefile.PL");
+            $test_make_rc = CPAN::Reporter::test( $dist, "$make test" );
+            system("$make realclean");
+        }, \$stdout, \$stderr;
+        return 1;
+    } or diag "$@\n\nSTDOUT:\n$stdout\n\nSTDERR:\n$stderr\n";
+     
     ok( $makefile_rc,
-        "$d: Makefile.PL returned true"
+        "$case->{name}: Makefile.PL returned true"
     ); 
-    ok( $pass ? $test_make_rc : ! $test_make_rc, 
-        "$d: test('make test') returned $pass"
-    ); 
+    ok( $case->{success} ? $test_make_rc : ! $test_make_rc, 
+        "$case->{name}: test('make test') returned $case->{success}"
+    ) or diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr"; 
     
     SKIP: {
 
@@ -133,11 +158,11 @@ for my $d ( keys %distro_pass ) {
         }, \$stdout, \$stderr;
 
         ok( $build_rc,
-            "$d: Build.PL returned true"
+            "$case->{name}: Build.PL returned true"
         ); 
-        ok( $pass ? $test_build_rc : ! $test_build_rc, 
-            "$d: test('perl Build test') returned $pass"
-        );
+        ok( $case->{success} ? $test_build_rc : ! $test_build_rc, 
+            "$case->{name}: test('perl Build test') returned $case->{success}"
+        ) or diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr"; 
     }
     
 } 

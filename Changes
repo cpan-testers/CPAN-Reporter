@@ -1,5 +1,17 @@
 Revision history for Perl module CPAN::Reporter
 
+0.20
+
+    - fixed RT#21626: "unknown" results will now be reported to CPAN.pm 
+      as success and will not interrupt module installation (Slaven Rezic)
+    
+    - added several new test distributions for greater coverage and 
+      confirmed bug closure
+    
+    - added user feedback on test grade assigned during report generation
+    
+    - changed format of test report
+
 0.19 Fri Sep 22 16:54:02 EDT 2006
 
     - changed test IO capture to IO::CaptureOutput (fixes test issues
