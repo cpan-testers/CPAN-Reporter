@@ -1,4 +1,4 @@
-package Bogus::Pass;
+package Bogus::Module;
 
 $VERSION     = "0.01";
 
