@@ -9,8 +9,9 @@ use Test::More;
 use t::MockCPANDist;
 
 use Config;
-use File::pushd qw/pushd/;
+use File::Copy::Recursive qw/dircopy/;
 use File::Path qw/mkpath/;
+use File::pushd qw/pushd/;
 use File::Spec ();
 use File::Temp qw/tempdir/;
 use IO::CaptureOutput qw/capture/;
@@ -24,11 +25,21 @@ my @test_distros = (
         success => 1,
         grade => "pass",
     },
+    {
+        name => 'Bogus-Test.pl-Pass',
+        success => 1,
+        grade => "pass"
+    },
     # fail
     {
         name => 'Bogus-Fail',
         success => 0,
         grade => "fail",
+    },
+    {
+        name => 'Bogus-Test.pl-Fail',
+        success => 0,
+        grade => "fail"
     },
     {
         name => 'Bogus-NoTestOutput',
@@ -44,7 +55,7 @@ my @test_distros = (
     # na -- TBD
 );
 
-plan tests => 4 + 5 * @test_distros;
+plan tests => 4 + 7 * @test_distros;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -112,26 +123,33 @@ ok( $tiny->write( $config_file ),
 
 #--------------------------------------------------------------------------#
 # Scenarios to test
-#   * make/dmake test -- pass, fail, unknown, na
-#   * Build test -- pass, fail, unknown, na
+#   * make/dmake test --  na
+#   * Build test --  na
 #   * dmake and Build with test.pl -- aborts currently
 #   * dmake and Build with bad prereqs
 #--------------------------------------------------------------------------#
 
 for my $case ( @test_distros ) {
+    # automate CPAN::Reporter prompting
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
-    
-    my $wd = pushd( File::Spec->catdir( qw/t dist /, $case->{name} ) );
+
+    # clone dist directory -- avoids needing to cleanup source
+    my $dist_dir = File::Spec->catdir( qw/t dist /, $case->{name} );
+    my $work_dir = tempdir();
+    ok( dircopy($dist_dir, $work_dir),
+        "Copying $case->{name} to temporary build directory"
+    );
+
+    my $pushd = pushd $work_dir;
+
     my $dist = t::MockCPANDist->new( %mock_dist, pretty_id => "Bogus::Module" );
     
     my ($stdout, $stderr, $makefile_rc, $test_make_rc);
     
-    pass "Testing $case->{name}";
     eval {
         capture sub {
             $makefile_rc = ! system("$perl Makefile.PL");
             $test_make_rc = CPAN::Reporter::test( $dist, "$make test" );
-            system("$make realclean");
         }, \$stdout, \$stderr;
         return 1;
     } or diag "$@\n\nSTDOUT:\n$stdout\n\nSTDERR:\n$stderr\n";
@@ -139,9 +157,20 @@ for my $case ( @test_distros ) {
     ok( $makefile_rc,
         "$case->{name}: Makefile.PL returned true"
     ); 
-    ok( $case->{success} ? $test_make_rc : ! $test_make_rc, 
+
+    my $is_rc_correct = $case->{success} ? $test_make_rc : ! $test_make_rc;
+    my $is_grade_correct = $stdout =~ /^Test result is '$case->{grade}'/ms;
+
+    ok( $is_rc_correct, 
         "$case->{name}: test('make test') returned $case->{success}"
-    ) or diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr"; 
+    );
+        
+    ok( $is_grade_correct, 
+        "$case->{name}: test('make test') grade reported as '$case->{grade}'"
+    );
+        
+    diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
+        unless ( $is_rc_correct && $is_grade_correct );
     
     SKIP: {
 
@@ -154,15 +183,25 @@ for my $case ( @test_distros ) {
         capture sub {
             $build_rc = ! system("$perl Build.PL");
             $test_build_rc = CPAN::Reporter::test( $dist, "$perl Build test" );
-            system("$perl Build realclean");
         }, \$stdout, \$stderr;
 
         ok( $build_rc,
             "$case->{name}: Build.PL returned true"
         ); 
-        ok( $case->{success} ? $test_build_rc : ! $test_build_rc, 
+        
+        $is_rc_correct = $case->{success} ? $test_make_rc : ! $test_make_rc;
+        $is_grade_correct = $stdout =~ /^Test result is '$case->{grade}'/ms;
+
+        ok( $is_rc_correct, 
             "$case->{name}: test('perl Build test') returned $case->{success}"
-        ) or diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr"; 
+        );
+            
+        ok( $is_grade_correct, 
+            "$case->{name}: test('perl Build test') grade reported as '$case->{grade}'"
+        );
+        
+        diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
+            unless ( $is_rc_correct && $is_grade_correct );
     }
     
 } 

@@ -1,15 +1,7 @@
 TODO list for Perl module CPAN::Reporter
 
-- Improve handling of test.pl; should be OK with Module::Build as M::B always
-  passes it to Test::Harness.  The question is whether or not to report
-  test success/failures under ExtUtils::MakeMaker for test.pl.  Or run failed
-  tests twice to capture output.
-
 - Check failed tests for prerequisite failures -- this could
   occur if tests were forced.  Such failures should be marked N/A.
-
-- Write some more tests and get some decent test coverage.  Add more 
-  test distributions
 
 - Include some/all of %ENV
 

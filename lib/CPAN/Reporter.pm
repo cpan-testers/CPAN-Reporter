@@ -3,6 +3,7 @@ use strict;
 
 $CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.20";
 
+use Config;
 use Config::Tiny ();
 use ExtUtils::MakeMaker qw/prompt/;
 use File::Basename qw/basename/;
@@ -161,26 +162,40 @@ sub test {
     my ($dist, $system_command) = @_;
     my $temp_out = File::Temp->new;
     
-    # XXX FAIL SAFE: can't get the result from teeing test.pl
-    # May change this later to report based on result, but with
-    # no detail
-    if ( -f "test.pl" ) {
-        warn "CPAN::Reporter can't report results for test.pl; continuing\n";
-        my $rc = system($system_command);
-        return $rc == 0;
-    }
-    
-    tee($system_command, { stderr => 1 }, $temp_out);
-    if ( ! open(TEST_RESULT, "<", $temp_out) ) {
-        warn "CPAN::Reporter couldn't read test results\n";
-        return;
-    }
     my $result = {
         dist => $dist,
         command => $system_command,
-        output => do { local $/; <TEST_RESULT> }
     };
-    close TEST_RESULT;
+
+    # ExtUtils::MakeMaker runs test.pl directly, not through 
+    # Test Harness, so we have to rely on the result code for
+    # success instead of parsing.  So we run it directly without
+    # teeing and then fake the result output for the rest of 
+    # the reporting
+    if ( -f "test.pl" && $system_command =~ /$Config{make}/ ) {
+        warn "CPAN::Reporter can't report test.pl output " .
+             "using $Config{make}; continuing\n";
+        my $rc = system($system_command);
+        if ( $rc == 0 ) {
+            $result->{output} = "All tests successful.  (Success assumed " .
+                                "because test.pl exit code was 0.)\n";
+        }
+        else {
+            $result->{output} = "Failed tests.  (test.pl exit code was " .
+                                "non-zero.)  Detailed output could not be ".
+                                "captured with test.pl and make.";
+        }
+    }
+    # Otherwise, we can tee the command and generate the report normally
+    else { 
+        tee($system_command, { stderr => 1 }, $temp_out);
+        if ( ! open(TEST_RESULT, "<", $temp_out) ) {
+            warn "CPAN::Reporter couldn't read test results\n";
+            return;
+        }
+        $result->{output} = do { local $/; <TEST_RESULT> };
+        close TEST_RESULT;
+    }
     _process_report( $result );
     return $result->{success};    
 }
