@@ -1,5 +1,24 @@
 TODO list for Perl module CPAN::Reporter
 
+- Need a more complete grade/option table
+
+            pass    fail    unknown na
+    yes                                 
+    no
+    ask/yes
+    ask/no
+
+- Idea in ABNF form:
+    option      ::= rule *( WSP rule )
+    rule        ::= grade-list / ( [ grade-list ":" ] action )
+    grade-list  ::= grade *( "/" grade )
+    grade       ::= "pass" / "fail" / "unknown" / "na"
+    action      ::= "yes" / "no" / "ask/yes" / "ask/no" / "ask"
+
+- Rules without a grade-list are a fallback if no other rule applies; 
+  rules are processed left to right, later rules overwrite earlier ones;
+  grade-lists without actions are taken to mean "no"
+
 - Check failed tests for prerequisite failures -- this could
   occur if tests were forced.  Such failures should be marked N/A.
 
