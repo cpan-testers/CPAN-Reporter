@@ -3,6 +3,14 @@ TODO list for Perl module CPAN::Reporter
 - Check failed tests for prerequisite failures -- this could
   occur if tests were forced.  Such failures should be marked N/A.
 
+- Test dist:
+    - no prereqs
+    - prereq failures
+
+- Confirm up-to-date Test::Harness diagnostics
+
+- Improve test coverage
+
 - Include some/all of %ENV
 
 - Include some of Config (compiler, make, lib/inc paths, etc.) and
