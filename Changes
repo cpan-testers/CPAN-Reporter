@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.20
+0.20 Sun Sep 24 22:45:48 EDT 2006
 
     - fixed RT#21626: "unknown" results will now be reported to CPAN.pm as
       success and will not interrupt module installation (Slaven Rezic)
@@ -9,7 +9,7 @@ Revision history for Perl module CPAN::Reporter
       on exit code only and no output is collected
 
     - added several new tests and test distributions for greater coverage and
-      confirmed bug closure
+      confirming bug closure
 
     - added user feedback for test grade assigned during report generation
 

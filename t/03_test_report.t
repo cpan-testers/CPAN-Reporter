@@ -182,7 +182,7 @@ for my $case ( @test_distros ) {
     
     eval {
         capture sub {
-            $makefile_rc = ! system("$perl Makefile.PL");
+            $makefile_rc = do "Makefile.PL";
             $test_make_rc = CPAN::Reporter::test( $dist, "$make test" );
         }, \$stdout, \$stderr;
         return 1;
@@ -215,7 +215,7 @@ for my $case ( @test_distros ) {
         my ($build_rc, $test_build_rc);
         
         capture sub {
-            $build_rc = ! system("$perl Build.PL");
+            $build_rc = do "Build.PL";
             $test_build_rc = CPAN::Reporter::test( $dist, "$perl Build test" );
         }, \$stdout, \$stderr;
 

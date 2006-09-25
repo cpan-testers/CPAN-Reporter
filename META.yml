@@ -12,6 +12,7 @@ requires:
   Config::Tiny: 2.08
   ExtUtils::MakeMaker: 0
   File::Basename: 0
+  File::Copy::Recursive: 0.28
   File::HomeDir: 0.58
   File::Path: 0
   File::Spec: 3.19

@@ -424,7 +424,7 @@ automatically by CPAN::Reporter, version $CPAN::Reporter::VERSION.
 
 ENDREPORT
     
-    if ( $data->{tests_ok} ) { $output .= << "ENDREPORT"; 
+    if ( $data->{success} ) { $output .= << "ENDREPORT"; 
 Thank you for uploading your work to CPAN.  Congratulations!
 All tests were successful.
 
@@ -437,7 +437,6 @@ there were some problems testing your distribution.
 ENDREPORT
     }
     $output .= << "ENDREPORT";
-
 Sections of this report:
 
     * Tester comments
