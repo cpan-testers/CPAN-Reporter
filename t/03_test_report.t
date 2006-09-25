@@ -22,35 +22,69 @@ my @test_distros = (
     # pass
     {
         name => 'Bogus-Pass',
-        success => 1,
-        grade => "pass",
+        eumm_success => 1,
+        eumm_grade => "pass",
+        mb_success => 1,
+        mb_grade => "pass",
     },
     {
         name => 'Bogus-Test.pl-Pass',
-        success => 1,
-        grade => "pass"
+        eumm_success => 1,
+        eumm_grade => "pass",
+        mb_success => 1,
+        mb_grade => "pass",
+    },
+    # split pass/fail
+    {
+        name => 'Bogus-Test.pl-NoOutPass',
+        eumm_success => 1,
+        eumm_grade => "pass",
+        mb_success => 0,
+        mb_grade => "fail",
     },
     # fail
     {
         name => 'Bogus-Fail',
-        success => 0,
-        grade => "fail",
+        eumm_success => 0,
+        eumm_grade => "fail",
+        mb_success => 0,
+        mb_grade => "fail",
+    },
+    {
+        name => 'Bogus-Test.pl-NoOutFail',
+        eumm_success => 0,
+        eumm_grade => "fail",
+        mb_success => 0,
+        mb_grade => "fail",
     },
     {
         name => 'Bogus-Test.pl-Fail',
-        success => 0,
-        grade => "fail"
+        eumm_success => 0,
+        eumm_grade => "fail",
+        mb_success => 0,
+        mb_grade => "fail",
     },
     {
         name => 'Bogus-NoTestOutput',
-        success => 0,
-        grade => "fail",
+        eumm_success => 0,
+        eumm_grade => "fail",
+        mb_success => 0,
+        mb_grade => "fail",
     },
     # unknown
     {
-        name => 'Bogus-NoTests',
-        success => 1,
-        grade => "unknown"
+        name => 'Bogus-NoTestDir',
+        eumm_success => 1,
+        eumm_grade => "unknown",
+        mb_success => 1,
+        mb_grade => "unknown",
+    },
+    {
+        name => 'Bogus-NoTestFiles',
+        eumm_success => 1,
+        eumm_grade => "unknown",
+        mb_success => 1,
+        mb_grade => "unknown",
     },
     # na -- TBD
 );
@@ -96,7 +130,7 @@ package Test::Reporter;
 sub new { print shift, "\n"; return bless {}, 'Test::Reporter::Mocked' }
 
 package Test::Reporter::Mocked;
-sub AUTOLOAD { return 1 }
+sub AUTOLOAD { return "1 mocked answer" }
 
 package main;
 
@@ -158,15 +192,15 @@ for my $case ( @test_distros ) {
         "$case->{name}: Makefile.PL returned true"
     ); 
 
-    my $is_rc_correct = $case->{success} ? $test_make_rc : ! $test_make_rc;
-    my $is_grade_correct = $stdout =~ /^Test result is '$case->{grade}'/ms;
+    my $is_rc_correct = $case->{eumm_success} ? $test_make_rc : ! $test_make_rc;
+    my $is_grade_correct = $stdout =~ /^Test result is '$case->{eumm_grade}'/ms;
 
     ok( $is_rc_correct, 
-        "$case->{name}: test('make test') returned $case->{success}"
+        "$case->{name}: test('make test') returned $case->{eumm_success}"
     );
         
     ok( $is_grade_correct, 
-        "$case->{name}: test('make test') grade reported as '$case->{grade}'"
+        "$case->{name}: test('make test') grade reported as '$case->{eumm_grade}'"
     );
         
     diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
@@ -189,15 +223,15 @@ for my $case ( @test_distros ) {
             "$case->{name}: Build.PL returned true"
         ); 
         
-        $is_rc_correct = $case->{success} ? $test_make_rc : ! $test_make_rc;
-        $is_grade_correct = $stdout =~ /^Test result is '$case->{grade}'/ms;
+        $is_rc_correct = $case->{mb_success} ? $test_build_rc : ! $test_build_rc;
+        $is_grade_correct = $stdout =~ /^Test result is '$case->{mb_grade}'/ms;
 
         ok( $is_rc_correct, 
-            "$case->{name}: test('perl Build test') returned $case->{success}"
+            "$case->{name}: test('perl Build test') returned $case->{mb_success}"
         );
             
         ok( $is_grade_correct, 
-            "$case->{name}: test('perl Build test') grade reported as '$case->{grade}'"
+            "$case->{name}: test('perl Build test') grade reported as '$case->{mb_grade}'"
         );
         
         diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
