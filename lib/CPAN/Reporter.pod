@@ -61,6 +61,49 @@ with interactive configuration of CPAN::Reporter options.
 Once CPAN::Reporter is enabled and configured, test or install modules with
 CPAN.pm as usual.
 
+=head1 UNDERSTANDING TEST GRADES
+
+See L</"KNOWN ISSUES"> for limitations involving test.pl files.
+
+=over
+
+=item *
+
+C<<< pass >>> -- all tests were successful  
+
+=back
+
+=over
+
+=item *
+
+C<<< fail >>> -- one or more tests failed, one or more test files died during
+testing or no test output was seen
+
+=back
+
+=over
+
+=item *
+
+C<<< na >>> -- tests could not be run on this platform or one or more test files
+died because of missing prerequisites
+
+=back
+
+=over
+
+=item *
+
+C<<< unknown >>> -- no test files could be found (either tE<sol>*.t or test.pl)
+
+=back
+
+In returning results to CPAN.pm, "PASS" and "UNKNOWN" are considered successful
+attempts to "make test" or "Build test" and will not prevent installation.
+"FAIL" and "NA" are considered to be failures and CPAN.pm will not install
+unless forced.
+
 =head1 CONFIG FILE OPTIONS
 
 Default options for CPAN::Reporter are read from a configuration file 
@@ -227,8 +270,8 @@ option, e.g.:
 Given a CPAN::Distribution object and a system command to run distribution
 tests (e.g. "make test"), C<<< test() >>> executes the command via C<<< system() >>> while
 teeing the output to a file.  Based on the output captured in the file,
-C<<< test() >>> generates and sends a L<Test::Reporter> report.  It returns true if the
-captured output indicates that all tests passed and false, otherwise.
+C<<< test() >>> generates and sends a L<Test::Reporter> report.  It returns true if
+the test grade is "pass" or "unknown" and returns false, otherwise.
 
 =head1 KNOWN ISSUES
 
@@ -236,8 +279,9 @@ captured output indicates that all tests passed and false, otherwise.
 
 =item *
 
-Does not (yet) support reporting on C<<< test.pl >>> files; will issue a warning 
-and continue
+Does not capture detailed output if C<<< test.pl >>> exists and "make test" is 
+the system command; results will be reported without test output based
+on the exit code when test.pl is run
 
 =back
 

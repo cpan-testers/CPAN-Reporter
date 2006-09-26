@@ -85,14 +85,15 @@ sub test_dist {
     
     eval {
         capture sub {
-            $makefile_rc = do "Makefile.PL";
+            # Have to run Makefile separate as return value isn't reliable
+            $makefile_rc = ! system("$perl Makefile.PL");
             $test_make_rc = CPAN::Reporter::test( $dist, "$make test" );
         }, \$stdout, \$stderr;
         return 1;
     } or diag "$@\n\nSTDOUT:\n$stdout\n\nSTDERR:\n$stderr\n";
      
     ok( $makefile_rc,
-        "$case->{name}: Makefile.PL returned true"
+        "$case->{name}: Makefile.PL ran without error"
     ); 
 
     my $is_rc_correct = $case->{eumm_success} ? $test_make_rc : ! $test_make_rc;

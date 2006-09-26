@@ -12,28 +12,28 @@ use t::Helper;
 my @test_distros = (
     # fail
     {
-        name => 'Bogus-Fail',
+        name => 'Bogus-t-Fail',
         eumm_success => 0,
         eumm_grade => "fail",
         mb_success => 0,
         mb_grade => "fail",
     },
     {
-        name => 'Bogus-Test.pl-NoOutFail',
+        name => 'Bogus-test.pl-NoOutput-NOK',
         eumm_success => 0,
         eumm_grade => "fail",
         mb_success => 0,
         mb_grade => "fail",
     },
     {
-        name => 'Bogus-Test.pl-Fail',
+        name => 'Bogus-test.pl-Fail',
         eumm_success => 0,
         eumm_grade => "fail",
         mb_success => 0,
         mb_grade => "fail",
     },
     {
-        name => 'Bogus-NoTestOutput',
+        name => 'Bogus-t-NoOutput',
         eumm_success => 0,
         eumm_grade => "fail",
         mb_success => 0,

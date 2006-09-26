@@ -12,7 +12,7 @@ use t::Helper;
 my @test_distros = (
     # split pass/fail
     {
-        name => 'Bogus-Test.pl-NoOutPass',
+        name => 'Bogus-test.pl-NoOutput-OK',
         eumm_success => 1,
         eumm_grade => "pass",
         mb_success => 0,

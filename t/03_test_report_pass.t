@@ -12,14 +12,14 @@ use t::Helper;
 my @test_distros = (
     # pass
     {
-        name => 'Bogus-Pass',
+        name => 'Bogus-t-Pass',
         eumm_success => 1,
         eumm_grade => "pass",
         mb_success => 1,
         mb_grade => "pass",
     },
     {
-        name => 'Bogus-Test.pl-Pass',
+        name => 'Bogus-test.pl-Pass',
         eumm_success => 1,
         eumm_grade => "pass",
         mb_success => 1,

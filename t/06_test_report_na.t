@@ -12,7 +12,7 @@ use t::Helper;
 my @test_distros = (
     # na 
     {
-        name => 'Bogus-PrereqFail',
+        name => 'Bogus-t-PrereqFail',
         prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
         eumm_success => 0,
         eumm_grade => "na",
@@ -20,7 +20,7 @@ my @test_distros = (
         mb_grade => "na",
     },
     {
-        name => 'Bogus-PerlFail',
+        name => 'Bogus-t-LowPerl',
         prereq => { },
         eumm_success => 0,
         eumm_grade => "na",
