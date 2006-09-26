@@ -12,6 +12,11 @@ README
 t/01_CPAN_Reporter.t
 t/02_config_file.t
 t/03_test_report.t
+t/03_test_report_pass.t
+t/04_test_report_fail.t
+t/05_test_report_unknown.t
+t/06_test_report_na.t
+t/07_test_report_split.t
 t/dist/Bogus-Fail/Build.PL
 t/dist/Bogus-Fail/lib/Bogus/Module.pm
 t/dist/Bogus-Fail/Makefile.PL
@@ -41,6 +46,10 @@ t/dist/Bogus-Pass/Build.PL
 t/dist/Bogus-Pass/lib/Bogus/Module.pm
 t/dist/Bogus-Pass/Makefile.PL
 t/dist/Bogus-Pass/t/01_Bogus.t
+t/dist/Bogus-PrereqFail/Build.PL
+t/dist/Bogus-PrereqFail/lib/Bogus/Module.pm
+t/dist/Bogus-PrereqFail/Makefile.PL
+t/dist/Bogus-PrereqFail/t/01_Bogus.t
 t/dist/Bogus-Test.pl-Fail/Build.PL
 t/dist/Bogus-Test.pl-Fail/lib/Bogus/Module.pm
 t/dist/Bogus-Test.pl-Fail/Makefile.PL
@@ -57,6 +66,7 @@ t/dist/Bogus-Test.pl-Pass/Build.PL
 t/dist/Bogus-Test.pl-Pass/lib/Bogus/Module.pm
 t/dist/Bogus-Test.pl-Pass/Makefile.PL
 t/dist/Bogus-Test.pl-Pass/test.pl
+t/Helper.pm
 t/MockCPANDist.pm
 t/pod-coverage.t
 t/pod.t

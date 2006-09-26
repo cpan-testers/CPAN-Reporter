@@ -1,12 +1,14 @@
-#!perl
+package t::Helper;
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
-select(STDERR); $|=1;
-select(STDOUT); $|=1;
+use vars qw/@EXPORT/;
+@EXPORT = qw/
+    test_dist test_dist_plan
+    test_fake_config test_fake_config_plan
+/;
 
-use Test::More;
-use t::MockCPANDist;
+use base 'Exporter';
 
 use Config;
 use File::Copy::Recursive qw/dircopy/;
@@ -16,154 +18,57 @@ use File::Spec ();
 use File::Temp qw/tempdir/;
 use IO::CaptureOutput qw/capture/;
 use Probe::Perl ();
+use Test::More;
 
-
-my @test_distros = (
-    # pass
-    {
-        name => 'Bogus-Pass',
-        eumm_success => 1,
-        eumm_grade => "pass",
-        mb_success => 1,
-        mb_grade => "pass",
-    },
-    {
-        name => 'Bogus-Test.pl-Pass',
-        eumm_success => 1,
-        eumm_grade => "pass",
-        mb_success => 1,
-        mb_grade => "pass",
-    },
-    # split pass/fail
-    {
-        name => 'Bogus-Test.pl-NoOutPass',
-        eumm_success => 1,
-        eumm_grade => "pass",
-        mb_success => 0,
-        mb_grade => "fail",
-    },
-    # fail
-    {
-        name => 'Bogus-Fail',
-        eumm_success => 0,
-        eumm_grade => "fail",
-        mb_success => 0,
-        mb_grade => "fail",
-    },
-    {
-        name => 'Bogus-Test.pl-NoOutFail',
-        eumm_success => 0,
-        eumm_grade => "fail",
-        mb_success => 0,
-        mb_grade => "fail",
-    },
-    {
-        name => 'Bogus-Test.pl-Fail',
-        eumm_success => 0,
-        eumm_grade => "fail",
-        mb_success => 0,
-        mb_grade => "fail",
-    },
-    {
-        name => 'Bogus-NoTestOutput',
-        eumm_success => 0,
-        eumm_grade => "fail",
-        mb_success => 0,
-        mb_grade => "fail",
-    },
-    # unknown
-    {
-        name => 'Bogus-NoTestDir',
-        eumm_success => 1,
-        eumm_grade => "unknown",
-        mb_success => 1,
-        mb_grade => "unknown",
-    },
-    {
-        name => 'Bogus-NoTestFiles',
-        eumm_success => 1,
-        eumm_grade => "unknown",
-        mb_success => 1,
-        mb_grade => "unknown",
-    },
-    # na -- TBD
-);
-
-plan tests => 4 + 7 * @test_distros;
+my $perl = Probe::Perl->find_perl_interpreter();
+my $make = $Config{make};
 
 #--------------------------------------------------------------------------#
 # Fixtures
 #--------------------------------------------------------------------------#
 
-my $perl = Probe::Perl->find_perl_interpreter();
-my $make = $Config{make};
 my $temp_stdout = File::Temp->new();
 my $temp_home = tempdir();
 my $home_dir = File::Spec->rel2abs( $temp_home );
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 
-
 my $bogus_email = 'johndoe@nowhere.com';
 my $bogus_smtp = 'mail.mail.com';
-my %mock_dist = (
-    prereq_pm       => {
-        'File::Spec' => 0,
-    },
-    author_id       => "JOHNQP",
-    author_fullname => "John Q. Public",
-);
-
-#--------------------------------------------------------------------------#
-# Mocking -- override support/system functions
-#--------------------------------------------------------------------------#
-    
-BEGIN {
-    $INC{"File/HomeDir.pm"} = 1; # fake load
-    $INC{"Test/Reporter.pm"} = 1; # fake load
-}
-
-package File::HomeDir;
-sub my_documents { return $home_dir };
-
-package Test::Reporter;
-sub new { print shift, "\n"; return bless {}, 'Test::Reporter::Mocked' }
-
-package Test::Reporter::Mocked;
-sub AUTOLOAD { return "1 mocked answer" }
-
-package main;
 
 #--------------------------------------------------------------------------#
 # test config file prep
 #--------------------------------------------------------------------------#
 
-require_ok('CPAN::Reporter');
-is( File::HomeDir::my_documents(), $home_dir,
-    "home directory mocked"
-); 
-mkpath $config_dir;
-ok( -d $config_dir,
-    "config directory created"
-);
+sub test_fake_config_plan() { 3 }
+sub test_fake_config {
+    is( File::HomeDir::my_documents(), $home_dir,
+        "home directory mocked"
+    ); 
+    mkpath $config_dir;
+    ok( -d $config_dir,
+        "config directory created"
+    );
 
-my $tiny = Config::Tiny->new();
-$tiny->{_}{email_from} = $bogus_email;
-$tiny->{_}{email_to} = 'no_one@nowhere.com'; # failsafe
-$tiny->{_}{smtp_server} = $bogus_smtp;
-ok( $tiny->write( $config_file ),
-    "created temp config file with a new email address and smtp server"
-);
+    my $tiny = Config::Tiny->new();
+    $tiny->{_}{email_from} = $bogus_email;
+    $tiny->{_}{email_to} = 'no_one@nowhere.com'; # failsafe
+    $tiny->{_}{smtp_server} = $bogus_smtp;
+    ok( $tiny->write( $config_file ),
+        "created temp config file with a new email address and smtp server"
+    );
+}
+
 
 #--------------------------------------------------------------------------#
-# Scenarios to test
-#   * make/dmake test --  na
-#   * Build test --  na
-#   * dmake and Build with test.pl -- aborts currently
-#   * dmake and Build with bad prereqs
+# dist tests
 #--------------------------------------------------------------------------#
 
-for my $case ( @test_distros ) {
+sub test_dist_plan() { 7 }
+sub test_dist {
+    my ($case, $dist) = @_;
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     # automate CPAN::Reporter prompting
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
 
@@ -176,8 +81,6 @@ for my $case ( @test_distros ) {
 
     my $pushd = pushd $work_dir;
 
-    my $dist = t::MockCPANDist->new( %mock_dist, pretty_id => "Bogus::Module" );
-    
     my ($stdout, $stderr, $makefile_rc, $test_make_rc);
     
     eval {
@@ -237,5 +140,23 @@ for my $case ( @test_distros ) {
         diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
             unless ( $is_rc_correct && $is_grade_correct );
     }
-    
-} 
+
+}
+
+#--------------------------------------------------------------------------#
+# Mocking
+#--------------------------------------------------------------------------#
+
+BEGIN {
+    $INC{"File/HomeDir.pm"} = 1; # fake load
+    $INC{"Test/Reporter.pm"} = 1; # fake load
+}
+
+package File::HomeDir;
+sub my_documents { return $home_dir };
+
+package Test::Reporter;
+sub new { print shift, "\n"; return bless {}, 'Test::Reporter::Mocked' }
+
+package Test::Reporter::Mocked;
+sub AUTOLOAD { return "1 mocked answer" }

@@ -1,5 +1,14 @@
 Revision history for Perl module CPAN::Reporter
 
+0.21
+
+    - added support for "NA" grade when prerequisites are not met
+
+    - changed diagnostic message for problems with "make test" and test.pl
+      for greater clarity
+
+    - refactored tests into separate files by grade
+    
 0.20 Sun Sep 24 22:45:48 EDT 2006
 
     - fixed RT#21626: "unknown" results will now be reported to CPAN.pm as

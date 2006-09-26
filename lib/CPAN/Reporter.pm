@@ -182,8 +182,9 @@ sub test {
         }
         else {
             $result->{output} = "Failed tests.  (test.pl exit code was " .
-                                "non-zero.)  Detailed output could not be ".
-                                "captured with test.pl and make.";
+                                "non-zero.)  CPAN::Reporter cannot (yet) ".
+                                "capture detailed test output when test.pl ".
+                                "exists.";
         }
     }
     # Otherwise, we can tee the command and generate the report normally
@@ -269,8 +270,18 @@ sub _grade_report {
         $msg = 'No tests were run';
     }
     elsif ( $result->{output} =~ m{^FAILED--.*--no output}ms ) {
-        $grade = 'fail';
-        $msg = 'Tests had no output';
+        if ( $result->{prereq_pm} =~ m{Not found}ims ) {
+            $grade = 'na';
+            $msg = 'Missing prerequisites';
+        }
+        elsif ( $result->{output} =~ m{Perl .*? required.*?this is only}ms ) {
+            $grade = 'na';
+            $msg = 'Perl version too low';
+        }
+        else {
+            $grade = 'fail';
+            $msg = 'Tests had no output';
+        }
     }
     elsif ( $result->{output} =~ m{^Failed }ms ) {  # must be lowercase
         $grade = 'fail';
@@ -539,6 +550,25 @@ with interactive configuration of CPAN::Reporter options.
 Once CPAN::Reporter is enabled and configured, test or install modules with
 CPAN.pm as usual.
 
+= UNDERSTANDING TEST GRADES
+
+See [/"KNOWN ISSUES"] for limitations involving test.pl files.
+
+* {pass} -- all tests were successful  
+
+* {fail} -- one or more tests failed, one or more test files died during
+testing or no test output was seen
+
+* {na} -- tests could not be run on this platform or one or more test files
+died because of missing prerequisites
+
+* {unknown} -- no test files could be found (either t/*.t or test.pl)
+
+In returning results to CPAN.pm, "PASS" and "UNKNOWN" are considered successful
+attempts to "make test" or "Build test" and will not prevent installation.
+"FAIL" and "NA" are considered to be failures and CPAN.pm will not install
+unless forced.
+
 = CONFIG FILE OPTIONS
 
 Default options for CPAN::Reporter are read from a configuration file 
@@ -654,13 +684,14 @@ option, e.g.:
 Given a CPAN::Distribution object and a system command to run distribution
 tests (e.g. "make test"), {test()} executes the command via {system()} while
 teeing the output to a file.  Based on the output captured in the file,
-{test()} generates and sends a [Test::Reporter] report.  It returns true if the
-captured output indicates that all tests passed and false, otherwise.
+{test()} generates and sends a [Test::Reporter] report.  It returns true if
+the test grade is "pass" or "unknown" and returns false, otherwise.
 
 = KNOWN ISSUES
 
-* Does not (yet) support reporting on {test.pl} files; will issue a warning 
-and continue
+* Does not capture detailed output if {test.pl} exists and "make test" is 
+the system command; results will be reported without test output based
+on the exit code when test.pl is run
 
 = BUGS
 

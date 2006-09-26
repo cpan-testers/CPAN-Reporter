@@ -1,5 +1,8 @@
 TODO list for Perl module CPAN::Reporter
 
+- Look at CPANPLUS::Internals::Constants::Reports and try to 
+  replicate that logic
+
 - Need a more complete grade/option table
 
             pass    fail    unknown na
@@ -9,22 +12,18 @@ TODO list for Perl module CPAN::Reporter
     ask/no
 
 - Idea in ABNF form:
-    option      ::= rule *( WSP rule )
+    option      ::= rule *( [ "," ] WSP rule )
     rule        ::= grade-list / ( [ grade-list ":" ] action )
     grade-list  ::= grade *( "/" grade )
-    grade       ::= "pass" / "fail" / "unknown" / "na"
+    grade       ::= "pass" / "fail" / "unknown" / "na" / "default"
     action      ::= "yes" / "no" / "ask/yes" / "ask/no" / "ask"
 
 - Rules without a grade-list are a fallback if no other rule applies; 
   rules are processed left to right, later rules overwrite earlier ones;
-  grade-lists without actions are taken to mean "no"
+  grade-lists without actions are taken to mean "yes" for those grades;
+  "no" is the default fallback rule; default can be specified explicitly
 
-- Check failed tests for prerequisite failures -- this could
-  occur if tests were forced.  Such failures should be marked N/A.
-
-- Test dist:
-    - no prereqs
-    - prereq failures
+- Check failed tests for perl prerequisite failure
 
 - Confirm up-to-date Test::Harness diagnostics
 
