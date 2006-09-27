@@ -1,5 +1,7 @@
 TODO list for Perl module CPAN::Reporter
 
+- prepare for CPAN.pm changing what prereq_pm() returns
+
 - test.pl -- have to parse for make error message:
   qr/$Config{make}.*?:.*?error/i
 
