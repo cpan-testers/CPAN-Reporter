@@ -1,5 +1,11 @@
 TODO list for Perl module CPAN::Reporter
 
+- test.pl -- have to parse for make error message:
+  qr/$Config{make}.*?:.*?error/i
+
+  should allow normal tee capture, but will require some fancy
+  footwork in the grade evaluation section
+  
 - Look at CPANPLUS::Internals::Constants::Reports and try to 
   replicate that logic
 
