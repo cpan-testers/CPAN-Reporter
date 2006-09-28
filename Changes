@@ -1,5 +1,13 @@
 Revision history for Perl module CPAN::Reporter
 
+0.22
+
+    - added support for future CPAN.pm support for separate requires and
+      build_requires prerequisites
+
+    - changed prerequisites report for easier reading and to show requires
+      and build_requires individually, if available from CPAN.pm
+      
 0.21 Thu Sep 28 07:06:30 EDT 2006
 
     - added test.pl support with full capture of output (Tim Bunce)

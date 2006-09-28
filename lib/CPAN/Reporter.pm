@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.21";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.22";
 
 use Config;
 use Config::Tiny ();
@@ -285,9 +285,14 @@ sub _grade_report {
     # that should be reported as 'na'
 
     if ( $grade eq 'fail' ) {
-        if ( $result->{prereq_pm} =~ m{Not found}ims ) {
+        # check the prereq report for a failure flag (!)
+        if ( $result->{prereq_pm} =~ m{n/a}ims ) {
             $grade = 'na';
-            $msg = 'Missing prerequisites';
+            $msg = 'Prerequisite missing';
+        }
+        elsif ( $result->{prereq_pm} =~ m{^\s+!}ims ) {
+            $grade = 'na';
+            $msg = 'Prerequisite version too low';
         }
         elsif ( $result->{output} =~ m{Perl .*? required.*?this is only}ms ) {
             $grade = 'na';
@@ -313,13 +318,62 @@ sub _open_config_file {
 
 sub _prereq_report {
     my $data = shift;
-    my $prereq = $data->{dist}->prereq_pm;
-    my $report;
-    for my $module ( keys %$prereq ) {
-        my $version = eval "require $module; return $module->VERSION";
-        $version = defined $version ? $version : "Not found";
-        $report .= "    $module\: $version (Need $prereq->{$module})\n";
+    my %prereq;
+    $prereq{requires} = $data->{dist}->prereq_pm;
+    
+    # unpack if subdivided in newer versions of CPAN.pm
+    if ( 
+        join( q{ }, sort keys %{$prereq{requires}} ) eq 
+        "build_requires requires" 
+    ) {
+        $prereq{build_requires} = $prereq{requires}{build_requires};
+        $prereq{requires} = $prereq{requires}{requires};
     }
+
+    my ($name_width, $need_width, $have_width) = (6, 4, 4);
+    my (%have, $report);
+
+    # find formatting widths and get installed versions
+    for my $section ( qw/requires build_requires/ ) {
+        for my $module ( keys %{ $prereq{$section} } ) {
+            my $name_length = length $module;
+            my $need_length = length $prereq{$section}{$module};
+            my $version = eval "require $module; return $module->VERSION";
+            $version = defined $version ? $version : "n/a";
+            my $have_length = length $version;
+            $have{$module} = $version;
+            $name_width = $name_length if $name_length > $name_width;
+            $need_width = $need_length if $need_length > $need_width;
+            $have_width = $have_length if $have_length > $have_width;
+        }
+    }
+
+    my $format_str = 
+        "  \%1s \%-${name_width}s \%-${need_width}s \%-${have_width}s\n";
+
+    # generate the report
+    for my $section ( qw/requires build_requires/ ) {
+        if ( keys %{ $prereq{$section} } ) {
+            $report .= "$section:\n\n";
+            $report .= sprintf( $format_str, " ", qw/Module Need Have/ );
+            $report .= sprintf( $format_str, " ", 
+                                 "-" x $name_width, 
+                                 "-" x $need_width,
+                                 "-" x $have_width );
+        }
+        for my $module ( keys %{ $prereq{$section} } ) {
+            my $need = $prereq{$section}{$module};
+            # can we satisfy the prereq?
+            eval "use $module $need";
+            # flag bad modules with "!" and for parsing later
+            my $bad = $@ ? "!" : " ";
+            $report .= 
+                sprintf( $format_str, $bad, $module, $need, $have{$module});
+        }
+        print "\n";
+    }
+    
+    
     return $report || "    No requirements found\n";
 }
 
