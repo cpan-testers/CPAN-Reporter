@@ -1,10 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
-0.21
+0.21 Thu Sep 28 07:06:30 EDT 2006
 
-    - added test.pl support with full capture of output
+    - added test.pl support with full capture of output (Tim Bunce)
 
-    - added support for "NA" grade when prerequisites are not met
+    - added support for "NA" grade when prerequisites are not meta or
+      Perl version is too low
 
     - refactored tests into separate files by grade
     

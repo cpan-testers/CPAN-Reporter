@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.20";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.21";
 
 use Config;
 use Config::Tiny ();
@@ -556,6 +556,8 @@ CPAN.pm as usual.
 
 = UNDERSTANDING TEST GRADES
 
+CPAN::Reporter will assign one of the following grades to the report:
+
 * {pass} -- all tests were successful  
 
 * {fail} -- one or more tests failed, one or more test files died during
@@ -564,11 +566,12 @@ testing or no test output was seen
 * {na} -- tests could not be run on this platform or one or more test files
 died because of missing prerequisites
 
-* {unknown} -- no test files could be found (either t/*.t or test.pl)
+* {unknown} -- no test files could be found (either t/*.t or test.pl) or 
+a result could not be determined from test output
 
-In returning results to CPAN.pm, "PASS" and "UNKNOWN" are considered successful
+In returning results to CPAN.pm, "pass" and "unknown" are considered successful
 attempts to "make test" or "Build test" and will not prevent installation.
-"FAIL" and "NA" are considered to be failures and CPAN.pm will not install
+"fail" and "na" are considered to be failures and CPAN.pm will not install
 unless forced.
 
 = CONFIG FILE OPTIONS

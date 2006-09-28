@@ -53,6 +53,25 @@ GETTING STARTED
     Once CPAN::Reporter is enabled and configured, test or install modules
     with CPAN.pm as usual.
 
+UNDERSTANDING TEST GRADES
+    CPAN::Reporter will assign one of the following grades to the report:
+
+    *   "pass" -- all tests were successful
+
+    *   "fail" -- one or more tests failed, one or more test files died
+        during testing or no test output was seen
+
+    *   "na" -- tests could not be run on this platform or one or more test
+        files died because of missing prerequisites
+
+    *   "unknown" -- no test files could be found (either t/*.t or test.pl)
+        or a result could not be determined from test output
+
+    In returning results to CPAN.pm, "pass" and "unknown" are considered
+    successful attempts to "make test" or "Build test" and will not prevent
+    installation. "fail" and "na" are considered to be failures and CPAN.pm
+    will not install unless forced.
+
 CONFIG FILE OPTIONS
     Default options for CPAN::Reporter are read from a configuration file
     ".cpanreporter/config.ini" in the user's home directory (Unix), "My
@@ -174,12 +193,8 @@ FUNCTIONS
     distribution tests (e.g. "make test"), "test()" executes the command via
     "system()" while teeing the output to a file. Based on the output
     captured in the file, "test()" generates and sends a Test::Reporter
-    report. It returns true if the captured output indicates that all tests
-    passed and false, otherwise.
-
-KNOWN ISSUES
-    *   Does not (yet) support reporting on "test.pl" files; will issue a
-        warning and continue
+    report. It returns true if the test grade is "pass" or "unknown" and
+    returns false, otherwise.
 
 BUGS
     Please report any bugs or feature using the CPAN Request Tracker. Bugs

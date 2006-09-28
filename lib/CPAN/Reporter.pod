@@ -63,7 +63,7 @@ CPAN.pm as usual.
 
 =head1 UNDERSTANDING TEST GRADES
 
-See L</"KNOWN ISSUES"> for limitations involving test.pl files.
+CPAN::Reporter will assign one of the following grades to the report:
 
 =over
 
@@ -95,13 +95,14 @@ died because of missing prerequisites
 
 =item *
 
-C<<< unknown >>> -- no test files could be found (either tE<sol>*.t or test.pl)
+C<<< unknown >>> -- no test files could be found (either tE<sol>*.t or test.pl) or 
+a result could not be determined from test output
 
 =back
 
-In returning results to CPAN.pm, "PASS" and "UNKNOWN" are considered successful
+In returning results to CPAN.pm, "pass" and "unknown" are considered successful
 attempts to "make test" or "Build test" and will not prevent installation.
-"FAIL" and "NA" are considered to be failures and CPAN.pm will not install
+"fail" and "na" are considered to be failures and CPAN.pm will not install
 unless forced.
 
 =head1 CONFIG FILE OPTIONS
@@ -272,18 +273,6 @@ tests (e.g. "make test"), C<<< test() >>> executes the command via C<<< system()
 teeing the output to a file.  Based on the output captured in the file,
 C<<< test() >>> generates and sends a L<Test::Reporter> report.  It returns true if
 the test grade is "pass" or "unknown" and returns false, otherwise.
-
-=head1 KNOWN ISSUES
-
-=over
-
-=item *
-
-Does not capture detailed output if C<<< test.pl >>> exists and "make test" is 
-the system command; results will be reported without test output based
-on the exit code when test.pl is run
-
-=back
 
 =head1 BUGS
 
