@@ -2,10 +2,9 @@ Revision history for Perl module CPAN::Reporter
 
 0.21
 
-    - added support for "NA" grade when prerequisites are not met
+    - added test.pl support with full capture of output
 
-    - changed diagnostic message for problems with "make test" and test.pl
-      for greater clarity
+    - added support for "NA" grade when prerequisites are not met
 
     - refactored tests into separate files by grade
     

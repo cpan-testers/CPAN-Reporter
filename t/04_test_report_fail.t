@@ -17,6 +17,7 @@ my @test_distros = (
         eumm_grade => "fail",
         mb_success => 0,
         mb_grade => "fail",
+        msg => "Distribution had failing tests",
     },
     {
         name => 'Bogus-test.pl-NoOutput-NOK',
@@ -24,6 +25,7 @@ my @test_distros = (
         eumm_grade => "fail",
         mb_success => 0,
         mb_grade => "fail",
+        msg => "Tests had no output",
     },
     {
         name => 'Bogus-test.pl-Fail',
@@ -31,6 +33,7 @@ my @test_distros = (
         eumm_grade => "fail",
         mb_success => 0,
         mb_grade => "fail",
+        msg => "Distribution had failing tests",
     },
     {
         name => 'Bogus-t-NoOutput',
@@ -38,6 +41,7 @@ my @test_distros = (
         eumm_grade => "fail",
         mb_success => 0,
         mb_grade => "fail",
+        msg => "Tests had no output",
     },
 );
 
