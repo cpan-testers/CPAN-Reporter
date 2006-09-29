@@ -7,6 +7,10 @@ Revision history for Perl module CPAN::Reporter
 
     - changed prerequisites report for easier reading and to show requires
       and build_requires individually, if available from CPAN.pm
+
+    - change test.pl test grading under ExtUtils::MakeMaker from output 
+      parsing to determining the success or failure of a separate run of 
+      Makefile
       
 0.21 Thu Sep 28 07:06:30 EDT 2006
 

@@ -266,12 +266,21 @@ sub _grade_report {
 
     # With test.pl and 'make test', any t/*.t might pass Test::Harness, but
     # test.pl might still fail, or there might only be test.pl,
-    # so parse for make errors and reset the results from that
+    # so re-run make test on test.pl
     
     if ( $is_make && -f "test.pl" && $grade ne 'fail' ) {
-        my ($make) = ($result->{command} =~ m{^(\S+)});
-        $make = basename($make);
-        if ( $result->{output} =~ m{^$make.*?:.*?error}ims ) {
+        my $make = $result->{command};
+        if ( -d "t" ) {
+            # need to skip t/*.t
+            open SKIPPING, ">skipping.t";
+            print SKIPPING 
+                q{print "1..0 # Skipping bypass t/*.t and only run test.pl\n"};
+            close SKIPPING;
+            $make .= " TEST_FILES=skipping.t";
+        }
+        print "\nCouldn't conclusively determine test result; re-running " .
+              "test.pl to capture results.\n\n";
+        if ( system( $make ) ) {
             $grade = "fail";
             $msg = "'make test' error detected";
         }
