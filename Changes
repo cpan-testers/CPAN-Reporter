@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.22
+0.22 Thu Sep 28 23:44:54 EDT 2006
 
     - added support for future CPAN.pm support for separate requires and
       build_requires prerequisites
