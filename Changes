@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+0.23
+
+    - changed test.pl/ExtUtils::MakeMaker handling to wrap 'make test'
+      execution with a standardized (parsable) string; does not run
+      test.pl twice anymore (Jonathan Rockway)
+
 0.22 Thu Sep 28 23:44:54 EDT 2006
 
     - added support for future CPAN.pm support for separate requires and
@@ -8,7 +14,7 @@ Revision history for Perl module CPAN::Reporter
     - changed prerequisites report for easier reading and to show requires
       and build_requires individually, if available from CPAN.pm
 
-    - change test.pl test grading under ExtUtils::MakeMaker from output 
+    - changed test.pl test grading under ExtUtils::MakeMaker from output 
       parsing to determining the success or failure of a separate run of 
       Makefile
       

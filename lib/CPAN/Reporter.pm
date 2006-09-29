@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.22";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.23";
 
 use Config;
 use Config::Tiny ();
@@ -10,6 +10,7 @@ use File::Basename qw/basename/;
 use File::HomeDir ();
 use File::Path qw/mkpath/;
 use File::Temp ();
+use Probe::Perl ();
 use Tee qw/tee/;
 use Test::Reporter ();
 
@@ -167,7 +168,23 @@ sub test {
         command => $system_command,
     };
 
-    tee($system_command, { stderr => 1 }, $temp_out);
+    my ($tee_input, $makewrapper);
+    
+    if ( -f "test.pl" && _is_make($system_command) ) {
+        $makewrapper = File::Temp->new;
+        open MAKEWRAP, ">$makewrapper"
+            or die "Could not create a wrapper for make: $!";
+        print MAKEWRAP qq{system('$system_command');\n};
+        print MAKEWRAP qq{print "makewrapper: make ", \$? ? "failed" : "ok";\n};
+        close MAKEWRAP;
+        $tee_input = Probe::Perl->find_perl_interpreter() .  " $makewrapper";
+    }
+    else {
+        $tee_input = $system_command;
+    }
+    
+    tee($tee_input, { stderr => 1 }, $temp_out);
+        
     if ( ! open(TEST_RESULT, "<", $temp_out) ) {
         warn "CPAN::Reporter couldn't read test results\n";
         return;
@@ -236,7 +253,7 @@ sub _grade_report {
     # get_results()    -- for versions >= 2.57_03
 
     # check for make or Build
-    $is_make = 1 if $result->{command} =~ m{make};
+    $is_make = _is_make( $result->{command} );
         
     # parse for Test::Harness results
     if ( $result->{output} =~ m{^All tests successful}ms ) {
@@ -269,24 +286,13 @@ sub _grade_report {
     # so re-run make test on test.pl
     
     if ( $is_make && -f "test.pl" && $grade ne 'fail' ) {
-        my $make = $result->{command};
-        if ( -d "t" ) {
-            # need to skip t/*.t
-            open SKIPPING, ">skipping.t";
-            print SKIPPING 
-                q{print "1..0 # Skipping bypass t/*.t and only run test.pl\n"};
-            close SKIPPING;
-            $make .= " TEST_FILES=skipping.t";
-        }
-        print "\nCouldn't conclusively determine test result; re-running " .
-              "test.pl to capture results.\n\n";
-        if ( system( $make ) ) {
+        if ( $result->{output} =~ m{^makewrapper: make failed}ims ) {
             $grade = "fail";
             $msg = "'make test' error detected";
         }
         else {
             $grade = "pass";
-            $msg = "'make test' had no errors";
+            $msg = "'make test' no errors";
         }
     }
 
@@ -311,6 +317,13 @@ sub _grade_report {
 
     _grade_msg( $grade, $msg );
     return $grade;
+}
+
+#--------------------------------------------------------------------------#
+
+sub _is_make {
+    my $command = shift;
+    return 1 if $command =~ m{^\S*make}ims;
 }
 
 #--------------------------------------------------------------------------#
