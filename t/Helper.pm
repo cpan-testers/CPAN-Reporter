@@ -64,7 +64,7 @@ sub test_fake_config {
 # dist tests
 #--------------------------------------------------------------------------#
 
-sub test_dist_plan() { 7 }
+sub test_dist_plan() { 9 }
 sub test_dist {
     my ($case, $dist) = @_;
     local $Test::Builder::Level = $Test::Builder::Level + 1;
@@ -107,6 +107,10 @@ sub test_dist {
         "$case->{name}: test('make test') grade reported as '$case->{eumm_grade}'"
     );
         
+    like( $stdout, "/$case->{eumm_msg}/",
+        "$case->{name}: test('make test') grade explanation correct"
+    );
+
     diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
         unless ( $is_rc_correct && $is_grade_correct );
     
@@ -138,6 +142,10 @@ sub test_dist {
             "$case->{name}: test('perl Build test') grade reported as '$case->{mb_grade}'"
         );
         
+        like( $stdout, "/$case->{mb_msg}/",
+            "$case->{name}: test('perl Build test') grade explanation correct"
+        );
+
         diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
             unless ( $is_rc_correct && $is_grade_correct );
     }

@@ -12,18 +12,31 @@ use t::Helper;
 my @test_distros = (
     # pass
     {
-        name => 'Bogus-t-Pass',
+        name => 't-Pass',
         eumm_success => 1,
         eumm_grade => "pass",
+        eumm_msg => "All tests successful",
         mb_success => 1,
         mb_grade => "pass",
+        mb_msg => "All tests successful",
     },
     {
-        name => 'Bogus-test.pl-Pass',
+        name => 'test.pl-Pass',
         eumm_success => 1,
         eumm_grade => "pass",
+        eumm_msg => "'make test' no errors",
         mb_success => 1,
         mb_grade => "pass",
+        mb_msg => "All tests successful",
+    },
+    {
+        name => 't-test.pl-Pass-Pass',
+        eumm_success => 1,
+        eumm_grade => "pass",
+        eumm_msg => "'make test' no errors",
+        mb_success => 1,
+        mb_grade => "pass",
+        mb_msg => "All tests successful",
     },
 );
 

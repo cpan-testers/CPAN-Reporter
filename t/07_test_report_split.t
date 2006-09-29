@@ -12,11 +12,22 @@ use t::Helper;
 my @test_distros = (
     # split pass/fail
     {
-        name => 'Bogus-test.pl-NoOutput-OK',
+        name => 'test.pl-NoOutput-OK',
         eumm_success => 1,
         eumm_grade => "pass",
+        eumm_msg => "'make test' no errors",
         mb_success => 0,
         mb_grade => "fail",
+        mb_msg => "Tests had no output",
+    },
+    {
+        name => 't-test.pl-Pass-NoOutput-OK',
+        eumm_success => 1,
+        eumm_grade => "pass",
+        eumm_msg => "'make test' no errors",
+        mb_success => 0,
+        mb_grade => "fail",
+        mb_msg => "Distribution had failing tests",
     },
 );
 

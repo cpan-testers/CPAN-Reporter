@@ -258,6 +258,7 @@ sub _grade_report {
     # parse for Test::Harness results
     if ( $result->{output} =~ m{^All tests successful}ms ) {
         $grade = 'pass';
+        $msg = 'All tests successful';
     }
     elsif ( $result->{output} =~ m{^.?No tests defined}ms ) {
         $grade = 'unknown';

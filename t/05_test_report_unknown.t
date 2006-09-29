@@ -12,18 +12,22 @@ use t::Helper;
 my @test_distros = (
     # unknown
     {
-        name => 'Bogus-NoTestDir',
+        name => 'NoTestDir',
         eumm_success => 1,
         eumm_grade => "unknown",
+        eumm_msg => "No tests provided",
         mb_success => 1,
         mb_grade => "unknown",
+        mb_msg => "No tests provided",
     },
     {
-        name => 'Bogus-NoTestFiles',
+        name => 'NoTestFiles',
         eumm_success => 1,
         eumm_grade => "unknown",
+        eumm_msg => "No tests were run",
         mb_success => 1,
         mb_grade => "unknown",
+        mb_msg => "No tests provided",
     },
 );
 

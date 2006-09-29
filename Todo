@@ -1,10 +1,5 @@
 TODO list for Perl module CPAN::Reporter
 
-- prepare for CPAN.pm changing what prereq_pm() returns
-
-- Look at CPANPLUS::Internals::Constants::Reports and try to 
-  replicate that logic
-
 - Need a more complete grade/option table
 
             pass    fail    unknown na
@@ -25,18 +20,19 @@ TODO list for Perl module CPAN::Reporter
   grade-lists without actions are taken to mean "yes" for those grades;
   "no" is the default fallback rule; default can be specified explicitly
 
-- Check failed tests for perl prerequisite failure
-
 - Confirm up-to-date Test::Harness diagnostics
 
-- Improve test coverage
+- Look at CPANPLUS::Internals::Constants::Reports and try to 
+  replicate that logic
+
+- Add tests for the report itself
+
+- Improve test coverage for utility/error handling
 
 - Include some/all of %ENV
 
 - Include some of Config (compiler, make, lib/inc paths, etc.) and
   special variables like UID, EID, etc.
-
-- Add TOC to report
 
 - Check email addresses for validity (?)
 
