@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.23
+0.23 Fri Sep 29 14:35:49 EDT 2006
 
     - changed test.pl/ExtUtils::MakeMaker handling to wrap 'make test'
       execution with a standardized (parsable) string; does not run
