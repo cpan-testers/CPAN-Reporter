@@ -22,6 +22,7 @@ t/dist/NoTestDir/Makefile.PL
 t/dist/NoTestFiles/Build.PL
 t/dist/NoTestFiles/lib/Bogus/Module.pm
 t/dist/NoTestFiles/Makefile.PL
+t/dist/NoTestFiles/t/README
 t/dist/t-Fail/Build.PL
 t/dist/t-Fail/lib/Bogus/Module.pm
 t/dist/t-Fail/Makefile.PL
