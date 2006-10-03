@@ -1,5 +1,16 @@
 TODO list for Perl module CPAN::Reporter
 
+- Write prereq_pm report tests
+
+- Generate prereq report from a sub-process
+
+- Check prereq_pm for "perl" now that CPAN.pm passes it along
+
+- Test installed versions of programs in a perl subshell to pick up PERL5LIB
+
+- Check for system() call $? & 127 (only on Unix, though) or set a $SIG{INT}
+  handler (for Win32); abort test without sending
+
 - Need a more complete grade/option table
 
             pass    fail    unknown na

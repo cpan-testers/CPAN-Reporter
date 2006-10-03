@@ -1,5 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+0.25
+
+    - added tests for prereq reporting
+
 0.24 Sun Oct  1 04:27:51 EDT 2006
 
     *** Emergency bug fix ***
