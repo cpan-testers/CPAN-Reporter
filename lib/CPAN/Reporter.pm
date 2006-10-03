@@ -403,7 +403,7 @@ sub _prereq_report {
         }
     }
     
-    # find formatting widths and get installed versions
+    # find formatting widths 
     my ($name_width, $need_width, $have_width) = (6, 4, 4);
     for my $section ( qw/requires build_requires/ ) {
         for my $module ( keys %{ $need{$section} } ) {

@@ -19,7 +19,18 @@ my @prereq_cases = (
     [ 'perl',               5.00,    $],   1   ],   
 );
 
-plan tests => 1 + test_fake_config_plan() + 1 + 4 * @prereq_cases;
+my @scenarios = (
+    [ "old CPAN-style", undef ], # undef is signal and helps keep count
+    [ "only one", qw/requires/ ],
+    [ "only one", qw/build_requires/ ],
+    [ "both types", qw/requires build_requires/ ],
+);
+
+my $scenario_count;
+$scenario_count += @$_ - 1 for @scenarios;
+
+plan tests => 2 + test_fake_config_plan() + 
+              $scenario_count * ( 1 + 4 * @prereq_cases );
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -55,47 +66,90 @@ require_ok('CPAN::Reporter');
 test_fake_config();
 
 #--------------------------------------------------------------------------#
-# Old style CPAN prereq_pm
+# Test no prereq
 #--------------------------------------------------------------------------#
 
-my $mock_dist = t::MockCPANDist->new( 
-    @mock_defaults,
-    prereq_pm => { %prereq_pm },
-);
-
-$got = CPAN::Reporter::_prereq_report( $mock_dist );
-@got = split /\n+/ms, $got;
-
-like( shift( @got), '/^requires:\s*$/ms',
-    "'requires' header"
-);
-
-# Dump header lines
-splice( @got, 0, 2 );
-
-for my $case ( sort { lc $a->[0] cmp lc $b->[0] } @prereq_cases ) {
-    my ($exp_module, $exp_need, $exp_have, $exp_ok) = @$case;
-    my ($bang, $module, $need, $have);
-    my $line = shift(@got);
-    if ($exp_ok) {
-        ($module, $need, $have) = 
-            ( $line =~ /^$expect_regex{$exp_module}\s*$/ms );
-    }
-    else {
-        ($bang, $module, $need, $have) = 
-            ( $line =~ /^$expect_regex{$exp_module}\s*$/ms );
-    }
-    is( $module, $exp_module,
-        "found '$exp_module' in report"
+{
+    my $mock_dist = t::MockCPANDist->new( 
+        @mock_defaults,
+        prereq_pm => { },
     );
-    is( $bang, $exp_ok ? undef : '!',
-        "'$exp_module' flag correct"
-    );
-    is( $exp_need, $need,
-        "'$exp_module' needed version correct"
-    );
-    is( $exp_have, $have,
-        "'$exp_module' installed version correct"
+
+    $got = CPAN::Reporter::_prereq_report( $mock_dist );
+    like( $got, '/^\s*No requirements found\s*$/ms',
+            "No requirements specified message correct"
     );
 }
 
+#--------------------------------------------------------------------------#
+# Scenario testing
+#--------------------------------------------------------------------------#
+
+for my $scene ( @scenarios ) {
+    
+    my ($label, @keys ) = @$scene;
+    
+    # initialize -- we need to have both keys for CPAN::Reporter
+    # to detect new CPAN style
+    my %scenario_prereq = (
+        requires => {},
+        build_requires => {},
+    );
+
+    # load up prereqs into one or more keys (new style) or replace
+    # %scenario_prereq if old, flat style
+    if ( @keys ) {
+        if ( defined $keys[0] ) {
+            $scenario_prereq{$_} = { %prereq_pm } for @keys;
+        }
+        else {
+            # do it old style, but set up $keys[0] to act like "requires"
+            # for analysis of output
+            %scenario_prereq = %prereq_pm;
+            $keys[0] = 'requires';
+        }
+    }
+    
+    my $mock_dist = t::MockCPANDist->new( 
+        @mock_defaults,
+        prereq_pm => { %scenario_prereq },
+    );
+
+    $got = CPAN::Reporter::_prereq_report( $mock_dist );
+    @got = split /\n+/ms, $got;
+
+    for my $prereq_type ( @keys ) {
+        like( shift( @got), '/^' . $prereq_type . ':\s*$/ms',
+            "$label: '$prereq_type' header"
+        );
+
+        # Dump header lines
+        splice( @got, 0, 2 );
+
+        for my $case ( sort { lc $a->[0] cmp lc $b->[0] } @prereq_cases ) {
+            my ($exp_module, $exp_need, $exp_have, $exp_ok) = @$case;
+            my ($bang, $module, $need, $have);
+            my $line = shift(@got);
+            if ($exp_ok) {
+                ($module, $need, $have) = 
+                    ( $line =~ /^$expect_regex{$exp_module}\s*$/ms );
+            }
+            else {
+                ($bang, $module, $need, $have) = 
+                    ( $line =~ /^$expect_regex{$exp_module}\s*$/ms );
+            }
+            is( $module, $exp_module,
+                "$label ($prereq_type): found '$exp_module' in report"
+            );
+            is( $bang, ($exp_ok ? undef : '!'),
+                "$label ($prereq_type): '$exp_module' flag correct"
+            );
+            is( $exp_need, $need,
+                "$label ($prereq_type): '$exp_module' needed version correct"
+            );
+            is( $exp_have, $have,
+                "$label ($prereq_type): '$exp_module' installed version correct"
+            );
+        }
+    }
+}
