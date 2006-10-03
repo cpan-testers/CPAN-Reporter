@@ -19,7 +19,7 @@ my @prereq_cases = (
     [ 'perl',               5.00,    $],   1   ],   
 );
 
-plan tests => 1 + test_fake_config_plan() + 1 + @prereq_cases;
+plan tests => 1 + test_fake_config_plan() + 1 + 4 * @prereq_cases;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -87,6 +87,15 @@ for my $case ( sort { lc $a->[0] cmp lc $b->[0] } @prereq_cases ) {
     }
     is( $module, $exp_module,
         "found '$exp_module' in report"
+    );
+    is( $bang, $exp_ok ? undef : '!',
+        "'$exp_module' flag correct"
+    );
+    is( $exp_need, $need,
+        "'$exp_module' needed version correct"
+    );
+    is( $exp_have, $have,
+        "'$exp_module' installed version correct"
     );
 }
 
