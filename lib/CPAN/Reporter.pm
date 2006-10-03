@@ -302,18 +302,22 @@ sub _grade_report {
     # that should be reported as 'na'
 
     if ( $grade eq 'fail' ) {
+        # check for perl version prerequisite or outright failure
+        if (
+            $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ||
+            $result->{output} =~ m{Perl .*? required.*?this is only}ms
+        ) {
+            $grade = 'na';
+            $msg = 'Perl version too low';
+        }
         # check the prereq report for a failure flag (!)
-        if ( $result->{prereq_pm} =~ m{n/a}ims ) {
+        elsif ( $result->{prereq_pm} =~ m{n/a}ims ) {
             $grade = 'na';
             $msg = 'Prerequisite missing';
         }
         elsif ( $result->{prereq_pm} =~ m{^\s+!}ims ) {
             $grade = 'na';
             $msg = 'Prerequisite version too low';
-        }
-        elsif ( $result->{output} =~ m{Perl .*? required.*?this is only}ms ) {
-            $grade = 'na';
-            $msg = 'Perl version too low';
         }
     }
 
@@ -343,8 +347,6 @@ sub _open_config_file {
 #--------------------------------------------------------------------------#
 
 # create support program
-# XXX consider using version.pm to do verson comparisons instead
-# of other things
 my $version_finder = File::Temp->new;
 open VERSIONFINDER , ">$version_finder"
     or die "Could not create temporary support program for versions: $!";

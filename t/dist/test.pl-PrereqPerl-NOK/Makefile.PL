@@ -8,5 +8,6 @@ WriteMakefile
     'EXE_FILES' => [],
     'VERSION_FROM' => 'lib/Bogus/Module.pm',
     'PREREQ_PM' => {
+        perl => 42,
     },
 );

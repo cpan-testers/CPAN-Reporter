@@ -71,6 +71,26 @@ my @test_distros = (
         mb_grade => "na",
         mb_msg => "Perl version too low",
     },
+    {
+        name => 't-PrereqPerl-NOK',
+        prereq => { perl => 42 },
+        eumm_success => 0,
+        eumm_grade => "na",
+        eumm_msg => "Perl version too low",
+        mb_success => 0,
+        mb_grade => "na",
+        mb_msg => "Perl version too low",
+    },
+    {
+        name => 'test.pl-PrereqPerl-NOK',
+        prereq => { perl => 42 },
+        eumm_success => 0,
+        eumm_grade => "na",
+        eumm_msg => "Perl version too low",
+        mb_success => 0,
+        mb_grade => "na",
+        mb_msg => "Perl version too low",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() + test_dist_plan() * @test_distros;
