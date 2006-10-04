@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.26
+0.26 Wed Oct  4 09:25:08 EDT 2006
 
     - fixed prereq tests: requiring "0" will now pass for modules with no 
       $VERSION defined (will show that version '0' is installed)
