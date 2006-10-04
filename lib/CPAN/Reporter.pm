@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.26";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.27";
 
 use Config;
 use Config::Tiny ();
@@ -382,26 +382,29 @@ close VERSIONFINDER;
 
 sub _prereq_report {
     my $dist = shift;
-    my %need = (
-        'requires' => $dist->prereq_pm,
-        'build_requires' => {},
-    );
-    my (%have, %prereq_met, $report);
+    my (%need, %have, %prereq_met, $report);
     
-    # unpack if subdivided in newer versions of CPAN.pm
-    if ( 
-        join( q{ }, sort keys %{$need{requires}} ) eq 
-        "build_requires requires" 
-    ) {
-        $need{build_requires} = $need{requires}{build_requires};
-        $need{requires} = $need{requires}{requires};
+    my $prereq_pm = $dist->prereq_pm;
+
+    if ( ref $prereq_pm eq 'HASH' ) {
+        # is it the new CPAN style with requires/build_requires?
+        if (join(q{ }, sort keys %$prereq_pm) eq "build_requires requires") {
+            $need{requires} = $prereq_pm->{requires} 
+                if  ref $prereq_pm->{requires} eq 'HASH';
+            $need{build_requires} = $prereq_pm->{build_requires} 
+                if ref $prereq_pm->{build_requires} eq 'HASH';
+        }
+        else {
+            $need{requires} = $prereq_pm;
+        }
     }
 
     # see what prereqs are satisfied in subprocess
+    my $perl = Probe::Perl->find_perl_interpreter();
     for my $section ( qw/requires build_requires/ ) {
-        my @prereq_list = %{$need{$section} };
+        next unless ref $need{$section} eq 'HASH';
+        my @prereq_list = %{ $need{$section} };
         next unless @prereq_list;
-        my $perl = Probe::Perl->find_perl_interpreter();
         my @prereq_results = qx/$perl $version_finder @prereq_list/;
         for my $line ( @prereq_results ) {
             my ($mod, $met, $have) = split " ", $line;

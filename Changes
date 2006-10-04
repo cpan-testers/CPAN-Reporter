@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+0.27
+
+    *** Emergency bug fix ***
+    
+    - fixed bug in prereq collection from some versions of CPAN.pm
+
 0.26 Wed Oct  4 09:25:08 EDT 2006
 
     - fixed prereq tests: requiring "0" will now pass for modules with no 
