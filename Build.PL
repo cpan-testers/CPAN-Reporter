@@ -66,6 +66,7 @@ $class->new(
     create_makefile_pl  => 'traditional',
     requires        => {
         # module requirements here
+        'Config'                => 0,
         'Config::Tiny'          => 2.08,
         'CPAN'                  => 1.88,
         'ExtUtils::MakeMaker'   => 0,

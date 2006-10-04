@@ -1,12 +1,12 @@
 Revision history for Perl module CPAN::Reporter
 
-0.25
+0.25 Tue Oct  3 23:00:02 EDT 2006
 
     - fixed prereq testing: tests are conducted in a perl subprocess to use
       same $ENV{PERL5LIB} as used for testing itself; necessary to support
       prerequisites that may be tested by CPAN.pm but not yet installed
       
-    - added special logic for perl prerequisite versions checks now that
+    - added special logic for perl prerequisite version checks now that
       CPAN.pm passes it along
 
     - added tests for prereq reporting
