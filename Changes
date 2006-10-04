@@ -1,10 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
-0.27
+0.27 Wed Oct  4 14:04:08 EDT 2006
 
     *** Emergency bug fix ***
     
-    - fixed bug in prereq collection from some versions of CPAN.pm
+    - fixed fatal bug in prereq collection from some versions of CPAN.pm
 
 0.26 Wed Oct  4 09:25:08 EDT 2006
 
