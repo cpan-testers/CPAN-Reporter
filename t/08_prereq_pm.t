@@ -95,8 +95,8 @@ for my $scene ( @scenarios ) {
     # initialize -- we need to have both keys for CPAN::Reporter
     # to detect new CPAN style
     my %scenario_prereq = (
-        requires => {},
-        build_requires => {},
+        requires => undef,
+        build_requires => undef,
     );
 
     # load up prereqs into one or more keys (new style) or replace
