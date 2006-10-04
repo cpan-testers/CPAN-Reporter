@@ -15,7 +15,7 @@ my @prereq_cases = (
     [ 'Bogus::Found',       1.23,   3.14,   1   ],
     [ 'Bogus::NotFound',    1.49,   "n/a",  0   ],
     [ 'Bogus::TooOld',      2.72,   0.01,   0   ],
-    [ 'Bogus::NoVersion',   0.23,      0,   0   ],
+    [ 'Bogus::NoVersion',      0,      0,   1   ],
     [ 'perl',               5.00,    $],   1   ],   
 );
 
@@ -38,13 +38,16 @@ plan tests => 2 + test_fake_config_plan() +
 
 my %prereq_pm = map { @{$_}[0,1] } @prereq_cases;
 
-my %expect_regex;
+my $expect_regex = '\s+(!|\s)\s+(\S+)\s+(\S+)\s+(\S+)';
+# \s+         leading spaces
+# (!|\s)      capture bang or space
+# \s+         separator spaces
+# (\S+)       module name
+# \s+         separator spaces
+# (\S+)       module version needed
+# \s+         separator spaces
+# (\S+)       module version found
 
-my $term_regex = '\s+(\S+)';
-for my $case ( @prereq_cases ) {
-    my $terms = $case->[3] ? 3 : 4;
-    $expect_regex{$case->[0]} = ( $term_regex x $terms );
-}
 
 my @mock_defaults = (
     pretty_id => "Bogus::Module",
@@ -128,26 +131,21 @@ for my $scene ( @scenarios ) {
 
         for my $case ( sort { lc $a->[0] cmp lc $b->[0] } @prereq_cases ) {
             my ($exp_module, $exp_need, $exp_have, $exp_ok) = @$case;
-            my ($bang, $module, $need, $have);
             my $line = shift(@got);
-            if ($exp_ok) {
-                ($module, $need, $have) = 
-                    ( $line =~ /^$expect_regex{$exp_module}\s*$/ms );
-            }
-            else {
-                ($bang, $module, $need, $have) = 
-                    ( $line =~ /^$expect_regex{$exp_module}\s*$/ms );
-            }
+            my ($bang, $module, $need, $have) = 
+                ( $line =~ /^$expect_regex\s*$/ms );
             is( $module, $exp_module,
                 "$label ($prereq_type): found '$exp_module' in report"
             );
-            is( $bang, ($exp_ok ? undef : '!'),
+            is( $bang, ($exp_ok ? ' ' : '!'),
                 "$label ($prereq_type): '$exp_module' flag correct"
             );
             is( $exp_need, $need,
                 "$label ($prereq_type): '$exp_module' needed version correct"
             );
-            is( $exp_have, $have,
+            # Check numerically, too, since version.pm/bleadperl will make 
+            # 1.2 into 1.200
+            ok( $exp_have eq $have || $exp_have == $have,
                 "$label ($prereq_type): '$exp_module' installed version correct"
             );
         }

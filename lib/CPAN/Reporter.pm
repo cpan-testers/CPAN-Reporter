@@ -365,6 +365,11 @@ while ( @ARGV ) {
         if ( $@ ) {
             print "0 n/a\n";
         }
+        elsif ( $need == 0) {
+            # enough that it exists, don't check explicitly
+            # or modules without $VERSION will fail
+            print "1 ", $mod->VERSION || 0, "\n";
+        }
         else {
             eval "use $mod $need qw()";
             print $@ ? "0 " : "1 ";

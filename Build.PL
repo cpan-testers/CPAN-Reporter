@@ -66,10 +66,9 @@ $class->new(
     create_makefile_pl  => 'traditional',
     requires        => {
         # module requirements here
-        'Config'                => 0,
         'Config::Tiny'          => 2.08,
         'CPAN'                  => 1.88,
-        'ExtUtils::MakeMaker'   => 0,
+        'ExtUtils::MakeMaker'   => 6.26, # sane ExtUtils::Command::MM
         'File::Basename'        => 0,
         'File::Copy::Recursive' => 0.28,
         'File::HomeDir'         => 0.58, 

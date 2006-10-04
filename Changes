@@ -1,5 +1,16 @@
 Revision history for Perl module CPAN::Reporter
 
+0.26
+
+    - fixed prereq tests: requiring "0" will now pass for modules with no 
+      $VERSION defined (will show that version '0' is installed)
+
+    - fixed prereq tests for version.pm and bleadperl expansion of
+      version numbers when stringified (1.2 becomes 1.200)
+
+    - bumped ExtUtils::MakeMaker prereq version to 6.26 to ensure proper
+      globbing of t/*.t files for Test::Harness
+
 0.25 Tue Oct  3 23:00:02 EDT 2006
 
     - fixed prereq testing: tests are conducted in a perl subprocess to use
