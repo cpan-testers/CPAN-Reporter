@@ -1,8 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
-0.28
+0.28 Sun Oct  8 12:47:46 EDT 2006
 
-    - changed tests to cleanup temp directories (due to bug in File::Temp)
+    - fixed test programs to force cleanup temp directories 
+      (due to bug in File::Temp)
 
 0.27 Wed Oct  4 14:04:08 EDT 2006
 
