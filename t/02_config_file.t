@@ -18,7 +18,9 @@ plan tests => 30;
 # Fixtures
 #--------------------------------------------------------------------------#
 
-my $temp_home = tempdir();
+my $temp_home = tempdir( 
+    "CPAN-Reporter-testhome-XXXXXXXX", TMPDIR => 1, CLEANUP => 1 
+);
 
 my $home_dir = File::Spec->rel2abs( $temp_home );
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );

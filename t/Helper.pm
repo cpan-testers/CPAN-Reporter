@@ -28,7 +28,9 @@ my $make = $Config{make};
 #--------------------------------------------------------------------------#
 
 my $temp_stdout = File::Temp->new();
-my $temp_home = tempdir();
+my $temp_home = tempdir(
+        "CPAN-Reporter-testhome-XXXXXXXX", TMPDIR => 1, CLEANUP => 1
+);
 my $home_dir = File::Spec->rel2abs( $temp_home );
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
@@ -74,7 +76,9 @@ sub test_dist {
 
     # clone dist directory -- avoids needing to cleanup source
     my $dist_dir = File::Spec->catdir( qw/t dist /, $case->{name} );
-    my $work_dir = tempdir();
+    my $work_dir = tempdir( 
+        "CPAN-Reporter-testdist-XXXXXXXX", TMPDIR => 1, CLEANUP => 1
+    );
     ok( dircopy($dist_dir, $work_dir),
         "Copying $case->{name} to temporary build directory"
     );
