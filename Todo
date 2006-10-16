@@ -1,7 +1,11 @@
 TODO list for Perl module CPAN::Reporter
 
 - Check for system() call $? & 127 (only on Unix, though) or set a $SIG{INT}
-  handler (for Win32); abort test without sending
+  handler (for Win32); abort test without sending; key question: is this
+  "unknown" (success) or "n/a" (fail)?  Probably the latter.
+
+- Add an interface for CPAN.pm to pass in test output directly (e.g. from 
+  Expect.pm) for report generation.
 
 - Need a more complete grade/option table
 
@@ -28,6 +32,9 @@ TODO list for Perl module CPAN::Reporter
 
 - Look at CPANPLUS::Internals::Constants::Reports and try to 
   replicate that logic
+
+- In test programs, check that temp space gets created -- skip if can't 
+  set up the test properly
 
 - Add tests for the report itself
 
