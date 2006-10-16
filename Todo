@@ -1,11 +1,23 @@
 TODO list for Perl module CPAN::Reporter
 
+- Check for grading regex independently.  Track how many "pass" or "fail"
+  regex match.  If ambiguous result, flag as UNKNOWN.  (Should help 
+  handle autoinstall recursion.)
+  
 - Check for system() call $? & 127 (only on Unix, though) or set a $SIG{INT}
   handler (for Win32); abort test without sending; key question: is this
-  "unknown" (success) or "n/a" (fail)?  Probably the latter.
+  success or fail for return code to CPAN?  Probably the latter.
 
 - Add an interface for CPAN.pm to pass in test output directly (e.g. from 
   Expect.pm) for report generation.
+
+- In test programs, check that temp space gets created -- skip if can't 
+  set up the test properly
+
+- Include some/all of %ENV
+
+- Include some of Config (compiler, make, lib/inc paths, etc.) and
+  special variables like UID, EID, etc.
 
 - Need a more complete grade/option table
 
@@ -33,17 +45,9 @@ TODO list for Perl module CPAN::Reporter
 - Look at CPANPLUS::Internals::Constants::Reports and try to 
   replicate that logic
 
-- In test programs, check that temp space gets created -- skip if can't 
-  set up the test properly
-
 - Add tests for the report itself
 
 - Improve test coverage for utility/error handling
-
-- Include some/all of %ENV
-
-- Include some of Config (compiler, make, lib/inc paths, etc.) and
-  special variables like UID, EID, etc.
 
 - Check email addresses for validity (?)
 
