@@ -30,6 +30,15 @@ my @test_distros = (
         mb_msg => "Distribution had failing tests",
     },
     {
+        name => 't-MultipleMatch',
+        eumm_success => 0,
+        eumm_grade => "fail",
+        eumm_msg => "Distribution had failing tests",
+        mb_success => 0,
+        mb_grade => "fail",
+        mb_msg => "Distribution had failing tests",
+    },
+    {
         name => 'test.pl-Fail',
         eumm_success => 0,
         eumm_grade => "fail",

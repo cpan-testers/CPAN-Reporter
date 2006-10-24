@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+0.29 
+
+    - added test for recursive builds with unrelated "tests successful" 
+      messages
+
 0.28 Sun Oct  8 12:47:46 EDT 2006
 
     - fixed test programs to force cleanup temp directories 
