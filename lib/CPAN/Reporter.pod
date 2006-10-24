@@ -212,17 +212,17 @@ The action prompt options are:
 
 =item *
 
-C<<< cc_author = <grade:action ...> >>> -- should module authors should be sent a copy of 
+C<<< cc_author = <grade:action> ... >>> -- should module authors should be sent a copy of 
 the test report at their C<<< author@cpan.org >>> address? (default:yes pass:no)
 
 =item *
 
-C<<< edit_report = <grade:action ...> >>> -- edit the test report before sending? 
+C<<< edit_report = <grade:action> ... >>> -- edit the test report before sending? 
 (default: askE<sol>no)
 
 =item *
 
-C<<< send_report = <grade:action ...> >>> -- should test reports be sent at all?
+C<<< send_report = <grade:action> ... >>> -- should test reports be sent at all?
 (default: askE<sol>yes)
 
 =back

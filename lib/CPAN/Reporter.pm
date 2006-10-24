@@ -913,11 +913,11 @@ Multiple grades may be specified together by separating them with a slash.
 
 The action prompt options are:
 
-* {cc_author = <grade:action ...>} -- should module authors should be sent a copy of 
+* {cc_author = <grade:action> ...} -- should module authors should be sent a copy of 
 the test report at their {author@cpan.org} address? (default:yes pass:no)
-* {edit_report = <grade:action ...>} -- edit the test report before sending? 
+* {edit_report = <grade:action> ...} -- edit the test report before sending? 
 (default: ask/no)
-* {send_report = <grade:action ...>} -- should test reports be sent at all?
+* {send_report = <grade:action> ...} -- should test reports be sent at all?
 (default: ask/yes)
 
 These options are included in the starter config file created automatically the
