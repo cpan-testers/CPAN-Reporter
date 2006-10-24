@@ -39,6 +39,8 @@ TODO list for Perl module CPAN::Reporter
   grade-lists without actions are taken to mean "yes" for those grades;
   "no" is the default fallback rule; default can be specified explicitly
 
+- Consider changing OSX config file location to my_home from my_documents
+
 - Confirm up-to-date Test::Harness diagnostics ( Note -- modern CPAN
   may be forcing 2.62 in some situations, but not all)
 

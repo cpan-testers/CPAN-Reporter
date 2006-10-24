@@ -333,6 +333,8 @@ sub _is_make {
 }
 
 #--------------------------------------------------------------------------#
+# _open_config_file
+#--------------------------------------------------------------------------#
 
 sub _open_config_file {
     my $config_file = _get_config_file();
@@ -340,6 +342,17 @@ sub _open_config_file {
         or warn "Couldn't read CPAN::Reporter configuration file " .
                 "'$config_file': " . Config::Tiny->errstr() . "\n";
     return $config; 
+}
+
+#--------------------------------------------------------------------------#
+# _parse_option
+#--------------------------------------------------------------------------#
+
+sub _parse_option {
+    my ($option, $input_string) = @_;
+    $option = {};
+
+    return $option;
 }
 
 #--------------------------------------------------------------------------#

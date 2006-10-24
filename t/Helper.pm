@@ -6,6 +6,7 @@ use vars qw/@EXPORT/;
 @EXPORT = qw/
     test_dist test_dist_plan
     test_fake_config test_fake_config_plan
+    test_process_report test_process_report_plan
 /;
 
 use base 'Exporter';
@@ -37,6 +38,8 @@ my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 
 my $bogus_email = 'johndoe@nowhere.com';
 my $bogus_smtp = 'mail.mail.com';
+
+my $sent_report;
 
 #--------------------------------------------------------------------------#
 # test config file prep
@@ -157,6 +160,57 @@ sub test_dist {
 }
 
 #--------------------------------------------------------------------------#
+# report tests
+#--------------------------------------------------------------------------#
+
+my $success_para = <<'HERE';
+Thank you for uploading your work to CPAN.  Congratulations!
+All tests were successful.
+HERE
+
+my $fail_para = <<'HERE';
+Thank you for uploading your work to CPAN.  However, it appears that
+there were some problems testing your distribution.
+HERE
+
+sub test_process_report_plan() { 4 };
+sub test_process_report {
+    my ($result, $label) = @_;
+
+    # automate CPAN::Reporter prompting
+    local $ENV{PERL_MM_USE_DEFAULT} = 1;
+    
+    my ($stdout, $stderr);
+    
+    eval {
+        capture sub {
+            CPAN::Reporter::_process_report( $result ); 
+        }, \$stdout, \$stderr;
+        return 1;
+    }; 
+     
+    is( $@, q{}, 
+        "_process_report for $label" 
+    );
+
+    my $msg_re = $result->{success} ? $success_para : $fail_para;
+    my $prereq = CPAN::Reporter::_prereq_report( $result->{dist} );
+
+    like( $t::Helper::sent_report, '/' . quotemeta($msg_re) . '/ms',
+        "correct intro paragraph for $label"
+    );
+
+    like( $t::Helper::sent_report, '/' . quotemeta($prereq) . '/ms',
+        "prereq report found for $label"
+    );
+    
+    like( $t::Helper::sent_report, '/' . quotemeta($result->{output}) . '/ms',
+        "test output found for $label"
+    );
+    
+};
+
+#--------------------------------------------------------------------------#
 # Mocking
 #--------------------------------------------------------------------------#
 
@@ -172,4 +226,9 @@ package Test::Reporter;
 sub new { print shift, "\n"; return bless {}, 'Test::Reporter::Mocked' }
 
 package Test::Reporter::Mocked;
+
+sub comments { shift; $t::Helper::sent_report = shift }
+
 sub AUTOLOAD { return "1 mocked answer" }
+
+1;

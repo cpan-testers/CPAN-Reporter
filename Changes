@@ -5,6 +5,10 @@ Revision history for Perl module CPAN::Reporter
     - added test for recursive builds with unrelated "tests successful" 
       messages
 
+    - added tests for report output format
+
+    - added TODO tests for improved option parsing
+    
 0.28 Sun Oct  8 12:47:46 EDT 2006
 
     - fixed test programs to force cleanup temp directories 
