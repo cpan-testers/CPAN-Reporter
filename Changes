@@ -1,9 +1,13 @@
 Revision history for Perl module CPAN::Reporter
 
-0.29 
+0.28_51 
 
-    *** Backward compatibility warning: configuration option changes ***
+    *** Backward compatibility warning: configuration options have changed
+        and config directory on OS X has changed ***
     
+    - changed config directory on Mac OS X to ~/.cpanreporter instead of 
+      ~/Documents/.cpanreporter to be more like Unix
+
     - change action prompt configuration option format to support grade-
       specific actions
     

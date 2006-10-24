@@ -1,18 +1,49 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.29";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.28_51";
 
 use Config;
 use Config::Tiny ();
 use ExtUtils::MakeMaker qw/prompt/;
 use File::Basename qw/basename/;
 use File::HomeDir ();
-use File::Path qw/mkpath/;
+use File::Path qw/mkpath rmtree/;
 use File::Temp ();
 use Probe::Perl ();
 use Tee qw/tee/;
 use Test::Reporter ();
+
+#--------------------------------------------------------------------------#
+# Back-compatibility checks -- just once per load
+#--------------------------------------------------------------------------#
+
+# 0.28_51 changed Mac OS X config file location -- if old directory is found,
+# move it to the new location
+if ( $^O eq 'darwin' ) {
+    my $old = File::Spec->catdir(File::HomeDir->my_documents,".cpanreporter");
+    my $new = File::Spec->catdir(File::HomeDir->my_home,".cpanreporter");
+    if ( ( -d $old ) && (! -d $new ) ) {
+        print STDERR << "HERE";
+Since CPAN::Reporter 0.28_51, the Mac OSX config directory has changed. 
+
+  Old: $old
+  New: $new  
+
+Your existing configuration file will be moved automatically.
+HERE
+        mkpath($new);
+        open OLD_CONFIG, File::Spec->catfile($old, "config.ini")
+            or die $!;
+        open NEW_CONFIG, ">" . File::Spec->catfile($new, "config.ini")
+            or die $!;
+        print NEW_CONFIG <OLD_CONFIG>;
+        close OLD_CONFIG;
+        close NEW_CONFIG;
+        unlink File::Spec->catfile($old, "config.ini") or die $!;
+        rmdir($old) or die $!;
+    }
+}
 
 #--------------------------------------------------------------------------#
 # defaults and prompts
@@ -206,7 +237,9 @@ sub test {
 #--------------------------------------------------------------------------#
 
 sub _get_config_dir {
-    return File::Spec->catdir(File::HomeDir->my_documents, ".cpanreporter");
+    return ( $^O eq 'MSWin32' )
+        ? File::Spec->catdir(File::HomeDir->my_documents, ".cpanreporter")
+        : File::Spec->catdir(File::HomeDir->my_home, ".cpanreporter") ;
 }
 
 #--------------------------------------------------------------------------#
@@ -801,10 +834,8 @@ unless forced.
 = CONFIG FILE OPTIONS
 
 Default options for CPAN::Reporter are read from a configuration file 
-{.cpanreporter/config.ini} in the user's home directory (Unix), "My 
-Documents" directory (Windows) or "~/Documents" directory (OS X).  
-(See [File::HomeDir] and the {my_documents} method for config folder
-location on other operating systems.)
+{.cpanreporter/config.ini} in the user's home directory (Unix and OS X)
+or "My Documents" directory (Windows).
 
 The configuration file is in "ini" format, with the option name and value
 separated by an "=" sign
@@ -853,8 +884,8 @@ Valid actions, and their associated meaning, are as follows:
 
 * {yes} -- automatic yes
 * {no} -- automatic no
-* {ask/no} or just {ask} -- prompt each time, but default to no
-* {ask/yes} -- prompt each time, but default to yes
+* {ask/no} or just {ask} -- ask each time, but default to no
+* {ask/yes} -- ask each time, but default to yes
 
 For "ask" prompts, the default will be used if return is pressed immediately at
 the prompt or if the {PERL_MM_USE_DEFAULT} environment variable is set to a

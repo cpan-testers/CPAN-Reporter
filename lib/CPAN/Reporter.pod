@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.29.
+This documentation describes version 0.28_51.
 
 =head1 SYNOPSIS
 
@@ -108,10 +108,8 @@ unless forced.
 =head1 CONFIG FILE OPTIONS
 
 Default options for CPAN::Reporter are read from a configuration file 
-C<<< .cpanreporter/config.ini >>> in the user's home directory (Unix), "My 
-Documents" directory (Windows) or "~E<sol>Documents" directory (OS X).  
-(See L<File::HomeDir> and the C<<< my_documents >>> method for config folder
-location on other operating systems.)
+C<<< .cpanreporter/config.ini >>> in the user's home directory (Unix and OS X)
+or "My Documents" directory (Windows).
 
 The configuration file is in "ini" format, with the option name and value
 separated by an "=" sign
@@ -176,11 +174,11 @@ C<<< no >>> -- automatic no
 
 =item *
 
-C<<< ask/no >>> or just C<<< ask >>> -- prompt each time, but default to no
+C<<< ask/no >>> or just C<<< ask >>> -- ask each time, but default to no
 
 =item *
 
-C<<< ask/yes >>> -- prompt each time, but default to yes
+C<<< ask/yes >>> -- ask each time, but default to yes
 
 =back
 

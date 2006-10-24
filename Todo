@@ -4,8 +4,6 @@ TODO list for Perl module CPAN::Reporter
   handler (for Win32); abort test without sending; key question: is this
   success or fail for return code to CPAN?  Probably the latter.
 
-- Consider changing OSX config file location to my_home from my_documents
-
 - Add an interface for CPAN.pm to pass in test output directly (e.g. from 
   Expect.pm) for report generation.
 
@@ -25,7 +23,7 @@ TODO list for Perl module CPAN::Reporter
 - Look at CPANPLUS::Internals::Constants::Reports and try to 
   replicate that logic
 
-- Improve test coverage for utility/error handling
+- Improve test coverage for utility subs and error handling
 
 - Check email addresses for validity (?)
 
