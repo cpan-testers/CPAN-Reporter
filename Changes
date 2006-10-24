@@ -2,6 +2,11 @@ Revision history for Perl module CPAN::Reporter
 
 0.29 
 
+    *** Backward compatibility warning: configuration option changes ***
+    
+    - change action prompt configuration option format to support grade-
+      specific actions
+    
     - fixed success/failure parsing when recursive make output is included;
       line parsing is now done in reverse and only the first matching line
       is used

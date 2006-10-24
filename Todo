@@ -4,6 +4,8 @@ TODO list for Perl module CPAN::Reporter
   handler (for Win32); abort test without sending; key question: is this
   success or fail for return code to CPAN?  Probably the latter.
 
+- Consider changing OSX config file location to my_home from my_documents
+
 - Add an interface for CPAN.pm to pass in test output directly (e.g. from 
   Expect.pm) for report generation.
 
@@ -15,27 +17,13 @@ TODO list for Perl module CPAN::Reporter
 - Include some of Config (compiler, make, lib/inc paths, etc.) and
   special variables like UID, EID, etc.
 
-- Idea in ABNF form:
-    option      ::= rule *( [ "," ] WSP rule )
-    rule        ::= grade-list / ( [ grade-list ":" ] action )
-    grade-list  ::= grade *( "/" grade )
-    grade       ::= "pass" / "fail" / "unknown" / "na" / "default"
-    action      ::= "yes" / "no" / "ask/yes" / "ask/no" / "ask"
-
-- Rules without a grade-list are a fallback if no other rule applies; 
-  rules are processed left to right, later rules overwrite earlier ones;
-  grade-lists without actions are taken to mean "yes" for those grades;
-  "no" is the default fallback rule; default can be specified explicitly
-
-- Consider changing OSX config file location to my_home from my_documents
+- Figure out what Andreas is doing with locally applied patches in CPAN.pm
 
 - Confirm up-to-date Test::Harness diagnostics ( Note -- modern CPAN
   may be forcing 2.62 in some situations, but not all)
 
 - Look at CPANPLUS::Internals::Constants::Reports and try to 
   replicate that logic
-
-- Add tests for the report itself
 
 - Improve test coverage for utility/error handling
 

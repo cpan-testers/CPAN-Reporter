@@ -27,7 +27,7 @@ my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 my $default_options = {
     email_from => '',
-    cc_author => 'fail',
+    cc_author => 'default:yes pass:no',
     edit_report => 'ask/no',
     send_report => 'ask/yes',
 };

@@ -79,15 +79,42 @@ my @good_cases = (
             default => "no",
         },
     },
+    {
+        label   => "grade/grade2:action",
+        option  => "edit_report",
+        input   => "fail/na:ask/yes",
+        output  => {
+            "fail"  => "ask/yes",
+            "na"    => "ask/yes",
+            default => "ask/no",
+        },
+    },
+    {
+        label   => "grade/grade2",
+        option  => "edit_report",
+        input   => "fail/na",
+        output  => {
+            "fail"  => "yes",
+            "na"    => "yes",
+            default => "ask/no",
+        },
+    },
 );
         
 my @bad_cases = (
     {
-        label   => "bad_action",
+        label   => "bad grade",
         option  => "edit_report",
-        input   => "nope",
+        input   => "failed",
         msg     => 
-            "/\\AIgnoring invalid option 'nope' for 'edit_report'/",
+            "/\\AIgnoring invalid grade 'failed' in option for 'edit_report'/",
+    },
+    {
+        label   => "bad action",
+        option  => "edit_report",
+        input   => "fail:run-away",
+        msg     => 
+            "/\\AIgnoring invalid action 'run-away' in option for 'edit_report'/",
     },
 );
 
