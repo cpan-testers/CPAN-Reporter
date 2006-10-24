@@ -338,6 +338,27 @@ sub _is_make {
 }
 
 #--------------------------------------------------------------------------#
+# _is_valid_action
+#--------------------------------------------------------------------------#
+
+my @valid_actions = qw{ yes no ask/yes ask/no ask };
+
+sub _is_valid_action {
+    my $action = shift;
+    return grep { $action eq $_ } @valid_actions;
+}
+
+#--------------------------------------------------------------------------#
+# _is_valid_grade
+#--------------------------------------------------------------------------#
+
+my @valid_grades = qw{ pass fail unknown na default };
+sub _is_valid_grade {
+    my $grade = shift;
+    return grep { $grade eq $_ } @valid_grades;
+}
+
+#--------------------------------------------------------------------------#
 # _open_config_file
 #--------------------------------------------------------------------------#
 
@@ -354,9 +375,28 @@ sub _open_config_file {
 #--------------------------------------------------------------------------#
 
 sub _parse_option {
-    my ($option, $input_string) = @_;
-    $option = {};
+    my ($name, $input_string) = @_;
+    my $option = {
+        default => $defaults{$name}{default} || "no",
+    };
 
+    for my $spec ( split q{ }, $input_string ) {
+        if ( $spec =~ m{.:.} ) {
+            my ($grade,$action) = $spec =~ m{\A([^:]+):(.+)\z};
+            
+            $option->{$grade} = $action;
+        }
+        elsif ( _is_valid_action($spec) ) {
+            $option->{default} = $spec;
+        }
+        elsif ( _is_valid_grade($spec) ) {
+            $option->{$spec} = "yes";
+        }
+        else {
+            warn "Ignoring invalid option '$spec' for '$name'\n";
+        }
+    }
+    
     return $option;
 }
 

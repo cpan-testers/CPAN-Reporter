@@ -1,9 +1,5 @@
 TODO list for Perl module CPAN::Reporter
 
-- Check for grading regex independently.  Track how many "pass" or "fail"
-  regex match.  If ambiguous result, flag as UNKNOWN.  (Should help 
-  handle autoinstall recursion.)
-  
 - Check for system() call $? & 127 (only on Unix, though) or set a $SIG{INT}
   handler (for Win32); abort test without sending; key question: is this
   success or fail for return code to CPAN?  Probably the latter.
@@ -18,14 +14,6 @@ TODO list for Perl module CPAN::Reporter
 
 - Include some of Config (compiler, make, lib/inc paths, etc.) and
   special variables like UID, EID, etc.
-
-- Need a more complete grade/option table
-
-            pass    fail    unknown na
-    yes                                 
-    no
-    ask/yes
-    ask/no
 
 - Idea in ABNF form:
     option      ::= rule *( [ "," ] WSP rule )
