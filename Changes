@@ -2,8 +2,14 @@ Revision history for Perl module CPAN::Reporter
 
 0.29 
 
-    - added test for recursive builds with unrelated "tests successful" 
-      messages
+    - fixed success/failure parsing when recursive make output is included;
+      line parsing is now done in reverse and only the first matching line
+      is used
+
+    - changed perl version prerequisite logic; report will only be marked
+      "na" if a perl version was explicitly set in the prerequisites;
+      autodetection of low perl version was removed to eliminate spurious
+      matches from recursive makes
 
     - added tests for report output format
 

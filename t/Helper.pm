@@ -204,7 +204,7 @@ sub test_process_report {
         "prereq report found for $label"
     );
     
-    like( $t::Helper::sent_report, '/' . quotemeta($result->{output}) . '/ms',
+    like( $t::Helper::sent_report, '/' . quotemeta($result->{original}) . '/ms',
         "test output found for $label"
     );
     

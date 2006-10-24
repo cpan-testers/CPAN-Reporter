@@ -44,13 +44,15 @@ my @cases = (
         label => "pass",
         dist => $mock_dist,
         command => $command,
-        output => $pass_output,
+        output => [ map {$_ . "\n" } split( "\n", $pass_output) ],
+        original => $pass_output,
     },
     {
         label => "fail",
         dist => $mock_dist,
         command => $command,
-        output => $fail_output,
+        output => [ map { $_ . "\n" } split( "\n", $fail_output) ],
+        original => $fail_output,
     },
 );
 

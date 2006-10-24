@@ -190,7 +190,7 @@ sub test {
         warn "CPAN::Reporter couldn't read test results\n";
         return;
     }
-    $result->{output} = do { local $/; <TEST_RESULT> };
+    $result->{output} = [ <TEST_RESULT> ];
     close TEST_RESULT;
 
     _process_report( $result );
@@ -244,7 +244,8 @@ sub _grade_msg {
 sub _grade_report {
     my $result = shift;
     my ($grade,$is_make,$msg);
-
+    my $output = $result->{output};
+    
     # CPAN.pm won't normally test a failed 'make', so that should
     # catch prereq failures that would normally be "unknown".
     # XXX really should check in case test was forced
@@ -255,30 +256,37 @@ sub _grade_report {
 
     # check for make or Build
     $is_make = _is_make( $result->{command} );
-        
-    # parse for Test::Harness results
-    if ( $result->{output} =~ m{^All tests successful}ms ) {
-        $grade = 'pass';
-        $msg = 'All tests successful';
+    
+    # parse in reverse order for Test::Harness results
+    for my $i ( reverse 0 .. $#{$output} ) {
+        if ( $output->[$i] =~ m{^All tests successful}ms ) {
+            $grade = 'pass';
+            $msg = 'All tests successful';
+        }
+        elsif ( $output->[$i] =~ m{^.?No tests defined}ms ) {
+            $grade = 'unknown';
+            $msg = 'No tests provided';
+        }
+        elsif ( $output->[$i] =~ m{^FAILED--no tests were run}ms ) {
+            $grade = 'unknown';
+            $msg = 'No tests were run';
+        }
+        elsif ( $output->[$i] =~ m{^FAILED--.*--no output}ms ) {
+            $grade = 'fail';
+            $msg = 'Tests had no output';
+        }
+        elsif ( $output->[$i] =~ m{^Failed }ms ) {  # must be lowercase
+            $grade = 'fail';
+            $msg = "Distribution had failing tests";
+        }
+        else {
+            next;
+        }
+        last if $grade;
     }
-    elsif ( $result->{output} =~ m{^.?No tests defined}ms ) {
-        $grade = 'unknown';
-        $msg = 'No tests provided';
-    }
-    elsif ( $result->{output} =~ m{^FAILED--no tests were run}ms ) {
-        $grade = 'unknown';
-        $msg = 'No tests were run';
-    }
-    elsif ( $result->{output} =~ m{^FAILED--.*--no output}ms ) {
-        $grade = 'fail';
-        $msg = 'Tests had no output';
-    }
-    elsif ( $result->{output} =~ m{^Failed }ms ) {  # must be lowercase
-        $grade = 'fail';
-        $msg = "Distribution had failing tests";
-    }
-    else {
-        # didn't find Test::Harness output we recognized
+    
+    # didn't find Test::Harness output we recognized
+    if ( ! $grade ) {
         $grade = "unknown";
         $msg = "Couldn't determine a result";
     }
@@ -288,7 +296,7 @@ sub _grade_report {
     # so re-run make test on test.pl
     
     if ( $is_make && -f "test.pl" && $grade ne 'fail' ) {
-        if ( $result->{output} =~ m{^makewrapper: make failed}ims ) {
+        if ( $output->[$#{$output}] =~ m{^makewrapper: make failed}ims ) {
             $grade = "fail";
             $msg = "'make test' error detected";
         }
@@ -303,14 +311,11 @@ sub _grade_report {
 
     if ( $grade eq 'fail' ) {
         # check for perl version prerequisite or outright failure
-        if (
-            $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ||
-            $result->{output} =~ m{Perl .*? required.*?this is only}ms
-        ) {
+        if ( $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ) {
             $grade = 'na';
             $msg = 'Perl version too low';
         }
-        # check the prereq report for a failure flag (!)
+        # check the prereq report for missing or failure flag '!'
         elsif ( $result->{prereq_pm} =~ m{n/a}ims ) {
             $grade = 'na';
             $msg = 'Prerequisite missing';
@@ -570,7 +575,7 @@ sub _prompt {
 
 sub _report_text {
     my $data = shift;
-    
+    my $test_log = join(q{},@{$data->{output}});
     # generate report
     my $output = << "ENDREPORT";
 Dear $data->{author},
@@ -620,7 +625,7 @@ TEST OUTPUT
 
 Output from '$data->{command}':
 
-$data->{output}
+$test_log
 ENDREPORT
 
     return $output;
