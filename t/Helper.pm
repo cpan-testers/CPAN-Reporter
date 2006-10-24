@@ -221,6 +221,7 @@ BEGIN {
 
 package File::HomeDir;
 sub my_documents { return $home_dir };
+sub my_home { return $home_dir };
 sub my_data { return $home_dir };
 
 package Test::Reporter;
