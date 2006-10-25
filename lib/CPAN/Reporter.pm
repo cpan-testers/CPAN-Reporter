@@ -53,6 +53,24 @@ HERE
 
 my @config_order = qw/ email_from cc_author edit_report send_report
                        smtp_server /;
+
+my $grade_action_prompt = << 'HERE'; 
+
+Some of the following configuration options require one or more "grade:action"
+pairs that determine what grade-specific action to take for that option.
+These pairs should be space-separated and are processed left-to-right. See
+CPAN::Reporter documentation for more details.
+
+    GRADE   :   ACTION  ======> EXAMPLES        
+    -------     -------         --------    
+    pass        yes             default:no
+    fail        no              default:yes pass:no
+    unknown     ask/no          default:ask/no pass:yes fail:no
+    na          ask/yes         
+    default
+
+HERE
+
 my %defaults = (
     email_from => {
         default => '',
@@ -131,9 +149,12 @@ sub configure {
     my $config;
     my $existing_options;
     
+    # explain grade:action pairs
+    print $grade_action_prompt;
+    
     # read or create
     if ( -f $config_file ) {
-        print "\nFound your CPAN::Reporter config file at '$config_file'.\n";
+        print "\nFound your CPAN::Reporter config file at:\n$config_file\n";
         $config = _open_config_file() 
             or return;
         $existing_options = _get_config_options( $config );

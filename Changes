@@ -19,6 +19,8 @@ Revision history for Perl module CPAN::Reporter
       OS X config files from being migrated early during testing. (Reported by
       Michael Schwern).
 
+    - added explanation of grade:action pairs during configuration
+
 0.28_51 Mon Oct 23 23:47:33 EDT 2006
 
     *** Backward compatibility warning: configuration options have changed and
