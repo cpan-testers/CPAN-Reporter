@@ -1,4 +1,5 @@
 use Test::More;
+use t::Helper;
 plan skip_all => "Skipping author tests" if not $ENV{AUTHOR_TESTING};
 
 my $min_tp = 1.22;

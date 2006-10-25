@@ -28,8 +28,8 @@ my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 my $default_options = {
     email_from => '',
     cc_author => 'default:yes pass:no',
-    edit_report => 'ask/no',
-    send_report => 'ask/yes',
+    edit_report => 'default:ask/no pass:no',
+    send_report => 'default:ask/yes pass:yes',
 };
 my @additional_prompts = qw/ smtp_server /;
 
