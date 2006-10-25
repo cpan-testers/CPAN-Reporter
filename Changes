@@ -1,16 +1,35 @@
 Revision history for Perl module CPAN::Reporter
 
+0.29
+
+    *** Backward compatibility warning: See below and 0.28_51 change log ***
+
+    - fixed RT#22557: recursive build directories with no tests will no longer
+      cause an "unknown" grade if tests exist at the top-level directory
+
+    - changed action prompt rules; default is always no unless otherwise
+      specified -- the suggested rule from interactive configuration has no
+      impact on parsing
+
+    - changed default action for edit_report and send_report to "no" and "yes"
+      respectively if the grade is pass to avoid holding up successful 
+      installations. (Suggested by Michael Schwern)
+
+    - changed several tests to always mock configuration directory; prevents
+      OS X config files from being migrated early during testing. (Reported by
+      Michael Schwern).
+
 0.28_51 Mon Oct 23 23:47:33 EDT 2006
 
-    *** Backward compatibility warning: configuration options have changed
-        and config directory on OS X has changed ***
+    *** Backward compatibility warning: configuration options have changed and
+    config directory on OS X has changed ***
     
-    - changed config directory on Mac OS X to ~/.cpanreporter instead of 
+    - changed config directory on Mac OS X to ~/.cpanreporter instead of
       ~/Documents/.cpanreporter to be more like Unix; automatically moves
-      config file if old directory is detected
+      config file if old directory is detected. (RT#22120)
 
-    - change action prompt configuration option format to support grade-
-      specific actions
+    - changed action prompt configuration option format to support grade-
+      specific actions (RT#21690)
     
     - fixed success/failure parsing when recursive make output is included;
       line parsing is now done in reverse and only the first matching line
@@ -22,8 +41,6 @@ Revision history for Perl module CPAN::Reporter
       matches from recursive makes
 
     - added tests for report output format
-
-    - added TODO tests for improved option parsing
     
 0.28 Sun Oct  8 12:47:46 EDT 2006
 

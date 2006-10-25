@@ -56,6 +56,15 @@ my @test_distros = (
         mb_grade => "pass",
         mb_msg => "All tests successful",
     },
+    {
+        name => 't-Recurse',
+        eumm_success => 1,
+        eumm_grade => "pass",
+        eumm_msg => "All tests successful",
+        mb_success => 1,
+        mb_grade => "pass",
+        mb_msg => "All tests successful",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() + test_dist_plan() * @test_distros;

@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.28_51";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.29";
 
 use Config;
 use Config::Tiny ();
@@ -74,7 +74,7 @@ failed/unknown results. This option takes "grade:action" pairs.
 HERE
     },
     edit_report => {
-        default => 'ask/no',
+        default => 'default:ask/no pass:no',
         prompt => "Do you want to edit the test report?",
         info => <<'HERE',
 Before test reports are sent, you may want to edit the test report
@@ -85,7 +85,7 @@ report. This option takes "grade:action" pairs.
 HERE
     },
     send_report => {
-        default => 'ask/yes',
+        default => 'default:ask/yes pass:yes',
         prompt => "Do you want to send the test report?",
         info => <<'HERE',
 By default, CPAN::Reporter will prompt you for confirmation that
@@ -291,14 +291,13 @@ sub _grade_report {
     my ($grade,$is_make,$msg);
     my $output = $result->{output};
     
-    # CPAN.pm won't normally test a failed 'make', so that should
-    # catch prereq failures that would normally be "unknown".
-    # XXX really should check in case test was forced
-    #
     # Output strings taken from Test::Harness::
     # _show_results()  -- for versions < 2.57_03 
     # get_results()    -- for versions >= 2.57_03
 
+    # XXX don't shortcut to unknown with _has_tests here because a custom
+    # Makefile.PL or Build.PL might define tests in a non-standard way
+    
     # check for make or Build
     $is_make = _is_make( $result->{command} );
     
@@ -325,6 +324,12 @@ sub _grade_report {
             $msg = "Distribution had failing tests";
         }
         else {
+            next;
+        }
+        if ( $grade eq 'unknown' && _has_tests() ) {
+            # probably a spurious message from recursive make, so ignore and
+            # continue if we can find any standard test files
+            $grade = $msg = undef;
             next;
         }
         last if $grade;
@@ -376,6 +381,25 @@ sub _grade_report {
 }
 
 #--------------------------------------------------------------------------#
+# _has_tests
+#--------------------------------------------------------------------------#
+
+sub _has_tests {
+    return 1 if -f 'test.pl';
+    if ( -d 't' ) {
+        local *TESTDIR;
+        opendir TESTDIR, 't';
+        while ( my $f = readdir TESTDIR ) {
+            if ( $f =~ m{\.t$} ) {
+                close TESTDIR;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+#--------------------------------------------------------------------------#
 # _is_make
 #--------------------------------------------------------------------------#
 
@@ -422,12 +446,11 @@ sub _open_config_file {
 #--------------------------------------------------------------------------#
 
 sub _parse_option {
-    my ($name, $input_string) = @_;
-
+    my $name = shift;
+    my $input_string = "default:no " . shift;
+    
     # preset defaults
-    my $option = {
-        default => $defaults{$name}{default} || "no",
-    };
+    my $option = {};
 
     # process space-separated terms in order
     for my $spec ( split q{ }, $input_string ) {
@@ -826,6 +849,9 @@ died because of missing prerequisites
 * {unknown} -- no test files could be found (either t/*.t or test.pl) or 
 a result could not be determined from test output
 
+* {default} -- this is not an actual grade reported to CPAN Testers, but it
+is used in action prompt configuration options to indicate a fallback action
+
 In returning results to CPAN.pm, "pass" and "unknown" are considered successful
 attempts to "make test" or "Build test" and will not prevent installation.
 "fail" and "na" are considered to be failures and CPAN.pm will not install
@@ -916,9 +942,9 @@ The action prompt options are:
 * {cc_author = <grade:action> ...} -- should module authors should be sent a copy of 
 the test report at their {author@cpan.org} address? (default:yes pass:no)
 * {edit_report = <grade:action> ...} -- edit the test report before sending? 
-(default: ask/no)
+(default:ask/no pass:no)
 * {send_report = <grade:action> ...} -- should test reports be sent at all?
-(default: ask/yes)
+(default:ask/yes pass:yes)
 
 These options are included in the starter config file created automatically the
 first time CPAN::Reporter is configured interactively.
