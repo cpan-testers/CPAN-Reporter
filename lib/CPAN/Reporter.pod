@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.28_51.
+This documentation describes version 0.29.
 
 =head1 SYNOPSIS
 
@@ -97,6 +97,15 @@ died because of missing prerequisites
 
 C<<< unknown >>> -- no test files could be found (either tE<sol>*.t or test.pl) or 
 a result could not be determined from test output
+
+=back
+
+=over
+
+=item *
+
+C<<< default >>> -- this is not an actual grade reported to CPAN Testers, but it
+is used in action prompt configuration options to indicate a fallback action
 
 =back
 
@@ -218,12 +227,12 @@ the test report at their C<<< author@cpan.org >>> address? (default:yes pass:no)
 =item *
 
 C<<< edit_report = <grade:action> ... >>> -- edit the test report before sending? 
-(default: askE<sol>no)
+(default:askE<sol>no pass:no)
 
 =item *
 
 C<<< send_report = <grade:action> ... >>> -- should test reports be sent at all?
-(default: askE<sol>yes)
+(default:askE<sol>yes pass:yes)
 
 =back
 

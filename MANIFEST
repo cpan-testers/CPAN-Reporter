@@ -63,6 +63,12 @@ t/dist/t-PrereqPerl-OK/Build.PL
 t/dist/t-PrereqPerl-OK/lib/Bogus/Module.pm
 t/dist/t-PrereqPerl-OK/Makefile.PL
 t/dist/t-PrereqPerl-OK/t/01_Bogus.t
+t/dist/t-Recurse/Build.PL
+t/dist/t-Recurse/lib/Bogus/Module.pm
+t/dist/t-Recurse/Makefile.PL
+t/dist/t-Recurse/subdir/Makefile.PL
+t/dist/t-Recurse/subdir/SubModule.pm
+t/dist/t-Recurse/t/01_Bogus.t
 t/dist/t-test.pl-Fail-Pass/Build.PL
 t/dist/t-test.pl-Fail-Pass/lib/Bogus/Module.pm
 t/dist/t-test.pl-Fail-Pass/Makefile.PL

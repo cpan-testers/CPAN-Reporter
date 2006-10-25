@@ -2,7 +2,7 @@ NAME
     CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 VERSION
-    This documentation describes version 0.28_51.
+    This documentation describes version 0.29.
 
 SYNOPSIS
     From the CPAN shell:
@@ -66,6 +66,10 @@ UNDERSTANDING TEST GRADES
 
     *   "unknown" -- no test files could be found (either t/*.t or test.pl)
         or a result could not be determined from test output
+
+    *   "default" -- this is not an actual grade reported to CPAN Testers,
+        but it is used in action prompt configuration options to indicate a
+        fallback action
 
     In returning results to CPAN.pm, "pass" and "unknown" are considered
     successful attempts to "make test" or "Build test" and will not prevent
@@ -162,10 +166,10 @@ CONFIG FILE OPTIONS
         (default:yes pass:no)
 
     *   "edit_report = <grade:action> ..." -- edit the test report before
-        sending? (default: ask/no)
+        sending? (default:ask/no pass:no)
 
     *   "send_report = <grade:action> ..." -- should test reports be sent at
-        all? (default: ask/yes)
+        all? (default:ask/yes pass:yes)
 
     These options are included in the starter config file created
     automatically the first time CPAN::Reporter is configured interactively.
