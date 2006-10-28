@@ -1,8 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
-0.29
+0.29 Sat Oct 28 13:36:26 EDT 2006
 
     *** Backward compatibility warning: See below and 0.28_51 change log ***
+
+        * Config file location on Mac OS X
+        * Config option format and semantics for action prompts
 
     - fixed RT#22557: recursive build directories with no tests will no longer
       cause an "unknown" grade if tests exist at the top-level directory

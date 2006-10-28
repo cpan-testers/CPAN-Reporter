@@ -11,10 +11,10 @@ META.yml
 README
 t/01_CPAN_Reporter.t
 t/02_config_file.t
-t/03_option_parsing.t
-t/04_prompting.t
-t/05_prereq_pm.t
-t/10_report_output.t
+t/04_option_parsing.t
+t/05_prompting.t
+t/10_prereq_pm.t
+t/20_report_output.t
 t/50_test_report_pass.t
 t/51_test_report_fail.t
 t/52_test_report_unknown.t
