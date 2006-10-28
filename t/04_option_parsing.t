@@ -108,14 +108,14 @@ my @bad_cases = (
         option  => "edit_report",
         input   => "failed",
         msg     => 
-            "/\\AIgnoring invalid grade 'failed' in option for 'edit_report'/",
+            "/\\AIgnoring invalid grade:action 'failed' for 'edit_report'/",
     },
     {
         label   => "bad action",
         option  => "edit_report",
         input   => "fail:run-away",
         msg     => 
-            "/\\AIgnoring invalid action 'run-away' in option for 'edit_report'/",
+            "/\\AIgnoring invalid grade:action 'fail:run-away' for 'edit_report'/",
     },
 );
 

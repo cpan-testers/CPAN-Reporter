@@ -85,6 +85,7 @@ HERE
     cc_author => {
         default => 'default:yes pass:no',
         prompt => "Do you want to CC the the module author?",
+        validate => 1,
         info => <<'HERE',
 If you would like, CPAN::Reporter will copy the module author with
 the results of your tests.  By default, authors are copied only on 
@@ -94,6 +95,7 @@ HERE
     edit_report => {
         default => 'default:ask/no pass:no',
         prompt => "Do you want to edit the test report?",
+        validate => 1,
         info => <<'HERE',
 Before test reports are sent, you may want to edit the test report
 and add additional comments about the result or about your system or
@@ -105,6 +107,7 @@ HERE
     send_report => {
         default => 'default:ask/yes pass:yes',
         prompt => "Do you want to send the test report?",
+        validate => 1,
         info => <<'HERE',
 By default, CPAN::Reporter will prompt you for confirmation that
 the test report should be sent before actually emailing the 
@@ -165,20 +168,34 @@ sub configure {
         $config = Config::Tiny->new();
     }
     
-    # initialize options that have an info description
     for my $k ( @config_order ) {
         my $option_data = $defaults{$k};
         print "\n" . $option_data->{info}. "\n";
+        # options with defaults are mandatory
         if ( defined $defaults{$k}{default} ) {
-            $config->{_}{$k} = prompt( 
+            # repeat until validated
+            PROMPT:
+            while ( my $answer = prompt(
                 "$k?", 
-                $existing_options->{$k} || $option_data->{default} 
-            );
+                $existing_options->{$k} || $option_data->{default} )
+            ) 
+            {
+                if ( $defaults{$k}{validate} ) {
+                    for my $ga ( split q{ }, $answer ) {
+                        if ( ! _validate_grade_action( $ga ) ) {
+                            warn "\nInvalid option '$ga' in '$k'\n\n";
+                            next PROMPT;
+                        }
+                    }
+                }
+                $config->{_}{$k} = $answer;
+                last PROMPT;
+            }
         }
         else {
-            # only initialize options with undef default if
-            # answer matches non white space, otherwise
-            # reset it
+            # only initialize options without default if
+            # answer matches non white space and validates, 
+            # otherwise reset it
             my $answer = prompt( 
                 "$k?", 
                 $existing_options->{$k} || q{} 
@@ -471,43 +488,23 @@ sub _parse_option {
     my $input_string = "default:no " . shift;
     
     # preset defaults
-    my $option = {};
+    my @options;
 
     # process space-separated terms in order
     for my $spec ( split q{ }, $input_string ) {
         my ($grade_list,$action);
         
-        # break up each term into component parts
-        if ( $spec =~ m{.:.} ) {
-            ($grade_list, $action) = $spec =~ m{\A([^:]+):(.+)\z};
-        }
-        elsif ( _is_valid_action($spec) ) {
-            $grade_list = "default";
-            $action = $spec;
-        }
-        else {
-            $grade_list = $spec;
-            $action = "yes";
+        # get valid parts or warn
+        my @grade_actions = _validate_grade_action($spec);
+        
+        if( ! @grade_actions ) {
+            warn "Ignoring invalid grade:action '$spec' for '$name'\n";
         }
         
-        # validate action or skip term
-        if( ! _is_valid_action($action) ) {
-            warn "Ignoring invalid action '$action' in option for '$name'\n";
-            next;
-        }
-        
-        # set action for each slash-separated grade in grade-list
-        for my $g ( split "/", $grade_list ) { 
-            # validate grade or skip grade
-            if( ! _is_valid_grade($g) ) {
-                warn "Ignoring invalid grade '$g' in option for '$name'\n";
-                next;
-            }
-            $option->{$g} = $action;
-        }
-    } # for $spec
+        push @options, @grade_actions;
+    }
     
-    return $option;
+    return { @options };
 }
 
 #--------------------------------------------------------------------------#
@@ -784,6 +781,53 @@ $test_log
 ENDREPORT
 
     return $output;
+}
+
+#--------------------------------------------------------------------------#
+# _validate_grade_action 
+# returns grade, action, grade, action ...
+# returns empty list/undef if invalid
+#--------------------------------------------------------------------------#
+
+sub _validate_grade_action {
+    my $grade_action = shift;
+    
+    my ($grade_list,$action);
+
+    if ( $grade_action =~ m{.:.} ) {
+        # parse pair for later check
+        ($grade_list, $action) = $grade_action =~ m{\A([^:]+):(.+)\z};
+    }
+    elsif ( _is_valid_action($grade_action) ) {
+        # action by itself
+        return "default", $grade_action;
+    }
+    elsif ( _is_valid_grade($grade_action) ) {
+        # grade by itself
+        return $grade_action, "yes";
+    }
+    elsif( $grade_action =~ m{./.} ) {
+        # gradelist by itself, so setup for later check
+        $grade_list = $grade_action;
+        $action = "yes";
+    }
+    else {
+        # something weird, so fail
+        return;
+    }
+        
+    # check gradelist
+    my @grades = split "/", $grade_list;
+    
+    for my $g ( @grades ) { 
+        return if ! _is_valid_grade($g);
+    }
+    
+    # check action
+    return if ! _is_valid_action($action);
+
+    # otherwise, it all must be OK
+    return map { $_ => $action } @grades;
 }
 
 1; #this line is important and will help the module return a true value
