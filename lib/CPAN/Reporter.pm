@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.29";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.30";
 
 use Config;
 use Config::Tiny ();
@@ -269,6 +269,44 @@ sub test {
 #--------------------------------------------------------------------------#
 # private functions
 #--------------------------------------------------------------------------#
+
+#--------------------------------------------------------------------------#
+# _env_report
+#--------------------------------------------------------------------------#
+
+# Entries bracketed with "/" are taken to be a regex; otherwise literal
+my @env_vars= qw(
+    /PERL/
+    PATH
+    SHELL
+    COMSPEC
+    TERM
+    AUTOMATED_TESTING
+    AUTHOR_TESTING
+    INCLUDE
+    LIB
+    LD_LIBRARY_PATH
+    PROCESSOR_IDENTIFIER
+    NUMBER_OF_PROCESSORS
+);
+
+sub _env_report {
+    my @vars_found;
+    for my $var ( @env_vars ) {
+        if ( $var =~ m{^/(.+)/$} ) {
+            push @vars_found, grep { /$1/ } keys %ENV;
+        }
+        else {
+            push @vars_found, $var if exists $ENV{$var};
+        }
+    }
+
+    my $report = "";
+    for my $var ( sort @vars_found ) {
+        $report .= "    $var = $ENV{$var}\n";
+    }
+    return $report;
+}
 
 #--------------------------------------------------------------------------#
 # _get_config_dir
@@ -784,6 +822,20 @@ ENDREPORT
 }
 
 #--------------------------------------------------------------------------#
+# _special_vars_report
+#--------------------------------------------------------------------------#
+
+sub _special_vars_report {
+    return << "HERE";
+    Perl: \$^X = $^X
+    UID:  \$<  = $<
+    EUID: \$>  = $>
+    GID:  \$(  = $(
+    EGID: \$)  = $)
+HERE
+}
+
+#--------------------------------------------------------------------------#
 # _validate_grade_action 
 # returns grade, action, grade, action ...
 # returns empty list/undef if invalid
@@ -892,12 +944,19 @@ CPAN::Reporter.
 
 If not prompted automatically, users should manually initialize CPAN::Reporter
 support.  After enabling CPAN::Reporter,  CPAN.pm will automatically continue
-with interactive configuration of CPAN::Reporter options.
+with interactive configuration of CPAN::Reporter options.  (Remember to 
+commit the CPAN configuration changes.)
 
  cpan> o conf init test_report
+ cpan> o conf commit
 
 Once CPAN::Reporter is enabled and configured, test or install modules with
-CPAN.pm as usual.
+CPAN.pm as usual.  
+
+For example, to force CPAN to repeat tests for CPAN::Reporter to see how it
+works:
+
+ cpan> force test CPAN::Reporter
 
 = UNDERSTANDING TEST GRADES
 

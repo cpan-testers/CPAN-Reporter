@@ -17,6 +17,9 @@ TODO list for Perl module CPAN::Reporter
 - Add an interface for CPAN.pm to pass in test output directly (e.g. from 
   Expect.pm) for report generation.
 
+- Figure out if forced tests should be handled differently than normal
+  tests
+
 - In test programs, check that temp space gets created -- skip if can't 
   set up the test properly
 
