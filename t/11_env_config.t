@@ -37,41 +37,46 @@ for my $var ( @env_vars ) {
     }
 }
 
-my $special_vars = << "HERE";
-    Perl: \$^X = $^X
-    UID:  \$<  = $<
-    EUID: \$>  = $>
-    GID:  \$(  = $(
-    EGID: \$)  = $)
-HERE
+my @special_vars = qw/
+    $^X
+    $<
+    $>
+    $(
+    $)
+/;
+
+my %special_vars = map { $_ => eval "$_" } @special_vars;
+
+if ( $^O eq 'MSWin32' && eval "require Win32" ) {
+    my @getosversion = Win32::GetOSVersion();
+    my $getosversion = join(", ", @getosversion);
+    $special_vars{"Win32::GetOSName"} = Win32::GetOSName();
+    $special_vars{"Win32::GetOSVersion"} = $getosversion;
+    $special_vars{"Win32::IsAdminUser"} = Win32::IsAdminUser();
+}
+
+my @toolchain_modules = qw(
+    CPAN
+    Module::Build
+    ExtUtils::MakeMaker
+    version
+);
 
 # paths
 #    * cwd
 #    * compiler
 #    * $Config{make}
 
-# toolchain versions (probably all of Bundle::CPAN)
-#    * CPAN
-#    * Module::Build
-#    * ExtUtils::MakeMaker
-#    * version
-
 # special handling
 #    * umask
-#    * Win32::GetOSVersion() (list context)
-#    * Win32::IsAdminUser()
 #    * locale -- how do I determine this?
 #    * compiler tools versions
 
-
-# qw() protects from interpolation
-my @config_vars = qw(
-);
-
 plan tests => 1 + test_fake_config_plan()
                 + 2 * @env_vars_found
-                + 1 # special vars
-            ;
+                + 2* keys %special_vars;
+#                + @toolchain_modules
+#            ;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -107,6 +112,21 @@ for my $var ( sort @env_vars_found ) {
 #--------------------------------------------------------------------------#
 
 $got = CPAN::Reporter::_special_vars_report();
-is( $got, $special_vars,
-    "Special variables correct"
-);
+
+for my $var ( sort keys %special_vars ) {
+    my ($name, $value) = ( $got =~ m{\s(\Q$var\E)\s+=\s+([^\n]+?)$}ms );
+    is( $name, $var,
+        "found special variable $var"
+    );
+    is( $value, $special_vars{$var},
+        "value of $var is correct"
+    );
+}
+
+diag $got;
+#--------------------------------------------------------------------------#
+# toolchain modules
+#--------------------------------------------------------------------------#
+
+#$got = CPAN::Reporter::_toolchain_report();
+

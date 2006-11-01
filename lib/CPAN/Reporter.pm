@@ -549,40 +549,6 @@ sub _parse_option {
 # _prereq_report
 #--------------------------------------------------------------------------#
 
-# create support program
-my $version_finder = File::Temp->new;
-open VERSIONFINDER , ">$version_finder"
-    or die "Could not create temporary support program for versions: $!";
-print VERSIONFINDER << 'END';
-use strict;
-while ( @ARGV ) {
-    my ($mod, $need) = splice @ARGV, 0, 2;
-    print "$mod ";
-    if ( $mod eq "perl" ) { 
-        eval "use $need";
-        print $@ ? "0 " : "1 ";
-        print $], "\n";
-    }
-    else {
-        eval "use $mod qw()";
-        if ( $@ ) {
-            print "0 n/a\n";
-        }
-        elsif ( $need == 0) {
-            # enough that it exists, don't check explicitly
-            # or modules without $VERSION will fail
-            print "1 ", $mod->VERSION || 0, "\n";
-        }
-        else {
-            eval "use $mod $need qw()";
-            print $@ ? "0 " : "1 ";
-            print $mod->VERSION || 0, "\n";
-        }
-    }
-}
-END
-close VERSIONFINDER;
-
 sub _prereq_report {
     my $dist = shift;
     my (%need, %have, %prereq_met, $report);
@@ -603,16 +569,14 @@ sub _prereq_report {
     }
 
     # see what prereqs are satisfied in subprocess
-    my $perl = Probe::Perl->find_perl_interpreter();
     for my $section ( qw/requires build_requires/ ) {
         next unless ref $need{$section} eq 'HASH';
         my @prereq_list = %{ $need{$section} };
         next unless @prereq_list;
-        my @prereq_results = qx/$perl $version_finder @prereq_list/;
-        for my $line ( @prereq_results ) {
-            my ($mod, $met, $have) = split " ", $line;
-            $have{$section}{$mod} = $have;
-            $prereq_met{$section}{$mod} = $met;
+        my $prereq_results = _version_finder( @prereq_list );
+        for my $mod ( keys %{$prereq_results} ) {
+            $have{$section}{$mod} = $prereq_results->{$mod}{have};
+            $prereq_met{$section}{$mod} = $prereq_results->{$mod}{met};
         }
     }
     
@@ -826,13 +790,21 @@ ENDREPORT
 #--------------------------------------------------------------------------#
 
 sub _special_vars_report {
-    return << "HERE";
+    my $special_vars = << "HERE";
     Perl: \$^X = $^X
     UID:  \$<  = $<
     EUID: \$>  = $>
     GID:  \$(  = $(
     EGID: \$)  = $)
 HERE
+    if ( $^O eq 'MSWin32' && eval "require Win32" ) {
+        my @getosversion = Win32::GetOSVersion();
+        my $getosversion = join(", ", @getosversion);
+        $special_vars .= "    Win32::GetOSName = " . Win32::GetOSName() . "\n";
+        $special_vars .= "    Win32::GetOSVersion = $getosversion\n";
+        $special_vars .= "    Win32::IsAdminUser = " . Win32::IsAdminUser() . "\n";
+    }
+    return $special_vars;
 }
 
 #--------------------------------------------------------------------------#
@@ -880,6 +852,56 @@ sub _validate_grade_action {
 
     # otherwise, it all must be OK
     return map { $_ => $action } @grades;
+}
+
+#--------------------------------------------------------------------------#
+# _version_finder
+#--------------------------------------------------------------------------#
+
+my $version_finder = File::Temp->new;
+open VERSIONFINDER , ">$version_finder"
+    or die "Could not create temporary support program for versions: $!";
+print VERSIONFINDER << 'END';
+use strict;
+while ( @ARGV ) {
+    my ($mod, $need) = splice @ARGV, 0, 2;
+    print "$mod ";
+    if ( $mod eq "perl" ) { 
+        eval "use $need";
+        print $@ ? "0 " : "1 ";
+        print $], "\n";
+    }
+    else {
+        eval "use $mod qw()";
+        if ( $@ ) {
+            print "0 n/a\n";
+        }
+        elsif ( $need == 0) {
+            # enough that it exists, don't check explicitly
+            # or modules without $VERSION will fail
+            print "1 ", $mod->VERSION || 0, "\n";
+        }
+        else {
+            eval "use $mod $need qw()";
+            print $@ ? "0 " : "1 ";
+            print $mod->VERSION || 0, "\n";
+        }
+    }
+}
+END
+close VERSIONFINDER;
+
+sub _version_finder {
+    my @module_list = @_;
+    my $perl = Probe::Perl->find_perl_interpreter();
+    my @prereq_results = qx/$perl $version_finder @module_list/;
+    my %result;
+    for my $line ( @prereq_results ) {
+        my ($mod, $met, $have) = split " ", $line;
+        $result{$mod}{have} = $have;
+        $result{$mod}{met} = $met;
+    }
+    return \%result;
 }
 
 1; #this line is important and will help the module return a true value
