@@ -277,6 +277,9 @@ sub test {
 # Entries bracketed with "/" are taken to be a regex; otherwise literal
 my @env_vars= qw(
     /PERL/
+    /LC_/
+    LANG
+    LANGUAGE
     PATH
     SHELL
     COMSPEC
