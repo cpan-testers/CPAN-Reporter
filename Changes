@@ -2,7 +2,7 @@ Revision history for Perl module CPAN::Reporter
 
 0.30
 
-    - added internal functions for environment and context
+    - added internal functions for recording environment and context
 
     - added some addition clarifications in Pod
 
