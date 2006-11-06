@@ -730,6 +730,33 @@ sub _prompt {
 # _report_text
 #--------------------------------------------------------------------------#
 
+my %intro_para = (
+    'pass' => <<'HERE',
+Thank you for uploading your work to CPAN.  Congratulations!
+All tests were successful.
+HERE
+
+    'fail' => <<'HERE',
+Thank you for uploading your work to CPAN.  However, it appears that
+there were some problems testing your distribution.
+HERE
+
+    'unknown' => << 'HERE',
+Thank you for uploading your work to CPAN.  However, attempting to
+test your distribution gave an inconclusive result.  This could be because
+you did not define tests (or tests could not be found), because
+your tests were interrupted before they finished, or because
+the results of the tests could not be parsed by CPAN::Reporter.
+HERE
+
+    'na' => << 'HERE',
+Thank you for uploading your work to CPAN.  However, it appears that
+your distribution tests are not fully supported on this machine, either 
+due to operating system limitations or missing prerequisite modules.
+HERE
+    
+);
+
 sub _report_text {
     my $data = shift;
     my $test_log = join(q{},@{$data->{output}});
@@ -738,23 +765,13 @@ sub _report_text {
 Dear $data->{author},
     
 This is a computer-generated test report for $data->{dist_name}, created
-automatically by CPAN::Reporter, version $CPAN::Reporter::VERSION.
+automatically by CPAN::Reporter, version $CPAN::Reporter::VERSION, and
+sent to the CPAN Testers mailing list.  If you have received this email 
+directly, it is because the person testing your distribution chose to send
+a copy to your CPAN email address.
 
-ENDREPORT
-    
-    if ( $data->{success} ) { $output .= << "ENDREPORT"; 
-Thank you for uploading your work to CPAN.  Congratulations!
-All tests were successful.
+$intro_para{ $data->{grade} }
 
-ENDREPORT
-    }
-    else { $output .=  <<"ENDREPORT";
-Thank you for uploading your work to CPAN.  However, it appears that
-there were some problems testing your distribution.
-
-ENDREPORT
-    }
-    $output .= << "ENDREPORT";
 Sections of this report:
 
     * Tester comments

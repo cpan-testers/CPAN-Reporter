@@ -1,9 +1,5 @@
 TODO list for Perl module CPAN::Reporter
 
-- Customize report message for each grade with an explanation; mention that
-  test reports received by email are due to the tester electing to cc the 
-  author
-
 - Include some/all of %ENV
 
 - Include some of Config (compiler, make, lib/inc paths, etc.) and

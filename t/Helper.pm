@@ -163,19 +163,37 @@ sub test_dist {
 # report tests
 #--------------------------------------------------------------------------#
 
-my $success_para = <<'HERE';
+my %report_para = (
+    'pass' => <<'HERE',
 Thank you for uploading your work to CPAN.  Congratulations!
 All tests were successful.
 HERE
 
-my $fail_para = <<'HERE';
+    'fail' => <<'HERE',
 Thank you for uploading your work to CPAN.  However, it appears that
 there were some problems testing your distribution.
 HERE
 
-sub test_process_report_plan() { 4 };
+    'unknown' => << 'HERE',
+Thank you for uploading your work to CPAN.  However, attempting to
+test your distribution gave an inconclusive result.  This could be because
+you did not define tests (or tests could not be found), because
+your tests were interrupted before they finished, or because
+the results of the tests could not be parsed by CPAN::Reporter.
+HERE
+
+    'na' => << 'HERE',
+Thank you for uploading your work to CPAN.  However, it appears that
+your distribution tests are not fully supported on this machine, either 
+due to operating system limitations or missing prerequisite modules.
+HERE
+    
+);
+
+sub test_process_report_plan() { 6 };
 sub test_process_report {
-    my ($result, $label) = @_;
+    my ($result) = @_;
+    my $label = $result->{label};
 
     # automate CPAN::Reporter prompting
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
@@ -193,7 +211,15 @@ sub test_process_report {
         "_process_report for $label" 
     );
 
-    my $msg_re = $result->{success} ? $success_para : $fail_para;
+    is( $result->{grade}, $label,
+        "result graded correctly"
+    );
+
+    my $msg_re = $report_para{ $label };
+    ok( defined $msg_re && length $msg_re,
+        "grade paragraph selected for $label"
+    );
+    
     my $prereq = CPAN::Reporter::_prereq_report( $result->{dist} );
 
     like( $t::Helper::sent_report, '/' . quotemeta($msg_re) . '/ms',

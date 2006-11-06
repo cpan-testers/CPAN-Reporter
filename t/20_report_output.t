@@ -15,44 +15,66 @@ use t::Helper;
 
 my $mock_dist = t::MockCPANDist->new( 
     pretty_id => "Bogus::Module",
-    prereq_pm       => {
-        'File::Spec' => 0,
-    },
+    prereq_pm => {},
     author_id       => "JOHNQP",
     author_fullname => "John Q. Public",
 );
 
 my $command = "make test";
 
-my $pass_output = << 'HERE';
+my %report_output = (
+    'pass' => << 'HERE',
 t\01_CPAN_Reporter....ok
 All tests successful.
 Files=1, Tests=3,  0 wallclock secs ( 0.00 cusr +  0.00 csys =  0.00 CPU)
 HERE
 
-my $fail_output = << 'HERE';
+    'fail' => << 'HERE',
 t\09_option_parsing....
 t\09_option_parsing....NOK 2#   Failed test 'foo'
 DIED. FAILED test 2
 Failed 1/1 test programs. 1/2 subtests failed.
 HERE
 
+    'unknown' => << 'HERE',
+'No tests defined for Bogus::Module extension.'
+}
+HERE
+
+    'na' => << 'HERE',
+t/01_Bogus....dubious
+        Test returned status 2 (wstat 512, 0x200)
+FAILED--1 test script could be run, alas--no output ever seen
+HERE
+
+);
+    
 my ($got, $prereq_pm);
 
 my @cases = (
     {
         label => "pass",
-        dist => $mock_dist,
-        command => $command,
-        output => [ map {$_ . "\n" } split( "\n", $pass_output) ],
-        original => $pass_output,
+        prereq_pm => {
+            'File::Spec' => 0,
+        },
     },
     {
         label => "fail",
-        dist => $mock_dist,
-        command => $command,
-        output => [ map { $_ . "\n" } split( "\n", $fail_output) ],
-        original => $fail_output,
+        prereq_pm => {
+            'File::Spec' => 0,
+        },
+    },
+    {
+        label => "unknown",
+        prereq_pm => {
+            'File::Spec' => 0,
+        },
+    },
+    {
+        label => "na",
+        prereq_pm => {
+            'Bogus::Module' => 0,
+        },
     },
 );
 
@@ -71,7 +93,13 @@ test_fake_config();
 $prereq_pm = CPAN::Reporter::_prereq_report( $mock_dist );
 
 for my $case ( @cases ) {
-    test_process_report( $case, $case->{label} );
+    $case->{dist} = $mock_dist;
+    $case->{dist}{prereq_pm} = $case->{prereq_pm};
+    $case->{command} = $command;
+    $case->{output} = [ map {$_ . "\n" } 
+                        split( "\n", $report_output{$case->{label}}) ];
+    $case->{original} = $report_output{$case->{label}};
+    test_process_report( $case );
 }
 
 
