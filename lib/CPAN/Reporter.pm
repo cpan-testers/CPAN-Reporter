@@ -653,6 +653,8 @@ EMAIL_REQUIRED
     $result->{author} = $result->{dist}->author->fullname;
     $result->{author_id} = $result->{dist}->author->id;
     $result->{prereq_pm} = _prereq_report( $result->{dist} );
+    $result->{env_vars} = _env_report();
+    $result->{special_vars} = _special_vars_report();
 
     # Determine result
     print "Preparing a test report for $result->{dist_name}\n";
@@ -776,6 +778,7 @@ Sections of this report:
 
     * Tester comments
     * Prerequisites
+    * Environment and other context
     * Test output
 
 ------------------------------
@@ -793,6 +796,16 @@ PREREQUISITES
 Prerequisite modules loaded:
 
 $data->{prereq_pm}
+------------------------------
+ENVIRONMENT AND OTHER CONTEXT
+------------------------------
+
+Environment variables:
+
+$data->{env_vars}
+Perl special variables (and OS-specific diagnostics, for MSWin32):
+
+$data->{special_vars}
 ------------------------------
 TEST OUTPUT
 ------------------------------

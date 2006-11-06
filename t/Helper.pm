@@ -190,7 +190,7 @@ HERE
     
 );
 
-sub test_process_report_plan() { 6 };
+sub test_process_report_plan() { 8 };
 sub test_process_report {
     my ($result) = @_;
     my $label = $result->{label};
@@ -221,7 +221,9 @@ sub test_process_report {
     );
     
     my $prereq = CPAN::Reporter::_prereq_report( $result->{dist} );
-
+    my $env_vars = CPAN::Reporter::_env_report();
+    my $special_vars = CPAN::Reporter::_special_vars_report();
+    
     like( $t::Helper::sent_report, '/' . quotemeta($msg_re) . '/ms',
         "correct intro paragraph for $label"
     );
@@ -230,10 +232,17 @@ sub test_process_report {
         "prereq report found for $label"
     );
     
+    like( $t::Helper::sent_report, '/' . quotemeta($env_vars) . '/ms',
+        "environment variables found for $label"
+    );
+    
+    like( $t::Helper::sent_report, '/' . quotemeta($special_vars) . '/ms',
+        "special variables found for $label"
+    );
+    
     like( $t::Helper::sent_report, '/' . quotemeta($result->{original}) . '/ms',
         "test output found for $label"
     );
-    
 };
 
 #--------------------------------------------------------------------------#

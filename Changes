@@ -6,7 +6,8 @@ Revision history for Perl module CPAN::Reporter
       each test grade to better clarify the meaning of 'unknown' and 'na'
       results from testing
 
-    - added internal functions for recording environment and context
+    - added select environment variables and Perl special variables to
+      generated report
 
     - added some addition clarifications in Pod
 
