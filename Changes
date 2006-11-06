@@ -1,6 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
-0.30
+0.31 Mon Nov  6 13:38:57 EST 2006
+
+    - relace broken 0.30 release
+
+0.30 Mon Nov  6 13:29:03 EST 2006
 
     - changed report output to have a different introductory paragraph for
       each test grade to better clarify the meaning of 'unknown' and 'na'

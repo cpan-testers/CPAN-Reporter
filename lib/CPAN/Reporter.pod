@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.29.
+This documentation describes version 0.31.
 
 =head1 SYNOPSIS
 
@@ -54,12 +54,19 @@ CPAN::Reporter.
 
 If not prompted automatically, users should manually initialize CPAN::Reporter
 support.  After enabling CPAN::Reporter,  CPAN.pm will automatically continue
-with interactive configuration of CPAN::Reporter options.
+with interactive configuration of CPAN::Reporter options.  (Remember to 
+commit the CPAN configuration changes.)
 
   cpan> o conf init test_report
+  cpan> o conf commit
 
 Once CPAN::Reporter is enabled and configured, test or install modules with
-CPAN.pm as usual.
+CPAN.pm as usual.  
+
+For example, to force CPAN to repeat tests for CPAN::Reporter to see how it
+works:
+
+  cpan> force test CPAN::Reporter
 
 =head1 UNDERSTANDING TEST GRADES
 
