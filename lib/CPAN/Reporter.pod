@@ -328,6 +328,22 @@ teeing the output to a file.  Based on the output captured in the file,
 C<<< test() >>> generates and sends a L<Test::Reporter> report.  It returns true if
 the test grade is "pass" or "unknown" and returns false, otherwise.
 
+=head1 PRIVACY WARNING
+
+CPAN::Reporter includes information in the test report about environment
+variables and special Perl variables that could be affecting test results in
+order to help module authors interpret the results of the tests.  This includes
+information about paths, terminal, locale, userE<sol>group ID, installed toolchain
+modules (e.g. ExtUtils::MakeMaker) and so on.  
+
+These have been intentionally limited to items that should not cause harmful
+personal information to be revealed.  I.e it does I<not> include your entire
+environment.  Nevertheless, please do not use CPAN::Reporter if you are
+concerned about the disclosure of this information as part of your test report.  
+
+Users wishing to review this information may choose to edit the report 
+prior to sending it.
+
 =head1 BUGS
 
 Please report any bugs or feature using the CPAN Request Tracker.  

@@ -1036,6 +1036,7 @@ they test or install.  Installing CPAN::Reporter gives the option of
 automatically generating and emailing test reports whenever tests are run via
 CPAN.pm.
 
+
 = GETTING STARTED
 
 The first step in using CPAN::Reporter is to install it using whatever
@@ -1246,6 +1247,22 @@ tests (e.g. "make test"), {test()} executes the command via {system()} while
 teeing the output to a file.  Based on the output captured in the file,
 {test()} generates and sends a [Test::Reporter] report.  It returns true if
 the test grade is "pass" or "unknown" and returns false, otherwise.
+
+= PRIVACY WARNING
+
+CPAN::Reporter includes information in the test report about environment
+variables and special Perl variables that could be affecting test results in
+order to help module authors interpret the results of the tests.  This includes
+information about paths, terminal, locale, user/group ID, installed toolchain
+modules (e.g. ExtUtils::MakeMaker) and so on.  
+
+These have been intentionally limited to items that should not cause harmful
+personal information to be revealed.  I.e it does ~not~ include your entire
+environment.  Nevertheless, please do not use CPAN::Reporter if you are
+concerned about the disclosure of this information as part of your test report.  
+
+Users wishing to review this information may choose to edit the report 
+prior to sending it.
 
 = BUGS
 
