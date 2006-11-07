@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+0.33 Tue Nov  7 07:37:08 EST 2006
+
+    - Added Test::Harness and Test::More to the modules included as
+      part of the toolchain version report
+
 0.32 Tue Nov  7 01:24:14 EST 2006
 
     - Added versions of module toolchain (e.g. CPAN, ExtUtils::MakeMaker,

@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.32";
+$CPAN::Reporter::VERSION = "0.33";
 
 use Config;
 use Config::Tiny ();
@@ -859,6 +859,8 @@ my @toolchain_mods= qw(
     File::Spec
     Module::Build
     Module::Signature
+    Test::Harness
+    Test::More
     version
 );
 

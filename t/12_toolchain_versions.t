@@ -22,6 +22,8 @@ my @toolchain= qw(
     File::Spec
     Module::Build
     Module::Signature
+    Test::Harness
+    Test::More
     version
 );
 
