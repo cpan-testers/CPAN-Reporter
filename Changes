@@ -122,7 +122,7 @@ Revision history for Perl module CPAN::Reporter
 
     - changed test.pl/ExtUtils::MakeMaker handling to wrap 'make test'
       execution with a standardized (parsable) string; does not run
-      best.pl twice anymore (Jonathan Rockway)
+      test.pl twice anymore (Jonathan Rockway)
 
     - added additional test distributions and added tests for diagnostic
       messages explaining each grade (coverage now > 90%)
