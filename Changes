@@ -1,8 +1,13 @@
 Revision history for Perl module CPAN::Reporter
 
+0.32
+
+    - Added versions of module toolchain (e.g. CPAN, ExtUtils::MakeMaker,
+      Module::Build, etc.) to test report
+
 0.31 Mon Nov  6 13:38:57 EST 2006
 
-    - relace broken 0.30 release
+    - replace broken 0.30 release
 
 0.30 Mon Nov  6 13:29:03 EST 2006
 

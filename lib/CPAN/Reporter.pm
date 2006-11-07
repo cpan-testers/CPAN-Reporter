@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.31";
+$CPAN::Reporter::VERSION = $CPAN::Reporter::VERSION = "0.32";
 
 use Config;
 use Config::Tiny ();
@@ -655,6 +655,7 @@ EMAIL_REQUIRED
     $result->{prereq_pm} = _prereq_report( $result->{dist} );
     $result->{env_vars} = _env_report();
     $result->{special_vars} = _special_vars_report();
+    $result->{toolchain_versions} = _toolchain_report();
 
     # Determine result
     print "Preparing a test report for $result->{dist_name}\n";
@@ -767,13 +768,12 @@ sub _report_text {
 Dear $data->{author},
     
 This is a computer-generated test report for $data->{dist_name}, created
-automatically by CPAN::Reporter, version $CPAN::Reporter::VERSION, and
-sent to the CPAN Testers mailing list.  If you have received this email 
-directly, it is because the person testing your distribution chose to send
-a copy to your CPAN email address.
+automatically by CPAN::Reporter, version $CPAN::Reporter::VERSION, and sent to the CPAN 
+Testers mailing list.  If you have received this email directly, it is 
+because the person testing your distribution chose to send a copy to your 
+CPAN email address.
 
 $intro_para{ $data->{grade} }
-
 Sections of this report:
 
     * Tester comments
@@ -806,6 +806,9 @@ $data->{env_vars}
 Perl special variables (and OS-specific diagnostics, for MSWin32):
 
 $data->{special_vars}
+Perl module toolchain versions installed:
+
+$data->{toolchain_versions}
 ------------------------------
 TEST OUTPUT
 ------------------------------
@@ -839,6 +842,56 @@ HERE
     }
     return $special_vars;
 }
+
+#--------------------------------------------------------------------------#-
+# _toolchain_report
+#--------------------------------------------------------------------------#
+
+my @toolchain_mods= qw(
+    CPAN
+    Cwd
+    ExtUtils::CBuilder
+    ExtUtils::Command
+    ExtUtils::Install
+    ExtUtils::MakeMaker
+    ExtUtils::Manifest
+    ExtUtils::ParseXS
+    File::Spec
+    Module::Build
+    Module::Signature
+    version
+);
+
+sub _toolchain_report {
+    my $tools_result = _version_finder( map { $_ => 0 } @toolchain_mods );
+    my $report = "";
+
+    my $mod_width = [ 
+        sort { $b <=> $a } 
+        map { length $_ }
+        keys %$tools_result
+    ]->[0];
+
+    my $ver_width = [
+        sort { $b <=> $a } 
+        map { length $_ }
+        map { $tools_result->{$_}{have} }
+        keys %$tools_result
+    ]->[0];
+
+    my $format = "    \%-${mod_width}s \%-${ver_width}s\n";
+
+    $report .= sprintf( $format, "Module", "Have" );
+    $report .= sprintf( $format, "-" x $mod_width, "-" x $ver_width );
+
+    for my $var ( sort keys %$tools_result ) {
+        $report .= sprintf("    \%-${mod_width}s \%-${ver_width}s\n",
+                            $var, $tools_result->{$var}{have} );
+    }
+
+    return $report;
+}
+
 
 #--------------------------------------------------------------------------#
 # _validate_grade_action 
@@ -889,6 +942,8 @@ sub _validate_grade_action {
 
 #--------------------------------------------------------------------------#
 # _version_finder
+#
+# arguments: module => version pairs
 #--------------------------------------------------------------------------#
 
 my $version_finder = File::Temp->new;

@@ -190,7 +190,7 @@ HERE
     
 );
 
-sub test_process_report_plan() { 8 };
+sub test_process_report_plan() { 9 };
 sub test_process_report {
     my ($result) = @_;
     my $label = $result->{label};
@@ -223,6 +223,7 @@ sub test_process_report {
     my $prereq = CPAN::Reporter::_prereq_report( $result->{dist} );
     my $env_vars = CPAN::Reporter::_env_report();
     my $special_vars = CPAN::Reporter::_special_vars_report();
+    my $toolchain_versions = CPAN::Reporter::_toolchain_report();
     
     like( $t::Helper::sent_report, '/' . quotemeta($msg_re) . '/ms',
         "correct intro paragraph for $label"
@@ -238,6 +239,10 @@ sub test_process_report {
     
     like( $t::Helper::sent_report, '/' . quotemeta($special_vars) . '/ms',
         "special variables found for $label"
+    );
+    
+    like( $t::Helper::sent_report, '/' . quotemeta($toolchain_versions) . '/ms',
+        "toolchain versions found for $label"
     );
     
     like( $t::Helper::sent_report, '/' . quotemeta($result->{original}) . '/ms',

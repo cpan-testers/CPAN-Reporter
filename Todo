@@ -1,7 +1,7 @@
 TODO list for Perl module CPAN::Reporter
 
-- Include some of Config (compiler, make, lib/inc paths, etc.) also toolchain
-  like CPAN, M::B, EU::MM and version.pm in context report
+- Include some of Config (compiler, make, lib/inc paths, etc.) in context
+  report
 
 - Check for system() call $? & 127 (only on Unix, though) or set a $SIG{INT}
   handler (for Win32); abort test without sending; key question: is this

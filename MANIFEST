@@ -16,6 +16,7 @@ t/04_option_parsing.t
 t/05_prompting.t
 t/10_prereq_pm.t
 t/11_env_config.t
+t/12_toolchain_versions.t
 t/20_report_output.t
 t/50_test_report_pass.t
 t/51_test_report_fail.t
