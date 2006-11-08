@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = "0.33";
+$CPAN::Reporter::VERSION = "0.34";
 
 use Config;
 use Config::Tiny ();

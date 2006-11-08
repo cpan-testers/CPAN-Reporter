@@ -124,7 +124,7 @@ sub test_dist {
     SKIP: {
 
         eval "require Module::Build";
-        skip "Module::Build not installed", 2
+        skip "Module::Build not installed", 4
             if $@;
         
         my ($build_rc, $test_build_rc);

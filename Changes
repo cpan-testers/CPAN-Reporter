@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+0.34 Wed Nov  8 05:39:22 EST 2006
+
+    - fixed test skip block count when Module::Build is not installed
+      (reported by rincewind)
+
 0.33 Tue Nov  7 07:37:08 EST 2006
 
     - Added Test::Harness and Test::More to the modules included as
