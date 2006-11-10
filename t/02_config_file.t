@@ -10,6 +10,7 @@ use Config::Tiny;
 use IO::CaptureOutput qw/capture/;
 use File::Spec;
 use File::Temp qw/tempdir/;
+use t::Frontend;
 
 plan tests => 30;
 #plan 'no_plan';

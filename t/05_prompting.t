@@ -7,6 +7,7 @@ select(STDOUT); $|=1;
 
 use Test::More;
 use t::Helper;
+use t::Frontend;
 use IO::CaptureOutput qw/capture/;
 
 my @cases = (

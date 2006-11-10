@@ -7,6 +7,7 @@ select(STDOUT); $|=1;
 
 use Test::More;
 use t::MockCPANDist;
+use t::Frontend;
 use t::Helper;
 
 my @test_distros = (

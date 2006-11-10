@@ -8,6 +8,7 @@ select(STDOUT); $|=1;
 use Test::More;
 use t::MockCPANDist;
 use t::Helper;
+use t::Frontend;
 
 my @test_distros = (
     # split pass/fail

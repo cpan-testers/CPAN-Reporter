@@ -24,7 +24,7 @@ if ( $^O eq 'darwin' ) {
     my $old = File::Spec->catdir(File::HomeDir->my_documents,".cpanreporter");
     my $new = File::Spec->catdir(File::HomeDir->my_home,".cpanreporter");
     if ( ( -d $old ) && (! -d $new ) ) {
-        CPAN::Shell->mywarn( << "HERE");
+        $CPAN::Frontend->mywarn( << "HERE");
 Since CPAN::Reporter 0.28_51, the Mac OSX config directory has changed. 
 
   Old: $old
@@ -153,22 +153,22 @@ sub configure {
     my $existing_options;
     
     # explain grade:action pairs
-    CPAN::Shell->myprint( $grade_action_prompt );
+    $CPAN::Frontend->myprint( $grade_action_prompt );
     
     # read or create
     if ( -f $config_file ) {
-        CPAN::Shell->myprint(
+        $CPAN::Frontend->myprint(
             "\nFound your CPAN::Reporter config file at:\n$config_file\n"
         );
         $config = _open_config_file() 
             or return;
         $existing_options = _get_config_options( $config );
-        CPAN::Shell->myprint(
+        $CPAN::Frontend->myprint(
             "\nUpdating your CPAN::Reporter configuration settings:\n"
         );
     }
     else {
-        CPAN::Shell->myprint(
+        $CPAN::Frontend->myprint(
             "\nNo CPAN::Reporter config file found; creating a new one.\n"
         );
         $config = Config::Tiny->new();
@@ -176,7 +176,7 @@ sub configure {
     
     for my $k ( @config_order ) {
         my $option_data = $defaults{$k};
-        CPAN::Shell->myprint( "\n" . $option_data->{info}. "\n");
+        $CPAN::Frontend->myprint( "\n" . $option_data->{info}. "\n");
         # options with defaults are mandatory
         if ( defined $defaults{$k}{default} ) {
             # repeat until validated
@@ -189,7 +189,7 @@ sub configure {
                 if ( $defaults{$k}{validate} ) {
                     for my $ga ( split q{ }, $answer ) {
                         if ( ! _validate_grade_action( $ga ) ) {
-                            CPAN::Shell->mywarn( "\nInvalid option '$ga' in '$k'\n\n" );
+                            $CPAN::Frontend->mywarn( "\nInvalid option '$ga' in '$k'\n\n" );
                             next PROMPT;
                         }
                     }
@@ -218,7 +218,7 @@ sub configure {
     }
 
     # initialize remaining existing options
-    CPAN::Shell->myprint(
+    $CPAN::Frontend->myprint(
         "\nYour CPAN::Reporter config file also contains these advanced " .
           "options:\n\n") if keys %$existing_options;
     for my $k ( keys %$existing_options ) {
@@ -227,14 +227,14 @@ sub configure {
         ); 
     }
 
-    CPAN::Shell->myprint( 
+    $CPAN::Frontend->myprint( 
         "\nWriting CPAN::Reporter config file to '$config_file'.\n"
     );
     if ( $config->write( $config_file ) ) {
         return $config->{_};
     }
     else {
-        CPAN::Shell->mywarn( "\nError writing config file to '$config_file':" . 
+        $CPAN::Frontend->mywarn( "\nError writing config file to '$config_file':" . 
              Config::Tiny->errstr(). "\n");
         return;
     }
@@ -267,7 +267,7 @@ sub test {
     tee($tee_input, { stderr => 1 }, $temp_out);
         
     if ( ! open(TEST_RESULT, "<", $temp_out) ) {
-        CPAN::Shell->mywarn( "CPAN::Reporter couldn't read test results\n" );
+        $CPAN::Frontend->mywarn( "CPAN::Reporter couldn't read test results\n" );
         return;
     }
     $result->{output} = [ <TEST_RESULT> ];
@@ -366,9 +366,9 @@ sub _get_config_options {
 
 sub _grade_msg {
     my ($grade, $msg) = @_;
-    CPAN::Shell->myprint( "Test result is '$grade'");
-    CPAN::Shell->myprint(": $msg") if defined $msg && length $msg;
-    CPAN::Shell->myprint(".\n");
+    $CPAN::Frontend->myprint( "Test result is '$grade'");
+    $CPAN::Frontend->myprint(": $msg") if defined $msg && length $msg;
+    $CPAN::Frontend->myprint(".\n");
     return;
 }
 
@@ -526,7 +526,7 @@ sub _is_valid_grade {
 sub _open_config_file {
     my $config_file = _get_config_file();
     my $config = Config::Tiny->read( $config_file )
-        or CPAN::Shell->mywarn("Couldn't read CPAN::Reporter configuration file " .
+        or $CPAN::Frontend->mywarn("Couldn't read CPAN::Reporter configuration file " .
                 "'$config_file': " . Config::Tiny->errstr() . "\n");
     return $config; 
 }
@@ -550,7 +550,7 @@ sub _parse_option {
         my @grade_actions = _validate_grade_action($spec);
         
         if( ! @grade_actions ) {
-            CPAN::Shell->mywarn( 
+            $CPAN::Frontend->mywarn( 
                 "Ignoring invalid grade:action '$spec' for '$name'\n"
             );
         }
@@ -644,14 +644,14 @@ sub _process_report {
     # Get configuration options
     my $config_obj = _open_config_file();
     if ( not defined $config_obj ) {
-        CPAN::Shell->mywarn( "\nCPAN::Reporter config file not found. " .
+        $CPAN::Frontend->mywarn( "\nCPAN::Reporter config file not found. " .
              "Skipping test report generation.\n");
         return;
     }
     my $config = _get_config_options( $config_obj );
     
     if ( ! $config->{email_from} ) {
-        CPAN::Shell->mywarn( << "EMAIL_REQUIRED");
+        $CPAN::Frontend->mywarn( << "EMAIL_REQUIRED");
         
 CPAN::Reporter requires an email-address.  Test report will not be sent.
 See documentation for configuration details.
@@ -671,7 +671,7 @@ EMAIL_REQUIRED
     $result->{toolchain_versions} = _toolchain_report();
 
     # Determine result
-    CPAN::Shell->myprint("Preparing a test report for $result->{dist_name}\n");
+    $CPAN::Frontend->myprint("Preparing a test report for $result->{dist_name}\n");
     $result->{grade} = _grade_report($result);
     $result->{success} =  $result->{grade} eq 'pass'
                        || $result->{grade} eq 'unknown';
@@ -706,12 +706,12 @@ EMAIL_REQUIRED
     }
     
     if ( _prompt( $config, "send_report", $tr->grade ) =~ /^y/ ) {
-        CPAN::Shell->myprint( "Sending test report with '" . $tr->grade . 
+        $CPAN::Frontend->myprint( "Sending test report with '" . $tr->grade . 
               "' to " . join(q{, }, $tr->address, @cc) . "\n");
-        $tr->send( @cc ) or CPAN::Shell->mywarn( $tr->errstr. "\n");
+        $tr->send( @cc ) or $CPAN::Frontend->mywarn( $tr->errstr. "\n");
     }
     else {
-        CPAN::Shell->myprint("Test report not sent\n");
+        $CPAN::Frontend->myprint("Test report not sent\n");
     }
 
     return;

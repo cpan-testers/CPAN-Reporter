@@ -4,6 +4,7 @@ BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
 use Test::More;
 use t::Helper;
+use t::Frontend;
 
 #--------------------------------------------------------------------------#
 # autoflush to keep output in order
