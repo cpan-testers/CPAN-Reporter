@@ -124,6 +124,7 @@ t/dist/test.pl-PrereqPerl-OK/Build.PL
 t/dist/test.pl-PrereqPerl-OK/lib/Bogus/Module.pm
 t/dist/test.pl-PrereqPerl-OK/Makefile.PL
 t/dist/test.pl-PrereqPerl-OK/test.pl
+t/Frontend.pm
 t/Helper.pm
 t/MockCPANDist.pm
 t/perl5lib/Bogus/Found.pm

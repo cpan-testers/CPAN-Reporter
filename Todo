@@ -33,5 +33,8 @@ TODO list for Perl module CPAN::Reporter
 
 - Improve test coverage for utility subs and error handling
 
+- Consider tracking duplicate reports and avoiding submitting same report. 
+  MD5 hash of report + Perl -V ?  save as filename in a cache dir?
+
 - Check email addresses for validity (?)
 
