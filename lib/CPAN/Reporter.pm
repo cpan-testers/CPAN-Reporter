@@ -5,7 +5,7 @@ $CPAN::Reporter::VERSION = "0.34";
 
 use Config;
 use Config::Tiny ();
-use ExtUtils::MakeMaker qw/prompt/;
+use CPAN ();
 use File::Basename qw/basename/;
 use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
@@ -24,7 +24,7 @@ if ( $^O eq 'darwin' ) {
     my $old = File::Spec->catdir(File::HomeDir->my_documents,".cpanreporter");
     my $new = File::Spec->catdir(File::HomeDir->my_home,".cpanreporter");
     if ( ( -d $old ) && (! -d $new ) ) {
-        print STDERR << "HERE";
+        CPAN::Shell->mywarn( << "HERE");
 Since CPAN::Reporter 0.28_51, the Mac OSX config directory has changed. 
 
   Old: $old
@@ -153,29 +153,35 @@ sub configure {
     my $existing_options;
     
     # explain grade:action pairs
-    print $grade_action_prompt;
+    CPAN::Shell->myprint( $grade_action_prompt );
     
     # read or create
     if ( -f $config_file ) {
-        print "\nFound your CPAN::Reporter config file at:\n$config_file\n";
+        CPAN::Shell->myprint(
+            "\nFound your CPAN::Reporter config file at:\n$config_file\n"
+        );
         $config = _open_config_file() 
             or return;
         $existing_options = _get_config_options( $config );
-        print "\nUpdating your CPAN::Reporter configuration settings:\n"
+        CPAN::Shell->myprint(
+            "\nUpdating your CPAN::Reporter configuration settings:\n"
+        );
     }
     else {
-        print "\nNo CPAN::Reporter config file found; creating a new one.\n";
+        CPAN::Shell->myprint(
+            "\nNo CPAN::Reporter config file found; creating a new one.\n"
+        );
         $config = Config::Tiny->new();
     }
     
     for my $k ( @config_order ) {
         my $option_data = $defaults{$k};
-        print "\n" . $option_data->{info}. "\n";
+        CPAN::Shell->myprint( "\n" . $option_data->{info}. "\n");
         # options with defaults are mandatory
         if ( defined $defaults{$k}{default} ) {
             # repeat until validated
             PROMPT:
-            while ( my $answer = prompt(
+            while ( my $answer = CPAN::Shell::colorable_makemaker_prompt(
                 "$k?", 
                 $existing_options->{$k} || $option_data->{default} )
             ) 
@@ -183,7 +189,7 @@ sub configure {
                 if ( $defaults{$k}{validate} ) {
                     for my $ga ( split q{ }, $answer ) {
                         if ( ! _validate_grade_action( $ga ) ) {
-                            warn "\nInvalid option '$ga' in '$k'\n\n";
+                            CPAN::Shell->mywarn( "\nInvalid option '$ga' in '$k'\n\n" );
                             next PROMPT;
                         }
                     }
@@ -196,7 +202,7 @@ sub configure {
             # only initialize options without default if
             # answer matches non white space and validates, 
             # otherwise reset it
-            my $answer = prompt( 
+            my $answer = CPAN::Shell::colorable_makemaker_prompt( 
                 "$k?", 
                 $existing_options->{$k} || q{} 
             ); 
@@ -212,19 +218,24 @@ sub configure {
     }
 
     # initialize remaining existing options
-    print "\nYour CPAN::Reporter config file also contains these advanced " .
-          "options:\n\n" if keys %$existing_options;
+    CPAN::Shell->myprint(
+        "\nYour CPAN::Reporter config file also contains these advanced " .
+          "options:\n\n") if keys %$existing_options;
     for my $k ( keys %$existing_options ) {
-        $config->{_}{$k} = prompt( "$k?", $existing_options->{$k} ); 
+        $config->{_}{$k} = CPAN::Shell::colorable_makemaker_prompt( 
+            "$k?", $existing_options->{$k} 
+        ); 
     }
 
-    print "\nWriting CPAN::Reporter config file to '$config_file'.\n";    
+    CPAN::Shell->myprint( 
+        "\nWriting CPAN::Reporter config file to '$config_file'.\n"
+    );
     if ( $config->write( $config_file ) ) {
         return $config->{_};
     }
     else {
-        warn "\nError writing config file to '$config_file':" . 
-             Config::Tiny->errstr(). "\n";
+        CPAN::Shell->mywarn( "\nError writing config file to '$config_file':" . 
+             Config::Tiny->errstr(). "\n");
         return;
     }
 }
@@ -256,7 +267,7 @@ sub test {
     tee($tee_input, { stderr => 1 }, $temp_out);
         
     if ( ! open(TEST_RESULT, "<", $temp_out) ) {
-        warn "CPAN::Reporter couldn't read test results\n";
+        CPAN::Shell->mywarn( "CPAN::Reporter couldn't read test results\n" );
         return;
     }
     $result->{output} = [ <TEST_RESULT> ];
@@ -355,9 +366,9 @@ sub _get_config_options {
 
 sub _grade_msg {
     my ($grade, $msg) = @_;
-    print "Test result is '$grade'";
-    print ": $msg" if defined $msg && length $msg;
-    print ".\n";
+    CPAN::Shell->myprint( "Test result is '$grade'");
+    CPAN::Shell->myprint(": $msg") if defined $msg && length $msg;
+    CPAN::Shell->myprint(".\n");
     return;
 }
 
@@ -515,8 +526,8 @@ sub _is_valid_grade {
 sub _open_config_file {
     my $config_file = _get_config_file();
     my $config = Config::Tiny->read( $config_file )
-        or warn "Couldn't read CPAN::Reporter configuration file " .
-                "'$config_file': " . Config::Tiny->errstr() . "\n";
+        or CPAN::Shell->mywarn("Couldn't read CPAN::Reporter configuration file " .
+                "'$config_file': " . Config::Tiny->errstr() . "\n");
     return $config; 
 }
 
@@ -539,7 +550,9 @@ sub _parse_option {
         my @grade_actions = _validate_grade_action($spec);
         
         if( ! @grade_actions ) {
-            warn "Ignoring invalid grade:action '$spec' for '$name'\n";
+            CPAN::Shell->mywarn( 
+                "Ignoring invalid grade:action '$spec' for '$name'\n"
+            );
         }
         
         push @options, @grade_actions;
@@ -631,14 +644,14 @@ sub _process_report {
     # Get configuration options
     my $config_obj = _open_config_file();
     if ( not defined $config_obj ) {
-        warn "\nCPAN::Reporter config file not found. " .
-             "Skipping test report generation.\n";
+        CPAN::Shell->mywarn( "\nCPAN::Reporter config file not found. " .
+             "Skipping test report generation.\n");
         return;
     }
     my $config = _get_config_options( $config_obj );
     
     if ( ! $config->{email_from} ) {
-        warn << "EMAIL_REQUIRED";
+        CPAN::Shell->mywarn( << "EMAIL_REQUIRED");
         
 CPAN::Reporter requires an email-address.  Test report will not be sent.
 See documentation for configuration details.
@@ -658,7 +671,7 @@ EMAIL_REQUIRED
     $result->{toolchain_versions} = _toolchain_report();
 
     # Determine result
-    print "Preparing a test report for $result->{dist_name}\n";
+    CPAN::Shell->myprint("Preparing a test report for $result->{dist_name}\n");
     $result->{grade} = _grade_report($result);
     $result->{success} =  $result->{grade} eq 'pass'
                        || $result->{grade} eq 'unknown';
@@ -693,12 +706,12 @@ EMAIL_REQUIRED
     }
     
     if ( _prompt( $config, "send_report", $tr->grade ) =~ /^y/ ) {
-        print "Sending test report with '" . $tr->grade . 
-              "' to " . join(q{, }, $tr->address, @cc) . "\n";
-        $tr->send( @cc ) or warn $tr->errstr. "\n";
+        CPAN::Shell->myprint( "Sending test report with '" . $tr->grade . 
+              "' to " . join(q{, }, $tr->address, @cc) . "\n");
+        $tr->send( @cc ) or CPAN::Shell->mywarn( $tr->errstr. "\n");
     }
     else {
-        print "Test report not sent\n";
+        CPAN::Shell->myprint("Test report not sent\n");
     }
 
     return;
@@ -718,10 +731,14 @@ sub _prompt {
 
     my $prompt;
     if     ( $action =~ m{^ask/yes}i ) { 
-        $prompt = prompt( $defaults{$option}{prompt} . " (yes/no)", "yes" );
+        $prompt = CPAN::Shell::colorable_makemaker_prompt( 
+            $defaults{$option}{prompt} . " (yes/no)", "yes" 
+        );
     }
     elsif  ( $action =~ m{^ask(/no)?}i ) {
-        $prompt = prompt( $defaults{$option}{prompt} . " (yes/no)", "no" );
+        $prompt = CPAN::Shell::colorable_makemaker_prompt( 
+            $defaults{$option}{prompt} . " (yes/no)", "no" 
+        );
     }
     else { 
         $prompt = $action;

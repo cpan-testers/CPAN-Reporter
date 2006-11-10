@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+0.35
+
+    - fixed environment report tests for undefined/empty environment variables
+
+    - added support for CPAN.pm ANSI color messages and prompts
+
 0.34 Wed Nov  8 05:39:22 EST 2006
 
     - fixed test skip block count when Module::Build is not installed

@@ -78,8 +78,6 @@ my @toolchain_modules = qw(
 plan tests => 1 + test_fake_config_plan()
                 + 2 * @env_vars_found
                 + 2* keys %special_vars;
-#                + @toolchain_modules
-#            ;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -101,11 +99,11 @@ test_fake_config();
 
 $got = CPAN::Reporter::_env_report();
 for my $var ( sort @env_vars_found ) {
-    my ($name, $value) = ( $got =~ m{^ +(\Q$var\E) = ([^\n]+?)$}ms );
+    my ($name, $value) = ( $got =~ m{^ +(\Q$var\E) += +([^\n]*?)$}ms );
     is( $name, $var,
         "found \$ENV{$var}"
     );
-    is( $value, $ENV{$var},
+    is( defined $value ? $value : '', defined $ENV{$var} ? $ENV{$var} : '',
         "value of \$ENV{$var} is correct"
     );
 }
@@ -117,18 +115,12 @@ for my $var ( sort @env_vars_found ) {
 $got = CPAN::Reporter::_special_vars_report();
 
 for my $var ( sort keys %special_vars ) {
-    my ($name, $value) = ( $got =~ m{\s(\Q$var\E)\s+=\s+([^\n]+?)$}ms );
+    my ($name, $value) = ( $got =~ m{ +(\Q$var\E) += +([^\n]*?)$}ms );
     is( $name, $var,
         "found special variable $var"
     );
-    is( $value, $special_vars{$var},
+    is( defined $value ? $value : '', 
+        defined $special_vars{$var} ? $special_vars{$var} : '',
         "value of $var is correct"
     );
 }
-
-#--------------------------------------------------------------------------#
-# toolchain modules
-#--------------------------------------------------------------------------#
-
-#$got = CPAN::Reporter::_toolchain_report();
-
