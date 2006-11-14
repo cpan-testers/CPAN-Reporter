@@ -79,7 +79,9 @@ my %defaults = (
 CPAN::Reporter requires a valid email address as the return address
 for test reports sent to cpan-testers\@perl.org.  Either provide just
 an email address, or put your real name in double-quote marks followed 
-by your email address in angle marks, e.g. "John Doe" <jdoe@nowhere.com>
+by your email address in angle marks, e.g. "John Doe" <jdoe@nowhere.com>.
+Note: unless this email address is subscribed to the cpan-testers mailing
+list, your test reports will not appear until manually reviewed.
 HERE
     },
     cc_author => {
