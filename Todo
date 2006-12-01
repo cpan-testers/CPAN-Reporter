@@ -1,5 +1,9 @@
 TODO list for Perl module CPAN::Reporter
 
+- Add an FAQ
+    - why don't I see my test report
+    - why won't it send
+
 - Add Test::Harness/Test::More to toolchain list
 
 - Include some of Config (compiler, make, lib/inc paths, etc.) in context

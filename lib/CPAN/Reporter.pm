@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = "0.35";
+$CPAN::Reporter::VERSION = "0.36";
 
 use Config;
 use Config::Tiny ();
@@ -790,7 +790,8 @@ This is a computer-generated test report for $data->{dist_name}, created
 automatically by CPAN::Reporter, version $CPAN::Reporter::VERSION, and sent to the CPAN 
 Testers mailing list.  If you have received this email directly, it is 
 because the person testing your distribution chose to send a copy to your 
-CPAN email address.
+CPAN email address; there may be a delay before the official report is
+received and processed by CPAN Testers.
 
 $intro_para{ $data->{grade} }
 Sections of this report:
