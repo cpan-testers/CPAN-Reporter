@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.35.
+This documentation describes version 0.36.
 
 =head1 SYNOPSIS
 
@@ -53,7 +53,7 @@ their configuration settings, including the 'test_report' option to enable
 CPAN::Reporter.  
 
 If not prompted automatically, users should manually initialize CPAN::Reporter
-support.  After enabling CPAN::Reporter,  CPAN.pm will automatically continue
+support.  After enabling CPAN::Reporter, CPAN.pm will automatically continue
 with interactive configuration of CPAN::Reporter options.  (Remember to 
 commit the CPAN configuration changes.)
 
@@ -239,7 +239,7 @@ C<<< edit_report = <grade:action> ... >>> -- edit the test report before sending
 =item *
 
 C<<< send_report = <grade:action> ... >>> -- should test reports be sent at all?
-(default:askE<sol>yes pass:yes)
+(default:askE<sol>yes pass:yes na:no)
 
 =back
 
@@ -248,7 +248,8 @@ first time CPAN::Reporter is configured interactively.
 
 Note that if C<<< send_report >>> is set to "no", CPAN::Reporter will still go through
 the motions of preparing a report, but will discard it rather than send it.
-This is used primarily for testing CPAN::Reporter.
+This is the default for an "na" report -- users may still edit the report to 
+see which prerequisites failed, but no report will be sent.
 
 A better way to disable CPAN::Reporter temporarily is with the CPAN option
 C<<< test_report >>>:
@@ -337,7 +338,7 @@ information about paths, terminal, locale, userE<sol>group ID, installed toolcha
 modules (e.g. ExtUtils::MakeMaker) and so on.  
 
 These have been intentionally limited to items that should not cause harmful
-personal information to be revealed.  I.e it does I<not> include your entire
+personal information to be revealed -- it does I<not> include your entire
 environment.  Nevertheless, please do not use CPAN::Reporter if you are
 concerned about the disclosure of this information as part of your test report.  
 
@@ -347,8 +348,7 @@ prior to sending it.
 =head1 BUGS
 
 Please report any bugs or feature using the CPAN Request Tracker.  
-Bugs can be submitted by email to bug-CPAN-Reporter@rt.cpan.org or 
-through the web interface at 
+Bugs can be submitted through the web interface at 
 L<http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter>
 
 When submitting a bug or request, please include a test-file or a patch to an

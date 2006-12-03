@@ -2,7 +2,7 @@ NAME
     CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 VERSION
-    This documentation describes version 0.35.
+    This documentation describes version 0.36.
 
 SYNOPSIS
     From the CPAN shell:
@@ -175,14 +175,16 @@ CONFIG FILE OPTIONS
         sending? (default:ask/no pass:no)
 
     *   "send_report = <grade:action> ..." -- should test reports be sent at
-        all? (default:ask/yes pass:yes)
+        all? (default:ask/yes pass:yes na:no)
 
     These options are included in the starter config file created
     automatically the first time CPAN::Reporter is configured interactively.
 
     Note that if "send_report" is set to "no", CPAN::Reporter will still go
     through the motions of preparing a report, but will discard it rather
-    than send it. This is used primarily for testing CPAN::Reporter.
+    than send it. This is the default for an "na" report -- users may still
+    edit the report to see which prerequisites failed, but no report will be
+    sent.
 
     A better way to disable CPAN::Reporter temporarily is with the CPAN
     option "test_report":
@@ -253,7 +255,7 @@ PRIVACY WARNING
     and so on.
 
     These have been intentionally limited to items that should not cause
-    harmful personal information to be revealed. I.e it does *not* include
+    harmful personal information to be revealed -- it does *not* include
     your entire environment. Nevertheless, please do not use CPAN::Reporter
     if you are concerned about the disclosure of this information as part of
     your test report.
@@ -263,8 +265,7 @@ PRIVACY WARNING
 
 BUGS
     Please report any bugs or feature using the CPAN Request Tracker. Bugs
-    can be submitted by email to bug-CPAN-Reporter@rt.cpan.org or through
-    the web interface at
+    can be submitted through the web interface at
     <http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter>
 
     When submitting a bug or request, please include a test-file or a patch

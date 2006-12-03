@@ -1,9 +1,13 @@
 Revision history for Perl module CPAN::Reporter
 
-0.36
+0.36 Sun Dec  3 12:30:26 EST 2006
+    - changed default for send_report to "no" for "na" reports to avoid
+      sending spurious reports from prerequisites failures
 
-    - changed email report intro for better help to module authors 
-      receiving a CC
+    - customized email report intros for better help to module authors 
+      receiving a CC for various types of reports
+
+    - removed email address for RT to reduce spam
 
 0.35 Fri Nov 10 01:52:47 EST 2006
 

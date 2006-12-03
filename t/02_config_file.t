@@ -30,7 +30,7 @@ my $default_options = {
     email_from => '',
     cc_author => 'default:yes pass:no',
     edit_report => 'default:ask/no pass:no',
-    send_report => 'default:ask/yes pass:yes',
+    send_report => 'default:ask/yes pass:yes na:no',
 };
 my @additional_prompts = qw/ smtp_server /;
 

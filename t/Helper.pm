@@ -186,6 +186,8 @@ HERE
 Thank you for uploading your work to CPAN.  However, it appears that
 your distribution tests are not fully supported on this machine, either 
 due to operating system limitations or missing prerequisite modules.
+If the failure is due to missing prerequisites, you may wish to 
+disregard this report.
 HERE
     
 );

@@ -107,7 +107,7 @@ report. This option takes "grade:action" pairs.
 HERE
     },
     send_report => {
-        default => 'default:ask/yes pass:yes',
+        default => 'default:ask/yes pass:yes na:no',
         prompt => "Do you want to send the test report?",
         validate => 1,
         info => <<'HERE',
@@ -775,6 +775,8 @@ HERE
 Thank you for uploading your work to CPAN.  However, it appears that
 your distribution tests are not fully supported on this machine, either 
 due to operating system limitations or missing prerequisite modules.
+If the failure is due to missing prerequisites, you may wish to 
+disregard this report.
 HERE
     
 );
@@ -1058,7 +1060,6 @@ they test or install.  Installing CPAN::Reporter gives the option of
 automatically generating and emailing test reports whenever tests are run via
 CPAN.pm.
 
-
 = GETTING STARTED
 
 The first step in using CPAN::Reporter is to install it using whatever
@@ -1076,7 +1077,7 @@ their configuration settings, including the 'test_report' option to enable
 CPAN::Reporter.  
 
 If not prompted automatically, users should manually initialize CPAN::Reporter
-support.  After enabling CPAN::Reporter,  CPAN.pm will automatically continue
+support.  After enabling CPAN::Reporter, CPAN.pm will automatically continue
 with interactive configuration of CPAN::Reporter options.  (Remember to 
 commit the CPAN configuration changes.)
 
@@ -1201,14 +1202,15 @@ the test report at their {author@cpan.org} address? (default:yes pass:no)
 * {edit_report = <grade:action> ...} -- edit the test report before sending? 
 (default:ask/no pass:no)
 * {send_report = <grade:action> ...} -- should test reports be sent at all?
-(default:ask/yes pass:yes)
+(default:ask/yes pass:yes na:no)
 
 These options are included in the starter config file created automatically the
 first time CPAN::Reporter is configured interactively.
 
 Note that if {send_report} is set to "no", CPAN::Reporter will still go through
 the motions of preparing a report, but will discard it rather than send it.
-This is used primarily for testing CPAN::Reporter.
+This is the default for an "na" report -- users may still edit the report to 
+see which prerequisites failed, but no report will be sent.
 
 A better way to disable CPAN::Reporter temporarily is with the CPAN option
 {test_report}:
@@ -1279,7 +1281,7 @@ information about paths, terminal, locale, user/group ID, installed toolchain
 modules (e.g. ExtUtils::MakeMaker) and so on.  
 
 These have been intentionally limited to items that should not cause harmful
-personal information to be revealed.  I.e it does ~not~ include your entire
+personal information to be revealed -- it does ~not~ include your entire
 environment.  Nevertheless, please do not use CPAN::Reporter if you are
 concerned about the disclosure of this information as part of your test report.  
 
@@ -1289,8 +1291,7 @@ prior to sending it.
 = BUGS
 
 Please report any bugs or feature using the CPAN Request Tracker.  
-Bugs can be submitted by email to bug-CPAN-Reporter@rt.cpan.org or 
-through the web interface at 
+Bugs can be submitted through the web interface at 
 [http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter]
 
 When submitting a bug or request, please include a test-file or a patch to an
