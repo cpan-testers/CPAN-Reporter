@@ -1,5 +1,8 @@
 Revision history for Perl module CPAN::Reporter
 
+0.38
+    - fixed uninitialized value warning in "Preparing test report for..."
+
 0.37 Mon Dec  4 08:44:54 EST 2006
     - fixed false result given back to CPAN.pm when config file is missing
       but tests passed (Reported by Andreas Koenig)
