@@ -1,5 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+0.37 Mon Dec  4 08:44:54 EST 2006
+    - fixed false result given back to CPAN.pm when config file is missing
+      but tests passed (Reported by Andreas Koenig)
+
 0.36 Mon Dec  4 00:20:32 EST 2006
     - changed default for send_report to "no" for "na" reports to avoid
       sending spurious reports from prerequisites failures

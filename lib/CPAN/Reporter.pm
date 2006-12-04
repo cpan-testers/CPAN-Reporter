@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = "0.36";
+$CPAN::Reporter::VERSION = "0.37";
 
 use Config;
 use Config::Tiny ();
@@ -162,9 +162,14 @@ sub configure {
         $CPAN::Frontend->myprint(
             "\nFound your CPAN::Reporter config file at:\n$config_file\n"
         );
-        $config = _open_config_file() 
-            or return;
-        $existing_options = _get_config_options( $config );
+        $config = _open_config_file();
+        $existing_options = _get_config_options( $config ) if $config;
+        # if a file exists, but we can't open it or read it, then stop
+        if ( ! ( $config && $existing_options) ) {
+            $CPAN::Frontend->mywarn("\n
+                CPAN::Reporter configuration will not be changed\n");
+            return;
+        }
         $CPAN::Frontend->myprint(
             "\nUpdating your CPAN::Reporter configuration settings:\n"
         );
@@ -275,13 +280,102 @@ sub test {
     $result->{output} = [ <TEST_RESULT> ];
     close TEST_RESULT;
 
-    _process_report( $result );
-    return $result->{success};    
+    $CPAN::Frontend->myprint("Preparing a test report for $result->{dist_name}\n");
+    _expand_report( $result );
+    _dispatch_report( $result );
+
+    return $result->{success};   # from _expand_report 
 }
 
 #--------------------------------------------------------------------------#
 # private functions
 #--------------------------------------------------------------------------#
+
+#--------------------------------------------------------------------------#
+# _dispatch_report
+#
+# Set up Test::Reporter and prompt user for CC, edit, send
+#--------------------------------------------------------------------------#
+
+sub _dispatch_report {
+    my $result = shift;
+
+    # Get configuration options
+    my $config_obj = _open_config_file();
+    my $config = _get_config_options( $config_obj ) if $config_obj;
+    if ( ! $config->{email_from} ) {
+        $CPAN::Frontend->mywarn( << "EMAIL_REQUIRED");
+        
+CPAN::Reporter requires an email-address in the config file.  
+Test report will not be sent. See documentation for configuration details.
+
+EMAIL_REQUIRED
+        return;
+    }
+        
+    # Setup the test report
+    my $tr = Test::Reporter->new;
+    $tr->grade( $result->{grade} );
+    $tr->debug( $config->{debug} ) if defined $config->{debug};
+    $tr->from( $config->{email_from} );
+    $tr->address( $config->{email_to} ) if $config->{email_to};
+    if ( $config->{smtp_server} ) {
+        my @mx = split " ", $config->{smtp_server};
+        $tr->mx( \@mx );
+    }
+    
+    # Populate the test report
+    
+    $tr->distribution( $result->{dist_name}  );
+    $tr->comments( _report_text( $result ) );
+    $tr->via( 'CPAN::Reporter ' . $CPAN::Reporter::VERSION );
+    my @cc;
+
+    # User prompts for action
+    if ( _prompt( $config, "cc_author", $tr->grade) =~ /^y/ ) {
+        push @cc, "$result->{author_id}\@cpan.org";
+    }
+    
+    if ( _prompt( $config, "edit_report", $tr->grade ) =~ /^y/ ) {
+        my $editor = $config->{editor};
+        local $ENV{VISUAL} = $editor if $editor;
+        $tr->edit_comments;
+    }
+    
+    if ( _prompt( $config, "send_report", $tr->grade ) =~ /^y/ ) {
+        $CPAN::Frontend->myprint( "Sending test report with '" . $tr->grade . 
+              "' to " . join(q{, }, $tr->address, @cc) . "\n");
+        $tr->send( @cc ) or $CPAN::Frontend->mywarn( $tr->errstr. "\n");
+    }
+    else {
+        $CPAN::Frontend->myprint("Test report not sent\n");
+    }
+
+    return;
+}
+
+#--------------------------------------------------------------------------#
+# _expand_report
+#
+# broken out separately for testing
+#--------------------------------------------------------------------------#
+
+sub _expand_report {
+    my $result = shift;
+
+    $result->{dist_name} = basename($result->{dist}->pretty_id);
+    $result->{dist_name} =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
+    $result->{author} = $result->{dist}->author->fullname;
+    $result->{author_id} = $result->{dist}->author->id;
+    $result->{prereq_pm} = _prereq_report( $result->{dist} );
+    $result->{env_vars} = _env_report();
+    $result->{special_vars} = _special_vars_report();
+    $result->{toolchain_versions} = _toolchain_report();
+    $result->{grade} = _grade_report($result);
+    $result->{success} =  $result->{grade} eq 'pass'
+                       || $result->{grade} eq 'unknown';
+    return;
+}
 
 #--------------------------------------------------------------------------#
 # _env_report
@@ -634,89 +728,6 @@ sub _prereq_report {
     }
     
     return $report || "    No requirements found\n";
-}
-
-#--------------------------------------------------------------------------#
-# _process_report
-#--------------------------------------------------------------------------#
-
-sub _process_report {
-    my ( $result ) = @_;
-
-    # Get configuration options
-    my $config_obj = _open_config_file();
-    if ( not defined $config_obj ) {
-        $CPAN::Frontend->mywarn( "\nCPAN::Reporter config file not found. " .
-             "Skipping test report generation.\n");
-        return;
-    }
-    my $config = _get_config_options( $config_obj );
-    
-    if ( ! $config->{email_from} ) {
-        $CPAN::Frontend->mywarn( << "EMAIL_REQUIRED");
-        
-CPAN::Reporter requires an email-address.  Test report will not be sent.
-See documentation for configuration details.
-
-EMAIL_REQUIRED
-        return;
-    }
-        
-    # Setup variables for use in report
-    $result->{dist_name} = basename($result->{dist}->pretty_id);
-    $result->{dist_name} =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
-    $result->{author} = $result->{dist}->author->fullname;
-    $result->{author_id} = $result->{dist}->author->id;
-    $result->{prereq_pm} = _prereq_report( $result->{dist} );
-    $result->{env_vars} = _env_report();
-    $result->{special_vars} = _special_vars_report();
-    $result->{toolchain_versions} = _toolchain_report();
-
-    # Determine result
-    $CPAN::Frontend->myprint("Preparing a test report for $result->{dist_name}\n");
-    $result->{grade} = _grade_report($result);
-    $result->{success} =  $result->{grade} eq 'pass'
-                       || $result->{grade} eq 'unknown';
-
-    # Setup the test report
-    my $tr = Test::Reporter->new;
-    $tr->grade( $result->{grade} );
-    $tr->debug( $config->{debug} ) if defined $config->{debug};
-    $tr->from( $config->{email_from} );
-    $tr->address( $config->{email_to} ) if $config->{email_to};
-    if ( $config->{smtp_server} ) {
-        my @mx = split " ", $config->{smtp_server};
-        $tr->mx( \@mx );
-    }
-    
-    # Populate the test report
-    
-    $tr->distribution( $result->{dist_name}  );
-    $tr->comments( _report_text( $result ) );
-    $tr->via( 'CPAN::Reporter ' . $CPAN::Reporter::VERSION );
-    my @cc;
-
-    # User prompts for action
-    if ( _prompt( $config, "cc_author", $tr->grade) =~ /^y/ ) {
-        push @cc, "$result->{author_id}\@cpan.org";
-    }
-    
-    if ( _prompt( $config, "edit_report", $tr->grade ) =~ /^y/ ) {
-        my $editor = $config->{editor};
-        local $ENV{VISUAL} = $editor if $editor;
-        $tr->edit_comments;
-    }
-    
-    if ( _prompt( $config, "send_report", $tr->grade ) =~ /^y/ ) {
-        $CPAN::Frontend->myprint( "Sending test report with '" . $tr->grade . 
-              "' to " . join(q{, }, $tr->address, @cc) . "\n");
-        $tr->send( @cc ) or $CPAN::Frontend->mywarn( $tr->errstr. "\n");
-    }
-    else {
-        $CPAN::Frontend->myprint("Test report not sent\n");
-    }
-
-    return;
 }
 
 #--------------------------------------------------------------------------#

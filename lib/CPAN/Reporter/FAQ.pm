@@ -1,7 +1,7 @@
 package CPAN::Reporter::FAQ
 # Not really a .pm file, but holds wikidoc which will be
 # turned into .pod by the Build.PL
-$VERSION = "0.36";
+$VERSION = "0.37";
 use strict; # make CPANTS happy
 1;
 __END__

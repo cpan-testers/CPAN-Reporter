@@ -27,6 +27,7 @@ t/52_test_report_unknown.t
 t/53_test_report_na.t
 t/54_test_report_split.t
 t/70_darwin_move_config.t
+t/71_missing_config.t
 t/98_pod.t
 t/99_pod_coverage.t
 t/dist/NoTestDir/Build.PL

@@ -81,7 +81,7 @@ my @cases = (
 
 
 plan tests => 1 + test_fake_config_plan()
-                + test_process_report_plan() * @cases;
+                + test_report_plan() * @cases;
 
 #--------------------------------------------------------------------------#
 # tests
@@ -100,7 +100,7 @@ for my $case ( @cases ) {
     $case->{output} = [ map {$_ . "\n" } 
                         split( "\n", $report_output{$case->{label}}) ];
     $case->{original} = $report_output{$case->{label}};
-    test_process_report( $case );
+    test_report( $case );
 }
 
 

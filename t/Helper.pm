@@ -6,7 +6,7 @@ use vars qw/@EXPORT/;
 @EXPORT = qw/
     test_dist test_dist_plan
     test_fake_config test_fake_config_plan
-    test_process_report test_process_report_plan
+    test_report test_report_plan
 /;
 
 use base 'Exporter';
@@ -192,8 +192,8 @@ HERE
     
 );
 
-sub test_process_report_plan() { 9 };
-sub test_process_report {
+sub test_report_plan() { 9 };
+sub test_report {
     my ($result) = @_;
     my $label = $result->{label};
 
@@ -204,13 +204,14 @@ sub test_process_report {
     
     eval {
         capture sub {
-            CPAN::Reporter::_process_report( $result ); 
+            CPAN::Reporter::_expand_report( $result ); 
+            CPAN::Reporter::_dispatch_report( $result );
         }, \$stdout, \$stderr;
         return 1;
     }; 
      
     is( $@, q{}, 
-        "_process_report for $label" 
+        "report for $label ran without error" 
     );
 
     is( $result->{grade}, $label,
