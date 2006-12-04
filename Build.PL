@@ -82,4 +82,12 @@ $class->new(
         'Test::More'            => 0.45,   # thread-safe
         'Test::Reporter'        => 1.27,
     },
+    meta_add            => { 
+        no_index => { 
+            file => [ qw{ 
+                lib/CPAN/Reporter/FAQ.pm
+            } ],
+            directory => [ 'examples' ],
+        } 
+    },
 )->create_build_script;
