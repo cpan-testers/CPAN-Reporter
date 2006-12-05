@@ -17,11 +17,11 @@ DESCRIPTION
     project. Support for CPAN::Reporter is available in CPAN.pm as of
     version 1.88.
 
-    The goal of the CPAN Testers project ( <http://testers.cpan.org/> ) is
-    to test as many CPAN packages as possible on as many platforms as
-    possible. This provides valuable feedback to module authors and
-    potential users to identify bugs or platform compatibility issues and
-    improves the overall quality and value of CPAN.
+    The goal of the CPAN Testers project (<http://testers.cpan.org/>) is to
+    test as many CPAN packages as possible on as many platforms as possible.
+    This provides valuable feedback to module authors and potential users to
+    identify bugs or platform compatibility issues and improves the overall
+    quality and value of CPAN.
 
     One way individuals can contribute is to send test results for each
     module that they test or install. Installing CPAN::Reporter gives the

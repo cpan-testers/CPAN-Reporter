@@ -1061,7 +1061,7 @@ CPAN::Reporter is an add-on for the CPAN.pm module that uses
 Testers project.  Support for CPAN::Reporter is available in CPAN.pm 
 as of version 1.88.
 
-The goal of the CPAN Testers project ( [http://testers.cpan.org/] ) is to
+The goal of the CPAN Testers project ([http://testers.cpan.org/]) is to
 test as many CPAN packages as possible on as many platforms as
 possible.  This provides valuable feedback to module authors and
 potential users to identify bugs or platform compatibility issues and

@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.38
+0.38 Mon Dec  4 20:39:18 EST 2006
     - fixed uninitialized value warning in "Preparing test report for..."
 
 0.37 Mon Dec  4 08:44:54 EST 2006
