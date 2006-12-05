@@ -263,7 +263,7 @@ sub test {
         open MAKEWRAP, ">$makewrapper"
             or die "Could not create a wrapper for make: $!";
         print MAKEWRAP qq{system('$system_command');\n};
-        print MAKEWRAP qq{print "makewrapper: make ", \$? ? "failed" : "ok";\n};
+        print MAKEWRAP qq{print "makewrapper: make ", \$? ? "failed" : "ok","\n"};
         close MAKEWRAP;
         $tee_input = Probe::Perl->find_perl_interpreter() .  " $makewrapper";
     }

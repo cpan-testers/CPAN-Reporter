@@ -69,7 +69,7 @@ sub test_fake_config {
 # dist tests
 #--------------------------------------------------------------------------#
 
-sub test_dist_plan() { 9 }
+sub test_dist_plan() { 1 + 10 }
 sub test_dist {
     my ($case, $dist) = @_;
     local $Test::Builder::Level = $Test::Builder::Level + 1;
@@ -114,6 +114,10 @@ sub test_dist {
         "$case->{name}: test('make test') grade reported as '$case->{eumm_grade}'"
     );
         
+    like( $stdout, "/Preparing a test report for $dist->{pretty_id}/",
+        "$case->{name}: report info header correct"
+    );
+
     like( $stdout, "/$case->{eumm_msg}/",
         "$case->{name}: test('make test') grade explanation correct"
     );
@@ -124,7 +128,7 @@ sub test_dist {
     SKIP: {
 
         eval "require Module::Build";
-        skip "Module::Build not installed", 4
+        skip "Module::Build not installed", ( test_dist_plan() - 1 ) / 2
             if $@;
         
         my ($build_rc, $test_build_rc);
@@ -149,6 +153,10 @@ sub test_dist {
             "$case->{name}: test('perl Build test') grade reported as '$case->{mb_grade}'"
         );
         
+        like( $stdout, "/Preparing a test report for $dist->{pretty_id}/",
+            "$case->{name}: report info header correct"
+        );
+
         like( $stdout, "/$case->{mb_msg}/",
             "$case->{name}: test('perl Build test') grade explanation correct"
         );
