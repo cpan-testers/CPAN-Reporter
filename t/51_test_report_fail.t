@@ -84,7 +84,7 @@ plan tests => 1 + test_fake_config_plan() + test_dist_plan() * @test_distros;
 #--------------------------------------------------------------------------#
 
 my $mock_dist = t::MockCPANDist->new( 
-    pretty_id => "Bogus::Module",
+    pretty_id => "Bogus-Module",
     prereq_pm       => {
         'File::Spec' => 0,
     },
