@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = "0.38";
+$CPAN::Reporter::VERSION = "0.39";
 
 use Config;
 use Config::Tiny ();
@@ -628,6 +628,7 @@ sub _max_length {
     return $max;
 }
 
+    
 #--------------------------------------------------------------------------#
 # _open_config_file
 #--------------------------------------------------------------------------#
@@ -983,7 +984,16 @@ sub _validate_grade_action {
 #--------------------------------------------------------------------------#
 # _version_finder
 #
-# arguments: module => version pairs
+# module => version pairs
+#
+# This is done via an external program to show installed versions exactly
+# the way they would be found when test programs are run.  This means that
+# any updates to PERL5LIB will be reflected in the results.
+#
+# File-finding logic taken from CPAN::Module::inst_file().  Logic to 
+# handle newer Module::Build prereq syntax is taken from
+# CPAN::Distribution::unsat_prereq()
+#
 #--------------------------------------------------------------------------#
 
 my $version_finder = File::Temp->new;
@@ -991,40 +1001,101 @@ open VERSIONFINDER , ">$version_finder"
     or die "Could not create temporary support program for versions: $!";
 print VERSIONFINDER << 'END';
 use strict;
-while ( @ARGV ) {
-    my ($mod, $need) = splice @ARGV, 0, 2;
-    print "$mod ";
+use ExtUtils::MakeMaker;
+use CPAN::Version;
+
+# read module and prereq string from STDIN
+while ( <STDIN> ) {
+    m/^(\S+)\s+([^\n]*)/;
+    my ($mod, $need) = ($1, $2);
+    die "Couldn't read module for '$_'" unless $mod;
+    $need = 0 if not defined $need;
+
+    # get installed version from file with EU::MM
+    my($have, $inst_file, $dir, @packpath);
     if ( $mod eq "perl" ) { 
-        eval "use $need";
-        print $@ ? "0 " : "1 ";
-        print $], "\n";
+        $have = $];
     }
     else {
-        eval "use $mod qw()";
-        if ( $@ ) {
-            print "0 n/a\n";
+        @packpath = split /::/, $mod;
+        $packpath[-1] .= ".pm";
+        if (@packpath == 1 && $packpath[0] eq "readline.pm") {
+            unshift @packpath, "Term", "ReadLine"; # historical reasons
         }
-        elsif ( $need == 0) {
-            # enough that it exists, don't check explicitly
-            # or modules without $VERSION will fail
-            print "1 ", $mod->VERSION || 0, "\n";
+        foreach $dir (@INC) {
+            my $pmfile = File::Spec->catfile($dir,@packpath);
+            if (-f $pmfile){
+                $inst_file = $pmfile;
+            }
+        }
+        
+        # get version from file or else report missing
+        if ( defined $inst_file ) {
+            $have = MM->parse_version($inst_file);
+            $have = "0" if ! defined $have || $have eq 'undef';
         }
         else {
-            eval "use $mod $need qw()";
-            print $@ ? "0 " : "1 ";
-            print $mod->VERSION || 0, "\n";
+            print "$mod 0 n/a\n";
+            next;
         }
     }
+
+    # complex requirements are comma separated
+    my ( @requirements ) = split /\s*,\s*/, $need;
+
+    my $passes = 0;
+    RQ: 
+    for my $rq (@requirements) {
+        if ($rq =~ s|>=\s*||) {
+            # no-op -- just trimmed string
+        } elsif ($rq =~ s|>\s*||) {
+            if (CPAN::Version->vgt($have,$rq)){
+                $passes++;
+            }
+            next RQ;
+        } elsif ($rq =~ s|!=\s*||) {
+            if (CPAN::Version->vcmp($have,$rq)) { 
+                $passes++; # didn't match
+            }
+            next RQ;
+        } elsif ($rq =~ s|<=\s*||) {
+            if (! CPAN::Version->vgt($have,$rq)){
+                $passes++;
+            }
+            next RQ;
+        } elsif ($rq =~ s|<\s*||) {
+            if (CPAN::Version->vlt($have,$rq)){
+                $passes++;
+            }
+            next RQ;
+        }
+        # if made it here, then it's a normal >= comparison
+        if (! CPAN::Version->vlt($have, $rq)){
+            $passes++;
+        }
+    }
+    my $ok = $passes == @requirements ? 1 : 0;
+    print "$mod $ok $have\n"
 }
 END
 close VERSIONFINDER;
 
 sub _version_finder {
-    my @module_list = @_;
+    my %prereqs = @_;
+
     my $perl = Probe::Perl->find_perl_interpreter();
-    my @prereq_results = qx/$perl $version_finder @module_list/;
+    my @prereq_results;
+    
+    my $prereq_input = File::Temp->new;
+    open PREREQ , ">$prereq_input"
+        or die "Could not create temporary input for prereq analysis: $!";
+    print PREREQ map { "$_ $prereqs{$_}\n" } keys %prereqs;
+    close PREREQ;
+
+    my $prereq_result = qx/$perl $version_finder < $prereq_input/;
+
     my %result;
-    for my $line ( @prereq_results ) {
+    for my $line ( split "\n", $prereq_result ) {
         my ($mod, $met, $have) = split " ", $line;
         $result{$mod}{have} = $have;
         $result{$mod}{met} = $met;
