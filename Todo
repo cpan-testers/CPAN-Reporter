@@ -1,5 +1,23 @@
 TODO list for Perl module CPAN::Reporter
 
+#--------------------------------------------------------------------------#
+# Bugs
+#--------------------------------------------------------------------------#
+
+- 'Math::BigInt' => '>= 1.77',
+    - see CPAN::Distribution::unsat_prereq
+    - Module::Builid says:
+        requires => {
+               Foo::Module => '2.4',
+               Bar::Module => 0,
+               Ken::Module => '>= 1.2, != 1.5, < 2.0',
+               perl => '5.6.0'
+              },
+
+#--------------------------------------------------------------------------#
+# Features, etc
+#--------------------------------------------------------------------------#
+
 - Add an FAQ
     - why don't I see my test report
     - why won't it send
