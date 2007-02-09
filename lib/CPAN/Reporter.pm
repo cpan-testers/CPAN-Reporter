@@ -617,6 +617,18 @@ sub _is_valid_grade {
 }
 
 #--------------------------------------------------------------------------#
+# _max_length
+#--------------------------------------------------------------------------#
+
+sub _max_length {
+    my $max = length shift;
+    for my $term ( @_ ) {
+        $max = length $term if length $term > $max;
+    }
+    return $max;
+}
+
+#--------------------------------------------------------------------------#
 # _open_config_file
 #--------------------------------------------------------------------------#
 
@@ -899,30 +911,22 @@ my @toolchain_mods= qw(
 );
 
 sub _toolchain_report {
-    my $tools_result = _version_finder( map { $_ => 0 } @toolchain_mods );
-    my $report = "";
+    my $installed = _version_finder( map { $_ => 0 } @toolchain_mods );
 
-    my $mod_width = [ 
-        sort { $b <=> $a } 
-        map { length $_ }
-        keys %$tools_result
-    ]->[0];
-
-    my $ver_width = [
-        sort { $b <=> $a } 
-        map { length $_ }
-        map { $tools_result->{$_}{have} }
-        keys %$tools_result
-    ]->[0];
+    my $mod_width = _max_length( keys %$installed );
+    my $ver_width = _max_length( 
+        map { $installed->{$_}{have} } keys %$installed  
+    );
 
     my $format = "    \%-${mod_width}s \%-${ver_width}s\n";
 
+    my $report = "";
     $report .= sprintf( $format, "Module", "Have" );
     $report .= sprintf( $format, "-" x $mod_width, "-" x $ver_width );
 
-    for my $var ( sort keys %$tools_result ) {
+    for my $var ( sort keys %$installed ) {
         $report .= sprintf("    \%-${mod_width}s \%-${ver_width}s\n",
-                            $var, $tools_result->{$var}{have} );
+                            $var, $installed->{$var}{have} );
     }
 
     return $report;
