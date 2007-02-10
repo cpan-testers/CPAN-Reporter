@@ -17,7 +17,13 @@ my @prereq_cases = (
     [ 'Bogus::NotFound',    1.49,   "n/a",  0   ],
     [ 'Bogus::TooOld',      2.72,   0.01,   0   ],
     [ 'Bogus::NoVersion',      0,      0,   1   ],
-    [ 'perl',               5.00,    $],   1   ],   
+    [ 'Bogus::GTE',     '>= 3.14',   3.14,   1   ],
+    [ 'Bogus::GT',       '>3.14',   3.14,   0   ],
+    [ 'Bogus::LTE',     '<= 3.15',   3.14,   1   ],
+    [ 'Bogus::LT',       '<3.14',   3.14,   0   ],
+    [ 'Bogus::Conflict','!= 3.14',   3.14,   0   ],
+    [ 'Bogus::Complex', '>= 3, !=3.14, < 4', 3.14, 0],
+    [ 'perl',               5.00,    $],    1   ],   
 );
 
 my @scenarios = (
@@ -39,14 +45,22 @@ plan tests => 2 + test_fake_config_plan() +
 
 my %prereq_pm = map { @{$_}[0,1] } @prereq_cases;
 
-my $expect_regex = '\s+(!|\s)\s+(\S+)\s+(\S+)\s+(\S+)';
+my ($module_width, $prereq_width) = (0,0);
+for my $case ( @prereq_cases ) {
+    $module_width = length $case->[0] if length $case->[0] > $module_width;
+    $prereq_width = length $case->[1] if length $case->[1] > $prereq_width;
+}
+
+my $expect_regex = '\s+(!|\s)\s' .
+                   '(.{' . $module_width . '})\s' .
+                   '(.{' . $prereq_width . '})\s(\S+)';
 # \s+         leading spaces
 # (!|\s)      capture bang or space
-# \s+         separator spaces
-# (\S+)       module name
-# \s+         separator spaces
-# (\S+)       module version needed
-# \s+         separator spaces
+# \s         separator space
+# (.{N})       module name
+# \s         separator space
+# (.{N})       module version needed
+# \s         separator space
 # (\S+)       module version found
 
 
@@ -120,6 +134,7 @@ for my $scene ( @scenarios ) {
     );
 
     $got = CPAN::Reporter::_prereq_report( $mock_dist );
+#    diag $got;
     @got = split /\n+/ms, $got;
 
     for my $prereq_type ( @keys ) {
@@ -135,6 +150,9 @@ for my $scene ( @scenarios ) {
             my $line = shift(@got);
             my ($bang, $module, $need, $have) = 
                 ( $line =~ /^$expect_regex\s*$/ms );
+            # trim trailing spaces from fixed-width captures
+            $module =~ s/\s*$//;
+            $need =~ s/\s*$//;
             is( $module, $exp_module,
                 "$label ($prereq_type): found '$exp_module' in report"
             );
