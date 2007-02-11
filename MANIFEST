@@ -131,7 +131,13 @@ t/dist/test.pl-PrereqPerl-OK/test.pl
 t/Frontend.pm
 t/Helper.pm
 t/MockCPANDist.pm
+t/perl5lib/Bogus/Complex.pm
+t/perl5lib/Bogus/Conflict.pm
 t/perl5lib/Bogus/Found.pm
+t/perl5lib/Bogus/GT.pm
+t/perl5lib/Bogus/GTE.pm
+t/perl5lib/Bogus/LT.pm
+t/perl5lib/Bogus/LTE.pm
 t/perl5lib/Bogus/NoVersion.pm
 t/perl5lib/Bogus/TooOld.pm
 Todo

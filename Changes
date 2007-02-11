@@ -1,8 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
-0.39
+0.39 Sat Feb 10 19:28:13 EST 2007
     - changed prereq version testing to better match approach used
       by CPAN.pm
+    - added support for Module::Build-style extended prerequisite logic
+      (e.g. ">= N.nn, !=M.mm" etc.)
 
 0.38 Mon Dec  4 20:39:18 EST 2006
     - fixed uninitialized value warning in "Preparing test report for..."
