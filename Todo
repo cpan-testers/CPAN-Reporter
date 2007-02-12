@@ -9,7 +9,15 @@ TODO list for Perl module CPAN::Reporter
 # Features, etc
 #--------------------------------------------------------------------------#
 
-- Add config to save reports to a file
+- ability to turn on/off via an environment variable (David Cantrell)
+
+- remember which versions of which modules it has already reported on and not
+  report on them again (David Cantrell)
+
+- ability to only report on what I asked to install, not on its dependencies
+  (David Cantrell)
+
+- Add config to save reports to a file (Jerry Hedden)
 
 - Check for system() call $? & 127 (only on Unix, though) or set a $SIG{INT}
   handler (for Win32); abort test without sending; key question: is this
