@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = "0.39";
+$CPAN::Reporter::VERSION = "0.40"; 
 
 use Config;
 use Config::Tiny ();
@@ -10,7 +10,9 @@ use File::Basename qw/basename/;
 use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
 use File::Temp ();
+use IO::File ();
 use Probe::Perl ();
+use Symbol qw/gensym/;
 use Tee qw/tee/;
 use Test::Reporter ();
 
@@ -33,13 +35,15 @@ Since CPAN::Reporter 0.28_51, the Mac OSX config directory has changed.
 Your existing configuration file will be moved automatically.
 HERE
         mkpath($new);
-        open OLD_CONFIG, File::Spec->catfile($old, "config.ini")
-            or die $!;
-        open NEW_CONFIG, ">" . File::Spec->catfile($new, "config.ini")
-            or die $!;
-        print NEW_CONFIG <OLD_CONFIG>;
-        close OLD_CONFIG;
-        close NEW_CONFIG;
+        my $OLD_CONFIG = IO::File->new(
+            File::Spec->catfile($old, "config.ini"), "<"
+        ) or die $!;
+        my $NEW_CONFIG = IO::File->new(
+            File::Spec->catfile($new, "config.ini"), ">"
+        ) or die $!;
+        $NEW_CONFIG->print( do { local $/; <$OLD_CONFIG> } );
+        $OLD_CONFIG->close;
+        $NEW_CONFIG->close;
         unlink File::Spec->catfile($old, "config.ini") or die $!;
         rmdir($old) or die $!;
     }
@@ -259,12 +263,11 @@ sub test {
     my ($tee_input, $makewrapper);
     
     if ( -f "test.pl" && _is_make($system_command) ) {
-        $makewrapper = File::Temp->new;
-        open MAKEWRAP, ">$makewrapper"
+        $makewrapper = File::Temp->new
             or die "Could not create a wrapper for make: $!";
-        print MAKEWRAP qq{system('$system_command');\n};
-        print MAKEWRAP qq{print "makewrapper: make ", \$? ? "failed" : "ok","\n"};
-        close MAKEWRAP;
+        print $makewrapper qq{system('$system_command');\n};
+        print $makewrapper qq{print "makewrapper: make ", \$? ? "failed" : "ok","\n"};
+        $makewrapper->close;
         $tee_input = Probe::Perl->find_perl_interpreter() .  " $makewrapper";
     }
     else {
@@ -273,12 +276,13 @@ sub test {
     
     tee($tee_input, { stderr => 1 }, $temp_out);
         
-    if ( ! open(TEST_RESULT, "<", $temp_out) ) {
+    my $TEST_RESULT = IO::File->new($temp_out->filename, "<");
+    if ( !$TEST_RESULT ) {
         $CPAN::Frontend->mywarn( "CPAN::Reporter couldn't read test results\n" );
         return;
     }
-    $result->{output} = [ <TEST_RESULT> ];
-    close TEST_RESULT;
+    $result->{output} = [ <$TEST_RESULT> ];
+    $TEST_RESULT->close;
 
     _expand_report( $result );
     _dispatch_report( $result );
@@ -303,7 +307,8 @@ sub _dispatch_report {
 
     # Get configuration options
     my $config_obj = _open_config_file();
-    my $config = _get_config_options( $config_obj ) if $config_obj;
+    my $config;
+    $config = _get_config_options( $config_obj ) if $config_obj;
     if ( ! $config->{email_from} ) {
         $CPAN::Frontend->mywarn( << "EMAIL_REQUIRED");
         
@@ -338,8 +343,9 @@ EMAIL_REQUIRED
     }
     
     if ( _prompt( $config, "edit_report", $tr->grade ) =~ /^y/ ) {
+        local $ENV{VISUAL} = $ENV{VISUAL};
         my $editor = $config->{editor};
-        local $ENV{VISUAL} = $editor if $editor;
+        $ENV{VISUAL} = $editor if $editor;
         $tr->edit_comments;
     }
     
@@ -533,7 +539,7 @@ sub _grade_report {
     # so re-run make test on test.pl
     
     if ( $is_make && -f "test.pl" && $grade ne 'fail' ) {
-        if ( $output->[$#{$output}] =~ m{^makewrapper: make failed}ims ) {
+        if ( $output->[-1] =~ m{^makewrapper: make failed}ims ) {
             $grade = "fail";
             $msg = "'make test' error detected";
         }
@@ -592,7 +598,7 @@ sub _has_tests {
 
 sub _is_make {
     my $command = shift;
-    return 1 if $command =~ m{^\S*make}ims;
+    return $command =~ m{^\S*make}ims ? 1 : 0;
 }
 
 #--------------------------------------------------------------------------#
@@ -880,7 +886,7 @@ sub _special_vars_report {
     GID:  \$(  = $(
     EGID: \$)  = $)
 HERE
-    if ( $^O eq 'MSWin32' && eval "require Win32" ) {
+    if ( $^O eq 'MSWin32' && eval "require Win32" ) { ## no critic
         my @getosversion = Win32::GetOSVersion();
         my $getosversion = join(", ", @getosversion);
         $special_vars .= "    Win32::GetOSName = " . Win32::GetOSName() . "\n";
@@ -996,10 +1002,9 @@ sub _validate_grade_action {
 #
 #--------------------------------------------------------------------------#
 
-my $version_finder = File::Temp->new;
-open VERSIONFINDER , ">$version_finder"
+my $version_finder = File::Temp->new
     or die "Could not create temporary support program for versions: $!";
-print VERSIONFINDER << 'END';
+$version_finder->print( << 'END' );
 use strict;
 use ExtUtils::MakeMaker;
 use CPAN::Version;
@@ -1086,11 +1091,10 @@ sub _version_finder {
     my $perl = Probe::Perl->find_perl_interpreter();
     my @prereq_results;
     
-    my $prereq_input = File::Temp->new;
-    open PREREQ , ">$prereq_input"
+    my $prereq_input = File::Temp->new
         or die "Could not create temporary input for prereq analysis: $!";
-    print PREREQ map { "$_ $prereqs{$_}\n" } keys %prereqs;
-    close PREREQ;
+    $prereq_input->print( map { "$_ $prereqs{$_}\n" } keys %prereqs );
+    $prereq_input->close;
 
     my $prereq_result = qx/$perl $version_finder < $prereq_input/;
 
