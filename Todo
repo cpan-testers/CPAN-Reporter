@@ -4,10 +4,16 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
+- Add defensive checks in _expand_report in case $dist->author is undef
 
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
+
+- set alternate configuration file via environment variable
+
+- use environment variable and/or external file to indicate modules to 
+  skip for reporting
 
 - ability to turn on/off via an environment variable (David Cantrell)
 
