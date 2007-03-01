@@ -339,7 +339,8 @@ EMAIL_REQUIRED
 
     # User prompts for action
     if ( _prompt( $config, "cc_author", $tr->grade) =~ /^y/ ) {
-        push @cc, "$result->{author_id}\@cpan.org";
+        # CC only if we have an author_id
+        push @cc, "$result->{author_id}\@cpan.org" if $result->{author_id};
     }
     
     if ( _prompt( $config, "edit_report", $tr->grade ) =~ /^y/ ) {
@@ -372,8 +373,6 @@ sub _expand_report {
 
     $result->{dist_name} = basename($result->{dist}->pretty_id);
     $result->{dist_name} =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
-    $result->{author} = $result->{dist}->author->fullname;
-    $result->{author_id} = $result->{dist}->author->id;
     $result->{prereq_pm} = _prereq_report( $result->{dist} );
     $result->{env_vars} = _env_report();
     $result->{special_vars} = _special_vars_report();
@@ -381,6 +380,12 @@ sub _expand_report {
     $result->{grade} = _grade_report($result);
     $result->{success} =  $result->{grade} eq 'pass'
                        || $result->{grade} eq 'unknown';
+    
+    # CPAN might fail to find an author object for some strange dists
+    my $author = $result->{dist}->author;
+    $result->{author} = defined $author ? $author->fullname : "Author";
+    $result->{author_id} = defined $author ? $author->id : "" ;
+
     return;
 }
 

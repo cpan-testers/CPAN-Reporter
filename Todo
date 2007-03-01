@@ -4,7 +4,6 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
-- Add defensive checks in _expand_report in case $dist->author is undef
 
 #--------------------------------------------------------------------------#
 # Features, etc
