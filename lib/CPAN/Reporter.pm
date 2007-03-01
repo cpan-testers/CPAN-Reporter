@@ -799,7 +799,7 @@ Thank you for uploading your work to CPAN.  However, it appears that
 there were some problems testing your distribution.
 HERE
 
-    'unknown' => << 'HERE',
+    'unknown' => <<'HERE',
 Thank you for uploading your work to CPAN.  However, attempting to
 test your distribution gave an inconclusive result.  This could be because
 you did not define tests (or tests could not be found), because
@@ -807,7 +807,7 @@ your tests were interrupted before they finished, or because
 the results of the tests could not be parsed by CPAN::Reporter.
 HERE
 
-    'na' => << 'HERE',
+    'na' => <<'HERE',
 Thank you for uploading your work to CPAN.  However, it appears that
 your distribution tests are not fully supported on this machine, either 
 due to operating system limitations or missing prerequisite modules.

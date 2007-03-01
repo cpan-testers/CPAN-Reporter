@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.40 Wed Feb 28 22:15:48 EST 2007
+0.40 Wed Feb 28 23:30:13 EST 2007
     - eliminated Perl::Critic level 5 and (most) level 4 complaints
     - added defensive code in case CPAN.pm can't provide a valid Author
       object (Reported by David Cantrell)
