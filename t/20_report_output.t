@@ -94,6 +94,7 @@ test_fake_config();
 $prereq_pm = CPAN::Reporter::_prereq_report( $mock_dist );
 
 for my $case ( @cases ) {
+    $case->{expected_grade} = $case->{label};
     $case->{dist} = $mock_dist;
     $case->{dist}{prereq_pm} = $case->{prereq_pm};
     $case->{command} = $command;

@@ -42,7 +42,7 @@ sub author { return $simulate_bad_author ? undef : shift }
 
 sub prereq_pm { return shift->{prereq_pm} }
 sub pretty_id { return shift->{pretty_id} }
-sub id { return shift->{id} }
+sub id { return shift->{author_id} }
 sub fullname { return shift->{author_fullname} }
 
 1;

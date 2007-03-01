@@ -36,10 +36,12 @@ my $home_dir = File::Spec->rel2abs( $temp_home );
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 
-my $bogus_email = 'johndoe@nowhere.com';
+my $bogus_email_from = 'johndoe@example.com';
+my $bogus_email_to = 'no_one@example.com';
 my $bogus_smtp = 'mail.mail.com';
 
-my $sent_report;
+# used to capture from fixtures
+use vars qw/$sent_report @cc_list/;
 
 #--------------------------------------------------------------------------#
 # test config file prep
@@ -56,9 +58,10 @@ sub test_fake_config {
     );
 
     my $tiny = Config::Tiny->new();
-    $tiny->{_}{email_from} = $bogus_email;
-    $tiny->{_}{email_to} = 'no_one@nowhere.com'; # failsafe
+    $tiny->{_}{email_from} = $bogus_email_from;
+    $tiny->{_}{email_to} = $bogus_email_to; # failsafe
     $tiny->{_}{smtp_server} = $bogus_smtp;
+    $tiny->{_}{cc_author} = "yes";
     ok( $tiny->write( $config_file ),
         "created temp config file with a new email address and smtp server"
     );
@@ -200,16 +203,20 @@ HERE
     
 );
 
-sub test_report_plan() { 9 };
+sub test_report_plan() { 10 };
 sub test_report {
     my ($result) = @_;
     my $label = $result->{label};
+    my $expected_grade = $result->{expected_grade};
 
     # automate CPAN::Reporter prompting
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
     
     my ($stdout, $stderr);
     
+    $t::Helper::sent_report = undef;
+    @t::Helper::cc_list = ();
+
     eval {
         capture sub {
             CPAN::Reporter::_expand_report( $result ); 
@@ -222,13 +229,13 @@ sub test_report {
         "report for $label ran without error" 
     );
 
-    is( $result->{grade}, $label,
+    is( $result->{grade}, $expected_grade,
         "result graded correctly"
     );
 
-    my $msg_re = $report_para{ $label };
+    my $msg_re = $report_para{ $expected_grade };
     ok( defined $msg_re && length $msg_re,
-        "grade paragraph selected for $label"
+        "$expected_grade grade paragraph selected for $label"
     );
     
     my $prereq = CPAN::Reporter::_prereq_report( $result->{dist} );
@@ -259,6 +266,15 @@ sub test_report {
     like( $t::Helper::sent_report, '/' . quotemeta($result->{original}) . '/ms',
         "test output found for $label"
     );
+
+    my @expected_cc;
+    my $author = $result->{dist}->author;
+    push @expected_cc, $author->id if defined $author;
+    is_deeply( 
+        [ @t::Helper::cc_list ], 
+        [ map { $_ . '@cpan.org' } @expected_cc ],
+        "cc list correct"
+    );
 };
 
 #--------------------------------------------------------------------------#
@@ -281,6 +297,8 @@ sub new { print shift, "\n"; return bless {}, 'Test::Reporter::Mocked' }
 package Test::Reporter::Mocked;
 
 sub comments { shift; $t::Helper::sent_report = shift }
+
+sub send { shift; @t::Helper::cc_list = ( @_ ); return 1 } 
 
 sub AUTOLOAD { return "1 mocked answer" }
 
