@@ -77,6 +77,10 @@ sub test_dist {
     my ($case, $dist) = @_;
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
+    # simplify dist name
+    my $dist_name = $dist->pretty_id;
+    $dist_name =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
+
     # automate CPAN::Reporter prompting
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
 
@@ -117,7 +121,7 @@ sub test_dist {
         "$case->{name}: test('make test') grade reported as '$case->{eumm_grade}'"
     );
         
-    like( $stdout, "/Preparing a test report for $dist->{pretty_id}/",
+    like( $stdout, "/Preparing a test report for $dist_name/",
         "$case->{name}: report info header correct"
     );
 
@@ -156,7 +160,7 @@ sub test_dist {
             "$case->{name}: test('perl Build test') grade reported as '$case->{mb_grade}'"
         );
         
-        like( $stdout, "/Preparing a test report for $dist->{pretty_id}/",
+        like( $stdout, "/Preparing a test report for $dist_name/",
             "$case->{name}: report info header correct"
         );
 

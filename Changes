@@ -1,5 +1,8 @@
 Revision history for Perl module CPAN::Reporter
 
+0.41
+    - improved inputs for mocking CPAN::Distribution
+
 0.40 Wed Feb 28 23:30:13 EST 2007
     - eliminated Perl::Critic level 5 and (most) level 4 complaints
     - added defensive code in case CPAN.pm can't provide a valid Author

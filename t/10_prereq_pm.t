@@ -65,7 +65,7 @@ my $expect_regex = '\s+(!|\s)\s' .
 
 
 my @mock_defaults = (
-    pretty_id => "Bogus::Module",
+    pretty_id => "Bogus-Module-1.23.tar.gz",
     author_id       => "JOHNQP",
     author_fullname => "John Q. Public",
 );
