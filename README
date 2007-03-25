@@ -2,7 +2,7 @@ NAME
     CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 VERSION
-    This documentation describes version 0.40.
+    This documentation describes version 0.41.
 
 SYNOPSIS
     From the CPAN shell:
