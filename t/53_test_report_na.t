@@ -90,7 +90,7 @@ test_fake_config();
 
 for my $case ( @test_distros ) {
     my $mock_dist = t::MockCPANDist->new( 
-        pretty_id => "Bogus-Module-1.23.tar.gz",
+        pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
         prereq_pm       => $case->{prereq},
         author_id       => "JOHNQP",
         author_fullname => "John Q. Public",

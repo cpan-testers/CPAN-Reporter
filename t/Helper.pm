@@ -7,11 +7,13 @@ use vars qw/@EXPORT/;
     test_dist test_dist_plan
     test_fake_config test_fake_config_plan
     test_report test_report_plan
+    test_dispatch test_dispatch_plan
 /;
 
 use base 'Exporter';
 
 use Config;
+use File::Basename;
 use File::Copy::Recursive qw/dircopy/;
 use File::Path qw/mkpath/;
 use File::pushd qw/pushd/;
@@ -49,6 +51,8 @@ use vars qw/$sent_report @cc_list/;
 
 sub test_fake_config_plan() { 3 }
 sub test_fake_config {
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     is( File::HomeDir::my_documents(), $home_dir,
         "home directory mocked"
     ); 
@@ -72,14 +76,14 @@ sub test_fake_config {
 # dist tests
 #--------------------------------------------------------------------------#
 
-sub test_dist_plan() { 1 + 10 }
+sub test_dist_plan() { 1 + _test_dist_eumm_plan() + _test_dist_mb_plan() }
 sub test_dist {
     my ($case, $dist) = @_;
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     # simplify dist name
-    my $dist_name = $dist->pretty_id;
-    $dist_name =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
+    $dist->{short_name} = basename($dist->pretty_id);
+    $dist->{short_name} =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
 
     # automate CPAN::Reporter prompting
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
@@ -94,6 +98,20 @@ sub test_dist {
     );
 
     my $pushd = pushd $work_dir;
+
+    _test_dist_eumm( $case, $dist );
+    _test_dist_mb( $case, $dist );
+
+}
+
+#--------------------------------------------------------------------------#
+# Dist subtest for EU::MM
+#--------------------------------------------------------------------------#
+
+sub _test_dist_eumm_plan() { 5 }
+sub _test_dist_eumm {
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    my ($case, $dist) = @_;
 
     my ($stdout, $stderr, $makefile_rc, $test_make_rc);
     
@@ -121,7 +139,7 @@ sub test_dist {
         "$case->{name}: test('make test') grade reported as '$case->{eumm_grade}'"
     );
         
-    like( $stdout, "/Preparing a test report for $dist_name/",
+    like( $stdout, "/Preparing a test report for $dist->{short_name}/",
         "$case->{name}: report info header correct"
     );
 
@@ -131,14 +149,24 @@ sub test_dist {
 
     diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
         unless ( $is_rc_correct && $is_grade_correct );
-    
+}
+
+#--------------------------------------------------------------------------#
+# Dist subtest for M::B
+#--------------------------------------------------------------------------#
+
+sub _test_dist_mb_plan() { 5 }
+sub _test_dist_mb {
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    my ($case, $dist) = @_;
+
     SKIP: {
 
         eval "require Module::Build";
-        skip "Module::Build not installed", ( test_dist_plan() - 1 ) / 2
+        skip "Module::Build not installed", _test_dist_mb_plan()
             if $@;
         
-        my ($build_rc, $test_build_rc);
+        my ($stdout, $stderr, $build_rc, $test_build_rc);
         
         capture sub {
             $build_rc = do "Build.PL";
@@ -149,8 +177,8 @@ sub test_dist {
             "$case->{name}: Build.PL returned true"
         ); 
         
-        $is_rc_correct = $case->{mb_success} ? $test_build_rc : ! $test_build_rc;
-        $is_grade_correct = $stdout =~ /^Test result is '$case->{mb_grade}'/ms;
+        my $is_rc_correct = $case->{mb_success} ? $test_build_rc : ! $test_build_rc;
+        my $is_grade_correct = $stdout =~ /^Test result is '$case->{mb_grade}'/ms;
 
         ok( $is_rc_correct, 
             "$case->{name}: test('perl Build test') returned $case->{mb_success}"
@@ -160,7 +188,7 @@ sub test_dist {
             "$case->{name}: test('perl Build test') grade reported as '$case->{mb_grade}'"
         );
         
-        like( $stdout, "/Preparing a test report for $dist_name/",
+        like( $stdout, "/Preparing a test report for $dist->{short_name}/",
             "$case->{name}: report info header correct"
         );
 
@@ -171,7 +199,6 @@ sub test_dist {
         diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
             unless ( $is_rc_correct && $is_grade_correct );
     }
-
 }
 
 #--------------------------------------------------------------------------#
@@ -209,27 +236,15 @@ HERE
 
 sub test_report_plan() { 10 };
 sub test_report {
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
     my ($result) = @_;
     my $label = $result->{label};
     my $expected_grade = $result->{expected_grade};
 
-    # automate CPAN::Reporter prompting
-    local $ENV{PERL_MM_USE_DEFAULT} = 1;
+    my ($stdout, $stderr, $err) = _run_report( $result );
     
-    my ($stdout, $stderr);
-    
-    $t::Helper::sent_report = undef;
-    @t::Helper::cc_list = ();
-
-    eval {
-        capture sub {
-            CPAN::Reporter::_expand_report( $result ); 
-            CPAN::Reporter::_dispatch_report( $result );
-        }, \$stdout, \$stderr;
-        return 1;
-    }; 
-     
-    is( $@, q{}, 
+    is( $err, q{}, 
         "report for $label ran without error" 
     );
 
@@ -243,6 +258,8 @@ sub test_report {
     );
     
     my $prereq = CPAN::Reporter::_prereq_report( $result->{dist} );
+    # set PERL_MM_USE_DEFAULT to mirror _run_report
+    local $ENV{PERL_MM_USE_DEFAULT} = 1;
     my $env_vars = CPAN::Reporter::_env_report();
     my $special_vars = CPAN::Reporter::_special_vars_report();
     my $toolchain_versions = CPAN::Reporter::_toolchain_report();
@@ -280,6 +297,61 @@ sub test_report {
         "cc list correct"
     );
 };
+
+#--------------------------------------------------------------------------#
+# test_dispatch
+#--------------------------------------------------------------------------#
+
+sub test_dispatch_plan { 2 };
+sub test_dispatch {
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    my $result = shift;
+    my %opt = @_;
+
+    my ($stdout, $stderr, $err) = _run_report( $result );
+
+    is( $err, q{}, 
+            "generate report for $result->{label}" 
+    );
+
+    if ( $opt{should_work} ) {
+        unlike( $stderr, "/report will not be sent/",
+            "send dispatch for   $result->{label}"
+        );
+    }
+    else {
+        like( $stderr, "/report will not be sent/",
+            "refuse dispatch for $result->{label}"
+        );
+    }
+
+}
+
+#--------------------------------------------------------------------------#
+# _run_report
+#--------------------------------------------------------------------------#
+
+sub _run_report {
+    my $result = shift;
+
+    # automate CPAN::Reporter prompting
+    local $ENV{PERL_MM_USE_DEFAULT} = 1;
+    
+    my ($stdout, $stderr);
+    
+    $t::Helper::sent_report = undef;
+    @t::Helper::cc_list = ();
+
+    eval {
+        capture sub {
+            CPAN::Reporter::_expand_report( $result ); 
+            CPAN::Reporter::_dispatch_report( $result );
+        }, \$stdout, \$stderr;
+        return 1;
+    }; 
+
+    return ($stdout, $stderr, $@);
+}
 
 #--------------------------------------------------------------------------#
 # Mocking

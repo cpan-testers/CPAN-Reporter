@@ -14,8 +14,9 @@ use t::Helper;
 #--------------------------------------------------------------------------#
 
 my $mock_dist = t::MockCPANDist->new( 
-    pretty_id => "Bogus-Module-1.23.tar.gz",
+    pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
     prereq_pm => { 'File::Spec' => 0 },
+    # Using MockCPANDist with "bad_author" so the following are ignored
     author_id       => "JOHNQP",
     author_fullname => "John Q. Public",
 );
@@ -23,7 +24,7 @@ my $mock_dist = t::MockCPANDist->new(
 my $command = "make test";
 
 my $report_output =  << 'HERE';
-t\01_CPAN_Reporter....ok
+t\01_Bogus_Module....ok
 All tests successful.
 Files=1, Tests=3,  0 wallclock secs ( 0.00 cusr +  0.00 csys =  0.00 CPU)
 HERE

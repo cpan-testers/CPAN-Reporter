@@ -319,6 +319,27 @@ EMAIL_REQUIRED
         return;
     }
         
+    # Abort if the distribution name is not formatted according to 
+    # CPAN Testers requirements: Dist-Name-version.suffix
+    # Regex from CPAN-Testers should extract name, separator, version
+    # and extension
+    my @format_checks = $result->{dist_basename} =~ 
+        m{(.+)([\-\_])(v?\d.*)(\.(?:tar\.(?:gz|bz2)|tgz|zip))$}i;
+    ;
+    if ( ! grep { length } @format_checks ) {
+        $CPAN::Frontend->mywarn( << "END_BAD_DISTNAME");
+        
+The distribution name '$result->{dist_basename}' does not appear to be 
+formatted according to CPAN tester guidelines. Perhaps it is not a normal
+CPAN distribution.
+
+Test report will not be sent.
+
+END_BAD_DISTNAME
+
+        return;
+    }
+
     # Setup the test report
     my $tr = Test::Reporter->new;
     $tr->grade( $result->{grade} );
@@ -371,7 +392,9 @@ EMAIL_REQUIRED
 sub _expand_report {
     my $result = shift;
 
-    $result->{dist_name} = basename($result->{dist}->pretty_id);
+    # Note: pretty_id is like "DAGOLDEN/CPAN-Reporter-0.40.tar.gz"
+    $result->{dist_basename} = basename($result->{dist}->pretty_id);
+    $result->{dist_name} = $result->{dist_basename};
     $result->{dist_name} =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
     $result->{prereq_pm} = _prereq_report( $result->{dist} );
     $result->{env_vars} = _env_report();
