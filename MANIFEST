@@ -28,6 +28,7 @@ t/53_test_report_na.t
 t/54_test_report_split.t
 t/60_bad_author.t
 t/61_bad_dist_names.t
+t/62_duplicate_reports.t
 t/70_darwin_move_config.t
 t/71_missing_config.t
 t/98_pod.t
