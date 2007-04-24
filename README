@@ -2,7 +2,7 @@ NAME
     CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 VERSION
-    This documentation describes version 0.41.
+    This documentation describes version 0.42.
 
 SYNOPSIS
     From the CPAN shell:
@@ -177,6 +177,9 @@ CONFIG FILE OPTIONS
     *   "send_report = <grade:action> ..." -- should test reports be sent at
         all? (default:ask/yes pass:yes na:no)
 
+    *   "send_duplicates = <grade:action> ..." -- should duplicates of
+        previous reports be sent, regardless of "send_report"? (default:no)
+
     These options are included in the starter config file created
     automatically the first time CPAN::Reporter is configured interactively.
 
@@ -279,7 +282,7 @@ AUTHOR
     http://www.dagolden.org/
 
 COPYRIGHT AND LICENSE
-    Copyright (c) 2006 by David A. Golden
+    Copyright (c) 2006, 2007 by David A. Golden
 
     This program is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.
