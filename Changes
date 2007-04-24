@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+0.42
+    - added "send_duplicates" option with default "no"; compares CPAN Testers
+      subject lines (grade, distribution, version and platform) to previous
+      test results and skips sending duplicate reports
+      
 0.41 Sun Mar 25 09:39:07 EDT 2007
     - test reports will not be sent if the distribution name doesn't appear
       appear to be an actual distribution with version and archive suffix

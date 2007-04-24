@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = "0.41"; 
+$CPAN::Reporter::VERSION = "0.42"; 
 
 use Config;
 use Config::Tiny ();
@@ -56,7 +56,7 @@ HERE
 # undef defaults are not written to the starter configuration file
 
 my @config_order = qw/ email_from cc_author edit_report send_report
-                       smtp_server /;
+                       send_duplicates smtp_server /;
 
 my $grade_action_prompt = << 'HERE'; 
 
@@ -118,8 +118,19 @@ HERE
 By default, CPAN::Reporter will prompt you for confirmation that
 the test report should be sent before actually emailing the 
 report.  This gives the opportunity to bypass sending particular
-reports if you need to (e.g. a duplicate of an earlier result).
+reports if you need to (e.g. if you caused the failure).
 This option takes "grade:action" pairs.
+HERE
+    },
+    send_duplicates => {
+        default => 'default:no',
+        prompt => "This report is identical to a previous one.  Send it anyway?",
+        validate => 1,
+        info => <<'HERE',
+CPAN::Reporter records tests grades for each distribution, version and
+platform.  By default, duplicates of previous results will not be sent at
+all, regardless of the value of the "send_report" option.  This option takes 
+"grade:action" pairs.
 HERE
     },
     smtp_server => {
@@ -343,6 +354,25 @@ END_BAD_DISTNAME
     # Setup the test report
     my $tr = Test::Reporter->new;
     $tr->grade( $result->{grade} );
+    $tr->distribution( $result->{dist_name}  );
+
+    # Skip if duplicate, if requested
+    if ( _is_duplicate( $tr->subject ) ) {
+        if ( _prompt( $config, "send_duplicates", $tr->grade) =~ /^n/ ) {
+            $CPAN::Frontend->mywarn(<< "DUPLICATE_REPORT");
+
+It seems that "@{[$tr->subject]}"
+is a duplicate of a previous report you sent to CPAN Testers.
+
+Test report will not be sent.
+
+DUPLICATE_REPORT
+            
+            return;
+        }
+    }
+
+    # Continue report setup
     $tr->debug( $config->{debug} ) if defined $config->{debug};
     $tr->from( $config->{email_from} );
     $tr->address( $config->{email_to} ) if $config->{email_to};
@@ -352,8 +382,6 @@ END_BAD_DISTNAME
     }
     
     # Populate the test report
-    
-    $tr->distribution( $result->{dist_name}  );
     $tr->comments( _report_text( $result ) );
     $tr->via( 'CPAN::Reporter ' . $CPAN::Reporter::VERSION );
     my @cc;
@@ -374,7 +402,12 @@ END_BAD_DISTNAME
     if ( _prompt( $config, "send_report", $tr->grade ) =~ /^y/ ) {
         $CPAN::Frontend->myprint( "Sending test report with '" . $tr->grade . 
               "' to " . join(q{, }, $tr->address, @cc) . "\n");
-        $tr->send( @cc ) or $CPAN::Frontend->mywarn( $tr->errstr. "\n");
+        if ( $tr->send( @cc ) ) {
+                _record_history( $tr->subject );
+        }
+        else {
+            $CPAN::Frontend->mywarn( $tr->errstr. "\n");
+        }
     }
     else {
         $CPAN::Frontend->myprint("Test report not sent\n");
@@ -489,6 +522,15 @@ sub _get_config_options {
         }
     }
     return \%active;
+}
+
+
+#--------------------------------------------------------------------------#
+# _get_history_file
+#--------------------------------------------------------------------------#
+
+sub _get_history_file {
+    return File::Spec->catdir( _get_config_dir, "history.db" );
 }
 
 #--------------------------------------------------------------------------#
@@ -621,6 +663,18 @@ sub _has_tests {
 }
 
 #--------------------------------------------------------------------------#
+# _is_duplicate
+#--------------------------------------------------------------------------#
+
+sub _is_duplicate {
+    my $subject = shift;
+    my $history = _open_history_file('<') or return;
+    my %seen = map { chomp; ($_, 1); } <$history>;
+    $history->close;
+    return exists $seen{$subject};
+}
+
+#--------------------------------------------------------------------------#
 # _is_make
 #--------------------------------------------------------------------------#
 
@@ -673,6 +727,20 @@ sub _open_config_file {
         or $CPAN::Frontend->mywarn("Couldn't read CPAN::Reporter configuration file " .
                 "'$config_file': " . Config::Tiny->errstr() . "\n");
     return $config; 
+}
+
+#--------------------------------------------------------------------------#
+# _open_history_file
+#--------------------------------------------------------------------------#
+
+sub _open_history_file {
+    my $mode = shift || '<';
+    my $history_filename = _get_history_file();
+    return if ( $mode eq '<' && ! -f $history_filename );
+    my $history = IO::File->new( $history_filename, $mode )
+        or $CPAN::Frontend->mywarn("Couldn't open CPAN::Reporter history file "
+        . "'$history_filename': $!\n");
+    return $history; 
 }
 
 #--------------------------------------------------------------------------#
@@ -805,6 +873,19 @@ sub _prompt {
         $prompt = $action;
     }
     return lc $prompt;
+}
+
+#--------------------------------------------------------------------------#
+# _record_history
+#--------------------------------------------------------------------------#
+
+sub _record_history {
+    my $subject = shift;
+
+    my $history = _open_history_file('>>') or return;
+    $history->print( $subject, "\n" );
+    $history->close;
+    return;
 }
 
 #--------------------------------------------------------------------------#
@@ -1322,6 +1403,8 @@ the test report at their {author@cpan.org} address? (default:yes pass:no)
 (default:ask/no pass:no)
 * {send_report = <grade:action> ...} -- should test reports be sent at all?
 (default:ask/yes pass:yes na:no)
+* {send_duplicates = <grade:action> ...} -- should duplicates of previous 
+reports be sent, regardless of {send_report}? (default:no)
 
 These options are included in the starter config file created automatically the
 first time CPAN::Reporter is configured interactively.
@@ -1426,7 +1509,7 @@ http://www.dagolden.org/
 
 = COPYRIGHT AND LICENSE
 
-Copyright (c) 2006 by David A. Golden
+Copyright (c) 2006, 2007 by David A. Golden
 
 This program is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself.

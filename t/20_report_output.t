@@ -89,7 +89,7 @@ plan tests => 1 + test_fake_config_plan()
 
 require_ok('CPAN::Reporter');
 
-test_fake_config();
+test_fake_config( send_report => "yes" );
 
 $prereq_pm = CPAN::Reporter::_prereq_report( $mock_dist );
 

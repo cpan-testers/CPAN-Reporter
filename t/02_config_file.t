@@ -12,7 +12,7 @@ use File::Spec;
 use File::Temp qw/tempdir/;
 use t::Frontend;
 
-plan tests => 30;
+plan tests => 31;
 #plan 'no_plan';
 
 #--------------------------------------------------------------------------#
@@ -31,6 +31,7 @@ my $default_options = {
     cc_author => 'default:yes pass:no',
     edit_report => 'default:ask/no pass:no',
     send_report => 'default:ask/yes pass:yes na:no',
+    send_duplicates => 'default:no',
 };
 my @additional_prompts = qw/ smtp_server /;
 

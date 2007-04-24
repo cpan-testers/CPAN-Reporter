@@ -52,6 +52,7 @@ use vars qw/$sent_report @cc_list/;
 sub test_fake_config_plan() { 3 }
 sub test_fake_config {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
+    my %overrides = @_;
 
     is( File::HomeDir::my_documents(), $home_dir,
         "home directory mocked"
@@ -66,6 +67,11 @@ sub test_fake_config {
     $tiny->{_}{email_to} = $bogus_email_to; # failsafe
     $tiny->{_}{smtp_server} = $bogus_smtp;
     $tiny->{_}{cc_author} = "yes";
+    $tiny->{_}{send_report} = "yes";
+    $tiny->{_}{send_duplicates} = "yes"; # tests often repeat same stuff
+    for my $key ( keys %overrides ) {
+        $tiny->{_}{$key} = $overrides{$key};
+    }
     ok( $tiny->write( $config_file ),
         "created temp config file with a new email address and smtp server"
     );
@@ -371,11 +377,26 @@ package Test::Reporter;
 sub new { print shift, "\n"; return bless {}, 'Test::Reporter::Mocked' }
 
 package Test::Reporter::Mocked;
+use Config;
+use vars qw/$AUTOLOAD/;
 
 sub comments { shift; $t::Helper::sent_report = shift }
 
 sub send { shift; @t::Helper::cc_list = ( @_ ); return 1 } 
 
-sub AUTOLOAD { return "1 mocked answer" }
+sub subject {
+    my $self = shift;
+    return uc($self->grade) . ' ' . $self->distribution .
+        " $Config{archname} $Config{osvers}";
+}
+
+sub AUTOLOAD {
+    my $self = shift;
+    if ( @_ ) {
+        $self->{ $AUTOLOAD } = shift;
+    }
+    return $self->{ $AUTOLOAD };
+}
+
 
 1;
