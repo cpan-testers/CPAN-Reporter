@@ -667,7 +667,7 @@ sub _has_tests {
 #--------------------------------------------------------------------------#
 
 sub _is_duplicate {
-    my $subject = shift;
+    my $subject = shift(@_) . " $]"; # append perl version to subject
     my $history = _open_history_file('<') or return;
     my %seen = map { chomp; ($_, 1); } <$history>;
     $history->close;
@@ -880,8 +880,7 @@ sub _prompt {
 #--------------------------------------------------------------------------#
 
 sub _record_history {
-    my $subject = shift;
-
+    my $subject = shift(@_) . " $]"; # append perl version to subject
     my $history = _open_history_file('>>') or return;
     $history->print( $subject, "\n" );
     $history->close;

@@ -1,5 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+0.43 
+    - enhanced duplicate tracking to include Perl version (suggested by
+      David Cantrell)
+    
 0.42 Tue Apr 24 00:27:56 EDT 2007
     - added "send_duplicates" option with default "no"; compares CPAN Testers
       subject lines (grade, distribution, version and platform) to previous
