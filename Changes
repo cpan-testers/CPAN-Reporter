@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.43 
+0.43 Tue Apr 24 22:55:32 EDT 2007
     - enhanced duplicate tracking to include Perl version (suggested by
       David Cantrell)
     
