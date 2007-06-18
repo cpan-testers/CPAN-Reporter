@@ -518,7 +518,9 @@ sub _format_distname {
 #--------------------------------------------------------------------------#
 
 sub _format_history {
-    return shift(@_) . " $]\n"; # append perl version to subject
+    my $line = shift(@_) . " $]"; # append perl version to subject
+    $line .= " patch $Config{perl_patchlevel}" if $Config{perl_patchlevel};
+    return $line . "\n";
 }
 
 #--------------------------------------------------------------------------#

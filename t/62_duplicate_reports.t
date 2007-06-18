@@ -11,6 +11,17 @@ use t::Helper;
 use t::Frontend;
 
 #--------------------------------------------------------------------------#
+# We need Config to be writeable, so modify the tied hash
+#--------------------------------------------------------------------------#
+
+use Config;
+
+BEGIN {
+    BEGIN { if (not $] < 5.006 ) { warnings->unimport('redefine') } }
+    *Config::STORE = sub { $_[0]->{$_[1]} = $_[2] }
+}
+
+#--------------------------------------------------------------------------#
 # Fixtures
 #--------------------------------------------------------------------------#
 
@@ -46,6 +57,12 @@ my @cases = (
         send_dup => "yes",
         is_dup => 1,
     },
+    {
+        label => "fourth run (with perl_patchlevel)",
+        send_dup => "no",
+        is_dup => 0,
+        patch => 314159,
+    },
 );
 
 my $expected_history_lines = 0;
@@ -67,6 +84,10 @@ require_ok('Test::Reporter');
 my @results;
 
 for my $case ( @cases ) {
+    # localize Config in same scope if there is one
+    local $Config{perl_patchlevel} = $case->{patch} if $case->{patch};
+    # and set it once localized 
+
     test_fake_config( send_duplicates => $case->{send_dup} );
     $case->{dist} = t::MockCPANDist->new( %mock_dist_info );
     $case->{command} = $command;
@@ -81,7 +102,10 @@ for my $case ( @cases ) {
         my $tr = Test::Reporter->new;
         $tr->distribution( CPAN::Reporter::_format_distname($fake_dist) );
         $tr->grade( 'FAIL' );
-        push @results, $tr->subject;    
+        my $line = $tr->subject . " $]";
+        $line .= " patch $Config{perl_patchlevel}" 
+            if $Config{perl_patchlevel};
+        push @results, $line . "\n";
     }
 }
 
@@ -102,9 +126,7 @@ is( scalar @history, $expected_history_lines,
 );
 
 for my $i ( 0 .. $#results ) {
-    my $line = $results[$i] . " $]";
-    chomp $history[$i];
-    is( $history[$i], $line,
+    is( $history[$i], $results[$i],
         "\$history[$i] matched"
     );
 }

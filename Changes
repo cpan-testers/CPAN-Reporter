@@ -1,10 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
 0.44
-    - searches duplicate history in file rather than loading whole file
-      into memory
-    - added flocking to history file read/write (and faked it for platforms
-      that don't support flock)
+    - searches through duplicate history file instead of loading as a hash
+    - added flocking to history file read/write 
+      (and faked it for platforms that don't support flock)
+    - duplicate history includes $Config{perl_patchlevel} if it exists
 
 0.43 Tue Apr 24 22:55:32 EDT 2007
     - enhanced duplicate tracking to include Perl version (suggested by
