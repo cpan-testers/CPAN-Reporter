@@ -6,6 +6,7 @@ $CPAN::Reporter::VERSION = "0.43";
 use Config;
 use Config::Tiny ();
 use CPAN ();
+use Fcntl qw/:flock :seek/;
 use File::Basename qw/basename/;
 use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
@@ -48,6 +49,21 @@ HERE
         rmdir($old) or die $!;
     }
 }
+
+#--------------------------------------------------------------------------#
+# Some platforms don't implement flock, so fake it if necessary
+#--------------------------------------------------------------------------#
+
+BEGIN {
+    eval {
+        my $fh = File::Temp->new();
+        flock $fh, LOCK_EX;
+    };
+    if ( $@ ) {
+        *CORE::GLOBAL::flock = sub () { 1 };
+    }
+}
+
 
 #--------------------------------------------------------------------------#
 # defaults and prompts
@@ -356,8 +372,9 @@ END_BAD_DISTNAME
     $tr->grade( $result->{grade} );
     $tr->distribution( $result->{dist_name}  );
 
-    # Skip if duplicate, if requested
-    if ( _is_duplicate( $tr->subject ) ) {
+    # Skip if duplicate and not sending duplicates
+    my $is_duplicate = _is_duplicate( $tr->subject );
+    if ( $is_duplicate ) {
         if ( _prompt( $config, "send_duplicates", $tr->grade) =~ /^n/ ) {
             $CPAN::Frontend->mywarn(<< "DUPLICATE_REPORT");
 
@@ -403,7 +420,7 @@ DUPLICATE_REPORT
         $CPAN::Frontend->myprint( "Sending test report with '" . $tr->grade . 
               "' to " . join(q{, }, $tr->address, @cc) . "\n");
         if ( $tr->send( @cc ) ) {
-                _record_history( $tr->subject );
+                _record_history( $tr->subject ) if not $is_duplicate;
         }
         else {
             $CPAN::Frontend->mywarn( $tr->errstr. "\n");
@@ -426,9 +443,8 @@ sub _expand_report {
     my $result = shift;
 
     # Note: pretty_id is like "DAGOLDEN/CPAN-Reporter-0.40.tar.gz"
+    $result->{dist_name} = _format_distname( $result->{dist} );
     $result->{dist_basename} = basename($result->{dist}->pretty_id);
-    $result->{dist_name} = $result->{dist_basename};
-    $result->{dist_name} =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
     $result->{prereq_pm} = _prereq_report( $result->{dist} );
     $result->{env_vars} = _env_report();
     $result->{special_vars} = _special_vars_report();
@@ -484,6 +500,25 @@ sub _env_report {
         $report .= "    $var = $ENV{$var}\n";
     }
     return $report;
+}
+
+#--------------------------------------------------------------------------#
+# _format_distname
+#--------------------------------------------------------------------------#
+
+sub _format_distname {
+    my $dist = shift;
+    my $basename = basename( $dist->pretty_id );
+    $basename =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
+    return $basename;
+}
+
+#--------------------------------------------------------------------------#
+# _format_history -- append perl version to subject
+#--------------------------------------------------------------------------#
+
+sub _format_history {
+    return shift(@_) . " $]\n"; # append perl version to subject
 }
 
 #--------------------------------------------------------------------------#
@@ -667,11 +702,15 @@ sub _has_tests {
 #--------------------------------------------------------------------------#
 
 sub _is_duplicate {
-    my $subject = shift(@_) . " $]"; # append perl version to subject
+    my $subject = _format_history( shift );
     my $history = _open_history_file('<') or return;
-    my %seen = map { chomp; ($_, 1); } <$history>;
+    my $found = 0;
+    flock $history, LOCK_SH;
+    while ( defined (my $line = <$history>) ) {
+        $found++, last if $line eq $subject
+    }
     $history->close;
-    return exists $seen{$subject};
+    return $found;
 }
 
 #--------------------------------------------------------------------------#
@@ -880,9 +919,14 @@ sub _prompt {
 #--------------------------------------------------------------------------#
 
 sub _record_history {
-    my $subject = shift(@_) . " $]"; # append perl version to subject
+    my $subject = _format_history( shift );
     my $history = _open_history_file('>>') or return;
-    $history->print( $subject, "\n" );
+
+    flock( $history, LOCK_EX );
+    seek( $history, 0, SEEK_END );
+    $history->print( $subject );
+    flock( $history, LOCK_UN );
+    
     $history->close;
     return;
 }

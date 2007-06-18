@@ -34,62 +34,62 @@ my @cases = (
     {
         label => "proper distribution name (tar.gz)",
         pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
-        should_work => 1,
+        will_send => 1,
     },
     {
         label => "proper distribution name (tar.bz2)",
         pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
-        should_work => 1,
+        will_send => 1,
     },
     {
         label => "proper distribution name (tgz)",
         pretty_id => "JOHNQP/Bogus-Module-1.23.tgz",
-        should_work => 1,
+        will_send => 1,
     },
     {
         label => "proper distribution name (zip)",
         pretty_id => "JOHNQP/Bogus-Module-1.23.zip",
-        should_work => 1,
+        will_send => 1,
     },
     {
         label => "proper distribution name (ZIP)",
         pretty_id => "JOHNQP/Bogus-Module-1.23.ZIP",
-        should_work => 1,
+        will_send => 1,
     },
     {
         label => "proper distribution name (v1.23)",
         pretty_id => "JOHNQP/Bogus-Module-v1.23.tgz",
-        should_work => 1,
+        will_send => 1,
     },
     {
         label => "proper distribution name (1.2_01)",
         pretty_id => "JOHNQP/Bogus-Module-1.2_01.tgz",
-        should_work => 1,
+        will_send => 1,
     },
     {
         label => "proper distribution name (v1.2a)",
         pretty_id => "JOHNQP/Bogus-Module-v1.2a.tgz",
-        should_work => 1,
+        will_send => 1,
     },
     {
         label => "proper distribution name (v1.2_01)",
         pretty_id => "JOHNQP/Bogus-Module-v1.2_01.tgz",
-        should_work => 1,
+        will_send => 1,
     },
     {
         label => "missing extension",
         pretty_id => "JOHNQP/Bogus-Module-1.23",
-        should_work => 0,
+        will_send => 0,
     },
     {
         label => "missing version",
         pretty_id => "JOHNQP/Bogus-Module.tgz",
-        should_work => 0,
+        will_send => 0,
     },
     {
         label => "raw pm file",
         pretty_id => "JOHNQP/Module.pm",
-        should_work => 0,
+        will_send => 0,
     },
 );
 
@@ -111,7 +111,7 @@ for my $case ( @cases ) {
     $case->{command} = $command;
     $case->{output} = [ map {$_ . "\n" } 
                         split( "\n", $mock_output) ];
-    test_dispatch( $case, should_work => $case->{should_work} );
+    test_dispatch( $case, will_send => $case->{will_send} );
 }
 
 

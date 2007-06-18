@@ -320,7 +320,7 @@ sub test_dispatch {
             "generate report for $result->{label}" 
     );
 
-    if ( $opt{should_work} ) {
+    if ( $opt{will_send} ) {
         unlike( $stderr, "/report will not be sent/",
             "send dispatch for   $result->{label}"
         );
