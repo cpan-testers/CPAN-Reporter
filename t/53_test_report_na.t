@@ -23,6 +23,16 @@ my @test_distros = (
         mb_msg => "Prerequisite missing",
     },
     {
+        name => 't-NoTestsButPrereqMiss',
+        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
+        eumm_success => 0,
+        eumm_grade => "na",
+        eumm_msg => "Prerequisite missing",
+        mb_success => 0,
+        mb_grade => "na",
+        mb_msg => "Prerequisite missing",
+    },
+    {
         name => 'test.pl-PrereqMiss',
         prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
         eumm_success => 0,

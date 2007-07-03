@@ -40,6 +40,10 @@ t/dist/NoTestFiles/Build.PL
 t/dist/NoTestFiles/lib/Bogus/Module.pm
 t/dist/NoTestFiles/Makefile.PL
 t/dist/NoTestFiles/t/README
+t/dist/t-BailOut/Build.PL
+t/dist/t-BailOut/lib/Bogus/Module.pm
+t/dist/t-BailOut/Makefile.PL
+t/dist/t-BailOut/t/01_Bogus.t
 t/dist/t-Fail/Build.PL
 t/dist/t-Fail/lib/Bogus/Module.pm
 t/dist/t-Fail/Makefile.PL
@@ -53,6 +57,9 @@ t/dist/t-NoOutput/Build.PL
 t/dist/t-NoOutput/lib/Bogus/Module.pm
 t/dist/t-NoOutput/Makefile.PL
 t/dist/t-NoOutput/t/01_Bogus.t
+t/dist/t-NoTestsButPrereqMiss/Build.PL
+t/dist/t-NoTestsButPrereqMiss/lib/Bogus/Module.pm
+t/dist/t-NoTestsButPrereqMiss/Makefile.PL
 t/dist/t-Pass/Build.PL
 t/dist/t-Pass/lib/Bogus/Module.pm
 t/dist/t-Pass/Makefile.PL

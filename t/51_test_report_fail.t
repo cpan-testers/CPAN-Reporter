@@ -22,6 +22,15 @@ my @test_distros = (
         mb_msg => "Tests had no output",
     },
     {
+        name => 't-BailOut',
+        eumm_success => 0,
+        eumm_grade => "fail",
+        eumm_msg => "Bailed out of tests",
+        mb_success => 0,
+        mb_grade => "fail",
+        mb_msg => "Bailed out of tests",
+    },
+    {
         name => 't-Fail',
         eumm_success => 0,
         eumm_grade => "fail",

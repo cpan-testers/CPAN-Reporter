@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = "0.44"; 
+$CPAN::Reporter::VERSION = "0.45"; 
 
 use Config;
 use Config::Tiny ();
@@ -619,6 +619,10 @@ sub _grade_report {
             $grade = 'fail';
             $msg = 'Tests had no output';
         }
+        elsif ( $output->[$i] =~ m{FAILED--Further testing stopped}ms ) {
+            $grade = 'fail';
+            $msg = 'Bailed out of tests';
+        }
         elsif ( $output->[$i] =~ m{^Failed }ms ) {  # must be lowercase
             $grade = 'fail';
             $msg = "Distribution had failing tests";
@@ -656,10 +660,10 @@ sub _grade_report {
         }
     }
 
-    # Downgrade failure if we can determine a cause of the failure
-    # that should be reported as 'na'
+    # Downgrade failure/unknown grade if we can determine a cause
+    # that should be reported as 'na'.
 
-    if ( $grade eq 'fail' ) {
+    if ( $grade eq 'fail' || $grade eq 'unknown' ) {
         # check for perl version prerequisite or outright failure
         if ( $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ) {
             $grade = 'na';
