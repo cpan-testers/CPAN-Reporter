@@ -1,9 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
-0.45
-    - tests that bailout now report as FAIL, not UNKNOWN
-    - UNKNOWN results that have missing prereqs are downgraded to NA
-      just like FAIL reports already were
+0.45 Tue Jul  3 17:07:30 EDT 2007
+    - distribution tests that bailout now detected as FAIL instead of UNKNOWN
+    - UNKNOWN results when prereqs are missing are downgraded to NA
+      (just like FAIL reports with missing prereqs already were)
 
 0.44 Sun Jun 17 22:05:46 EDT 2007
     - searches through duplicate history file instead of loading as a hash
