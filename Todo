@@ -4,6 +4,11 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
+- tests with missing prerequisites should be discarded
+
+- Add "OS Unsupported" and "No support for OS" checks (result in NA)
+
+- Real NA tests should be sent to CPAN Testers (but not to author)
 
 #--------------------------------------------------------------------------#
 # Features, etc
