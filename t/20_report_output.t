@@ -74,7 +74,7 @@ my @cases = (
     {
         label => "na",
         prereq_pm => {
-            'Bogus::Module' => 0,
+            'perl' => 7,
         },
     },
 );

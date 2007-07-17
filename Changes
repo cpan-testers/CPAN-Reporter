@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+0.46
+    - FAIL/UNKNOWN grades results with unsatisfied prerequisites are 
+      discarded instead of being flagged as NA (as per CPAN Testers
+      specifications from Barbie)
+    - improved tests for detecting reports sent/not-sent
+
 0.45 Tue Jul  3 17:07:30 EDT 2007
     - distribution tests that bailout now detected as FAIL instead of UNKNOWN
     - UNKNOWN results when prereqs are missing are downgraded to NA

@@ -112,15 +112,21 @@ sub test_dist {
 
 #--------------------------------------------------------------------------#
 # Dist subtest for EU::MM
+#
+# XXX This is horribly redundant with the M::B version -- needs more
+# refactoring
 #--------------------------------------------------------------------------#
 
-sub _test_dist_eumm_plan() { 5 }
+sub _test_dist_eumm_plan() { 6 }
 sub _test_dist_eumm {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my ($case, $dist) = @_;
 
     my ($stdout, $stderr, $makefile_rc, $test_make_rc);
     
+    $t::Helper::sent_report = undef;
+    @t::Helper::cc_list = ();
+
     eval {
         capture sub {
             # Have to run Makefile separate as return value isn't reliable
@@ -135,19 +141,46 @@ sub _test_dist_eumm {
     ); 
 
     my $is_rc_correct = $case->{eumm_success} ? $test_make_rc : ! $test_make_rc;
-    my $is_grade_correct = $stdout =~ /^Test result is '$case->{eumm_grade}'/ms;
 
     ok( $is_rc_correct, 
         "$case->{name}: test('make test') returned $case->{eumm_success}"
     );
-        
-    ok( $is_grade_correct, 
-        "$case->{name}: test('make test') grade reported as '$case->{eumm_grade}'"
-    );
-        
-    like( $stdout, "/Preparing a test report for $dist->{short_name}/",
-        "$case->{name}: report info header correct"
-    );
+    
+    my $is_grade_correct;
+    # Special case if discarding
+    if ( $case->{eumm_grade} eq 'discard' ) {
+        $is_grade_correct = 
+            $stdout =~ /Test results were not valid/ms;
+
+        ok( $is_grade_correct,
+            "$case->{name}: test('make test') prerequisites not satisifed"
+        );
+            
+        like( $stdout, 
+            "/Test results for $dist->{short_name} will be discarded/",
+            "$case->{name}: discard message correct"
+        );
+
+        ok( ! defined $t::Helper::sent_report,
+            "$case->{name}: test results discarded"
+        );
+    }
+    else {
+        $is_grade_correct = 
+            $stdout =~ /^Test result is '$case->{eumm_grade}'/ms;
+
+        ok( $is_grade_correct, 
+            "$case->{name}: test('make test') grade reported as '$case->{eumm_grade}'"
+        );
+            
+        like( $stdout, "/Preparing a test report for $dist->{short_name}/",
+            "$case->{name}: report info header correct"
+        );
+
+        ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+            "$case->{name}: test report was mock sent"
+        );
+    }
 
     like( $stdout, "/$case->{eumm_msg}/",
         "$case->{name}: test('make test') grade explanation correct"
@@ -161,7 +194,7 @@ sub _test_dist_eumm {
 # Dist subtest for M::B
 #--------------------------------------------------------------------------#
 
-sub _test_dist_mb_plan() { 5 }
+sub _test_dist_mb_plan() { 6 }
 sub _test_dist_mb {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my ($case, $dist) = @_;
@@ -184,19 +217,45 @@ sub _test_dist_mb {
         ); 
         
         my $is_rc_correct = $case->{mb_success} ? $test_build_rc : ! $test_build_rc;
-        my $is_grade_correct = $stdout =~ /^Test result is '$case->{mb_grade}'/ms;
 
         ok( $is_rc_correct, 
             "$case->{name}: test('perl Build test') returned $case->{mb_success}"
         );
-            
-        ok( $is_grade_correct, 
-            "$case->{name}: test('perl Build test') grade reported as '$case->{mb_grade}'"
-        );
         
-        like( $stdout, "/Preparing a test report for $dist->{short_name}/",
-            "$case->{name}: report info header correct"
-        );
+        my $is_grade_correct;
+        # Special case if discarding
+        if ( $case->{mb_grade} eq 'discard' ) {
+            $is_grade_correct = 
+                $stdout =~ /Test results were not valid/ms;
+
+            ok( $is_grade_correct,
+                "$case->{name}: test('perl Build test') prerequisites not satisifed"
+            );
+                
+            like( $stdout, 
+                "/Test results for $dist->{short_name} will be discarded/",
+                "$case->{name}: discard message correct"
+            );
+
+            ok( ! defined $t::Helper::sent_report,
+                "$case->{name}: test results discarded"
+            );
+        }
+        else {
+            $is_grade_correct = 
+                $stdout =~ /^Test result is '$case->{mb_grade}'/ms;
+            ok( $is_grade_correct, 
+                "$case->{name}: test('perl Build test') grade reported as '$case->{mb_grade}'"
+            );
+            
+            like( $stdout, "/Preparing a test report for $dist->{short_name}/",
+                "$case->{name}: report info header correct"
+            );
+
+            ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+                "$case->{name}: test report was mock sent"
+            );
+        }
 
         like( $stdout, "/$case->{mb_msg}/",
             "$case->{name}: test('perl Build test') grade explanation correct"
@@ -231,11 +290,10 @@ the results of the tests could not be parsed by CPAN::Reporter.
 HERE
 
     'na' => << 'HERE',
-Thank you for uploading your work to CPAN.  However, it appears that
-your distribution tests are not fully supported on this machine, either 
-due to operating system limitations or missing prerequisite modules.
-If the failure is due to missing prerequisites, you may wish to 
-disregard this report.
+Thank you for uploading your work to CPAN.  While attempting to test this
+distribution, the distribution signaled that support is not available either
+for this operating system or this version of Perl.  Nevertheless, any 
+diagnostic output produced is provided below for reference.
 HERE
     
 );
@@ -308,7 +366,7 @@ sub test_report {
 # test_dispatch
 #--------------------------------------------------------------------------#
 
-sub test_dispatch_plan { 2 };
+sub test_dispatch_plan { 3 };
 sub test_dispatch {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my $result = shift;
@@ -321,13 +379,19 @@ sub test_dispatch {
     );
 
     if ( $opt{will_send} ) {
-        unlike( $stderr, "/report will not be sent/",
-            "send dispatch for   $result->{label}"
+        ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+            "report was sent for $result->{label}"
+        );
+        like( $stdout, "/Sending test report with/",
+            "saw report sent message for $result->{label}"
         );
     }
     else {
-        like( $stderr, "/report will not be sent/",
-            "refuse dispatch for $result->{label}"
+        ok( ! defined $t::Helper::sent_report,
+            "report not sent for $result->{label}"
+        );
+        like( $stdout, "/report will not be sent/",
+            "saw report not sent message for $result->{label}"
         );
     }
 
@@ -352,7 +416,7 @@ sub _run_report {
         capture sub {
             CPAN::Reporter::_expand_report( $result ); 
             CPAN::Reporter::_dispatch_report( $result );
-        }, \$stdout, \$stderr;
+        } => \$stdout, \$stderr;
         return 1;
     }; 
 

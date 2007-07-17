@@ -17,7 +17,7 @@ sub myprint {
 
 sub mywarn {
     shift;
-    warn @_;
+    print @_;
 }
 
 sub colorable_makemaker_prompt {

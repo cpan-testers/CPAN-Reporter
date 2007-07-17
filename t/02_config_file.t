@@ -74,7 +74,7 @@ is( capture(sub{CPAN::Reporter::_open_config_file()}, \$stdout, \$stderr),
     "opening non-existent file returns undef"
 );
 
-like( $stderr, "/^Couldn't read CPAN::Reporter configuration file/",
+like( $stdout, "/^Couldn't read CPAN::Reporter configuration file/",
     "opening non-existent file gives a warning"
 );
 
@@ -127,7 +127,7 @@ SKIP:
         );
     }
 
-    like( $stderr, "/Couldn't read CPAN::Reporter configuration file/",
+    like( $stdout, "/Couldn't read CPAN::Reporter configuration file/",
         "opening non-readable file gives a warning"
     );
 }
@@ -156,7 +156,7 @@ SKIP:
         );
     }
 
-    like( $stderr, "/Error writing config file/",
+    like( $stdout, "/Error writing config file/",
         "opening non-writeable file gives a warning"
     );
 }

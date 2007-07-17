@@ -312,7 +312,18 @@ sub test {
     $TEST_RESULT->close;
 
     _expand_report( $result );
-    _dispatch_report( $result );
+    
+    if ( $result->{grade} eq 'discard' ) {
+        $CPAN::Frontend->mywarn( 
+            "\nTest results were not valid: $result->{grade_msg}\n\n",
+            $result->{prereq_pm}, "\n",
+            "Test results for $result->{dist_name} will be discarded"
+        );
+    }
+    else {
+        _grade_msg( $result );
+        _dispatch_report( $result );
+    }
 
     return $result->{success};   # from _expand_report 
 }
@@ -449,7 +460,7 @@ sub _expand_report {
     $result->{env_vars} = _env_report();
     $result->{special_vars} = _special_vars_report();
     $result->{toolchain_versions} = _toolchain_report();
-    $result->{grade} = _grade_report($result);
+    _grade_report($result);
     $result->{success} =  $result->{grade} eq 'pass'
                        || $result->{grade} eq 'unknown';
     
@@ -575,7 +586,8 @@ sub _get_history_file {
 #--------------------------------------------------------------------------#
 
 sub _grade_msg {
-    my ($grade, $msg) = @_;
+    my ($result) = @_;
+    my ($grade, $msg) = ($result->{grade}, $result->{grade_msg});
     $CPAN::Frontend->myprint( "Test result is '$grade'");
     $CPAN::Frontend->myprint(": $msg") if defined $msg && length $msg;
     $CPAN::Frontend->myprint(".\n");
@@ -661,7 +673,8 @@ sub _grade_report {
     }
 
     # Downgrade failure/unknown grade if we can determine a cause
-    # that should be reported as 'na'.
+    # If perl version is too low or OS not supported => 'na'
+    # If stated prereqs missing => 'discard'
 
     if ( $grade eq 'fail' || $grade eq 'unknown' ) {
         # check for perl version prerequisite or outright failure
@@ -671,17 +684,18 @@ sub _grade_report {
         }
         # check the prereq report for missing or failure flag '!'
         elsif ( $result->{prereq_pm} =~ m{n/a}ims ) {
-            $grade = 'na';
+            $grade = 'discard';
             $msg = 'Prerequisite missing';
         }
         elsif ( $result->{prereq_pm} =~ m{^\s+!}ims ) {
-            $grade = 'na';
+            $grade = 'discard';
             $msg = 'Prerequisite version too low';
         }
     }
 
-    _grade_msg( $grade, $msg );
-    return $grade;
+    $result->{grade} = $grade;
+    $result->{grade_msg} = $msg;
+    return;
 }
 
 #--------------------------------------------------------------------------#
@@ -961,11 +975,10 @@ the results of the tests could not be parsed by CPAN::Reporter.
 HERE
 
     'na' => <<'HERE',
-Thank you for uploading your work to CPAN.  However, it appears that
-your distribution tests are not fully supported on this machine, either 
-due to operating system limitations or missing prerequisite modules.
-If the failure is due to missing prerequisites, you may wish to 
-disregard this report.
+Thank you for uploading your work to CPAN.  While attempting to test this
+distribution, the distribution signaled that support is not available either
+for this operating system or this version of Perl.  Nevertheless, any 
+diagnostic output produced is provided below for reference.
 HERE
     
 );

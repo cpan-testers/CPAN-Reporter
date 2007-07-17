@@ -134,11 +134,11 @@ for my $case ( @good_cases ) {
 }
 
 for my $case ( @bad_cases ) {
-    my $stderr;
+    my ($stdout, $stderr);
     capture sub { 
         my $got = 
         CPAN::Reporter::_parse_option( $case->{option}, $case->{input} );
-    }, undef, \$stderr;
-    like( $stderr, $case->{msg}, $case->{label} );
+    }, \$stdout, \$stderr;
+    like( $stdout, $case->{msg}, $case->{label} );
 }
 
