@@ -217,7 +217,12 @@ sub configure {
         $CPAN::Frontend->myprint( "\n" . $option_data->{info}. "\n");
         # options with defaults are mandatory
         if ( defined $option_data->{default} ) {
-            $CPAN::Frontend->myprint("(Recommended: $option_data->{default})"); 
+            # if we have a default, always show as a sane recommendation
+            if ( length $option_data->{default} ) {
+                $CPAN::Frontend->myprint(
+                    "(Recommended: '$option_data->{default}')\n\n"
+                );
+            }
             # repeat until validated
             PROMPT:
             while ( my $answer = CPAN::Shell::colorable_makemaker_prompt(

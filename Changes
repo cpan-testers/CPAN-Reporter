@@ -1,14 +1,17 @@
 Revision history for Perl module CPAN::Reporter
 
-0.46
-    - Significant improvements to NA handling (as per CPAN Testers
-      specifications from Barbie)-- NA reports should now be sent 
-      to CPAN Testers instead of discarded
-        - Tests that fail with 'OS Unsupported' or 'No support for OS' are
-          now correctly identified as NA 
-        - FAIL/UNKNOWN grades results with unsatisfied prerequisites are 
-          discarded immediately instead of being flagged as NA 
-        - changed default configurations to automatically send NA like PASS 
+0.46 Tue Jul 17 22:05:50 EDT 2007
+    
+    *** Significant improvements to NA report handling ***
+        
+        * Changes as per CPAN Testers specifications from Barbie
+        * NA reports should now be sent to CPAN Testers instead of discarded
+
+    - Tests that fail with 'OS Unsupported' or 'No support for OS' are
+      now correctly identified as NA
+    - FAIL/UNKNOWN grades results with unsatisfied prerequisites are 
+      discarded immediately instead of being flagged as NA 
+    - changed default configurations to automatically send NA just like PASS 
     - interactive configuration now always shows recommended options
       in addition to any prior configuration
     - added CPAN Testers website and wiki to SEE ALSO in docs
