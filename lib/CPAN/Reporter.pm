@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = "0.45"; 
+$CPAN::Reporter::VERSION = "0.46"; 
 
 use Config;
 use Config::Tiny ();
@@ -105,7 +105,7 @@ list, your test reports will not appear until manually reviewed.
 HERE
     },
     cc_author => {
-        default => 'default:yes pass:no',
+        default => 'default:yes pass/na:no',
         prompt => "Do you want to CC the the module author?",
         validate => 1,
         info => <<'HERE',
@@ -115,7 +115,7 @@ failed/unknown results. This option takes "grade:action" pairs.
 HERE
     },
     edit_report => {
-        default => 'default:ask/no pass:no',
+        default => 'default:ask/no pass/na:no',
         prompt => "Do you want to edit the test report?",
         validate => 1,
         info => <<'HERE',
@@ -127,7 +127,7 @@ report. This option takes "grade:action" pairs.
 HERE
     },
     send_report => {
-        default => 'default:ask/yes pass:yes na:no',
+        default => 'default:ask/yes pass/na:yes',
         prompt => "Do you want to send the test report?",
         validate => 1,
         info => <<'HERE',
@@ -216,7 +216,8 @@ sub configure {
         my $option_data = $defaults{$k};
         $CPAN::Frontend->myprint( "\n" . $option_data->{info}. "\n");
         # options with defaults are mandatory
-        if ( defined $defaults{$k}{default} ) {
+        if ( defined $option_data->{default} ) {
+            $CPAN::Frontend->myprint("(Recommended: $option_data->{default})"); 
             # repeat until validated
             PROMPT:
             while ( my $answer = CPAN::Shell::colorable_makemaker_prompt(
@@ -619,6 +620,10 @@ sub _grade_report {
             $grade = 'pass';
             $msg = 'All tests successful';
         }
+        elsif ( $output->[$i] =~ m{No support for OS|OS unsupported}ims ) {
+            $grade = 'na';
+            $msg = 'This platform is not supported';
+        }
         elsif ( $output->[$i] =~ m{^.?No tests defined}ms ) {
             $grade = 'unknown';
             $msg = 'No tests provided';
@@ -673,10 +678,15 @@ sub _grade_report {
     }
 
     # Downgrade failure/unknown grade if we can determine a cause
-    # If perl version is too low or OS not supported => 'na'
+    # If perl version is too low => 'na'
     # If stated prereqs missing => 'discard'
 
     if ( $grade eq 'fail' || $grade eq 'unknown' ) {
+        # check for unsupported OS
+        if ( $output =~ m{No support for OS|OS unsupported}ims ) {
+            $grade = 'na';
+            $msg = 'This platform is not supported';
+        }
         # check for perl version prerequisite or outright failure
         if ( $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ) {
             $grade = 'na';
@@ -1363,11 +1373,11 @@ CPAN::Reporter will assign one of the following grades to the report:
 * {fail} -- one or more tests failed, one or more test files died during
 testing or no test output was seen
 
-* {na} -- tests could not be run on this platform or one or more test files
-died because of missing prerequisites
+* {na} -- tests could not be run on this platform or version of perl
 
 * {unknown} -- no test files could be found (either t/*.t or test.pl) or 
-a result could not be determined from test output
+a result could not be determined from test output (e.g tests may have hung 
+and been interrupted)
 
 * {default} -- this is not an actual grade reported to CPAN Testers, but it
 is used in action prompt configuration options to indicate a fallback action
@@ -1376,6 +1386,9 @@ In returning results to CPAN.pm, "pass" and "unknown" are considered successful
 attempts to "make test" or "Build test" and will not prevent installation.
 "fail" and "na" are considered to be failures and CPAN.pm will not install
 unless forced.
+
+If prerequisites specified in {Makefile.PL} or {Build.PL} are not available,
+no report will be generated and a failure will be signaled to CPAN.pm.
 
 = CONFIG FILE OPTIONS
 
@@ -1460,11 +1473,11 @@ Multiple grades may be specified together by separating them with a slash.
 The action prompt options are:
 
 * {cc_author = <grade:action> ...} -- should module authors should be sent a copy of 
-the test report at their {author@cpan.org} address? (default:yes pass:no)
+the test report at their {author@cpan.org} address? (default:yes pass/na:no)
 * {edit_report = <grade:action> ...} -- edit the test report before sending? 
-(default:ask/no pass:no)
+(default:ask/no pass/na:no)
 * {send_report = <grade:action> ...} -- should test reports be sent at all?
-(default:ask/yes pass:yes na:no)
+(default:ask/yes pass/na:yes)
 * {send_duplicates = <grade:action> ...} -- should duplicates of previous 
 reports be sent, regardless of {send_report}? (default:no)
 
@@ -1473,8 +1486,6 @@ first time CPAN::Reporter is configured interactively.
 
 Note that if {send_report} is set to "no", CPAN::Reporter will still go through
 the motions of preparing a report, but will discard it rather than send it.
-This is the default for an "na" report -- users may still edit the report to 
-see which prerequisites failed, but no report will be sent.
 
 A better way to disable CPAN::Reporter temporarily is with the CPAN option
 {test_report}:
@@ -1560,6 +1571,11 @@ Bugs can be submitted through the web interface at
 
 When submitting a bug or request, please include a test-file or a patch to an
 existing test-file that illustrates the bug or desired feature.
+
+= SEE ALSO
+
+* [http://cpantesters.perl.org] -- project home with all reports
+* [http://cpantest.grango.org] -- documentation and wiki
 
 = AUTHOR
 

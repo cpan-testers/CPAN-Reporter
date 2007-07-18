@@ -26,6 +26,7 @@ t/51_test_report_fail.t
 t/52_test_report_unknown.t
 t/53_test_report_na.t
 t/54_test_report_split.t
+t/55_test_report_discard.t
 t/60_bad_author.t
 t/61_bad_dist_names.t
 t/62_duplicate_reports.t

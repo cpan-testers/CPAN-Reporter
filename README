@@ -2,7 +2,7 @@ NAME
     CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 VERSION
-    This documentation describes version 0.45.
+    This documentation describes version 0.46.
 
 SYNOPSIS
     From the CPAN shell:
@@ -67,11 +67,11 @@ UNDERSTANDING TEST GRADES
     *   "fail" -- one or more tests failed, one or more test files died
         during testing or no test output was seen
 
-    *   "na" -- tests could not be run on this platform or one or more test
-        files died because of missing prerequisites
+    *   "na" -- tests could not be run on this platform or version of perl
 
     *   "unknown" -- no test files could be found (either t/*.t or test.pl)
-        or a result could not be determined from test output
+        or a result could not be determined from test output (e.g tests may
+        have hung and been interrupted)
 
     *   "default" -- this is not an actual grade reported to CPAN Testers,
         but it is used in action prompt configuration options to indicate a
@@ -81,6 +81,10 @@ UNDERSTANDING TEST GRADES
     successful attempts to "make test" or "Build test" and will not prevent
     installation. "fail" and "na" are considered to be failures and CPAN.pm
     will not install unless forced.
+
+    If prerequisites specified in "Makefile.PL" or "Build.PL" are not
+    available, no report will be generated and a failure will be signaled to
+    CPAN.pm.
 
 CONFIG FILE OPTIONS
     Default options for CPAN::Reporter are read from a configuration file
@@ -169,13 +173,13 @@ CONFIG FILE OPTIONS
 
     *   "cc_author = <grade:action> ..." -- should module authors should be
         sent a copy of the test report at their "author@cpan.org" address?
-        (default:yes pass:no)
+        (default:yes pass/na:no)
 
     *   "edit_report = <grade:action> ..." -- edit the test report before
-        sending? (default:ask/no pass:no)
+        sending? (default:ask/no pass/na:no)
 
     *   "send_report = <grade:action> ..." -- should test reports be sent at
-        all? (default:ask/yes pass:yes na:no)
+        all? (default:ask/yes pass/na:yes)
 
     *   "send_duplicates = <grade:action> ..." -- should duplicates of
         previous reports be sent, regardless of "send_report"? (default:no)
@@ -185,9 +189,7 @@ CONFIG FILE OPTIONS
 
     Note that if "send_report" is set to "no", CPAN::Reporter will still go
     through the motions of preparing a report, but will discard it rather
-    than send it. This is the default for an "na" report -- users may still
-    edit the report to see which prerequisites failed, but no report will be
-    sent.
+    than send it.
 
     A better way to disable CPAN::Reporter temporarily is with the CPAN
     option "test_report":
@@ -273,6 +275,11 @@ BUGS
 
     When submitting a bug or request, please include a test-file or a patch
     to an existing test-file that illustrates the bug or desired feature.
+
+SEE ALSO
+    *   <http://cpantesters.perl.org> -- project home with all reports
+
+    *   <http://cpantest.grango.org> -- documentation and wiki
 
 AUTHOR
     David A. Golden (DAGOLDEN)

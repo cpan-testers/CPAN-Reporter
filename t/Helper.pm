@@ -176,10 +176,18 @@ sub _test_dist_eumm {
         like( $stdout, "/Preparing a test report for $dist->{short_name}/",
             "$case->{name}: report info header correct"
         );
-
-        ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
-            "$case->{name}: test report was mock sent"
-        );
+        
+        if ( -r $config_file ) {
+            ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+                "$case->{name}: test report was mock sent"
+            );
+        }
+        else {
+            ok( ! defined $t::Helper::sent_report,
+                "$case->{name}: test results not sent"
+            );
+        }
+            
     }
 
     like( $stdout, "/$case->{eumm_msg}/",
@@ -207,6 +215,9 @@ sub _test_dist_mb {
         
         my ($stdout, $stderr, $build_rc, $test_build_rc);
         
+        $t::Helper::sent_report = undef;
+        @t::Helper::cc_list = ();
+
         capture sub {
             $build_rc = do "Build.PL";
             $test_build_rc = CPAN::Reporter::test( $dist, "$perl Build test" );
@@ -252,9 +263,16 @@ sub _test_dist_mb {
                 "$case->{name}: report info header correct"
             );
 
-            ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
-                "$case->{name}: test report was mock sent"
-            );
+            if ( -r $config_file ) {
+                ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+                    "$case->{name}: test report was mock sent"
+                );
+            }
+            else {
+                ok( ! defined $t::Helper::sent_report,
+                    "$case->{name}: test results not sent"
+                );
+            }
         }
 
         like( $stdout, "/$case->{mb_msg}/",

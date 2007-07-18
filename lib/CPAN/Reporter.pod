@@ -8,7 +8,7 @@ CPAN::Reporter - Provides Test::Reporter support for CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 0.45.
+This documentation describes version 0.46.
 
 =head1 SYNOPSIS
 
@@ -93,8 +93,7 @@ testing or no test output was seen
 
 =item *
 
-C<<< na >>> -- tests could not be run on this platform or one or more test files
-died because of missing prerequisites
+C<<< na >>> -- tests could not be run on this platform or version of perl
 
 =back
 
@@ -103,7 +102,8 @@ died because of missing prerequisites
 =item *
 
 C<<< unknown >>> -- no test files could be found (either tE<sol>*.t or test.pl) or 
-a result could not be determined from test output
+a result could not be determined from test output (e.g tests may have hung 
+and been interrupted)
 
 =back
 
@@ -120,6 +120,9 @@ In returning results to CPAN.pm, "pass" and "unknown" are considered successful
 attempts to "make test" or "Build test" and will not prevent installation.
 "fail" and "na" are considered to be failures and CPAN.pm will not install
 unless forced.
+
+If prerequisites specified in C<<< Makefile.PL >>> or C<<< Build.PL >>> are not available,
+no report will be generated and a failure will be signaled to CPAN.pm.
 
 =head1 CONFIG FILE OPTIONS
 
@@ -229,17 +232,17 @@ The action prompt options are:
 =item *
 
 C<<< cc_author = <grade:action> ... >>> -- should module authors should be sent a copy of 
-the test report at their C<<< author@cpan.org >>> address? (default:yes pass:no)
+the test report at their C<<< author@cpan.org >>> address? (default:yes passE<sol>na:no)
 
 =item *
 
 C<<< edit_report = <grade:action> ... >>> -- edit the test report before sending? 
-(default:askE<sol>no pass:no)
+(default:askE<sol>no passE<sol>na:no)
 
 =item *
 
 C<<< send_report = <grade:action> ... >>> -- should test reports be sent at all?
-(default:askE<sol>yes pass:yes na:no)
+(default:askE<sol>yes passE<sol>na:yes)
 
 =item *
 
@@ -253,8 +256,6 @@ first time CPAN::Reporter is configured interactively.
 
 Note that if C<<< send_report >>> is set to "no", CPAN::Reporter will still go through
 the motions of preparing a report, but will discard it rather than send it.
-This is the default for an "na" report -- users may still edit the report to 
-see which prerequisites failed, but no report will be sent.
 
 A better way to disable CPAN::Reporter temporarily is with the CPAN option
 C<<< test_report >>>:
@@ -358,6 +359,20 @@ L<http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter>
 
 When submitting a bug or request, please include a test-file or a patch to an
 existing test-file that illustrates the bug or desired feature.
+
+=head1 SEE ALSO
+
+=over
+
+=item *
+
+L<http://cpantesters.perl.org> -- project home with all reports
+
+=item *
+
+L<http://cpantest.grango.org> -- documentation and wiki
+
+=back
 
 =head1 AUTHOR
 
