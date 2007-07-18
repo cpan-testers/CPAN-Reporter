@@ -18,19 +18,27 @@ This documentation refers to version %%VERSION%%
 
 = REPORT GRADES
 
-== Why did I receive an NA report?  The test failed because of a missing prerequisite!
+== Why did I receive a report?  The grade was PASS/FAIL/UNKNOWN/NA!
 
-An NA report indicates missing prerequisites (and may eventually
-indicate unsupported platforms).  As of version 0.36, CPAN::Reporter
-defaults to not sending NA reports.  Earlier versions will send NA
-reports if they occur or a user might have changed the defaults so
-as to send NA reports.
+If you received a report, it's because the person using CPAN::Reporter
+chose to copy you on the report in addition to sending it to CPAN Testers.  
+CPAN::Reporter suggests that only FAIL and UKNOWN reports be copied to 
+authors, but individual users may override that default.
 
-Generally, module authors may simply choose to ignore NA reports.
+== Why was a report sent if a prerequisite is missing?
+
+As of CPAN::Reporter 0.46, FAIL and UNKNOWN reports with unsatisfied 
+prerequisites are discarded.  Earlier versions may have sent these reports 
+out by mistake as either an NA or UNKNOWN report.
+
+PASS reports are not discarded because it may be useful to know when tests
+passed despite a missing prerequisite.  NA reports are sent because information
+about the lack of support for a platform is relevant regardless of
+prerequisites.
 
 = SENDING REPORTS
 
-== Why did I get a error sending a test report?
+== Why did I get an error sending a test report?
 
 Test reports are sent via ordinary email.  The most common reason for errors
 sending a report is that many Internet Service Providers (ISP's) will block
@@ -100,7 +108,7 @@ http://dagolden.com/
 
 = COPYRIGHT AND LICENSE
 
-Copyright (c) 2006 by David A. Golden
+Copyright (c) 2006, 2007 by David A. Golden
 
 This program is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
