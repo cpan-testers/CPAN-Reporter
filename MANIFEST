@@ -58,9 +58,17 @@ t/dist/t-NoOutput/Build.PL
 t/dist/t-NoOutput/lib/Bogus/Module.pm
 t/dist/t-NoOutput/Makefile.PL
 t/dist/t-NoOutput/t/01_Bogus.t
+t/dist/t-NoSupport/Build.PL
+t/dist/t-NoSupport/lib/Bogus/Module.pm
+t/dist/t-NoSupport/Makefile.PL
+t/dist/t-NoSupport/t/01_Bogus.t
 t/dist/t-NoTestsButPrereqMiss/Build.PL
 t/dist/t-NoTestsButPrereqMiss/lib/Bogus/Module.pm
 t/dist/t-NoTestsButPrereqMiss/Makefile.PL
+t/dist/t-OSUnsupported/Build.PL
+t/dist/t-OSUnsupported/lib/Bogus/Module.pm
+t/dist/t-OSUnsupported/Makefile.PL
+t/dist/t-OSUnsupported/t/01_Bogus.t
 t/dist/t-Pass/Build.PL
 t/dist/t-Pass/lib/Bogus/Module.pm
 t/dist/t-Pass/Makefile.PL
