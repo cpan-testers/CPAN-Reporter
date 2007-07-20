@@ -1,5 +1,8 @@
 Revision history for Perl module CPAN::Reporter
 
+0.47
+    - fixed spelling errors in documentation
+
 0.46 Tue Jul 17 22:05:50 EDT 2007
     
     *** Significant improvements to NA report handling ***

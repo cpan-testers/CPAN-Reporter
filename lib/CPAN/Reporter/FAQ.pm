@@ -1,7 +1,7 @@
 package CPAN::Reporter::FAQ
 # Not really a .pm file, but holds wikidoc which will be
 # turned into .pod by the Build.PL
-$VERSION = "0.46";
+$VERSION = "0.47";
 use strict; # make CPANTS happy
 1;
 __END__
@@ -22,7 +22,7 @@ This documentation refers to version %%VERSION%%
 
 If you received a report, it's because the person using CPAN::Reporter
 chose to copy you on the report in addition to sending it to CPAN Testers.  
-CPAN::Reporter suggests that only FAIL and UKNOWN reports be copied to 
+CPAN::Reporter suggests that only FAIL and UNKNOWN reports be copied to 
 authors, but individual users may override that default.
 
 == Why was a report sent if a prerequisite is missing?
@@ -70,7 +70,7 @@ time they appear on the CPAN Testers website. There is a further delay before
 summary statistics appear on search.cpan.org.
 
 If your email address is subscribed to the list but your test reports are still
-not showing up, your outbound email may have been silentely blocked by your
+not showing up, your outbound email may have been silently blocked by your
 ISP.  See the question above about errors sending reports.
 
 = CPAN TESTERS
