@@ -4,7 +4,8 @@ BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
 use vars qw/@EXPORT/;
 @EXPORT = qw/
-    test_dist test_dist_plan
+    test_grade_PL test_grade_PL_plan
+    test_grade_test test_grade_test_plan
     test_fake_config test_fake_config_plan
     test_report test_report_plan
     test_dispatch test_dispatch_plan
@@ -82,8 +83,8 @@ sub test_fake_config {
 # dist tests
 #--------------------------------------------------------------------------#
 
-sub test_dist_plan() { 1 + _test_dist_eumm_plan() + _test_dist_mb_plan() }
-sub test_dist {
+sub test_grade_test_plan() { 1 + 6 * 2 }
+sub test_grade_test {
     my ($case, $dist) = @_;
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -105,183 +106,210 @@ sub test_dist {
 
     my $pushd = pushd $work_dir;
 
-    _test_dist_eumm( $case, $dist );
-    _test_dist_mb( $case, $dist );
-
-}
-
-#--------------------------------------------------------------------------#
-# Dist subtest for EU::MM
-#
-# XXX This is horribly redundant with the M::B version -- needs more
-# refactoring
-#--------------------------------------------------------------------------#
-
-sub _test_dist_eumm_plan() { 6 }
-sub _test_dist_eumm {
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-    my ($case, $dist) = @_;
-
-    my ($stdout, $stderr, $makefile_rc, $test_make_rc);
-    
-    $t::Helper::sent_report = undef;
-    @t::Helper::cc_list = ();
-
-    eval {
-        capture sub {
-            # Have to run Makefile separate as return value isn't reliable
-            $makefile_rc = ! system("$perl Makefile.PL");
-            $test_make_rc = CPAN::Reporter::test( $dist, "$make test" );
-        }, \$stdout, \$stderr;
-        return 1;
-    } or diag "$@\n\nSTDOUT:\n$stdout\n\nSTDERR:\n$stderr\n";
-     
-    ok( $makefile_rc,
-        "$case->{name}: Makefile.PL ran without error"
-    ); 
-
-    my $is_rc_correct = $case->{eumm_success} ? $test_make_rc : ! $test_make_rc;
-
-    ok( $is_rc_correct, 
-        "$case->{name}: test('make test') returned $case->{eumm_success}"
-    );
-    
-    my $is_grade_correct;
-    # Special case if discarding
-    if ( $case->{eumm_grade} eq 'discard' ) {
-        $is_grade_correct = 
-            $stdout =~ /Test results were not valid/ms;
-
-        ok( $is_grade_correct,
-            "$case->{name}: test('make test') prerequisites not satisifed"
-        );
-            
-        like( $stdout, 
-            "/Test results for $dist->{short_name} will be discarded/",
-            "$case->{name}: discard message correct"
-        );
-
-        ok( ! defined $t::Helper::sent_report,
-            "$case->{name}: test results discarded"
-        );
-    }
-    else {
-        $is_grade_correct = 
-            $stdout =~ /^Test result is '$case->{eumm_grade}'/ms;
-
-        ok( $is_grade_correct, 
-            "$case->{name}: test('make test') grade reported as '$case->{eumm_grade}'"
-        );
-            
-        like( $stdout, "/Preparing a test report for $dist->{short_name}/",
-            "$case->{name}: report info header correct"
-        );
-        
-        if ( -r $config_file ) {
-            ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
-                "$case->{name}: test report was mock sent"
-            );
-        }
-        else {
-            ok( ! defined $t::Helper::sent_report,
-                "$case->{name}: test results not sent"
-            );
-        }
-            
-    }
-
-    like( $stdout, "/$case->{eumm_msg}/",
-        "$case->{name}: test('make test') grade explanation correct"
-    );
-
-    diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
-        unless ( $is_rc_correct && $is_grade_correct );
-}
-
-#--------------------------------------------------------------------------#
-# Dist subtest for M::B
-#--------------------------------------------------------------------------#
-
-sub _test_dist_mb_plan() { 6 }
-sub _test_dist_mb {
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-    my ($case, $dist) = @_;
-
-    SKIP: {
-
-        eval "require Module::Build";
-        skip "Module::Build not installed", _test_dist_mb_plan()
-            if $@;
-        
-        my ($stdout, $stderr, $build_rc, $test_build_rc);
-        
-        $t::Helper::sent_report = undef;
-        @t::Helper::cc_list = ();
-
-        capture sub {
-            $build_rc = do "Build.PL";
-            $test_build_rc = CPAN::Reporter::test( $dist, "$perl Build test" );
-        }, \$stdout, \$stderr;
-
-        ok( $build_rc,
-            "$case->{name}: Build.PL returned true"
-        ); 
-        
-        my $is_rc_correct = $case->{mb_success} ? $test_build_rc : ! $test_build_rc;
-
-        ok( $is_rc_correct, 
-            "$case->{name}: test('perl Build test') returned $case->{mb_success}"
-        );
-        
-        my $is_grade_correct;
-        # Special case if discarding
-        if ( $case->{mb_grade} eq 'discard' ) {
-            $is_grade_correct = 
-                $stdout =~ /Test results were not valid/ms;
-
-            ok( $is_grade_correct,
-                "$case->{name}: test('perl Build test') prerequisites not satisifed"
-            );
-                
-            like( $stdout, 
-                "/Test results for $dist->{short_name} will be discarded/",
-                "$case->{name}: discard message correct"
-            );
-
-            ok( ! defined $t::Helper::sent_report,
-                "$case->{name}: test results discarded"
-            );
-        }
-        else {
-            $is_grade_correct = 
-                $stdout =~ /^Test result is '$case->{mb_grade}'/ms;
-            ok( $is_grade_correct, 
-                "$case->{name}: test('perl Build test') grade reported as '$case->{mb_grade}'"
-            );
-            
-            like( $stdout, "/Preparing a test report for $dist->{short_name}/",
-                "$case->{name}: report info header correct"
-            );
-
-            if ( -r $config_file ) {
-                ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
-                    "$case->{name}: test report was mock sent"
+    for my $tool ( qw/eumm mb/ ) {
+        SKIP: {
+            my ($tool_mod, $tool_PL, $tool_cmd );
+            if ( $tool eq 'eumm' ) {
+                ($tool_mod, $tool_PL, $tool_cmd ) = (
+                    "ExtUtils::MakeMaker",
+                    "Makefile.PL",
+                    "$make test",
                 );
             }
             else {
-                ok( ! defined $t::Helper::sent_report,
-                    "$case->{name}: test results not sent"
+                ($tool_mod, $tool_PL, $tool_cmd ) = (
+                    "Module::Build",
+                    "Build.PL",
+                    "$perl Build test",
                 );
             }
+
+            eval "require $tool_mod";
+            skip "$tool_mod not installed", 6
+                if $@;
+            
+            my ($stdout, $stderr, $build_rc, $test_build_rc);
+            
+            $t::Helper::sent_report = undef;
+            @t::Helper::cc_list = ();
+
+            capture sub {
+                $build_rc = do $tool_PL;
+                $test_build_rc = CPAN::Reporter::test( $dist, $tool_cmd )
+            }, \$stdout, \$stderr;
+
+            ok( $build_rc,
+                "$case->{name}: $tool_PL returned true"
+            ); 
+            
+            my $is_rc_correct = $case->{"$tool\_success"} 
+                              ? $test_build_rc : ! $test_build_rc;
+
+            ok( $is_rc_correct, 
+                "$case->{name}: test('$tool_cmd') returned " . 
+                $case->{"$tool\_success"}
+            );
+            
+            my $is_grade_correct;
+            # Special case if discarding
+            if ( $case->{"$tool\_grade"} eq 'discard' ) {
+                $is_grade_correct = 
+                    $stdout =~ /Test results were not valid/ms;
+
+                ok( $is_grade_correct,
+                    "$case->{name}: test('$tool_cmd') prerequisites not satisifed"
+                );
+                    
+                like( $stdout, 
+                    "/Test results for $dist->{short_name} will be discarded/",
+                    "$case->{name}: discard message correct"
+                );
+
+                ok( ! defined $t::Helper::sent_report,
+                    "$case->{name}: test results discarded"
+                );
+            }
+            else {
+                my $case_grade = $case->{"$tool\_grade"};
+                $is_grade_correct = 
+                    $stdout =~ /^Test result is '$case_grade'/ms;
+                ok( $is_grade_correct, 
+                    "$case->{name}: test('$tool_cmd') grade reported as '$case_grade'"
+                );
+                
+                like( $stdout, "/Preparing a CPAN Testers report for $dist->{short_name}/",
+                    "$case->{name}: report notification correct"
+                );
+
+                if ( -r $config_file ) {
+                    ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+                        "$case->{name}: test report was mock sent"
+                    );
+                }
+                else {
+                    ok( ! defined $t::Helper::sent_report,
+                        "$case->{name}: test results not sent"
+                    );
+                }
+            }
+            
+            my $case_msg = $case->{"$tool\_msg"};
+            like( $stdout, "/$case_msg/",
+                "$case->{name}: test('$tool_cmd') grade explanation correct"
+            );
+
+            diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
+                unless ( $is_rc_correct && $is_grade_correct );
         }
+    }   
+}
 
-        like( $stdout, "/$case->{mb_msg}/",
-            "$case->{name}: test('perl Build test') grade explanation correct"
-        );
+#--------------------------------------------------------------------------#
+# PL testing
+#--------------------------------------------------------------------------#
 
-        diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
-            unless ( $is_rc_correct && $is_grade_correct );
-    }
+sub test_grade_PL_plan() { 1 + 5 * 2 } 
+sub test_grade_PL {
+    my ($case, $dist) = @_;
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    # simplify dist name
+    $dist->{short_name} = basename($dist->pretty_id);
+    $dist->{short_name} =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
+
+    # automate CPAN::Reporter prompting
+    local $ENV{PERL_MM_USE_DEFAULT} = 1;
+
+    # clone dist directory -- avoids needing to cleanup source
+    my $dist_dir = File::Spec->catdir( qw/t dist /, $case->{name} );
+    my $work_dir = tempdir( 
+        "CPAN-Reporter-testdist-XXXXXXXX", TMPDIR => 1, CLEANUP => 1
+    );
+    ok( dircopy($dist_dir, $work_dir),
+        "Copying $case->{name} to temporary build directory"
+    );
+
+    my $pushd = pushd $work_dir;
+
+    for my $tool ( qw/eumm mb/ ) {
+        SKIP: {
+            my ($tool_mod, $tool_PL, $tool_cmd );
+            if ( $tool eq 'eumm' ) {
+                ($tool_mod, $tool_PL, $tool_cmd ) = (
+                    "ExtUtils::MakeMaker",
+                    "Makefile.PL",
+                    "$perl Makefile.PL",
+                );
+            }
+            else {
+                ($tool_mod, $tool_PL, $tool_cmd ) = (
+                    "Module::Build",
+                    "Build.PL",
+                    "$perl Build.PL",
+                );
+            }
+
+            eval "require $tool_mod";
+            skip "$tool_mod not installed", 6
+                if $@;
+            
+            my ($stdout, $stderr, $build_rc, $test_build_rc);
+            
+            $t::Helper::sent_report = undef;
+            @t::Helper::cc_list = ();
+
+            my ($output, $exit_value, $rc);
+            capture sub {
+                ($output, $exit_value) = 
+                    CPAN::Reporter::record_command($tool_cmd);
+                $rc = CPAN::Reporter::grade_PL(
+                    $dist, $tool_cmd, $output, $exit_value
+                );
+            }, \$stdout, \$stderr;
+            
+            my $is_rc_correct = $case->{"$tool\_success"} 
+                              ? $rc : $rc;
+
+            ok( $is_rc_correct, 
+                "$case->{name}: grade_PL() returned " . 
+                $case->{"$tool\_success"}
+            );
+            
+            my $case_grade = $case->{"$tool\_grade"};
+
+            # correct grade identified?
+            my $is_grade_correct = 
+                $stdout =~ /^'$tool_PL' result is '$case_grade'/ms;
+            ok( $is_grade_correct, 
+                "$case->{name}: '$tool_cmd' grade identified as '$case_grade'"
+            );
+
+            if ( $case_grade =~ m{fail|unknown} ) {
+                # report should have been sent
+                like( $stdout, "/Preparing a CPAN Testers report for $dist->{short_name}/",
+                    "$case->{name}: report notification correct"
+                );
+                ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+                    "$case->{name}: report was mock sent"
+                );
+                my $case_msg = $case->{"$tool\_msg"};
+                like( $stdout, "/$case_msg/",
+                    "$case->{name}: '$tool_cmd' grade explanation correct"
+                );
+            }
+            else {
+                # report shouldn't have been sent
+                ok( ! defined $t::Helper::sent_report ,
+                    "$case->{name}: no $tool_PL report was sent"
+                );
+                pass("(advance test count)") for (0 .. 1);
+            }
+            
+            diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
+                unless ( $is_rc_correct && $is_grade_correct );
+        }
+    }   
+
 }
 
 #--------------------------------------------------------------------------#

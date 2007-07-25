@@ -33,7 +33,7 @@ my @test_distros = (
     },
 );
 
-plan tests => 1 + test_dist_plan() * @test_distros + 3;
+plan tests => 1 + test_grade_test_plan() * @test_distros + 3;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -57,7 +57,7 @@ require_ok('CPAN::Reporter');
 # Config file not created in advance with test_config()
 
 for my $case ( @test_distros ) {
-    test_dist( $case, $mock_dist );
+    test_grade_test( $case, $mock_dist );
 } 
 
 # Test warning messages

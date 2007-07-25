@@ -17,7 +17,7 @@ $|++;
 
 #--------------------------------------------------------------------------#
 
-my @api = qw/test configure record_command send_test_report/;
+my @api = qw/test configure record_command grade_PL grade_test/;
 
 plan tests =>  1 + @api ;
 

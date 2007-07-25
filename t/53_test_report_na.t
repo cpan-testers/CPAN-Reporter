@@ -54,7 +54,8 @@ my @test_distros = (
     },
 );
 
-plan tests => 1 + test_fake_config_plan() + test_dist_plan() * @test_distros;
+plan tests => 1 + test_fake_config_plan() 
+                + test_grade_test_plan() * @test_distros;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -76,5 +77,5 @@ for my $case ( @test_distros ) {
         author_fullname => "John Q. Public",
     );
 
-    test_dist( $case, $mock_dist ); 
+    test_grade_test( $case, $mock_dist ); 
 } 

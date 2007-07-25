@@ -336,10 +336,10 @@ sub test {
         );
         return;
     }
-    send_test_report( $dist, $system_command, $output, $exit_code );
+    grade_test( $dist, $system_command, $output, $exit_code );
 }
 
-sub send_test_report {
+sub grade_test {
     my ($dist, $system_command, $output, $exit_code) = @_;
     
     my $result = {
@@ -379,7 +379,7 @@ sub send_test_report {
 sub _dispatch_report {
     my $result = shift;
 
-    $CPAN::Frontend->myprint("Preparing a test report for $result->{dist_name}\n");
+    $CPAN::Frontend->myprint("Preparing a CPAN Testers report for $result->{dist_name}\n");
 
     # Get configuration options
     my $config_obj = _open_config_file();
@@ -1590,22 +1590,34 @@ actual exit value of the command will need to be extracted as described in
 If the attempt to record fails, a warning will be issued and one or more of 
 {$output} or {$exit_value} will be undefined.
 
-== {send_test_report()}
+== {grade_PL()}
 
- CPAN::Reporter::send_test_report( $dist, $command, $output, $exit);
+ CPAN::Reporter::grade_PL( $dist, $command, $output, $exit);
 
-Given a CPAN::Distribution object, the system command used to run distribution
-tests (e.g. "make test"), an array of lines of output from testing and the exit
-value from the system command, {send_test_report()} generates and sends a
-[Test::Reporter] report.  It returns true if the test grade is "pass" or
-"unknown" and returns false, otherwise.
+Given a CPAN::Distribution object, the system command used to run Makefile.PL
+or Build.PL (e.g. "perl Makefile.PL"), an array of lines of output from the
+command and the exit value from the command, {grade_PL()} determines a grade.
+If the grade is "pass", {grade_PL()} does *not* send a CPAN Testers report at
+this stage and returns true to signal that the Makefile.PL or Build.PL ran
+successfully.  Otherwise, a CPAN Testers report is sent and {grade_PL()}
+returns false.
+
+== {grade_test()}
+
+ CPAN::Reporter::grade_test( $dist, $command, $output, $exit);
+
+Given a CPAN::Distribution object, the system command used to run tests (e.g.
+"make test"), an array of lines of output from testing and the exit value from
+the system command, {grade_test()} determines a grade.  A CPAN Testers report
+is then sent unless specified prerequisites were not satisfied.  This function
+returns true if the grade is "pass" or "unknown" and returns false, otherwise.
 
 == {test()} -- DEPRECATED
 
  CPAN::Reporter::test( $cpan_dist, $system_command );
 
 This function is maintained for backwards compatibility.  It effectively 
-wraps the functionality of {record_command()} and {send_test_report()} into
+wraps the functionality of {record_command()} and {grade_test()} into
 a single function call. It takes a CPAN::Distribution object and the system
 command to run distribution tests.
 
