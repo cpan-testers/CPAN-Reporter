@@ -9,8 +9,6 @@ TODO list for Perl module CPAN::Reporter
 # Features, etc
 #--------------------------------------------------------------------------#
 
-- add YAML and YAML::Syck to toolchain modules
-
 - set alternate configuration file via environment variable
 
 - use environment variable and/or external file to indicate modules to 
@@ -27,9 +25,6 @@ TODO list for Perl module CPAN::Reporter
   handler (for Win32); abort test without sending; key question: is this
   success or fail for return code to CPAN?  Probably the latter.  Or, prompt
   for both parts -- so hanging tests can be reported.
-
-- Add an interface for CPAN.pm to pass in test output directly (e.g. from 
-  Expect.pm) for report generation.
 
 - Figure out if forced tests should be handled differently than normal
   tests

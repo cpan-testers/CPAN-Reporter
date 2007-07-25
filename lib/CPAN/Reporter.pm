@@ -1133,6 +1133,8 @@ my @toolchain_mods= qw(
     Test::Harness
     Test::More
     version
+    YAML
+    YAML::Syck
 );
 
 sub _toolchain_report {
