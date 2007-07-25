@@ -284,10 +284,55 @@ sub configure {
     }
 }
 
+sub record_command {
+    my ($cmd) = @_;
+    my $temp_out = File::Temp->new
+        or die "Could not create a temporary file for output: $!";
+
+    # Teeing a command loses its exit value so we must wrap the command 
+    # and print the exit code so we can read it off of output
+    my $cmdwrapper = File::Temp->new
+        or die "Could not create a wrapper for $cmd\: $!";
+    print {$cmdwrapper} qq{system('$cmd');\n};
+    print {$cmdwrapper} qq{print 'cmdwrapper: exited with ', \$?, "\n";};
+    $cmdwrapper->close;
+    
+    # tee the command wrapper
+    my $tee_input = Probe::Perl->find_perl_interpreter() .  " $cmdwrapper";
+    tee($tee_input, { stderr => 1 }, $temp_out);
+        
+    # read back the output
+    my $temp_out2 = IO::File->new($temp_out->filename, "<");
+    if ( !$temp_out2 ) {
+        $CPAN::Frontend->mywarn( 
+            "CPAN::Reporter couldn't read command results for '$cmd'\n" 
+        );
+        return;
+    }
+    my @cmd_output = <$temp_out2>;
+    if ( ! @cmd_output ) {
+        $CPAN::Frontend->mywarn( 
+            "CPAN::Reporter didn't capture command results for '$cmd'\n"
+        );
+        return;
+    }
+
+    # extract the exit value
+    my $exit_value;
+    if ( $cmd_output[-1] =~ m{\Acmdwrapper:} ) {
+        ($exit_value) = $cmd_output[-1] =~ m{exited with ([-0-9]+)};
+        delete $cmd_output[-1];
+    }
+
+    return \@cmd_output, $exit_value;
+}
+
 sub test {
     my ($dist, $system_command) = @_;
-    my $temp_out = File::Temp->new;
     
+    my $temp_out = File::Temp->new
+        or die "Could not create a temporary file for output: $!";
+
     my $result = {
         dist => $dist,
         command => $system_command,

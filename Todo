@@ -9,6 +9,8 @@ TODO list for Perl module CPAN::Reporter
 # Features, etc
 #--------------------------------------------------------------------------#
 
+- add YAML and YAML::Syck to toolchain modules
+
 - set alternate configuration file via environment variable
 
 - use environment variable and/or external file to indicate modules to 
