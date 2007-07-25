@@ -284,6 +284,33 @@ sub configure {
     }
 }
 
+sub grade_PL {
+    my $result = _init_result( @_ );
+    _compute_PL_grade($result);
+    if( $result->{grade} ne 'pass' ) {
+        _print_grade_msg( $result->{command}, $result );
+        _dispatch_report( $result );
+    }
+    return $result->{success};
+}
+
+sub grade_test {
+    my $result = _init_result( @_ );
+    _compute_test_grade($result);
+    if ( $result->{grade} eq 'discard' ) {
+        $CPAN::Frontend->mywarn( 
+            "\nTest results were not valid: $result->{grade_msg}\n\n",
+            $result->{prereq_pm}, "\n",
+            "Test results for $result->{dist_name} will be discarded"
+        );
+    }
+    else {
+        _print_grade_msg( "Test", $result );
+        _dispatch_report( $result );
+    }
+    return $result->{success};
+}
+
 sub record_command {
     my ($cmd) = @_;
     my $temp_out = File::Temp->new
@@ -329,46 +356,153 @@ sub record_command {
 
 sub test {
     my ($dist, $system_command) = @_;
-    my ($output, $exit_code) = record_command( $system_command );
-    unless ( defined $output && defined $exit_code ) {
+    my ($output, $exit_value) = record_command( $system_command );
+    unless ( defined $output && defined $exit_value ) {
         $CPAN::Frontend->mywarn(
             "CPAN::Reporter had errors capturing output. Tests abandoned"
         );
         return;
     }
-    grade_test( $dist, $system_command, $output, $exit_code );
-}
-
-sub grade_test {
-    my ($dist, $system_command, $output, $exit_code) = @_;
-    
-    my $result = {
-        dist => $dist,
-        command => $system_command,
-        output => ref $output eq 'ARRAY' ? $output : [ split /\n/, $output ],
-        exit_code => $exit_code,
-    };
-
-    _expand_report( $result );
-    
-    if ( $result->{grade} eq 'discard' ) {
-        $CPAN::Frontend->mywarn( 
-            "\nTest results were not valid: $result->{grade_msg}\n\n",
-            $result->{prereq_pm}, "\n",
-            "Test results for $result->{dist_name} will be discarded"
-        );
-    }
-    else {
-        _grade_msg( $result );
-        _dispatch_report( $result );
-    }
-
-    return $result->{success};   # from _expand_report 
+    grade_test( $dist, $system_command, $output, $exit_value );
 }
 
 #--------------------------------------------------------------------------#
 # private functions
 #--------------------------------------------------------------------------#
+
+#--------------------------------------------------------------------------#
+# _compute_PL_grade
+#--------------------------------------------------------------------------#
+
+sub _compute_PL_grade {
+    my $result = shift;
+    my ($grade,$msg);
+    if ( $result->{exit_value} ) {
+        $result->{grade} = "fail";
+    }
+    else {
+        $result->{grade} = "pass";
+    }
+    $result->{success} = $result->{grade} eq "pass" ? 1 : 0;
+    return;
+}
+
+#--------------------------------------------------------------------------#
+# _compute_test_grade
+#--------------------------------------------------------------------------#
+
+sub _compute_test_grade {
+    my $result = shift;
+    my ($grade,$msg);
+    my $output = $result->{output};
+    
+    # we need to know prerequisites
+    _expand_report( $result );
+
+    # Output strings taken from Test::Harness::
+    # _show_results()  -- for versions < 2.57_03 
+    # get_results()    -- for versions >= 2.57_03
+
+    # XXX don't shortcut to unknown with _has_tests here because a custom
+    # Makefile.PL or Build.PL might define tests in a non-standard way
+    
+    # check for make or Build
+    
+    # parse in reverse order for Test::Harness results
+    for my $i ( reverse 0 .. $#{$output} ) {
+        if ( $output->[$i] =~ m{^All tests successful}ms ) {
+            $grade = 'pass';
+            $msg = 'All tests successful';
+        }
+        elsif ( $output->[$i] =~ m{No support for OS|OS unsupported}ims ) {
+            $grade = 'na';
+            $msg = 'This platform is not supported';
+        }
+        elsif ( $output->[$i] =~ m{^.?No tests defined}ms ) {
+            $grade = 'unknown';
+            $msg = 'No tests provided';
+        }
+        elsif ( $output->[$i] =~ m{^FAILED--no tests were run}ms ) {
+            $grade = 'unknown';
+            $msg = 'No tests were run';
+        }
+        elsif ( $output->[$i] =~ m{^FAILED--.*--no output}ms ) {
+            $grade = 'fail';
+            $msg = 'Tests had no output';
+        }
+        elsif ( $output->[$i] =~ m{FAILED--Further testing stopped}ms ) {
+            $grade = 'fail';
+            $msg = 'Bailed out of tests';
+        }
+        elsif ( $output->[$i] =~ m{^Failed }ms ) {  # must be lowercase
+            $grade = 'fail';
+            $msg = "Distribution had failing tests";
+        }
+        else {
+            next;
+        }
+        if ( $grade eq 'unknown' && _has_tests() ) {
+            # probably a spurious message from recursive make, so ignore and
+            # continue if we can find any standard test files
+            $grade = $msg = undef;
+            next;
+        }
+        last if $grade;
+    }
+    
+    # didn't find Test::Harness output we recognized
+    if ( ! $grade ) {
+        $grade = "unknown";
+        $msg = "Couldn't determine a result";
+    }
+
+    # With test.pl and 'make test', any t/*.t might pass Test::Harness, but
+    # test.pl might still fail, or there might only be test.pl,
+    # so use exit code directly
+    
+    if ( $result->{is_make} && -f "test.pl" && $grade ne 'fail' ) {
+        if ( $result->{exit_value} ) {
+            $grade = "fail";
+            $msg = "'make test' error detected";
+        }
+        else {
+            $grade = "pass";
+            $msg = "'make test' no errors";
+        }
+    }
+
+    # Downgrade failure/unknown grade if we can determine a cause
+    # If perl version is too low => 'na'
+    # If stated prereqs missing => 'discard'
+
+    if ( $grade eq 'fail' || $grade eq 'unknown' ) {
+        # check for unsupported OS
+        if ( $output =~ m{No support for OS|OS unsupported}ims ) {
+            $grade = 'na';
+            $msg = 'This platform is not supported';
+        }
+        # check for perl version prerequisite or outright failure
+        if ( $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ) {
+            $grade = 'na';
+            $msg = 'Perl version too low';
+        }
+        # check the prereq report for missing or failure flag '!'
+        elsif ( $result->{prereq_pm} =~ m{n/a}ims ) {
+            $grade = 'discard';
+            $msg = 'Prerequisite missing';
+        }
+        elsif ( $result->{prereq_pm} =~ m{^\s+!}ims ) {
+            $grade = 'discard';
+            $msg = 'Prerequisite version too low';
+        }
+    }
+
+    $result->{grade} = $grade;
+    $result->{grade_msg} = $msg;
+    $result->{success} =  $result->{grade} eq 'pass'
+                       || $result->{grade} eq 'unknown';
+    return;
+}
 
 #--------------------------------------------------------------------------#
 # _dispatch_report
@@ -379,7 +513,9 @@ sub grade_test {
 sub _dispatch_report {
     my $result = shift;
 
-    $CPAN::Frontend->myprint("Preparing a CPAN Testers report for $result->{dist_name}\n");
+    $CPAN::Frontend->myprint(
+        "Preparing a CPAN Testers report for $result->{dist_name}\n"
+    );
 
     # Get configuration options
     my $config_obj = _open_config_file();
@@ -483,31 +619,19 @@ DUPLICATE_REPORT
 }
 
 #--------------------------------------------------------------------------#
-# _expand_report
-#
-# broken out separately for testing
+# _expand_report - add expensive information like prerequisites and
+# toolchain that should only be generated if a report will actually
+# be sent
 #--------------------------------------------------------------------------#
 
 sub _expand_report {
     my $result = shift;
-
-    # Note: pretty_id is like "DAGOLDEN/CPAN-Reporter-0.40.tar.gz"
-    $result->{dist_name} = _format_distname( $result->{dist} );
-    $result->{dist_basename} = basename($result->{dist}->pretty_id);
+    return if $result->{expanded}++; # only do this once
     $result->{prereq_pm} = _prereq_report( $result->{dist} );
     $result->{env_vars} = _env_report();
     $result->{special_vars} = _special_vars_report();
     $result->{toolchain_versions} = _toolchain_report();
-    _grade_report($result);
-    $result->{success} =  $result->{grade} eq 'pass'
-                       || $result->{grade} eq 'unknown';
-    
-    # CPAN might fail to find an author object for some strange dists
-    my $author = $result->{dist}->author;
-    $result->{author} = defined $author ? $author->fullname : "Author";
-    $result->{author_id} = defined $author ? $author->id : "" ;
-
-    return;
+    $result->{expanded} = 1;   
 }
 
 #--------------------------------------------------------------------------#
@@ -620,132 +744,6 @@ sub _get_history_file {
 }
 
 #--------------------------------------------------------------------------#
-# _grade_msg
-#--------------------------------------------------------------------------#
-
-sub _grade_msg {
-    my ($result) = @_;
-    my ($grade, $msg) = ($result->{grade}, $result->{grade_msg});
-    $CPAN::Frontend->myprint( "Test result is '$grade'");
-    $CPAN::Frontend->myprint(": $msg") if defined $msg && length $msg;
-    $CPAN::Frontend->myprint(".\n");
-    return;
-}
-
-#--------------------------------------------------------------------------#
-# _grade_report
-#--------------------------------------------------------------------------#
-
-sub _grade_report {
-    my $result = shift;
-    my ($grade,$is_make,$msg);
-    my $output = $result->{output};
-    
-    # Output strings taken from Test::Harness::
-    # _show_results()  -- for versions < 2.57_03 
-    # get_results()    -- for versions >= 2.57_03
-
-    # XXX don't shortcut to unknown with _has_tests here because a custom
-    # Makefile.PL or Build.PL might define tests in a non-standard way
-    
-    # check for make or Build
-    $is_make = _is_make( $result->{command} );
-    
-    # parse in reverse order for Test::Harness results
-    for my $i ( reverse 0 .. $#{$output} ) {
-        if ( $output->[$i] =~ m{^All tests successful}ms ) {
-            $grade = 'pass';
-            $msg = 'All tests successful';
-        }
-        elsif ( $output->[$i] =~ m{No support for OS|OS unsupported}ims ) {
-            $grade = 'na';
-            $msg = 'This platform is not supported';
-        }
-        elsif ( $output->[$i] =~ m{^.?No tests defined}ms ) {
-            $grade = 'unknown';
-            $msg = 'No tests provided';
-        }
-        elsif ( $output->[$i] =~ m{^FAILED--no tests were run}ms ) {
-            $grade = 'unknown';
-            $msg = 'No tests were run';
-        }
-        elsif ( $output->[$i] =~ m{^FAILED--.*--no output}ms ) {
-            $grade = 'fail';
-            $msg = 'Tests had no output';
-        }
-        elsif ( $output->[$i] =~ m{FAILED--Further testing stopped}ms ) {
-            $grade = 'fail';
-            $msg = 'Bailed out of tests';
-        }
-        elsif ( $output->[$i] =~ m{^Failed }ms ) {  # must be lowercase
-            $grade = 'fail';
-            $msg = "Distribution had failing tests";
-        }
-        else {
-            next;
-        }
-        if ( $grade eq 'unknown' && _has_tests() ) {
-            # probably a spurious message from recursive make, so ignore and
-            # continue if we can find any standard test files
-            $grade = $msg = undef;
-            next;
-        }
-        last if $grade;
-    }
-    
-    # didn't find Test::Harness output we recognized
-    if ( ! $grade ) {
-        $grade = "unknown";
-        $msg = "Couldn't determine a result";
-    }
-
-    # With test.pl and 'make test', any t/*.t might pass Test::Harness, but
-    # test.pl might still fail, or there might only be test.pl,
-    # so re-run make test on test.pl
-    
-    if ( $is_make && -f "test.pl" && $grade ne 'fail' ) {
-        if ( $result->{exit_code} ) {
-            $grade = "fail";
-            $msg = "'make test' error detected";
-        }
-        else {
-            $grade = "pass";
-            $msg = "'make test' no errors";
-        }
-    }
-
-    # Downgrade failure/unknown grade if we can determine a cause
-    # If perl version is too low => 'na'
-    # If stated prereqs missing => 'discard'
-
-    if ( $grade eq 'fail' || $grade eq 'unknown' ) {
-        # check for unsupported OS
-        if ( $output =~ m{No support for OS|OS unsupported}ims ) {
-            $grade = 'na';
-            $msg = 'This platform is not supported';
-        }
-        # check for perl version prerequisite or outright failure
-        if ( $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ) {
-            $grade = 'na';
-            $msg = 'Perl version too low';
-        }
-        # check the prereq report for missing or failure flag '!'
-        elsif ( $result->{prereq_pm} =~ m{n/a}ims ) {
-            $grade = 'discard';
-            $msg = 'Prerequisite missing';
-        }
-        elsif ( $result->{prereq_pm} =~ m{^\s+!}ims ) {
-            $grade = 'discard';
-            $msg = 'Prerequisite version too low';
-        }
-    }
-
-    $result->{grade} = $grade;
-    $result->{grade_msg} = $msg;
-    return;
-}
-
-#--------------------------------------------------------------------------#
 # _has_tests
 #--------------------------------------------------------------------------#
 
@@ -762,6 +760,35 @@ sub _has_tests {
         }
     }
     return 0;
+}
+
+#--------------------------------------------------------------------------#
+# _init_result -- create and return a hash of values for use in 
+# report evaluation and dispatch
+#
+# takes same argument format as grade_*()
+#--------------------------------------------------------------------------#
+
+sub _init_result {
+    my ($dist, $system_command, $output, $exit_value) = @_;
+    
+    my $result = {
+        dist => $dist,
+        command => $system_command,
+        is_make => _is_make( $system_command ),
+        output => ref $output eq 'ARRAY' ? $output : [ split /\n/, $output ],
+        exit_value => $exit_value,
+        # Note: pretty_id is like "DAGOLDEN/CPAN-Reporter-0.40.tar.gz"
+        dist_basename => basename($dist->pretty_id),
+        dist_name => _format_distname( $dist ),
+    };
+
+    # CPAN might fail to find an author object for some strange dists
+    my $author = $dist->author;
+    $result->{author} = defined $author ? $author->fullname : "Author";
+    $result->{author_id} = defined $author ? $author->id : "" ;
+
+    return $result;
 }
 
 #--------------------------------------------------------------------------#
@@ -786,7 +813,7 @@ sub _is_duplicate {
 
 sub _is_make {
     my $command = shift;
-    return $command =~ m{^\S*make}ims ? 1 : 0;
+    return $command =~ m{^\S*make|Makefile.PL$}ims ? 1 : 0;
 }
 
 #--------------------------------------------------------------------------#
@@ -950,6 +977,19 @@ sub _prereq_report {
     }
     
     return $report || "    No requirements found\n";
+}
+
+#--------------------------------------------------------------------------#
+# _print_grade_msg -
+#--------------------------------------------------------------------------#
+
+sub _print_grade_msg {
+    my ($phase, $result) = @_;
+    my ($grade, $msg) = ($result->{grade}, $result->{grade_msg});
+    $CPAN::Frontend->myprint( "$phase result is '$grade'");
+    $CPAN::Frontend->myprint(": $msg") if defined $msg && length $msg;
+    $CPAN::Frontend->myprint(".\n");
+    return;
 }
 
 #--------------------------------------------------------------------------#

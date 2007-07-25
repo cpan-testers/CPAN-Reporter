@@ -100,6 +100,7 @@ for my $case ( @cases ) {
     $case->{command} = $command;
     $case->{output} = [ map {$_ . "\n" } 
                         split( "\n", $report_output{$case->{label}}) ];
+    $case->{exit_value} = $case->{label} eq 'pass' ? 0 : 1 << 8 ;
     $case->{original} = $report_output{$case->{label}};
     test_report( $case );
 }

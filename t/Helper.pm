@@ -108,19 +108,21 @@ sub test_grade_test {
 
     for my $tool ( qw/eumm mb/ ) {
         SKIP: {
-            my ($tool_mod, $tool_PL, $tool_cmd );
+            my ($tool_mod, $tool_PL, $tool_cmd, $tool_label_cmd );
             if ( $tool eq 'eumm' ) {
-                ($tool_mod, $tool_PL, $tool_cmd ) = (
+                ($tool_mod, $tool_PL, $tool_cmd, $tool_label_cmd ) = (
                     "ExtUtils::MakeMaker",
                     "Makefile.PL",
                     "$make test",
+                    "make test",
                 );
             }
             else {
-                ($tool_mod, $tool_PL, $tool_cmd ) = (
+                ($tool_mod, $tool_PL, $tool_cmd, $tool_label_cmd ) = (
                     "Module::Build",
                     "Build.PL",
                     "$perl Build test",
+                    "perl Build test",
                 );
             }
 
@@ -146,7 +148,7 @@ sub test_grade_test {
                               ? $test_build_rc : ! $test_build_rc;
 
             ok( $is_rc_correct, 
-                "$case->{name}: test('$tool_cmd') returned " . 
+                "$case->{name}: '$tool_label_cmd' returned " . 
                 $case->{"$tool\_success"}
             );
             
@@ -157,7 +159,7 @@ sub test_grade_test {
                     $stdout =~ /Test results were not valid/ms;
 
                 ok( $is_grade_correct,
-                    "$case->{name}: test('$tool_cmd') prerequisites not satisifed"
+                    "$case->{name}: '$tool_label_cmd' prerequisites not satisifed"
                 );
                     
                 like( $stdout, 
@@ -174,7 +176,7 @@ sub test_grade_test {
                 $is_grade_correct = 
                     $stdout =~ /^Test result is '$case_grade'/ms;
                 ok( $is_grade_correct, 
-                    "$case->{name}: test('$tool_cmd') grade reported as '$case_grade'"
+                    "$case->{name}: '$tool_label_cmd' grade reported as '$case_grade'"
                 );
                 
                 like( $stdout, "/Preparing a CPAN Testers report for $dist->{short_name}/",
@@ -195,7 +197,7 @@ sub test_grade_test {
             
             my $case_msg = $case->{"$tool\_msg"};
             like( $stdout, "/$case_msg/",
-                "$case->{name}: test('$tool_cmd') grade explanation correct"
+                "$case->{name}: '$tool_label_cmd' grade explanation correct"
             );
 
             diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 
@@ -348,11 +350,13 @@ sub test_report_plan() { 10 };
 sub test_report {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    my ($result) = @_;
-    my $label = $result->{label};
-    my $expected_grade = $result->{expected_grade};
+    my ($case) = @_;
+    my $label = $case->{label};
+    my $expected_grade = $case->{expected_grade};
+    my $prereq = CPAN::Reporter::_prereq_report( $case->{dist} );
+    my $msg_re = $report_para{ $expected_grade };
 
-    my ($stdout, $stderr, $err) = _run_report( $result );
+    my ($result, $stdout, $stderr, $err) = _run_report( $case );
     
     is( $err, q{}, 
         "report for $label ran without error" 
@@ -362,12 +366,10 @@ sub test_report {
         "result graded correctly"
     );
 
-    my $msg_re = $report_para{ $expected_grade };
     ok( defined $msg_re && length $msg_re,
         "$expected_grade grade paragraph selected for $label"
     );
     
-    my $prereq = CPAN::Reporter::_prereq_report( $result->{dist} );
     # set PERL_MM_USE_DEFAULT to mirror _run_report
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
     my $env_vars = CPAN::Reporter::_env_report();
@@ -394,18 +396,20 @@ sub test_report {
         "toolchain versions found for $label"
     );
     
-    like( $t::Helper::sent_report, '/' . quotemeta($result->{original}) . '/ms',
+    like( $t::Helper::sent_report, '/' . quotemeta($case->{original}) . '/ms',
         "test output found for $label"
     );
 
     my @expected_cc;
-    my $author = $result->{dist}->author;
+    my $author = $case->{dist}->author;
     push @expected_cc, $author->id if defined $author;
     is_deeply( 
         [ @t::Helper::cc_list ], 
         [ map { $_ . '@cpan.org' } @expected_cc ],
         "cc list correct"
     );
+
+    return $result;
 };
 
 #--------------------------------------------------------------------------#
@@ -415,26 +419,26 @@ sub test_report {
 sub test_dispatch_plan { 3 };
 sub test_dispatch {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
-    my $result = shift;
+    my $case = shift;
     my %opt = @_;
 
-    my ($stdout, $stderr, $err) = _run_report( $result );
+    my ($result, $stdout, $stderr, $err) = _run_report( $case );
 
     is( $err, q{}, 
-            "generate report for $result->{label}" 
+            "generate report for $case->{label}" 
     );
 
     if ( $opt{will_send} ) {
         ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
-            "report was sent for $result->{label}"
+            "report was sent for $case->{label}"
         );
         like( $stdout, "/Sending test report with/",
-            "saw report sent message for $result->{label}"
+            "saw report sent message for $case->{label}"
         );
     }
     else {
         ok( ! defined $t::Helper::sent_report,
-            "report not sent for $result->{label}"
+            "report not sent for $case->{label}"
         );
         like( $stdout, "/report will not be sent/",
             "saw report not sent message for $result->{label}"
@@ -448,25 +452,30 @@ sub test_dispatch {
 #--------------------------------------------------------------------------#
 
 sub _run_report {
-    my $result = shift;
+    my $case = shift;
 
     # automate CPAN::Reporter prompting
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
     
-    my ($stdout, $stderr);
+    my ($result, $stdout, $stderr);
     
     $t::Helper::sent_report = undef;
     @t::Helper::cc_list = ();
 
     eval {
         capture sub {
-            CPAN::Reporter::_expand_report( $result ); 
+            $result = CPAN::Reporter::_init_result( 
+                $case->{dist},
+                $case->{command},
+                $case->{output},
+                $case->{exit_value},
+            );
+            CPAN::Reporter::_compute_test_grade( $result ); 
             CPAN::Reporter::_dispatch_report( $result );
         } => \$stdout, \$stderr;
-        return 1;
     }; 
 
-    return ($stdout, $stderr, $@);
+    return ($result, $stdout, $stderr, $@);
 }
 
 #--------------------------------------------------------------------------#
@@ -484,7 +493,7 @@ sub my_home { return $home_dir };
 sub my_data { return $home_dir };
 
 package Test::Reporter;
-sub new { print shift, "\n"; return bless {}, 'Test::Reporter::Mocked' }
+sub new { return bless {}, 'Test::Reporter::Mocked' }
 
 package Test::Reporter::Mocked;
 use Config;

@@ -339,22 +339,34 @@ L<perlvar>.
 If the attempt to record fails, a warning will be issued and one or more of 
 C<<< $output >>> or C<<< $exit_value >>> will be undefined.
 
-=head2 C<<< send_test_report() >>>
+=head2 C<<< grade_PL() >>>
 
-  CPAN::Reporter::send_test_report( $dist, $command, $output, $exit);
+  CPAN::Reporter::grade_PL( $dist, $command, $output, $exit);
 
-Given a CPAN::Distribution object, the system command used to run distribution
-tests (e.g. "make test"), an array of lines of output from testing and the exit
-value from the system command, C<<< send_test_report() >>> generates and sends a
-L<Test::Reporter> report.  It returns true if the test grade is "pass" or
-"unknown" and returns false, otherwise.
+Given a CPAN::Distribution object, the system command used to run Makefile.PL
+or Build.PL (e.g. "perl Makefile.PL"), an array of lines of output from the
+command and the exit value from the command, C<<< grade_PL() >>> determines a grade.
+If the grade is "pass", C<<< grade_PL() >>> does B<not> send a CPAN Testers report at
+this stage and returns true to signal that the Makefile.PL or Build.PL ran
+successfully.  Otherwise, a CPAN Testers report is sent and C<<< grade_PL() >>>
+returns false.
+
+=head2 C<<< grade_test() >>>
+
+  CPAN::Reporter::grade_test( $dist, $command, $output, $exit);
+
+Given a CPAN::Distribution object, the system command used to run tests (e.g.
+"make test"), an array of lines of output from testing and the exit value from
+the system command, C<<< grade_test() >>> determines a grade.  A CPAN Testers report
+is then sent unless specified prerequisites were not satisfied.  This function
+returns true if the grade is "pass" or "unknown" and returns false, otherwise.
 
 =head2 C<<< test() >>> -- DEPRECATED
 
   CPAN::Reporter::test( $cpan_dist, $system_command );
 
 This function is maintained for backwards compatibility.  It effectively 
-wraps the functionality of C<<< record_command() >>> and C<<< send_test_report() >>> into
+wraps the functionality of C<<< record_command() >>> and C<<< grade_test() >>> into
 a single function call. It takes a CPAN::Distribution object and the system
 command to run distribution tests.
 
