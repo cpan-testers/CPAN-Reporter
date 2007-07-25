@@ -16,10 +16,22 @@ use Probe::Perl ();
 
 my @cases = (
     {
-        label => "Normal exit",
+        label => "Exit with 0",
         program => 'print qq{foo\n}; exit 0',
         output => [ "foo\n" ],
         exit_code => 0,
+    },
+    {
+        label => "Exit with 1",
+        program => 'print qq{foo\n}; exit 1',
+        output => [ "foo\n" ],
+        exit_code => 1 << 8,
+    },
+    {
+        label => "Exit with 2",
+        program => 'print qq{foo\n}; exit 2',
+        output => [ "foo\n" ],
+        exit_code => 2 << 8,
     }
 );
 
