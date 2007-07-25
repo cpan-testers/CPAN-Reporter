@@ -329,38 +329,25 @@ sub record_command {
 
 sub test {
     my ($dist, $system_command) = @_;
-    
-    my $temp_out = File::Temp->new
-        or die "Could not create a temporary file for output: $!";
+    my ($output, $exit_code) = record_command( $system_command );
+    unless ( defined $output && defined $exit_code ) {
+        $CPAN::Frontend->mywarn(
+            "CPAN::Reporter had errors capturing output. Tests abandoned"
+        );
+        return;
+    }
+    send_test_report( $dist, $system_command, $output, $exit_code );
+}
 
+sub send_test_report {
+    my ($dist, $system_command, $output, $exit_code) = @_;
+    
     my $result = {
         dist => $dist,
         command => $system_command,
+        output => ref $output eq 'ARRAY' ? $output : [ split /\n/, $output ],
+        exit_code => $exit_code,
     };
-
-    my ($tee_input, $makewrapper);
-    
-    if ( -f "test.pl" && _is_make($system_command) ) {
-        $makewrapper = File::Temp->new
-            or die "Could not create a wrapper for make: $!";
-        print $makewrapper qq{system('$system_command');\n};
-        print $makewrapper qq{print "makewrapper: make ", \$? ? "failed" : "ok","\n"};
-        $makewrapper->close;
-        $tee_input = Probe::Perl->find_perl_interpreter() .  " $makewrapper";
-    }
-    else {
-        $tee_input = $system_command;
-    }
-    
-    tee($tee_input, { stderr => 1 }, $temp_out);
-        
-    my $TEST_RESULT = IO::File->new($temp_out->filename, "<");
-    if ( !$TEST_RESULT ) {
-        $CPAN::Frontend->mywarn( "CPAN::Reporter couldn't read test results\n" );
-        return;
-    }
-    $result->{output} = [ <$TEST_RESULT> ];
-    $TEST_RESULT->close;
 
     _expand_report( $result );
     
@@ -717,7 +704,7 @@ sub _grade_report {
     # so re-run make test on test.pl
     
     if ( $is_make && -f "test.pl" && $grade ne 'fail' ) {
-        if ( $output->[-1] =~ m{^makewrapper: make failed}ims ) {
+        if ( $result->{exit_code} ) {
             $grade = "fail";
             $msg = "'make test' error detected";
         }
@@ -1573,7 +1560,7 @@ Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
 
 = FUNCTIONS
 
-CPAN::Reporter provides only two public function for use within CPAN.pm.
+CPAN::Reporter provides only a few public function for use within CPAN.pm.
 They are not imported during {use}.  Ordinary users will never need them.
 
 == {configure()}
@@ -1587,15 +1574,38 @@ option, e.g.:
 
  cpan> o conf init test_report
 
-== {test()}
+== {record_command()}
+
+ ($output, $exit_value) = CPAN::Reporter::record_command( $cmd );
+
+Takes a command to be executed via system(), but wraps and tees it to
+show the output to the console, capture the output, and capture the
+exit code.  Returns an array reference of output lines (merged STDOUT and
+STDERR) and the return value from system().  Note that this is {$?}, so the
+actual exit value of the command will need to be extracted as described in
+[perlvar].
+
+If the attempt to record fails, a warning will be issued and one or more of 
+{$output} or {$exit_value} will be undefined.
+
+== {send_test_report()}
+
+ CPAN::Reporter::send_test_report( $dist, $command, $output, $exit);
+
+Given a CPAN::Distribution object, the system command used to run distribution
+tests (e.g. "make test"), an array of lines of output from testing and the exit
+value from the system command, {send_test_report()} generates and sends a
+[Test::Reporter] report.  It returns true if the test grade is "pass" or
+"unknown" and returns false, otherwise.
+
+== {test()} -- DEPRECATED
 
  CPAN::Reporter::test( $cpan_dist, $system_command );
 
-Given a CPAN::Distribution object and a system command to run distribution
-tests (e.g. "make test"), {test()} executes the command via {system()} while
-teeing the output to a file.  Based on the output captured in the file,
-{test()} generates and sends a [Test::Reporter] report.  It returns true if
-the test grade is "pass" or "unknown" and returns false, otherwise.
+This function is maintained for backwards compatibility.  It effectively 
+wraps the functionality of {record_command()} and {send_test_report()} into
+a single function call. It takes a CPAN::Distribution object and the system
+command to run distribution tests.
 
 = PRIVACY WARNING
 
