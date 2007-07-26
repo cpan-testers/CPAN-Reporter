@@ -289,7 +289,7 @@ sub test_grade_PL {
             like( $stdout, "/\Q$case_msg\E/",
                 "$case->{name}: $tool_PL grade explanation correct"
             );
-            if ( $case_grade =~ m{fail|unknown} ) {
+            if ( $case_grade =~ m{fail|unknown|na} ) {
                 # report should have been sent
                 like( $stdout, "/Preparing a CPAN Testers report for \Q$dist->{short_name}\E/",
                     "$case->{name}: report notification correct"
@@ -298,7 +298,7 @@ sub test_grade_PL {
                     "$case->{name}: report was mock sent"
                 );
             }
-            else {
+            else { # pass
                 # report shouldn't have been sent
                 ok( ! defined $t::Helper::sent_report ,
                     "$case->{name}: no $tool_PL report was sent"

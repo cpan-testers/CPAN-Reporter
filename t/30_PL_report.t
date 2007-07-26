@@ -30,6 +30,15 @@ my @test_distros = (
         mb_grade => "fail",
         mb_msg => "Stopped with an error",
     },
+    {
+        name => 'PL-RequirePerl',
+        eumm_success => 0,
+        eumm_grade => "na",
+        eumm_msg => "Perl version too low",
+        mb_success => 0,
+        mb_grade => "na",
+        mb_msg => "Perl version too low",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() 

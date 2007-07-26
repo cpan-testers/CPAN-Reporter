@@ -378,8 +378,14 @@ sub _compute_PL_grade {
     my $result = shift;
     my ($grade,$msg);
     if ( $result->{exit_value} ) {
-        $result->{grade} = "fail";
-        $result->{grade_msg} = "Stopped with an error"
+        if (grep /Perl .*? required.*?--this is only .*?/, @{$result->{output}}) {
+            $result->{grade} = "na";
+            $result->{grade_msg} = "Perl version too low";
+        }
+        else {
+            $result->{grade} = "fail";
+            $result->{grade_msg} = "Stopped with an error"
+        }
     }
     else {
         $result->{grade} = "pass";
@@ -399,7 +405,7 @@ sub _compute_test_grade {
     my $output = $result->{output};
     
     # we need to know prerequisites
-    _expand_report( $result );
+    _expand_result( $result );
 
     # Output strings taken from Test::Harness::
     # _show_results()  -- for versions < 2.57_03 
@@ -514,6 +520,7 @@ sub _compute_test_grade {
 
 sub _dispatch_report {
     my $result = shift;
+    _expand_result( $result);
 
     $CPAN::Frontend->myprint(
         "Preparing a CPAN Testers report for $result->{dist_name}\n"
@@ -621,12 +628,12 @@ DUPLICATE_REPORT
 }
 
 #--------------------------------------------------------------------------#
-# _expand_report - add expensive information like prerequisites and
+# _expand_result - add expensive information like prerequisites and
 # toolchain that should only be generated if a report will actually
 # be sent
 #--------------------------------------------------------------------------#
 
-sub _expand_report {
+sub _expand_result {
     my $result = shift;
     return if $result->{expanded}++; # only do this once
     $result->{prereq_pm} = _prereq_report( $result->{dist} );
