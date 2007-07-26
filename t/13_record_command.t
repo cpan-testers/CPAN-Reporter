@@ -6,9 +6,19 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use File::Temp ();
+use File::Temp qw/tmpnam/;
 use IO::CaptureOutput qw/capture/;
 use Probe::Perl ();
+
+#--------------------------------------------------------------------------#
+# fixtures
+#--------------------------------------------------------------------------#
+
+my $perl = Probe::Perl->find_perl_interpreter();
+
+# set up a temp file for testing command line redirection
+my $redirect_file = tmpnam();
+END { unlink $redirect_file if -f $redirect_file }
 
 #--------------------------------------------------------------------------#
 # Test planning
@@ -18,31 +28,42 @@ my @cases = (
     {
         label => "Exit with 0",
         program => 'print qq{foo\n}; exit 0',
+        args => '',
         output => [ "foo\n" ],
         exit_code => 0,
     },
     {
         label => "Exit with 1",
         program => 'print qq{foo\n}; exit 1',
+        args => '',
         output => [ "foo\n" ],
         exit_code => 1 << 8,
     },
     {
         label => "Exit with 2",
         program => 'print qq{foo\n}; exit 2',
+        args => '',
         output => [ "foo\n" ],
         exit_code => 2 << 8,
-    }
+    },
+    {
+        label => "Exit with 2 with args and pipe",
+        program => 'print qq{foo @ARGV\n}; exit 2',
+        args => "bar=1 | $perl -pe 0",
+        output => [ "foo bar=1\n" ],
+        exit_code => 2 << 8,
+    },
+    {
+        label => "Exit with 2 with args and redirect",
+        program => 'print qq{foo @ARGV\n}; exit 2',
+        args => "bar=2 > $redirect_file",
+        output => [ "foo bar=2\n" ],
+        exit_code => 2 << 8,
+    },
 );
 
 my $tests_per_case = 2;
 plan tests => 1 + $tests_per_case * @cases;
-
-#--------------------------------------------------------------------------#
-# fixtures
-#--------------------------------------------------------------------------#
-
-my $perl = Probe::Perl->find_perl_interpreter();
 
 #--------------------------------------------------------------------------#
 # tests
@@ -55,9 +76,12 @@ for my $c ( @cases ) {
     print {$fh} $c->{program}, "\n";
     $fh->flush;
     my ($output, $exit);
-    capture {
-        ($output, $exit) = CPAN::Reporter::record_command( "$perl $fh" );
-    };
+    my ($stdout, $stderr);
+    capture sub {
+        ($output, $exit) = 
+            CPAN::Reporter::record_command("$perl $fh $c->{args}" );
+    }, \$stdout, \$stderr;
+    diag $stderr;
     is_deeply( $output, $c->{output},  "$c->{label}: output correct" );
     is( $exit, $c->{exit_code}, "$c->{label}: exit code correct" ); 
 }

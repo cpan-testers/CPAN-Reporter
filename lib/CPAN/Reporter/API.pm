@@ -48,7 +48,7 @@ If the attempt to record fails, a warning will be issued and one or more of
 
 == {grade_make()}
 
- CPAN::Reporter::grade_make( $dist, $command, $output, $exit);
+ CPAN::Reporter::grade_make( $dist, $command, \@output, $exit);
 
 Given a CPAN::Distribution object, the system command used to build the
 distribution (e.g. "make", "perl Build"), an array of lines of output from the
@@ -60,7 +60,7 @@ is sent and {grade_make()} returns false.
 
 == {grade_PL()}
 
- CPAN::Reporter::grade_PL( $dist, $command, $output, $exit);
+ CPAN::Reporter::grade_PL( $dist, $command, \@output, $exit);
 
 Given a CPAN::Distribution object, the system command used to run Makefile.PL
 or Build.PL (e.g. "perl Makefile.PL"), an array of lines of output from the
@@ -72,7 +72,7 @@ CPAN Testers report is sent and {grade_PL()} returns false.
 
 == {grade_test()}
 
- CPAN::Reporter::grade_test( $dist, $command, $output, $exit);
+ CPAN::Reporter::grade_test( $dist, $command, \@output, $exit);
 
 Given a CPAN::Distribution object, the system command used to run tests (e.g.
 "make test"), an array of lines of output from testing and the exit value from

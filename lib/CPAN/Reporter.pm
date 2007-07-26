@@ -322,7 +322,12 @@ sub grade_test {
 }
 
 sub record_command {
-    my ($cmd) = @_;
+    my ($command) = @_;
+
+    my ($cmd, $redirect) = _split_redirect($command);
+
+    warn "# $cmd => $redirect\n";
+
     my $temp_out = File::Temp->new
         or die "Could not create a temporary file for output: $!";
 
@@ -336,6 +341,7 @@ sub record_command {
     
     # tee the command wrapper
     my $tee_input = Probe::Perl->find_perl_interpreter() .  " $cmdwrapper";
+    $tee_input .= " $redirect" if defined $redirect;
     tee($tee_input, { stderr => 1 }, $temp_out);
         
     # read back the output
@@ -1196,6 +1202,21 @@ HERE
         $special_vars .= "    Win32::IsAdminUser = " . Win32::IsAdminUser() . "\n";
     }
     return $special_vars;
+}
+
+#--------------------------------------------------------------------------#
+# _split_redirect
+#--------------------------------------------------------------------------#
+
+sub _split_redirect {
+    my $command = shift;
+    my ($cmd, $prefix) = ($command =~ m{\A(.+?)((?:\||\>|\&\>|\d+\>\&\d+).*)\z});
+    if (defined $cmd) {
+        return ($cmd, $prefix);
+    }
+    else { # didn't match a redirection
+        return $command
+    }
 }
 
 #--------------------------------------------------------------------------#-

@@ -9,6 +9,11 @@ TODO list for Perl module CPAN::Reporter
 # Features, etc
 #--------------------------------------------------------------------------#
 
+- handle shell redirection commands passed to record_command:
+  > >> | >& &> 2>&1
+
+- test with Test::Harness::Compatible in T::H 3.0 (aka TAPx)
+
 - set alternate configuration file via environment variable
 
 - use environment variable and/or external file to indicate modules to 
@@ -32,7 +37,7 @@ TODO list for Perl module CPAN::Reporter
 - In test programs, check that temp space gets created -- skip if can't 
   set up the test properly
 
-- Add interactive config for editor
+- Add interactive config for editor?
 
 - Figure out what Andreas is doing with locally applied patches in CPAN.pm
 
@@ -44,5 +49,5 @@ TODO list for Perl module CPAN::Reporter
 
 - Improve test coverage for utility subs and error handling
 
-- Check email addresses for validity (?)
+- Check email addresses for validity 
 
