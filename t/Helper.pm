@@ -440,7 +440,7 @@ sub test_dispatch {
             "report not sent for $case->{label}"
         );
         like( $stdout, "/report will not be sent/",
-            "saw report not sent message for $result->{label}"
+            "saw report not sent message for $case->{label}"
         );
     }
 
