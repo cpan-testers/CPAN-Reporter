@@ -339,17 +339,29 @@ L<perlvar>.
 If the attempt to record fails, a warning will be issued and one or more of 
 C<<< $output >>> or C<<< $exit_value >>> will be undefined.
 
+=head2 C<<< grade_make() >>>
+
+  CPAN::Reporter::grade_make( $dist, $command, $output, $exit);
+
+Given a CPAN::Distribution object, the system command used to build the
+distribution (e.g. "make", "perl Build"), an array of lines of output from the
+command and the exit value from the command, C<<< grade_make() >>> determines a grade
+for this stage of distribution installation.  If the grade is "pass",
+C<<< grade_make() >>> does B<not> send a CPAN Testers report for this stage and returns
+true to signal that the build was successful.  Otherwise, a CPAN Testers report
+is sent and C<<< grade_make() >>> returns false.
+
 =head2 C<<< grade_PL() >>>
 
   CPAN::Reporter::grade_PL( $dist, $command, $output, $exit);
 
 Given a CPAN::Distribution object, the system command used to run Makefile.PL
 or Build.PL (e.g. "perl Makefile.PL"), an array of lines of output from the
-command and the exit value from the command, C<<< grade_PL() >>> determines a grade.
-If the grade is "pass", C<<< grade_PL() >>> does B<not> send a CPAN Testers report at
-this stage and returns true to signal that the Makefile.PL or Build.PL ran
-successfully.  Otherwise, a CPAN Testers report is sent and C<<< grade_PL() >>>
-returns false.
+command and the exit value from the command, C<<< grade_PL() >>> determines a grade
+for this stage of distribution installation.  If the grade is "pass",
+C<<< grade_PL() >>> does B<not> send a CPAN Testers report for this stage and returns
+true to signal that the Makefile.PL or Build.PL ran successfully.  Otherwise, a
+CPAN Testers report is sent and C<<< grade_PL() >>> returns false.
 
 =head2 C<<< grade_test() >>>
 
@@ -357,9 +369,10 @@ returns false.
 
 Given a CPAN::Distribution object, the system command used to run tests (e.g.
 "make test"), an array of lines of output from testing and the exit value from
-the system command, C<<< grade_test() >>> determines a grade.  A CPAN Testers report
-is then sent unless specified prerequisites were not satisfied.  This function
-returns true if the grade is "pass" or "unknown" and returns false, otherwise.
+the system command, C<<< grade_test() >>> determines a grade for distribution tests.
+A CPAN Testers report is then sent unless specified prerequisites were not
+satisfied, in which case the report is discarded.  This function returns true
+if the grade is "pass" or "unknown" and returns false, otherwise.
 
 =head2 C<<< test() >>> -- DEPRECATED
 
