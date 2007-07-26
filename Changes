@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.47
+0.47_01
 
     *** Major API additions and changes ***
 
@@ -27,7 +27,8 @@ Revision history for Perl module CPAN::Reporter
     - added YAML & YAML::Syck to list of toolchain module versions
       reported (i.e. determines if META.yml is used by CPAN.pm)
 
-    - fixed some spelling errors in documentation
+    - separated documentation into separate API and Config files to
+      keep documentation simple in the primary CPAN::Reporter file
 
 0.46 Tue Jul 17 22:05:50 EDT 2007
     

@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = "0.47"; 
+$CPAN::Reporter::VERSION = "0.47_01"; 
 
 use Config;
 use Config::Tiny ();
@@ -71,8 +71,8 @@ BEGIN {
 
 # undef defaults are not written to the starter configuration file
 
-my @config_order = qw/ email_from cc_author edit_report send_report
-                       send_duplicates smtp_server /;
+my @config_order = qw/  email_from smtp_server cc_author edit_report 
+                        send_report send_duplicates /;
 
 my $grade_action_prompt = << 'HERE'; 
 
@@ -157,8 +157,8 @@ outbound mail traffic, CPAN::Reporter will not be able to send
 test reports unless you provide an alternate outbound (SMTP) 
 email server.  Enter the full name of your outbound mail server
 (e.g. smtp.your-ISP.com) or leave this blank to send mail 
-directly to perl.org.  Use a space character to reset an existing
-default.
+directly to perl.org.  Use a space character to reset this value
+to sending to perl.org.
 HERE
     },
     email_to => {
@@ -1457,6 +1457,8 @@ CPAN.pm.
 
 = GETTING STARTED
 
+== Installation
+
 The first step in using CPAN::Reporter is to install it using whatever
 version of CPAN.pm is already installed.  CPAN.pm will be upgraded as
 a dependency if necessary.
@@ -1467,17 +1469,45 @@ If CPAN.pm was upgraded, it needs to be reloaded.
 
  cpan> reload cpan
 
+== Configuration
+
 If upgrading from a very old version of CPAN.pm, users may be prompted to renew
 their configuration settings, including the 'test_report' option to enable
 CPAN::Reporter.  
 
 If not prompted automatically, users should manually initialize CPAN::Reporter
 support.  After enabling CPAN::Reporter, CPAN.pm will automatically continue
-with interactive configuration of CPAN::Reporter options.  (Remember to 
-commit the CPAN configuration changes.)
+with interactive configuration of CPAN::Reporter options.
 
  cpan> o conf init test_report
+
+Users will need to enter an email address in one of the following formats:
+
+ johndoe@example.com
+ John Doe <johndoe@example.com>
+ "John Q. Public" <johnqpublic@example.com>
+
+Because {cpan-testers} uses a mailing list to collect test reports, it is
+helpful if the email address provided is subscribed to the list.  Otherwise,
+test reports will be held until manually reviewed and approved.  Subscribing an
+account to the cpan-testers list is as easy as sending a blank email to
+cpan-testers-subscribe@perl.org and replying to the confirmation email.
+
+Users will also be prompted to enter the name of an outbound email server.  It
+is recommended to use an email server provided by the user's ISP or company.
+Alternatively, leave this blank to attempt to send email directly to perl.org.
+
+Users that are new to CPAN::Reporter should accept the recommended values
+for other configuration options.
+
+After completing interactive configuration, be sure to commit (save) the CPAN
+configuration changes.
+
  cpan> o conf commit
+
+See [CPAN::Reporter::Config] for advanced configuration settings.
+
+== Using CPAN::Reporter
 
 Once CPAN::Reporter is enabled and configured, test or install modules with
 CPAN.pm as usual.  
@@ -1486,6 +1516,9 @@ For example, to force CPAN to repeat tests for CPAN::Reporter to see how it
 works:
 
  cpan> force test CPAN::Reporter
+
+When distribution tests fail, users will be prompted to edit the report to add
+addition information.
 
 = UNDERSTANDING TEST GRADES
 
@@ -1502,9 +1535,6 @@ testing or no test output was seen
 a result could not be determined from test output (e.g tests may have hung 
 and been interrupted)
 
-* {default} -- this is not an actual grade reported to CPAN Testers, but it
-is used in action prompt configuration options to indicate a fallback action
-
 In returning results to CPAN.pm, "pass" and "unknown" are considered successful
 attempts to "make test" or "Build test" and will not prevent installation.
 "fail" and "na" are considered to be failures and CPAN.pm will not install
@@ -1512,211 +1542,6 @@ unless forced.
 
 If prerequisites specified in {Makefile.PL} or {Build.PL} are not available,
 no report will be generated and a failure will be signaled to CPAN.pm.
-
-= CONFIG FILE OPTIONS
-
-Default options for CPAN::Reporter are read from a configuration file 
-{.cpanreporter/config.ini} in the user's home directory (Unix and OS X)
-or "My Documents" directory (Windows).
-
-The configuration file is in "ini" format, with the option name and value
-separated by an "=" sign
-
-  email_from = "John Doe" <johndoe@nowhere.org>
-  cc_author = no
-
-Interactive configuration of email address, action prompts and mail server
-options may be repeated at any time from the CPAN shell.  
-
- cpan> o conf init test_report
-
-Interactive configuration will also include any additional, non-standard
-options that have been added manually to the configuration file.
-
-Available options are described in the following sections.
-
-== Email Address (required)
-
-CPAN::Reporter requires users to provide an email address that will be used
-in the "From" header of the email to cpan-testers@perl.org.
-
-* {email_from = <email address>} -- email address of the user sending the
-test report; it should be a valid address format, e.g.:
-
- user@domain
- John Doe <user@domain>
- "John Q. Public" <user@domain>
-
-Because {cpan-testers} uses a mailing list to collect test reports, it is
-helpful if the email address provided is subscribed to the list.  Otherwise,
-test reports will be held until manually reviewed and approved.  
-
-Subscribing an account to the cpan-testers list is as easy as sending a blank
-email to cpan-testers-subscribe@perl.org and replying to the confirmation
-email.
-
-== Action Prompts
-
-Several steps in the generation of a test report are optional.  Configuration
-options control whether an action should be taken automatically or whether
-CPAN::Reporter should prompt the user for the action to take.  The action
-to take may be different for each report grade.
-
-Valid actions, and their associated meaning, are as follows:
-
-* {yes} -- automatic yes
-* {no} -- automatic no
-* {ask/no} or just {ask} -- ask each time, but default to no
-* {ask/yes} -- ask each time, but default to yes
-
-For "ask" prompts, the default will be used if return is pressed immediately at
-the prompt or if the {PERL_MM_USE_DEFAULT} environment variable is set to a
-true value.
-
-Action prompt options take one or more space-separated "grade:action" pairs,
-which are processed left to right.
-
- edit_report = fail:ask/yes pass:no
- 
-An action by itself is taken as a default to be used for any grade which does
-not have a grade-specific action.  A default action may also be set by using
-the word "default" in place of a grade.  
-
- edit_report = ask/no
- edit_report = default:ask/no
- 
-A grade by itself is taken to have the action "yes" for that grade.
-
- edit_report = default:no fail
-
-Multiple grades may be specified together by separating them with a slash.
-
- edit_report = pass:no fail/na/unknown:ask/yes
-
-The action prompt options are:
-
-* {cc_author = <grade:action> ...} -- should module authors should be sent a copy of 
-the test report at their {author@cpan.org} address? (default:yes pass/na:no)
-* {edit_report = <grade:action> ...} -- edit the test report before sending? 
-(default:ask/no pass/na:no)
-* {send_report = <grade:action> ...} -- should test reports be sent at all?
-(default:ask/yes pass/na:yes)
-* {send_duplicates = <grade:action> ...} -- should duplicates of previous 
-reports be sent, regardless of {send_report}? (default:no)
-
-These options are included in the starter config file created automatically the
-first time CPAN::Reporter is configured interactively.
-
-Note that if {send_report} is set to "no", CPAN::Reporter will still go through
-the motions of preparing a report, but will discard it rather than send it.
-
-A better way to disable CPAN::Reporter temporarily is with the CPAN option
-{test_report}:
-
- cpan> o conf test_report 0
-
-== Mail Server
-
-By default, Test::Reporter attempts to send mail directly to perl.org mail 
-servers.  This may fail if a user's computer is behind a network firewall 
-that blocks outbound email.  In this case, the following option should
-be set to the outbound mail server (i.e., SMTP server) as provided by
-the user's Internet service provider (ISP):
-
-* {smtp_server = <server list>} -- one or more alternate outbound mail servers
-if the default perl.org mail servers cannot be reached; multiple servers may be
-given, separated with a space (none by default)
-
-In at least one reported case, an ISP's outbound mail servers also refused 
-to forward mail unless the {email_from} was from the ISP-given email address. 
-
-This option is also included in the starter config file.
-
-== Additional Options
-
-These additional options are only necessary in special cases, such as for
-testing, debugging or if a default editor cannot be found.
-
-* {email_to = <email address>} -- alternate destination for reports instead of
-{cpan-testers@perl.org}; used for testing
-* {editor = <editor>} -- editor to use to edit the test report; if not set,
-Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
-(in that order) to find an editor 
-* {debug = <boolean>} -- turns debugging on/off
-
-= FUNCTIONS
-
-CPAN::Reporter provides only a few public function for use within CPAN.pm.
-They are not imported during {use}.  Ordinary users will never need them.
-
-== {configure()}
-
- CPAN::Reporter::configure();
-
-Prompts the user to edit configuration settings stored in the CPAN::Reporter
-{config.ini} file.  It will create the configuration file if it does not exist.
-It is automatically called by CPAN.pm when initializing the 'test_report'
-option, e.g.:
-
- cpan> o conf init test_report
-
-== {record_command()}
-
- ($output, $exit_value) = CPAN::Reporter::record_command( $cmd );
-
-Takes a command to be executed via system(), but wraps and tees it to
-show the output to the console, capture the output, and capture the
-exit code.  Returns an array reference of output lines (merged STDOUT and
-STDERR) and the return value from system().  Note that this is {$?}, so the
-actual exit value of the command will need to be extracted as described in
-[perlvar].
-
-If the attempt to record fails, a warning will be issued and one or more of 
-{$output} or {$exit_value} will be undefined.
-
-== {grade_make()}
-
- CPAN::Reporter::grade_make( $dist, $command, $output, $exit);
-
-Given a CPAN::Distribution object, the system command used to build the
-distribution (e.g. "make", "perl Build"), an array of lines of output from the
-command and the exit value from the command, {grade_make()} determines a grade
-for this stage of distribution installation.  If the grade is "pass",
-{grade_make()} does *not* send a CPAN Testers report for this stage and returns
-true to signal that the build was successful.  Otherwise, a CPAN Testers report
-is sent and {grade_make()} returns false.
-
-== {grade_PL()}
-
- CPAN::Reporter::grade_PL( $dist, $command, $output, $exit);
-
-Given a CPAN::Distribution object, the system command used to run Makefile.PL
-or Build.PL (e.g. "perl Makefile.PL"), an array of lines of output from the
-command and the exit value from the command, {grade_PL()} determines a grade
-for this stage of distribution installation.  If the grade is "pass",
-{grade_PL()} does *not* send a CPAN Testers report for this stage and returns
-true to signal that the Makefile.PL or Build.PL ran successfully.  Otherwise, a
-CPAN Testers report is sent and {grade_PL()} returns false.
-
-== {grade_test()}
-
- CPAN::Reporter::grade_test( $dist, $command, $output, $exit);
-
-Given a CPAN::Distribution object, the system command used to run tests (e.g.
-"make test"), an array of lines of output from testing and the exit value from
-the system command, {grade_test()} determines a grade for distribution tests.
-A CPAN Testers report is then sent unless specified prerequisites were not
-satisfied, in which case the report is discarded.  This function returns true
-if the grade is "pass" or "unknown" and returns false, otherwise.
-
-== {test()} -- DEPRECATED
-
- CPAN::Reporter::test( $cpan_dist, $system_command );
-
-This function is maintained for backwards compatibility.  It effectively 
-wraps the functionality of {record_command()} and {grade_test()} into
-a single function call. It takes a CPAN::Distribution object and the system
-command to run distribution tests.
 
 = PRIVACY WARNING
 
@@ -1745,6 +1570,8 @@ existing test-file that illustrates the bug or desired feature.
 
 = SEE ALSO
 
+* [CPAN::Reporter::Config] -- advanced configuration settings
+* [CPAN::Reporter::FAQ] -- hints and tips
 * [http://cpantesters.perl.org] -- project home with all reports
 * [http://cpantest.grango.org] -- documentation and wiki
 

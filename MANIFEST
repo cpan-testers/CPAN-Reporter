@@ -4,6 +4,8 @@ examples/config.ini
 INSTALL
 lib/CPAN/Reporter.pm
 lib/CPAN/Reporter.pod
+lib/CPAN/Reporter/API.pm
+lib/CPAN/Reporter/Config.pm
 lib/CPAN/Reporter/FAQ.pm
 lib/CPAN/Reporter/FAQ.pod
 LICENSE
@@ -184,3 +186,5 @@ t/perl5lib/Bogus/LTE.pm
 t/perl5lib/Bogus/NoVersion.pm
 t/perl5lib/Bogus/TooOld.pm
 Todo
+lib/CPAN/Reporter/Config.pod
+lib/CPAN/Reporter/API.pod
