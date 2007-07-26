@@ -4,6 +4,7 @@ BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
 use vars qw/@EXPORT/;
 @EXPORT = qw/
+    test_grade_make test_grade_make_plan
     test_grade_PL test_grade_PL_plan
     test_grade_test test_grade_test_plan
     test_fake_config test_fake_config_plan
@@ -105,6 +106,7 @@ sub test_grade_make {
         SKIP: {
             my ($tool_mod,$tool_PL) = @{$tool_constants{$tool}}{qw/module PL/};
             my $tool_cmd = $tool eq 'eumm' ? $Config{make} : "$perl Build";
+            my $tool_label = $tool eq 'eumm' ? $Config{make} : "Build";
 
             eval "require $tool_mod";
             skip "$tool_mod not installed", 6
@@ -119,7 +121,7 @@ sub test_grade_make {
                 $build_rc = do $tool_PL;
                 ($output, $exit_value) = 
                     CPAN::Reporter::record_command($tool_cmd);
-                $rc = CPAN::Reporter::grade_PL(
+                $rc = CPAN::Reporter::grade_make(
                     $dist, $tool_cmd, $output, $exit_value
                 );
             }, \$stdout, \$stderr;
@@ -128,22 +130,23 @@ sub test_grade_make {
                               ? $rc : ! $rc;
 
             ok( $is_rc_correct, 
-                "$case->{name}: grade_PL() returned " . 
+                "$case->{name}: grade_make() for $tool_label returned " . 
                 $case->{"$tool\_success"}
             );
             
             my $case_grade = $case->{"$tool\_grade"};
 
             # correct grade identified?
-
             my $is_grade_correct;
-            like( $stdout, "/^\Q$tool_PL\E result is '$case_grade'/ms",
-                "$case->{name}: $tool_PL grade identified as '$case_grade'"
+            like( $stdout, "/^\Q$tool_label\E result is '$case_grade'/ms",
+                "$case->{name}: $tool_label grade identified as '$case_grade'"
             ) and $is_grade_correct++;
             my $case_msg = $case->{"$tool\_msg"};
             like( $stdout, "/\Q$case_msg\E/",
-                "$case->{name}: $tool_PL grade explanation correct"
+                "$case->{name}: $tool_label grade explanation correct"
             );
+            
+            # expectations are different by grade
             if ( $case_grade =~ m{fail|unknown|na} ) {
                 # report should have been sent
                 like( $stdout, "/Preparing a CPAN Testers report for \Q$short_name\E/",
@@ -156,7 +159,7 @@ sub test_grade_make {
             else { # pass
                 # report shouldn't have been sent
                 ok( ! defined $t::Helper::sent_report ,
-                    "$case->{name}: no $tool_PL report was sent"
+                    "$case->{name}: no $tool_label report was sent"
                 );
                 pass("$case->{name}: (advancing test count)");
             }
@@ -207,7 +210,7 @@ sub test_grade_PL {
                               ? $rc : ! $rc;
 
             ok( $is_rc_correct, 
-                "$case->{name}: grade_PL() returned " . 
+                "$case->{name}: grade_PL() for $tool_PL returned " . 
                 $case->{"$tool\_success"}
             );
             
