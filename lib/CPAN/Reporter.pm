@@ -331,7 +331,7 @@ sub record_command {
     my $cmdwrapper = File::Temp->new
         or die "Could not create a wrapper for $cmd\: $!";
     print {$cmdwrapper} qq{system('$cmd');\n};
-    print {$cmdwrapper} qq{print q/($cmd exited with /, \$?, ")\n";};
+    print {$cmdwrapper} qq{print '($cmd exited with ', \$?, ")\n";};
     $cmdwrapper->close;
     
     # tee the command wrapper
