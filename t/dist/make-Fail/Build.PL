@@ -4,5 +4,5 @@ use Module::Build;
 Module::Build->new( 
     module_name         => 'Bogus::Module',
     dist_author         => 'David A. Golden <dagolden@cpan.org>',
-    create_makefile_pl  => 'traditional',
+    PL_files            => { 'Die.PL' => 'impossible_file.pm' },
 )->create_build_script;

@@ -2,7 +2,7 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
-          'PL_FILES' => {},
+          'PL_FILES' => { 'Die.PL' => 'impossible_file.pm' },
           'INSTALLDIRS' => 'site',
           'NAME' => 'Bogus::Module',
           'EXE_FILES' => [],
