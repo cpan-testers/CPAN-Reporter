@@ -382,6 +382,11 @@ sub _compute_PL_grade {
             $result->{grade} = "na";
             $result->{grade_msg} = "Perl version too low";
         }
+        elsif ( grep /OS Unsupported|No support for OS/i, 
+                    @{$result->{output}}) {
+            $result->{grade} = "na";
+            $result->{grade_msg} = "This platform is not supported"
+        }
         else {
             $result->{grade} = "fail";
             $result->{grade_msg} = "Stopped with an error"

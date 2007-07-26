@@ -39,6 +39,15 @@ my @test_distros = (
         mb_grade => "na",
         mb_msg => "Perl version too low",
     },
+    {
+        name => 'PL-OSUnsupported',
+        eumm_success => 0,
+        eumm_grade => "na",
+        eumm_msg => "This platform is not supported",
+        mb_success => 0,
+        mb_grade => "na",
+        mb_msg => "This platform is not supported",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() 
