@@ -34,8 +34,6 @@ TODO list for Perl module CPAN::Reporter
 
 - Add interactive config for editor
 
-- Figure out where/how to capture Makefile.PL/Build.PL and make/Build results
-
 - Figure out what Andreas is doing with locally applied patches in CPAN.pm
 
 - Confirm up-to-date Test::Harness diagnostics ( Note -- modern CPAN
