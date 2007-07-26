@@ -16,19 +16,19 @@ my @test_distros = (
         name => 't-Pass',
         eumm_success => 1,
         eumm_grade => "pass",
-        eumm_msg => "All tests successful",
+        eumm_msg => "No errors",
         mb_success => 1,
         mb_grade => "pass",
-        mb_msg => "All tests successful",
+        mb_msg => "No errors",
     },
     {
         name => 'PL-Fail',
         eumm_success => 0,
         eumm_grade => "fail",
-        eumm_msg => "Makefile.PL failed",
+        eumm_msg => "Stopped with an error",
         mb_success => 0,
         mb_grade => "fail",
-        mb_msg => "Build.PL failed",
+        mb_msg => "Stopped with an error",
     },
 );
 

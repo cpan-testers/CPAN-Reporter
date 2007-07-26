@@ -163,7 +163,7 @@ sub test_grade_test {
                 );
                     
                 like( $stdout, 
-                    "/Test results for $dist->{short_name} will be discarded/",
+                    "/Test results for \Q$dist->{short_name}\E will be discarded/",
                     "$case->{name}: discard message correct"
                 );
 
@@ -179,7 +179,7 @@ sub test_grade_test {
                     "$case->{name}: '$tool_label_cmd' grade reported as '$case_grade'"
                 );
                 
-                like( $stdout, "/Preparing a CPAN Testers report for $dist->{short_name}/",
+                like( $stdout, "/Preparing a CPAN Testers report for \Q$dist->{short_name}\E/",
                     "$case->{name}: report notification correct"
                 );
 
@@ -196,7 +196,7 @@ sub test_grade_test {
             }
             
             my $case_msg = $case->{"$tool\_msg"};
-            like( $stdout, "/$case_msg/",
+            like( $stdout, "/\Q$case_msg\E/",
                 "$case->{name}: '$tool_label_cmd' grade explanation correct"
             );
 
@@ -270,7 +270,7 @@ sub test_grade_PL {
             }, \$stdout, \$stderr;
             
             my $is_rc_correct = $case->{"$tool\_success"} 
-                              ? $rc : $rc;
+                              ? $rc : ! $rc;
 
             ok( $is_rc_correct, 
                 "$case->{name}: grade_PL() returned " . 
@@ -280,23 +280,22 @@ sub test_grade_PL {
             my $case_grade = $case->{"$tool\_grade"};
 
             # correct grade identified?
-            my $is_grade_correct = 
-                $stdout =~ /^'$tool_PL' result is '$case_grade'/ms;
-            ok( $is_grade_correct, 
-                "$case->{name}: '$tool_cmd' grade identified as '$case_grade'"
-            );
 
+            my $is_grade_correct;
+            like( $stdout, "/^\Q$tool_PL\E result is '$case_grade'/ms",
+                "$case->{name}: $tool_PL grade identified as '$case_grade'"
+            ) and $is_grade_correct++;
+            my $case_msg = $case->{"$tool\_msg"};
+            like( $stdout, "/\Q$case_msg\E/",
+                "$case->{name}: $tool_PL grade explanation correct"
+            );
             if ( $case_grade =~ m{fail|unknown} ) {
                 # report should have been sent
-                like( $stdout, "/Preparing a CPAN Testers report for $dist->{short_name}/",
+                like( $stdout, "/Preparing a CPAN Testers report for \Q$dist->{short_name}\E/",
                     "$case->{name}: report notification correct"
                 );
                 ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
                     "$case->{name}: report was mock sent"
-                );
-                my $case_msg = $case->{"$tool\_msg"};
-                like( $stdout, "/$case_msg/",
-                    "$case->{name}: '$tool_cmd' grade explanation correct"
                 );
             }
             else {
@@ -304,7 +303,7 @@ sub test_grade_PL {
                 ok( ! defined $t::Helper::sent_report ,
                     "$case->{name}: no $tool_PL report was sent"
                 );
-                pass("(advance test count)") for (0 .. 1);
+                pass("$case->{name}: (advancing test count)");
             }
             
             diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n" 

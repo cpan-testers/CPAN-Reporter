@@ -287,8 +287,8 @@ sub configure {
 sub grade_PL {
     my $result = _init_result( @_ );
     _compute_PL_grade($result);
+    _print_grade_msg($result->{PL_file} , $result);
     if( $result->{grade} ne 'pass' ) {
-        _print_grade_msg( $result->{command}, $result );
         _dispatch_report( $result );
     }
     return $result->{success};
@@ -321,7 +321,7 @@ sub record_command {
     my $cmdwrapper = File::Temp->new
         or die "Could not create a wrapper for $cmd\: $!";
     print {$cmdwrapper} qq{system('$cmd');\n};
-    print {$cmdwrapper} qq{print 'cmdwrapper: exited with ', \$?, "\n";};
+    print {$cmdwrapper} qq{print q/($cmd exited with /, \$?, ")\n";};
     $cmdwrapper->close;
     
     # tee the command wrapper
@@ -346,7 +346,7 @@ sub record_command {
 
     # extract the exit value
     my $exit_value;
-    if ( $cmd_output[-1] =~ m{\Acmdwrapper:} ) {
+    if ( $cmd_output[-1] =~ m{exited with} ) {
         ($exit_value) = $cmd_output[-1] =~ m{exited with ([-0-9]+)};
         delete $cmd_output[-1];
     }
@@ -379,9 +379,11 @@ sub _compute_PL_grade {
     my ($grade,$msg);
     if ( $result->{exit_value} ) {
         $result->{grade} = "fail";
+        $result->{grade_msg} = "Stopped with an error"
     }
     else {
         $result->{grade} = "pass";
+        $result->{grade_msg} = "No errors"
     }
     $result->{success} = $result->{grade} eq "pass" ? 1 : 0;
     return;
@@ -782,6 +784,9 @@ sub _init_result {
         dist_basename => basename($dist->pretty_id),
         dist_name => _format_distname( $dist ),
     };
+
+    # Used in messages to user
+    $result->{PL_file} = $result->{is_make} ? "Makefile.PL" : "Build.PL";
 
     # CPAN might fail to find an author object for some strange dists
     my $author = $dist->author;
