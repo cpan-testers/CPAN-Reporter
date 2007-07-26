@@ -2,19 +2,24 @@ Revision history for Perl module CPAN::Reporter
 
 0.47
 
-    *** MAJOR API ADDITIONS AND CHANGES ***
+    *** Major API additions and changes ***
 
         * Deprecated test() function; test() separated into record_command()
           and grade_test() functions to support CPAN.pm sending
           reports from output generated indpendently from CPAN::Reporter,
-          e.g. distroprefs with Expect
+          e.g. CPAN.pm using Expect with distroprefs
 
         * Added record_command() to wrap and tee a system() command and 
-          return results for further evaluation in grade_*() functions
+          return results for further evaluation in grade_*() functions;
+          wrapping used to capture exit values that would otherwise
+          be lost from pipe to tee
 
         * Added grade_PL() function to evaluate results of 'perl Makefile.PL'
           or 'perl Build.PL'; recognizes 'require 5.xxxxx' and unsupported
           OS error messages to be 'NA' as well as ordinary pass/fail outcomes
+
+        * Added grade_make() function to evaluate results of 'make' or
+          'Build'
 
         * Added grade_test() function to evaluate results of 'make test'
           or 'Build test' (refactored from old test() function)
@@ -22,7 +27,7 @@ Revision history for Perl module CPAN::Reporter
     - added YAML & YAML::Syck to list of toolchain module versions
       reported (i.e. determines if META.yml is used by CPAN.pm)
 
-    - fixed spelling errors in documentation
+    - fixed some spelling errors in documentation
 
 0.46 Tue Jul 17 22:05:50 EDT 2007
     
