@@ -1,7 +1,7 @@
 use strict;
 use Module::Build;
 
-die "OS Unsupported";
+die "no support for OS";
 
 Module::Build->new( 
     module_name         => 'Bogus::Module',
