@@ -80,7 +80,7 @@ $class->new(
         'Probe::Perl'           => 0,
         'Tee'                   => 0.13,
         'Test::More'            => 0.45,   # thread-safe
-        'Test::Reporter'        => 1.27,
+        'Test::Reporter'        => 1.30,
     },
     meta_add            => { 
         no_index => { 
