@@ -47,22 +47,15 @@ my @cases = (
         exit_code => 2 << 8,
     },
     {
-        label => "Exit with 2 with args and pipe",
-        program => 'print qq{foo @ARGV\n}; exit 2',
+        label => "Exit with args and pipe",
+        program => 'print qq{foo @ARGV\n}; exit 1',
         args => "bar=1 | $perl -pe 0",
         output => [ "foo bar=1\n" ],
-        exit_code => 2 << 8,
-    },
-    {
-        label => "Exit with 2 with args and redirect",
-        program => 'print qq{foo @ARGV\n}; exit 2',
-        args => "bar=2 > $redirect_file",
-        output => [ "foo bar=2\n" ],
-        exit_code => 2 << 8,
+        exit_code => 1 << 8,
     },
 );
 
-my $tests_per_case = 2;
+my $tests_per_case = 3;
 plan tests => 1 + $tests_per_case * @cases;
 
 #--------------------------------------------------------------------------#
@@ -81,7 +74,7 @@ for my $c ( @cases ) {
         ($output, $exit) = 
             CPAN::Reporter::record_command("$perl $fh $c->{args}" );
     }, \$stdout, \$stderr;
-    diag $stderr;
-    is_deeply( $output, $c->{output},  "$c->{label}: output correct" );
+    is_deeply( $output, $c->{output},  "$c->{label}: captured output correct" );
+    like( $stdout, "/\Q$c->{output}[0]\E/", "$c->{label}: stdout correct" );
     is( $exit, $c->{exit_code}, "$c->{label}: exit code correct" ); 
 }

@@ -43,6 +43,11 @@ STDERR) and the return value from system().  Note that this is {$?}, so the
 actual exit value of the command will need to be extracted as described in
 [perlvar].
 
+If the command includes a pipe character ('|'), only the part of the 
+command prior to the pipe will be wrapped and teed.  The pipe will be
+applied to the execution of the wrapper script.  This is essential to 
+capture the exit value of the command and should be otherwise transparent.
+
 If the attempt to record fails, a warning will be issued and one or more of 
 {$output} or {$exit_value} will be undefined.
 

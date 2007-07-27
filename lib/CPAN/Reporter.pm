@@ -1210,7 +1210,7 @@ HERE
 
 sub _split_redirect {
     my $command = shift;
-    my ($cmd, $prefix) = ($command =~ m{\A(.+?)((?:\||\>|\&\>|\d+\>\&\d+).*)\z});
+    my ($cmd, $prefix) = ($command =~ m{\A(.+?)(\|.*)\z});
     if (defined $cmd) {
         return ($cmd, $prefix);
     }
