@@ -12,7 +12,7 @@ use File::Spec;
 use File::Temp qw/tempdir/;
 use t::Frontend;
 
-plan tests => 29;
+plan tests => 33;
 #plan 'no_plan';
 
 #--------------------------------------------------------------------------#
@@ -219,6 +219,47 @@ SKIP:
 
     is( $tiny->{_}{debug}, $bogus_debug,
         "updated config file preserved debug value"
+    );
+}
+
+#--------------------------------------------------------------------------#
+# confirm _get_config_options handles bad action pair validation
+#--------------------------------------------------------------------------#
+
+SKIP:
+{
+    skip "Couldn't set config file writable again; skipping additional tests", 4
+        if ! -w $config_file;
+
+    my $bogus_email = 'nobody@nowhere.com';
+    my $bogus_smtp = 'mail.mail.com';
+    my $bogus_debug = 1;
+
+    my $tiny = Config::Tiny->read( $config_file );
+    $tiny->{_}{email_from} = $bogus_email;
+    $tiny->{_}{cc_author} = "invalid:invalid";
+
+    ok( $tiny->write( $config_file ),
+        "updated config file with a bad cc_author setting"
+    );
+
+    $tiny = Config::Tiny->read( $config_file );
+    my $parsed_config;
+    capture sub{         
+        $parsed_config = CPAN::Reporter::_get_config_options( $tiny );
+    }, \$stdout, \$stderr;
+
+    like( $stdout, "/Invalid option 'invalid:invalid' in 'cc_author'. Using default instead./",
+        "bad option warning seen"
+    );
+
+    is( $parsed_config->{cc_author}, "default:yes pass/na:no",
+        "cc_author default returned"
+    );
+
+    $tiny = Config::Tiny->read( $config_file );
+    is( $tiny->{_}{cc_author}, "invalid:invalid",
+        "bad cc_author preserved in config.ini"
     );
 }
 

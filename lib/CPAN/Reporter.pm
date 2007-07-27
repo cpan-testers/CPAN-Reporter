@@ -770,8 +770,17 @@ sub _get_config_options {
     my $config = shift;
     # extract and return valid options, with fallback to defaults
     my %active;
-    for my $option ( keys %defaults ) {
+    OPTION: for my $option ( keys %defaults ) {
         if ( exists $config->{_}{$option} ) {
+            if ( $defaults{$option}{validate} ) {
+                for my $ga ( split q{ }, $config->{_}{$option} ) {
+                    if ( ! _validate_grade_action( $ga ) ) {
+                        $CPAN::Frontend->mywarn( "\nInvalid option '$ga' in '$option'. Using default instead.\n\n" );
+                        $active{$option} = $defaults{$option}{default};
+                        next OPTION;
+                    }
+                }
+            }
             $active{$option} = $config->{_}{$option};
         }
         else {
