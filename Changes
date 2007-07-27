@@ -2,7 +2,7 @@ Revision history for Perl module CPAN::Reporter
 
 0.47_01
 
-    *** Major API additions and changes ***
+    *** Major API additions and configuration changes ***
 
         * Deprecated test() function; test() separated into record_command()
           and grade_test() functions to support CPAN.pm sending
@@ -24,6 +24,10 @@ Revision history for Perl module CPAN::Reporter
         * Added grade_test() function to evaluate results of 'make test'
           or 'Build test' (refactored from old test() function)
         
+        * Removed 'cc_author' and 'send_duplicates' options from normal
+          interactive configuration; defaults will be used unless set
+          manually in the configuration file
+
     - added YAML & YAML::Syck to list of toolchain module versions
       reported (i.e. determines if META.yml is used by CPAN.pm)
 

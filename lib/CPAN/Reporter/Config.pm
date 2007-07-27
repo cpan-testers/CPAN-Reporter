@@ -16,7 +16,13 @@ CPAN::Reporter::Config - Config file options for CPAN::Reporter
 
 This documentation refers to version %%VERSION%%
 
-= CONFIG FILE OPTIONS
+= SYNOPSIS
+
+From the CPAN shell:
+
+ cpan> o conf init test_report
+
+= DESCRIPTION
 
 Default options for CPAN::Reporter are read from a configuration file 
 {.cpanreporter/config.ini} in the user's home directory (Unix and OS X)
@@ -28,15 +34,18 @@ separated by an "=" sign
   email_from = "John Doe" <johndoe@nowhere.org>
   cc_author = no
 
-Interactive configuration of email address, action prompts and mail server
-options may be repeated at any time from the CPAN shell.  
+Interactive configuration of email address, mail server and common
+action prompts may be repeated at any time from the CPAN shell.  
 
  cpan> o conf init test_report
 
-Interactive configuration will also include any additional, non-standard
+If a configuration file does not exist, it will be created the first
+time interactive configuration is performed.
+
+Subsequent interactive configuration will also include any advanced
 options that have been added manually to the configuration file.
 
-Available options are described in the following sections.
+= INTERACTIVE CONFIGURATION OPTIONS
 
 == Email Address (required)
 
@@ -57,6 +66,21 @@ test reports will be held until manually reviewed and approved.
 Subscribing an account to the cpan-testers list is as easy as sending a blank
 email to cpan-testers-subscribe@perl.org and replying to the confirmation
 email.
+
+== Mail Server
+
+By default, Test::Reporter attempts to send mail directly to perl.org mail 
+servers.  This may fail if a user's computer is behind a network firewall 
+that blocks outbound email.  In this case, the following option should
+be set to the outbound mail server (i.e., SMTP server) as provided by
+the user's Internet service provider (ISP):
+
+* {smtp_server = <server list>} -- one or more alternate outbound mail servers
+if the default perl.org mail servers cannot be reached; multiple servers may be
+given, separated with a space (none by default)
+
+In at least one reported case, an ISP's outbound mail servers also refused 
+to forward mail unless the {email_from} was from the ISP-given email address. 
 
 == Action Prompts
 
@@ -96,19 +120,12 @@ Multiple grades may be specified together by separating them with a slash.
 
  edit_report = pass:no fail/na/unknown:ask/yes
 
-The action prompt options are:
+The action prompt options included in interactive configuration are:
 
-* {cc_author = <grade:action> ...} -- should module authors should be sent a copy of 
-the test report at their {author@cpan.org} address? (default:yes pass/na:no)
 * {edit_report = <grade:action> ...} -- edit the test report before sending? 
 (default:ask/no pass/na:no)
 * {send_report = <grade:action> ...} -- should test reports be sent at all?
 (default:ask/yes pass/na:yes)
-* {send_duplicates = <grade:action> ...} -- should duplicates of previous 
-reports be sent, regardless of {send_report}? (default:no)
-
-These options are included in the starter config file created automatically the
-first time CPAN::Reporter is configured interactively.
 
 Note that if {send_report} is set to "no", CPAN::Reporter will still go through
 the motions of preparing a report, but will discard it rather than send it.
@@ -118,34 +135,24 @@ A better way to disable CPAN::Reporter temporarily is with the CPAN option
 
  cpan> o conf test_report 0
 
-== Mail Server
-
-By default, Test::Reporter attempts to send mail directly to perl.org mail 
-servers.  This may fail if a user's computer is behind a network firewall 
-that blocks outbound email.  In this case, the following option should
-be set to the outbound mail server (i.e., SMTP server) as provided by
-the user's Internet service provider (ISP):
-
-* {smtp_server = <server list>} -- one or more alternate outbound mail servers
-if the default perl.org mail servers cannot be reached; multiple servers may be
-given, separated with a space (none by default)
-
-In at least one reported case, an ISP's outbound mail servers also refused 
-to forward mail unless the {email_from} was from the ISP-given email address. 
-
-This option is also included in the starter config file.
-
-== Additional Options
+= ADVANCED CONFIGURATION OPTIONS
 
 These additional options are only necessary in special cases, such as for
 testing, debugging or if a default editor cannot be found.
 
-* {email_to = <email address>} -- alternate destination for reports instead of
-{cpan-testers@perl.org}; used for testing
 * {editor = <editor>} -- editor to use to edit the test report; if not set,
 Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
 (in that order) to find an editor 
+* {cc_author = <grade:action> ...} -- should module authors should be sent a copy of 
+the test report at their {author@cpan.org} address? (default:yes pass/na:no)
+* {send_duplicates = <grade:action> ...} -- should duplicates of previous 
+reports be sent, regardless of {send_report}? (default:no)
+* {email_to = <email address>} -- alternate destination for reports instead of
+{cpan-testers@perl.org}; used for testing
 * {debug = <boolean>} -- turns debugging on/off
+
+If these options are manually added to the configuration file, they will
+be included (and preserved) in subsequent interactive configuration.
 
 = SEE ALSO
 

@@ -71,8 +71,8 @@ BEGIN {
 
 # undef defaults are not written to the starter configuration file
 
-my @config_order = qw/  email_from smtp_server cc_author edit_report 
-                        send_report send_duplicates /;
+my @config_order = qw/  email_from smtp_server edit_report 
+                        send_report /;
 
 my $grade_action_prompt = << 'HERE'; 
 
@@ -194,13 +194,14 @@ sub configure {
             "\nFound your CPAN::Reporter config file at:\n$config_file\n"
         );
         $config = _open_config_file();
-        $existing_options = _get_config_options( $config ) if $config;
-        # if a file exists, but we can't open it or read it, then stop
-        if ( ! ( $config && $existing_options) ) {
+        # if we can't read it, bail out
+        if ( ! $config ) {
             $CPAN::Frontend->mywarn("\n
                 CPAN::Reporter configuration will not be changed\n");
             return;
         }
+        # clone what's in the config file
+        $existing_options = { %{$config->{_}} } if $config;
         $CPAN::Frontend->myprint(
             "\nUpdating your CPAN::Reporter configuration settings:\n"
         );
@@ -225,10 +226,10 @@ sub configure {
             }
             # repeat until validated
             PROMPT:
-            while ( my $answer = CPAN::Shell::colorable_makemaker_prompt(
+            while ( defined( my $answer = CPAN::Shell::colorable_makemaker_prompt(
                 "$k?", 
                 $existing_options->{$k} || $option_data->{default} )
-            ) 
+            )) 
             {
                 if ( $defaults{$k}{validate} ) {
                     for my $ga ( split q{ }, $answer ) {

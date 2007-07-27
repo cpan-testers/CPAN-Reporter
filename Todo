@@ -9,9 +9,6 @@ TODO list for Perl module CPAN::Reporter
 # Features, etc
 #--------------------------------------------------------------------------#
 
-- handle shell redirection commands passed to record_command:
-  > >> | >& &> 2>&1
-
 - test with Test::Harness::Compatible in T::H 3.0 (aka TAPx)
 
 - set alternate configuration file via environment variable
@@ -49,5 +46,5 @@ TODO list for Perl module CPAN::Reporter
 
 - Improve test coverage for utility subs and error handling
 
-- Check email addresses for validity 
+- Check email addresses for validity (cf. Email::Valid, etc.)
 

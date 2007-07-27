@@ -12,7 +12,7 @@ use File::Spec;
 use File::Temp qw/tempdir/;
 use t::Frontend;
 
-plan tests => 31;
+plan tests => 29;
 #plan 'no_plan';
 
 #--------------------------------------------------------------------------#
@@ -28,10 +28,10 @@ my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 my $default_options = {
     email_from => '',
-    cc_author => 'default:yes pass/na:no',
+#    cc_author => 'default:yes pass/na:no',
     edit_report => 'default:ask/no pass/na:no',
     send_report => 'default:ask/yes pass/na:yes',
-    send_duplicates => 'default:no',
+#    send_duplicates => 'default:no',
 };
 my @additional_prompts = qw/ smtp_server /;
 
@@ -95,7 +95,7 @@ is( ref $rc, 'HASH',
     "configure() returned a hash reference"
 );
 
-is_deeply( CPAN::Reporter::_get_config_options(), $default_options,
+is_deeply( $rc, $default_options,
     "configure return value has expected defaults"
 );
 
@@ -103,9 +103,11 @@ ok( -f $config_file,
     "configuration successfully created a config file"
 );
 
-is_deeply( CPAN::Reporter::_get_config_options(), $default_options,
+my $new_config = Config::Tiny->read( $config_file );
+is_deeply( $new_config->{_}, $default_options,
     "newly created config file has expected defaults"
 );
+
 
 #--------------------------------------------------------------------------#
 # check error handling if not readable
