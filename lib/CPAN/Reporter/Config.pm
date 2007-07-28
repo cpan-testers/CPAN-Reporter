@@ -3,6 +3,263 @@ package CPAN::Reporter::Config;
 # turned into .pod by the Build.PL
 $VERSION = "0.99_01";
 use strict; # make CPANTS happy
+use File::HomeDir (); 
+use File::Path (qw/mkpath/);
+use File::Spec ();
+use IO::File ();
+use CPAN (); # for printing warnings
+
+#--------------------------------------------------------------------------#
+# Back-compatibility checks -- just once per load
+#--------------------------------------------------------------------------#
+
+# 0.28_51 changed Mac OS X config file location -- if old directory is found,
+# move it to the new location
+if ( $^O eq 'darwin' ) {
+    my $old = File::Spec->catdir(File::HomeDir->my_documents,".cpanreporter");
+    my $new = File::Spec->catdir(File::HomeDir->my_home,".cpanreporter");
+    if ( ( -d $old ) && (! -d $new ) ) {
+        $CPAN::Frontend->mywarn( << "HERE");
+Since CPAN::Reporter 0.28_51, the Mac OSX config directory has changed. 
+
+  Old: $old
+  New: $new  
+
+Your existing configuration file will be moved automatically.
+HERE
+        mkpath($new);
+        my $OLD_CONFIG = IO::File->new(
+            File::Spec->catfile($old, "config.ini"), "<"
+        ) or die $!;
+        my $NEW_CONFIG = IO::File->new(
+            File::Spec->catfile($new, "config.ini"), ">"
+        ) or die $!;
+        $NEW_CONFIG->print( do { local $/; <$OLD_CONFIG> } );
+        $OLD_CONFIG->close;
+        $NEW_CONFIG->close;
+        unlink File::Spec->catfile($old, "config.ini") or die $!;
+        rmdir($old) or die $!;
+    }
+}
+#--------------------------------------------------------------------------#
+# _config_order -- determines order of interactive config.  Only items 
+# in interactive config will be written to a starter config file
+#--------------------------------------------------------------------------#
+
+sub _config_order {
+    return qw(  
+        email_from 
+        smtp_server 
+        edit_report 
+        send_report
+    );
+}
+
+#--------------------------------------------------------------------------#
+# _grade_action_prompt -- describes grade action pairs
+#--------------------------------------------------------------------------#
+
+sub _grade_action_prompt {
+    return << 'HERE';
+
+Some of the following configuration options require one or more "grade:action"
+pairs that determine what grade-specific action to take for that option.
+These pairs should be space-separated and are processed left-to-right. See
+CPAN::Reporter documentation for more details.
+
+    GRADE   :   ACTION  ======> EXAMPLES        
+    -------     -------         --------    
+    pass        yes             default:no
+    fail        no              default:yes pass:no
+    unknown     ask/no          default:ask/no pass:yes fail:no
+    na          ask/yes         
+    default
+
+HERE
+}
+
+#--------------------------------------------------------------------------#
+# _config_spec -- returns configuration options information
+#
+# Keys include
+#   default     --  recommended value, used in prompts and as a fallback
+#                   if an options is not set
+#   prompt      --  short prompt for EU::MM prompting
+#   info        --  long description shown before prompting
+#   validate    --  CODE ref; return normalized option or undef if invalid
+#--------------------------------------------------------------------------#
+
+my %option_specs = (
+    email_from => {
+        default => '',
+        prompt => 'What email address will be used for sending reports?',
+        info => <<'HERE',
+CPAN::Reporter requires a valid email address as the return address
+for test reports sent to cpan-testers\@perl.org.  Either provide just
+an email address, or put your real name in double-quote marks followed 
+by your email address in angle marks, e.g. "John Doe" <jdoe@nowhere.com>.
+Note: unless this email address is subscribed to the cpan-testers mailing
+list, your test reports will not appear until manually reviewed.
+HERE
+    },
+    cc_author => {
+        default => 'default:yes pass/na:no',
+        prompt => "Do you want to CC the the module author?",
+        validate => \&_validate_grade_action_pair,
+        info => <<'HERE',
+If you would like, CPAN::Reporter will copy the module author with
+the results of your tests.  By default, authors are copied only on 
+failed/unknown results. This option takes "grade:action" pairs.  
+HERE
+    },
+    edit_report => {
+        default => 'default:ask/no pass/na:no',
+        prompt => "Do you want to edit the test report?",
+        validate => \&_validate_grade_action_pair,
+        info => <<'HERE',
+Before test reports are sent, you may want to edit the test report
+and add additional comments about the result or about your system or
+Perl configuration.  By default, CPAN::Reporter will ask after
+each report is generated whether or not you would like to edit the 
+report. This option takes "grade:action" pairs.
+HERE
+    },
+    send_report => {
+        default => 'default:ask/yes pass/na:yes',
+        prompt => "Do you want to send the test report?",
+        validate => \&_validate_grade_action_pair,
+        info => <<'HERE',
+By default, CPAN::Reporter will prompt you for confirmation that
+the test report should be sent before actually emailing the 
+report.  This gives the opportunity to bypass sending particular
+reports if you need to (e.g. if you caused the failure).
+This option takes "grade:action" pairs.
+HERE
+    },
+    send_duplicates => {
+        default => 'default:no',
+        prompt => "This report is identical to a previous one.  Send it anyway?",
+        validate => \&_validate_grade_action_pair,
+        info => <<'HERE',
+CPAN::Reporter records tests grades for each distribution, version and
+platform.  By default, duplicates of previous results will not be sent at
+all, regardless of the value of the "send_report" option.  This option takes 
+"grade:action" pairs.
+HERE
+    },
+    smtp_server => {
+        default => undef, # not written to starter config
+        info => <<'HERE',
+If your computer is behind a firewall or your ISP blocks
+outbound mail traffic, CPAN::Reporter will not be able to send
+test reports unless you provide an alternate outbound (SMTP) 
+email server.  Enter the full name of your outbound mail server
+(e.g. smtp.your-ISP.com) or leave this blank to send mail 
+directly to perl.org.  Use a space character to reset this value
+to sending to perl.org.
+HERE
+    },
+    email_to => {
+        default => undef, # not written to starter config
+    },
+    editor => {
+        default => undef, # not written to starter config
+    },
+    debug => {
+        default => undef, # not written to starter config
+    }
+);
+
+sub _config_spec { return %option_specs }
+
+#--------------------------------------------------------------------------#
+# _is_valid_action
+#--------------------------------------------------------------------------#
+
+my @valid_actions = qw{ yes no ask/yes ask/no ask };
+sub _is_valid_action {
+    my $action = shift;
+    return grep { $action eq $_ } @valid_actions;
+}
+
+#--------------------------------------------------------------------------#
+# _is_valid_grade
+#--------------------------------------------------------------------------#
+
+my @valid_grades = qw{ pass fail unknown na default };
+sub _is_valid_grade {
+    my $grade = shift;
+    return grep { $grade eq $_ } @valid_grades;
+}
+
+#--------------------------------------------------------------------------#
+# _validate_grade_action 
+# returns hash of grade => action 
+# returns undef
+#--------------------------------------------------------------------------#
+
+sub _validate_grade_action_pair {
+    my ($name, $option) = @_;
+    $option ||= "no";
+
+    my %ga_map; # grade => action
+    
+    PAIR: for my $grade_action ( split q{ }, $option ) {
+        my ($grade_list,$action);
+
+        if ( $grade_action =~ m{.:.} ) {
+            # parse pair for later check
+            ($grade_list, $action) = $grade_action =~ m{\A([^:]+):(.+)\z};
+        }
+        elsif ( _is_valid_action($grade_action) ) {
+            # action by itself
+            $ga_map{default} = $grade_action;
+            next PAIR;
+        }
+        elsif ( _is_valid_grade($grade_action) ) {
+            # grade by itself
+            $ga_map{$grade_action} = "yes";
+            next PAIR;
+        }
+        elsif( $grade_action =~ m{./.} ) {
+            # gradelist by itself, so setup for later check
+            $grade_list = $grade_action;
+            $action = "yes";
+        }
+        else {
+            # something weird, so warn and skip
+            $CPAN::Frontend->mywarn( 
+                "\nIgnoring invalid grade:action '$grade_action' for '$name'.\n\n" 
+            );
+            next PAIR;
+        }
+        
+        # check gradelist
+        my %grades = map { ($_,1) } split( "/", $grade_list);
+        for my $g ( keys %grades ) { 
+            if ( ! _is_valid_grade($g) ) {
+                $CPAN::Frontend->mywarn( 
+                    "\nIgnoring invalid grade '$g' in '$grade_action' for '$name'.\n\n" 
+                );
+                delete $grades{$g};
+            }
+        }
+        
+        # check action
+        if ( ! _is_valid_action($action) ) {
+            $CPAN::Frontend->mywarn( 
+                "\nIgnoring invalid action '$action' in '$grade_action' for '$name'.\n\n" 
+            );
+            next PAIR;
+        }
+
+        # otherwise, it all must be OK
+        $ga_map{$_} = $action for keys %grades;
+    }
+
+    return scalar(keys %ga_map) ? \%ga_map : undef;
+}
+
 1;
 __END__
 

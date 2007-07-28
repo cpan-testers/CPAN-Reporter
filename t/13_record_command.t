@@ -6,7 +6,8 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use File::Temp qw/tmpnam/;
+use t::Frontend;
+use File::Temp ();
 use IO::CaptureOutput qw/capture/;
 use Probe::Perl ();
 
@@ -15,10 +16,6 @@ use Probe::Perl ();
 #--------------------------------------------------------------------------#
 
 my $perl = Probe::Perl->find_perl_interpreter();
-
-# set up a temp file for testing command line redirection
-my $redirect_file = tmpnam();
-END { unlink $redirect_file if -f $redirect_file }
 
 #--------------------------------------------------------------------------#
 # Test planning
@@ -65,7 +62,8 @@ plan tests => 1 + $tests_per_case * @cases;
 require_ok( "CPAN::Reporter" );
 
 for my $c ( @cases ) {
-    my $fh = File::Temp->new();
+    my $fh = File::Temp->new() 
+        or die "Couldn't create a temporary file: $!\nIs your temp drive full?";
     print {$fh} $c->{program}, "\n";
     $fh->flush;
     my ($output, $exit);

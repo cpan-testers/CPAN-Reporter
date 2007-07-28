@@ -32,10 +32,11 @@ use Test::More;
 my $perl = Probe::Perl->find_perl_interpreter();
 my $make = $Config{make};
 
-my $temp_stdout = File::Temp->new();
+my $temp_stdout = File::Temp->new() 
+    or die "Couldn't make temporary file:$!\nIs your temp drive full?";
 my $temp_home = tempdir(
         "CPAN-Reporter-testhome-XXXXXXXX", TMPDIR => 1, CLEANUP => 1
-);
+) or die "Couldn't create temporary config dir: $!\nIs your temp drive full?";
 my $home_dir = File::Spec->rel2abs( $temp_home );
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
@@ -493,7 +494,7 @@ sub _ok_clone_dist_dir {
     my $dist_dir = File::Spec->catdir( qw/t dist /, $dist_name );
     my $work_dir = tempdir( 
         "CPAN-Reporter-testdist-XXXXXXXX", TMPDIR => 1, CLEANUP => 1
-    );
+    ) or die "Couldn't create temporary config dir: $!\nIs your temp drive full?";
     ok( dircopy($dist_dir, $work_dir),
         "Copying $dist_name to temporary build directory"
     );

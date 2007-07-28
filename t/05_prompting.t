@@ -37,7 +37,9 @@ local $ENV{PERL_MM_USE_DEFAULT} = 1;
 
 for my $c ( @cases ) {
     my $config = { $option_name => $c };
-    my $parsed = CPAN::Reporter::_parse_option( $option_name, $c );
+    my $parsed = CPAN::Reporter::Config::_validate_grade_action_pair( 
+        $option_name, $c 
+    );
     for my $grade ( qw/pass fail na unknown/ ) {
         capture {
             $got = CPAN::Reporter::_prompt( $config, $option_name, $grade );

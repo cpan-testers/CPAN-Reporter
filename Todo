@@ -21,6 +21,8 @@ TODO list for Perl module CPAN::Reporter
 
 # Medium priority 
 
+- refactor all config, history, etc into separate modules
+
 - test with Test::Harness::Compatible in T::H 3.0 (aka TAPx)
 
 - set alternate configuration file via environment variable

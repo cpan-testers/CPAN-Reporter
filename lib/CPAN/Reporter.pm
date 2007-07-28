@@ -10,45 +10,14 @@ use Fcntl qw/:flock :seek/;
 use File::Basename qw/basename/;
 use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
+use File::Spec ();
 use File::Temp ();
 use IO::File ();
 use Probe::Perl ();
 use Symbol qw/gensym/;
 use Tee qw/tee/;
 use Test::Reporter ();
-
-#--------------------------------------------------------------------------#
-# Back-compatibility checks -- just once per load
-#--------------------------------------------------------------------------#
-
-# 0.28_51 changed Mac OS X config file location -- if old directory is found,
-# move it to the new location
-if ( $^O eq 'darwin' ) {
-    my $old = File::Spec->catdir(File::HomeDir->my_documents,".cpanreporter");
-    my $new = File::Spec->catdir(File::HomeDir->my_home,".cpanreporter");
-    if ( ( -d $old ) && (! -d $new ) ) {
-        $CPAN::Frontend->mywarn( << "HERE");
-Since CPAN::Reporter 0.28_51, the Mac OSX config directory has changed. 
-
-  Old: $old
-  New: $new  
-
-Your existing configuration file will be moved automatically.
-HERE
-        mkpath($new);
-        my $OLD_CONFIG = IO::File->new(
-            File::Spec->catfile($old, "config.ini"), "<"
-        ) or die $!;
-        my $NEW_CONFIG = IO::File->new(
-            File::Spec->catfile($new, "config.ini"), ">"
-        ) or die $!;
-        $NEW_CONFIG->print( do { local $/; <$OLD_CONFIG> } );
-        $OLD_CONFIG->close;
-        $NEW_CONFIG->close;
-        unlink File::Spec->catfile($old, "config.ini") or die $!;
-        rmdir($old) or die $!;
-    }
-}
+use CPAN::Reporter::Config ();
 
 #--------------------------------------------------------------------------#
 # Some platforms don't implement flock, so fake it if necessary
@@ -56,121 +25,13 @@ HERE
 
 BEGIN {
     eval {
-        my $fh = File::Temp->new();
+        my $fh = File::Temp->new() or return;
         flock $fh, LOCK_EX;
     };
     if ( $@ ) {
         *CORE::GLOBAL::flock = sub () { 1 };
     }
 }
-
-
-#--------------------------------------------------------------------------#
-# defaults and prompts
-#--------------------------------------------------------------------------#
-
-# undef defaults are not written to the starter configuration file
-
-my @config_order = qw/  email_from smtp_server edit_report 
-                        send_report /;
-
-my $grade_action_prompt = << 'HERE'; 
-
-Some of the following configuration options require one or more "grade:action"
-pairs that determine what grade-specific action to take for that option.
-These pairs should be space-separated and are processed left-to-right. See
-CPAN::Reporter documentation for more details.
-
-    GRADE   :   ACTION  ======> EXAMPLES        
-    -------     -------         --------    
-    pass        yes             default:no
-    fail        no              default:yes pass:no
-    unknown     ask/no          default:ask/no pass:yes fail:no
-    na          ask/yes         
-    default
-
-HERE
-
-my %defaults = (
-    email_from => {
-        default => '',
-        prompt => 'What email address will be used for sending reports?',
-        info => <<'HERE',
-CPAN::Reporter requires a valid email address as the return address
-for test reports sent to cpan-testers\@perl.org.  Either provide just
-an email address, or put your real name in double-quote marks followed 
-by your email address in angle marks, e.g. "John Doe" <jdoe@nowhere.com>.
-Note: unless this email address is subscribed to the cpan-testers mailing
-list, your test reports will not appear until manually reviewed.
-HERE
-    },
-    cc_author => {
-        default => 'default:yes pass/na:no',
-        prompt => "Do you want to CC the the module author?",
-        validate => 1,
-        info => <<'HERE',
-If you would like, CPAN::Reporter will copy the module author with
-the results of your tests.  By default, authors are copied only on 
-failed/unknown results. This option takes "grade:action" pairs.  
-HERE
-    },
-    edit_report => {
-        default => 'default:ask/no pass/na:no',
-        prompt => "Do you want to edit the test report?",
-        validate => 1,
-        info => <<'HERE',
-Before test reports are sent, you may want to edit the test report
-and add additional comments about the result or about your system or
-Perl configuration.  By default, CPAN::Reporter will ask after
-each report is generated whether or not you would like to edit the 
-report. This option takes "grade:action" pairs.
-HERE
-    },
-    send_report => {
-        default => 'default:ask/yes pass/na:yes',
-        prompt => "Do you want to send the test report?",
-        validate => 1,
-        info => <<'HERE',
-By default, CPAN::Reporter will prompt you for confirmation that
-the test report should be sent before actually emailing the 
-report.  This gives the opportunity to bypass sending particular
-reports if you need to (e.g. if you caused the failure).
-This option takes "grade:action" pairs.
-HERE
-    },
-    send_duplicates => {
-        default => 'default:no',
-        prompt => "This report is identical to a previous one.  Send it anyway?",
-        validate => 1,
-        info => <<'HERE',
-CPAN::Reporter records tests grades for each distribution, version and
-platform.  By default, duplicates of previous results will not be sent at
-all, regardless of the value of the "send_report" option.  This option takes 
-"grade:action" pairs.
-HERE
-    },
-    smtp_server => {
-        default => undef, # not written to starter config
-        info => <<'HERE',
-If your computer is behind a firewall or your ISP blocks
-outbound mail traffic, CPAN::Reporter will not be able to send
-test reports unless you provide an alternate outbound (SMTP) 
-email server.  Enter the full name of your outbound mail server
-(e.g. smtp.your-ISP.com) or leave this blank to send mail 
-directly to perl.org.  Use a space character to reset this value
-to sending to perl.org.
-HERE
-    },
-    email_to => {
-        default => undef, # not written to starter config
-    },
-    editor => {
-        default => undef, # not written to starter config
-    },
-    debug => {
-        default => undef, # not written to starter config
-    }
-);
 
 #--------------------------------------------------------------------------#
 # public API
@@ -179,14 +40,20 @@ HERE
 sub configure {
     my $config_dir = _get_config_dir();
     my $config_file = _get_config_file();
-
+    
     mkpath $config_dir if ! -d $config_dir;
+    if ( ! -d $config_dir ) {
+        $CPAN::Frontend->myprint(
+            "\nCouldn't create configuration directory '$config_dir': $!"
+        );
+        return;
+    }
 
     my $config;
     my $existing_options;
     
     # explain grade:action pairs
-    $CPAN::Frontend->myprint( $grade_action_prompt );
+    $CPAN::Frontend->myprint( CPAN::Reporter::Config::_grade_action_prompt() );
     
     # read or create
     if ( -f $config_file ) {
@@ -213,8 +80,10 @@ sub configure {
         $config = Config::Tiny->new();
     }
     
-    for my $k ( @config_order ) {
-        my $option_data = $defaults{$k};
+    my %spec = CPAN::Reporter::Config::_config_spec();
+
+    for my $k ( CPAN::Reporter::Config::_config_order() ) {
+        my $option_data = $spec{$k};
         $CPAN::Frontend->myprint( "\n" . $option_data->{info}. "\n");
         # options with defaults are mandatory
         if ( defined $option_data->{default} ) {
@@ -226,21 +95,18 @@ sub configure {
             }
             # repeat until validated
             PROMPT:
-            while ( defined( my $answer = CPAN::Shell::colorable_makemaker_prompt(
-                "$k?", 
-                $existing_options->{$k} || $option_data->{default} )
-            )) 
-            {
-                if ( $defaults{$k}{validate} ) {
-                    for my $ga ( split q{ }, $answer ) {
-                        if ( ! _validate_grade_action( $ga ) ) {
-                            $CPAN::Frontend->mywarn( "\nInvalid option '$ga' in '$k'\n\n" );
-                            next PROMPT;
-                        }
-                    }
+            while ( defined ( 
+                my $answer = CPAN::Shell::colorable_makemaker_prompt(
+                    "$k?", 
+                    $existing_options->{$k} || $option_data->{default} 
+                )
+            )) {
+                if  ( ! $option_data->{validate} ||
+                        $option_data->{validate}->($k, $answer)
+                    ) {
+                    $config->{_}{$k} = $answer;
+                    last PROMPT;
                 }
-                $config->{_}{$k} = $answer;
-                last PROMPT;
             }
         }
         else {
@@ -769,23 +635,23 @@ sub _get_config_file {
 sub _get_config_options {
     my $config = shift;
     # extract and return valid options, with fallback to defaults
+    my %spec = CPAN::Reporter::Config::_config_spec();
     my %active;
-    OPTION: for my $option ( keys %defaults ) {
+    OPTION: for my $option ( keys %spec ) {
         if ( exists $config->{_}{$option} ) {
-            if ( $defaults{$option}{validate} ) {
-                for my $ga ( split q{ }, $config->{_}{$option} ) {
-                    if ( ! _validate_grade_action( $ga ) ) {
-                        $CPAN::Frontend->mywarn( "\nInvalid option '$ga' in '$option'. Using default instead.\n\n" );
-                        $active{$option} = $defaults{$option}{default};
-                        next OPTION;
-                    }
-                }
+            my $val = $config->{_}{$option};
+            if  (   $spec{$option}{validate} &&
+                    ! $spec{$option}{validate}->($option, $val)
+                ) {
+                    $CPAN::Frontend->mywarn( "\nInvalid option '$val' in '$option'. Using default instead.\n\n" );
+                    $active{$option} = $spec{$option}{default};
+                    next OPTION;
             }
-            $active{$option} = $config->{_}{$option};
+            $active{$option} = $val;
         }
         else {
-            $active{$option} = $defaults{$option}{default}
-                if defined $defaults{$option}{default};
+            $active{$option} = $spec{$option}{default}
+                if defined $spec{$option}{default};
         }
     }
     return \%active;
@@ -877,27 +743,6 @@ sub _is_make {
 }
 
 #--------------------------------------------------------------------------#
-# _is_valid_action
-#--------------------------------------------------------------------------#
-
-my @valid_actions = qw{ yes no ask/yes ask/no ask };
-
-sub _is_valid_action {
-    my $action = shift;
-    return grep { $action eq $_ } @valid_actions;
-}
-
-#--------------------------------------------------------------------------#
-# _is_valid_grade
-#--------------------------------------------------------------------------#
-
-my @valid_grades = qw{ pass fail unknown na default };
-sub _is_valid_grade {
-    my $grade = shift;
-    return grep { $grade eq $_ } @valid_grades;
-}
-
-#--------------------------------------------------------------------------#
 # _max_length
 #--------------------------------------------------------------------------#
 
@@ -934,36 +779,6 @@ sub _open_history_file {
         or $CPAN::Frontend->mywarn("Couldn't open CPAN::Reporter history file "
         . "'$history_filename': $!\n");
     return $history; 
-}
-
-#--------------------------------------------------------------------------#
-# _parse_option
-#--------------------------------------------------------------------------#
-
-sub _parse_option {
-    my $name = shift;
-    my $input_string = "default:no " . shift;
-    
-    # preset defaults
-    my @options;
-
-    # process space-separated terms in order
-    for my $spec ( split q{ }, $input_string ) {
-        my ($grade_list,$action);
-        
-        # get valid parts or warn
-        my @grade_actions = _validate_grade_action($spec);
-        
-        if( ! @grade_actions ) {
-            $CPAN::Frontend->mywarn( 
-                "Ignoring invalid grade:action '$spec' for '$name'\n"
-            );
-        }
-        
-        push @options, @grade_actions;
-    }
-    
-    return { @options };
 }
 
 #--------------------------------------------------------------------------#
@@ -1060,19 +875,22 @@ sub _print_grade_msg {
 
 sub _prompt {
     my ($config, $option, $grade) = @_;
+    my %spec = CPAN::Reporter::Config::_config_spec();
 
-    my $dispatch = _parse_option( $option, $config->{$option} );
+    my $dispatch = CPAN::Reporter::Config::_validate_grade_action_pair(
+        $option, join(q{ }, "default:no", $config->{$option} || '')
+    );
     my $action = $dispatch->{$grade} || $dispatch->{default};
 
     my $prompt;
     if     ( $action =~ m{^ask/yes}i ) { 
         $prompt = CPAN::Shell::colorable_makemaker_prompt( 
-            $defaults{$option}{prompt} . " (yes/no)", "yes" 
+            $spec{$option}{prompt} . " (yes/no)", "yes" 
         );
     }
     elsif  ( $action =~ m{^ask(/no)?}i ) {
         $prompt = CPAN::Shell::colorable_makemaker_prompt( 
-            $defaults{$option}{prompt} . " (yes/no)", "no" 
+            $spec{$option}{prompt} . " (yes/no)", "no" 
         );
     }
     else { 
@@ -1275,52 +1093,6 @@ sub _toolchain_report {
 }
 
 
-#--------------------------------------------------------------------------#
-# _validate_grade_action 
-# returns grade, action, grade, action ...
-# returns empty list/undef if invalid
-#--------------------------------------------------------------------------#
-
-sub _validate_grade_action {
-    my $grade_action = shift;
-    
-    my ($grade_list,$action);
-
-    if ( $grade_action =~ m{.:.} ) {
-        # parse pair for later check
-        ($grade_list, $action) = $grade_action =~ m{\A([^:]+):(.+)\z};
-    }
-    elsif ( _is_valid_action($grade_action) ) {
-        # action by itself
-        return "default", $grade_action;
-    }
-    elsif ( _is_valid_grade($grade_action) ) {
-        # grade by itself
-        return $grade_action, "yes";
-    }
-    elsif( $grade_action =~ m{./.} ) {
-        # gradelist by itself, so setup for later check
-        $grade_list = $grade_action;
-        $action = "yes";
-    }
-    else {
-        # something weird, so fail
-        return;
-    }
-        
-    # check gradelist
-    my @grades = split "/", $grade_list;
-    
-    for my $g ( @grades ) { 
-        return if ! _is_valid_grade($g);
-    }
-    
-    # check action
-    return if ! _is_valid_action($action);
-
-    # otherwise, it all must be OK
-    return map { $_ => $action } @grades;
-}
 
 #--------------------------------------------------------------------------#
 # _version_finder

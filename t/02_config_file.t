@@ -21,7 +21,7 @@ plan tests => 33;
 
 my $temp_home = tempdir( 
     "CPAN-Reporter-testhome-XXXXXXXX", TMPDIR => 1, CLEANUP => 1 
-);
+) or die "Couldn't create a temporary config directory: $!\nIs your temp drive full?";
 
 my $home_dir = File::Spec->rel2abs( $temp_home );
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
@@ -36,6 +36,7 @@ my $default_options = {
 my @additional_prompts = qw/ smtp_server /;
 
 my ($rc, $stdout, $stderr);
+
 
 #--------------------------------------------------------------------------#
 # Mocking -- override support/system functions
@@ -80,9 +81,12 @@ like( $stdout, "/^Couldn't read CPAN::Reporter configuration file/",
 
 {
     local $ENV{PERL_MM_USE_DEFAULT} = 1;  # use prompt defaults
-    ok( $rc = capture(sub{CPAN::Reporter::configure()}, \$stdout, \$stderr),
-        "configure() returned true"
-    );
+    eval {
+        ok( $rc = capture(sub{CPAN::Reporter::configure()}, \$stdout, \$stderr),
+            "configure() returned true"
+        );
+    };
+    diag "STDOUT:\n$stdout\nSTDERR:$stderr\n" if $@; 
 }
 
 for my $option ( keys %$default_options, @additional_prompts) {

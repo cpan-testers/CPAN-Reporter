@@ -8,6 +8,7 @@ select(STDOUT); $|=1;
 use Test::More;
 use t::MockCPANDist qw/bad_author/;
 use t::Helper;
+use t::Frontend;
 
 #--------------------------------------------------------------------------#
 # Fixtures

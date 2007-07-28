@@ -13,7 +13,7 @@ use File::Temp qw/tempdir/;
 use File::Path qw/mkpath rmtree/;
 use t::Frontend;
 
-plan tests => 8;
+plan tests => 9;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -56,7 +56,7 @@ package main;
 
 {
     local $^O = 'unknown';
-    require_ok('CPAN::Reporter');
+    require_ok('CPAN::Reporter::Config');
     ok( -d $old_config_dir,
         "non-darwin logic: old config dir still in place"
     );
@@ -66,16 +66,16 @@ package main;
 }
 
 # Reset %INC to get CPAN::Reporter to load again
-delete $INC{'CPAN/Reporter.pm'};
-delete ${*CPAN::Reporter::}{$_} for ( keys %{*CPAN::Reporter::} );
+delete $INC{'CPAN/Reporter/Config.pm'};
+delete ${*CPAN::Reporter::Config}{$_} for ( keys %{*CPAN::Reporter::Config} );
 
 {
     local $^O = 'darwin';
     capture sub {
-        require CPAN::Reporter;
+        require_ok( "CPAN::Reporter::Config" );
     };
-    ok( $INC{'CPAN/Reporter.pm'},
-        "CPAN::Reporter reloaded"
+    ok( $INC{'CPAN/Reporter/Config.pm'},
+        "CPAN::Reporter::Config reloaded"
     );
     ok( ! -d $old_config_dir,
         "darwin logic: old config-dir removed"

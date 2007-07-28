@@ -16,8 +16,8 @@ my @good_cases = (
         option  => "edit_report",
         input   => "",
         output  => {
-            "default" => "no",
-        },
+            default => "no",
+        }
     },
     {
         label   => "action (by itself)",
@@ -33,7 +33,6 @@ my @good_cases = (
         input   => "fail",
         output  => {
             "fail"  => "yes",
-            default => "no",
         },
     },
     {
@@ -50,7 +49,6 @@ my @good_cases = (
         input   => "fail:yes",
         output  => {
             "fail"  => "yes",
-            default => "no",
         },
     },
     {
@@ -88,7 +86,6 @@ my @good_cases = (
         output  => {
             "fail"  => "ask/yes",
             "na"    => "ask/yes",
-            default => "no",
         },
     },
     {
@@ -98,7 +95,6 @@ my @good_cases = (
         output  => {
             "fail"  => "yes",
             "na"    => "yes",
-            default => "no",
         },
     },
 );
@@ -108,37 +104,41 @@ my @bad_cases = (
         label   => "bad grade",
         option  => "edit_report",
         input   => "failed",
+        output  => undef,
         msg     => 
-            "/\\AIgnoring invalid grade:action 'failed' for 'edit_report'/",
+            "/Ignoring invalid grade:action 'failed' for 'edit_report'/",
     },
     {
         label   => "bad action",
         option  => "edit_report",
         input   => "fail:run-away",
+        output  => undef,
         msg     => 
-            "/\\AIgnoring invalid grade:action 'fail:run-away' for 'edit_report'/",
+            "/Ignoring invalid action 'run-away' in 'fail:run-away' for 'edit_report'/",
     },
 );
 
-plan tests => 1 + @good_cases + @bad_cases; 
+plan tests => 1 + 2 * ( @good_cases + @bad_cases ); 
 
 #--------------------------------------------------------------------------#
 # Begin tests
 #--------------------------------------------------------------------------#
 
-require_ok( "CPAN::Reporter" );
+require_ok( "CPAN::Reporter::Config" );
 
-for my $case ( @good_cases ) {
-    my $got = CPAN::Reporter::_parse_option( $case->{option}, $case->{input} );
-    is_deeply( $got, $case->{output}, $case->{label} );
-}
-
-for my $case ( @bad_cases ) {
-    my ($stdout, $stderr);
+for my $case ( @good_cases, @bad_cases ) {
+    my ($got, $stdout, $stderr);
     capture sub { 
-        my $got = 
-        CPAN::Reporter::_parse_option( $case->{option}, $case->{input} );
+        $got = CPAN::Reporter::Config::_validate_grade_action_pair( 
+            $case->{option}, $case->{input} 
+        );
     }, \$stdout, \$stderr;
-    like( $stdout, $case->{msg}, $case->{label} );
+    is_deeply( $got, $case->{output}, $case->{label} );
+    if ( $case->{msg} ) {
+        like( $stdout, $case->{msg}, $case->{label} );
+    }
+    else {
+        is( $stdout, '', "No warnings seen" );
+    }
 }
 
