@@ -19,9 +19,11 @@ TODO list for Perl module CPAN::Reporter
 
 - integrate PL/make reporting into CPAN.pm (RT#21566)
 
+- make duplicate checks specific to phase (i.e. PL, make, test)
+
 # Medium priority 
 
-- refactor all config, history, etc into separate modules
+- refactor all config, history, etc code into separate modules
 
 - test with Test::Harness::Compatible in T::H 3.0 (aka TAPx)
 
@@ -30,9 +32,21 @@ TODO list for Perl module CPAN::Reporter
 - Add config to save reports to a file (Jerry Hedden) (RT#24816)
 
 - Log entire history of reporting, regardless of whether a report is sent
-  (David Cantrell)
+  (David Cantrell) -- i.e. keep discards somehow ("DISCARD" just like rest 
+  of subject line?)
 
 # Low priority
+
+- switch from a single flat file for history. e.g.
+    - SDBM_File for history (key on subject line, with phase as value?
+      Or key on distro name/perl with result and phase as value? ) -- but
+      does it scale well?  (See MJD's article)
+    - Or use sorted file with Search::Dict(?) -- (prefer this option,
+      keeps search for non-existant line fast; insertion is a just a few
+      block writes and a rename.) If we do this, need to put distro name
+      first to make "have_tested()" easier to write
+    - Use filesystem to index -- one file per distname? hash with directories
+      to keep number of files/directory down?
 
 - Confirm Test::Harness diagnostics on various versions of T::H ( Note --
   modern CPAN may be forcing 2.62 in some situations, but not all)

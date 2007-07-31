@@ -28,11 +28,16 @@ Revision history for Perl module CPAN::Reporter
           interactive configuration; defaults will be used unless set
           manually in the configuration file
 
+    - separated documentation into separate API and Config files to
+      keep documentation simple in the primary CPAN::Reporter file
+
     - added YAML & YAML::Syck to list of toolchain module versions
       reported (i.e. determines if META.yml is used by CPAN.pm)
 
-    - separated documentation into separate API and Config files to
-      keep documentation simple in the primary CPAN::Reporter file
+    - began refactoring configuration code: moved configuration 
+      defaults and validation into Config.pm
+
+    - fixed bug in distribution-version string creation for .tar.bz2
 
 0.46 Tue Jul 17 22:05:50 EDT 2007
     

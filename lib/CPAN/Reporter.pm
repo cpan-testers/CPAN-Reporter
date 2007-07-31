@@ -596,7 +596,7 @@ sub _env_report {
 sub _format_distname {
     my $dist = shift;
     my $basename = basename( $dist->pretty_id );
-    $basename =~ s/(\.tar\.gz|\.tgz|\.zip)$//i;
+    $basename =~ s/(\.tar\.(?:gz|bz2)|\.tgz|\.zip)$//i;
     return $basename;
 }
 

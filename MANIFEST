@@ -16,7 +16,6 @@ META.yml
 README
 t/01_CPAN_Reporter.t
 t/02_config_file.t
-t/03_validate_option.t
 t/04_option_parsing.t
 t/05_prompting.t
 t/10_prereq_pm.t
