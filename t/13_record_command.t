@@ -55,6 +55,7 @@ my @cases = (
         program => '$now=time(); 1 while( time() - $now < 20); print qq{foo\n}; exit 0',
         args => '',
         output => [],
+        delay => 20,
         timeout => 5,
         exit_code => 9,
     },
@@ -63,12 +64,13 @@ my @cases = (
         program => '$now=time(); 1 while( time() - $now < 2); print qq{foo\n}; exit 0',
         args => '',
         output => ["foo\n"],
+        delay => 2,
         timeout => 10,
         exit_code => 0,
     },
 );
 
-my $tests_per_case = 3;
+my $tests_per_case = 4;
 plan tests => 1 + $tests_per_case * @cases;
 
 #--------------------------------------------------------------------------#
@@ -84,6 +86,7 @@ for my $c ( @cases ) {
     $fh->flush;
     my ($output, $exit);
     my ($stdout, $stderr);
+    my $start_time = time();
     eval {
         capture sub {
             ($output, $exit) = CPAN::Reporter::record_command( 
@@ -91,7 +94,25 @@ for my $c ( @cases ) {
             );
         }, \$stdout, \$stderr;
     };
+    my $run_time = time() - $start_time;
     diag $@ if $@;
+    if ( $c->{timeout} ) {
+        if ($c->{timeout} < $c->{delay} ) {
+            ok(     $run_time >= $c->{timeout} 
+                &&  $run_time <= $c->{delay},
+                "$c->{label}: runtime in right range"
+            );
+        }
+        else {
+            ok(     $run_time <= $c->{timeout} 
+                &&  $run_time >= $c->{delay},
+                "$c->{label}: runtime in right range"
+            );
+        }
+    }
+    else {
+        pass "$c->{label}: No timeout requested";
+    }
     like( $stdout, "/" . quotemeta(join(q{},@$output)) . "/", 
         "$c->{label}: captured stdout" 
     );

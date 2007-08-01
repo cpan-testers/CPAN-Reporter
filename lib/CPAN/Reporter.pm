@@ -206,6 +206,7 @@ sub record_command {
         $wrap_code = $^O eq 'MSWin32'
                    ? _timeout_wrapper_win32($cmd, $timeout)
                    : _timeout_wrapper($cmd, $timeout);
+        warn "$wrap_code\n";
     }
     # if no timeout or timeout wrap code wasn't available
     if ( ! $wrap_code ) {
@@ -1064,7 +1065,43 @@ sub _split_redirect {
 #--------------------------------------------------------------------------#
 
 sub _timeout_wrapper {
-    return;
+    my ($cmd, $timeout) = @_;
+    
+    my $wrapper = sprintf << 'HERE', $cmd, $timeout, $cmd;
+use strict;
+my ($pid, $exitcode);
+my @cmd = split " ", '%s';
+eval {
+    local $SIG{CHLD} = sub {die 'Child'}; 
+    if (defined($pid = fork)) {
+        if ($pid) { #parent
+#            alarm ;
+#            waitpid $pid, 0;
+            my $now = time();
+            1 while (time() - $now < %s); 
+            die "Timeout";
+#            if ( kill(0,$pid) ) {
+#                die "Timeout!"
+#            }
+#            waitpid $pid, 0;
+#            $exitcode= $?;
+        } else {    #child
+            exec @cmd;
+        }
+    } else {
+        die "Cannot fork: $!\n";
+    }
+};
+alarm 0;
+die $@ if $@ =~ /Cannot fork/;
+if ($@){
+    kill 9, $pid if $@ =~ /Timeout/;
+    waitpid $pid, 0;
+    $exitcode = $?;
+}
+print '(%s exited with ', $exitcode, ")\n";
+HERE
+    return $wrapper;
 }
 
 #--------------------------------------------------------------------------#
@@ -1074,13 +1111,18 @@ sub _timeout_wrapper {
 sub _timeout_wrapper_win32 {
     my ($cmd, $timeout) = @_;
 
-    eval "require Win32; require Win32::Process;";
-    return if $@;
+    eval "require Win32::Process;";
+    if ($@) {
+        $CPAN::Frontend->mywarn( << 'HERE' );
+CPAN::Reporter needs Win32::Process for inactivity_timeout support.
+Continuing without timeout...
+HERE
+        return;
+    }
 
     my ($program) = split " ", $cmd;
     my $wrapper = sprintf << 'HERE', $program, $cmd, $cmd, $timeout, $cmd;
 use strict;
-use Win32;
 use Win32::Process qw/STILL_ACTIVE NORMAL_PRIORITY_CLASS/;
 my ($process,$exitcode);
 Win32::Process::Create(
