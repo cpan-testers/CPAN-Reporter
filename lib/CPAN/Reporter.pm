@@ -1093,8 +1093,10 @@ Win32::Process::Create(
 ) or die 'Could not spawn %s: ' . "$^E\n";
 $process->Wait(%s * 1000);
 $process->GetExitCode($exitcode);
-$process->Kill(9) if $exitcode == STILL_ACTIVE;
-$process->GetExitCode($exitcode);
+if ($exitcode == STILL_ACTIVE) {
+    $process->Kill(9);
+    $exitcode = 9;
+}
 print '(%s exited with ', $exitcode, ")\n";
 HERE
     return $wrapper;

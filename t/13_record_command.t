@@ -56,7 +56,15 @@ my @cases = (
         args => '',
         output => [],
         timeout => 5,
-        exit_code => 1 << 8,
+        exit_code => 9,
+    },
+    {
+        label => "Timeout not reached",
+        program => '$now=time(); 1 while( time() - $now < 2); print qq{foo\n}; exit 0',
+        args => '',
+        output => ["foo\n"],
+        timeout => 10,
+        exit_code => 0,
     },
 );
 
