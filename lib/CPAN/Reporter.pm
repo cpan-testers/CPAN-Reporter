@@ -1112,6 +1112,20 @@ HERE
     }
 
     my ($program) = split " ", $cmd;
+    if (! File::Spec->file_name_is_absolute( $program ) ) {
+        my $exe = $program . ".exe";
+        my ($path) = grep { -e File::Spec->catfile($_,$exe) }
+                     split /$Config{path_sep}/, $ENV{PATH};
+        if (! $path) {
+            $CPAN::Frontend->mywarn( << "HERE" );
+CPAN::Reporter can't locate $exe in the PATH. 
+Continuing without timeout...
+HERE
+            return;
+        }
+        $program = File::Spec->catfile($path,$exe);
+    }
+
     my $wrapper = sprintf << 'HERE', $program, $cmd, $cmd, $timeout, $cmd;
 use strict;
 use Win32::Process qw/STILL_ACTIVE NORMAL_PRIORITY_CLASS/;
