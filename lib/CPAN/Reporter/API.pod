@@ -28,7 +28,7 @@ option, e.g.:
 
 =head2 C<<< record_command() >>>
 
-  ($output, $exit_value) = CPAN::Reporter::record_command( $cmd );
+  ($output, $exit_value) = CPAN::Reporter::record_command( $cmd, $secs );
 
 Takes a command to be executed via system(), but wraps and tees it to
 show the output to the console, capture the output, and capture the
@@ -41,6 +41,12 @@ If the command includes a pipe character ('E<verbar>'), only the part of the
 command prior to the pipe will be wrapped and teed.  The pipe will be
 applied to the execution of the wrapper script.  This is essential to 
 capture the exit value of the command and should be otherwise transparent.
+
+If a non-zero C<<< $secs >>> argument is provided, the command will be run with 
+a timeout of C<<< $secs >>> (seconds).  On Win32, L<Win32::Process> must be
+available or code will fall-back to running without a timeout; also, the
+first space-separated element of the command must be absolute, or else
+".exe" will be appended and the PATH searched for a matching command.
 
 If the attempt to record fails, a warning will be issued and one or more of 
 C<<< $output >>> or C<<< $exit_value >>> will be undefined.
