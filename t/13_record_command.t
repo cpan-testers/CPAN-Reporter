@@ -7,6 +7,7 @@ select(STDOUT); $|=1;
 
 use Test::More;
 use t::Frontend;
+use Config;
 use File::Temp ();
 use IO::CaptureOutput qw/capture/;
 use Probe::Perl ();
@@ -68,6 +69,24 @@ my @cases = (
         timeout => 10,
         exit_code => 0,
     },
+    {
+        label => "Relative path command",
+        relative => 1,
+        program => 'print qq{foo\n}; exit 0',
+        args => '',
+        output => [ "foo\n" ],
+        exit_code => 0,
+    },
+    {
+        label => "Relative and timeout",
+        relative => 1,
+        program => '$now=time(); 1 while( time() - $now < 20); print qq{foo\n}; exit 0',
+        args => '',
+        output => [],
+        delay => 20,
+        timeout => 5,
+        exit_code => 9,
+    },
 );
 
 my $tests_per_case = 4;
@@ -87,28 +106,24 @@ for my $c ( @cases ) {
     my ($output, $exit);
     my ($stdout, $stderr);
     my $start_time = time();
+    my $cmd = $c->{relative} ? "perl" : $perl; 
     eval {
         capture sub {
             ($output, $exit) = CPAN::Reporter::record_command( 
-                "$perl $fh $c->{args}", $c->{timeout}
+                "$cmd $fh $c->{args}", $c->{timeout}
             );
         }, \$stdout, \$stderr;
     };
     my $run_time = time() - $start_time;
     diag $@ if $@;
     if ( $c->{timeout} ) {
-        if ($c->{timeout} < $c->{delay} ) {
-            ok(     $run_time >= $c->{timeout} 
-                &&  $run_time <= $c->{delay},
-                "$c->{label}: runtime in right range"
-            );
-        }
-        else {
-            ok(     $run_time <= $c->{timeout} 
-                &&  $run_time >= $c->{delay},
-                "$c->{label}: runtime in right range"
-            );
-        }
+        my $right_range =  $c->{timeout} < $c->{delay}  
+                        ?  (    $run_time >= $c->{timeout} 
+                            &&  $run_time <= $c->{delay}    )
+                        :  (    $run_time <= $c->{timeout} 
+                            &&  $run_time >= $c->{delay}    )
+                        ;   
+        ok( $right_range, "$c->{label}: runtime in right range");
     }
     else {
         pass "$c->{label}: No timeout requested";
