@@ -1067,29 +1067,20 @@ sub _split_redirect {
 sub _timeout_wrapper {
     my ($cmd, $timeout) = @_;
     
-    my $wrapper = sprintf << 'HERE', $cmd, $timeout, $cmd;
+    my $wrapper = sprintf << 'HERE', $timeout, $cmd, $cmd;
 use strict;
 my ($pid, $exitcode);
-my @cmd = split " ", '%s';
 eval {
-    local $SIG{CHLD} = sub {die 'Child'}; 
-    if (defined($pid = fork)) {
-        if ($pid) { #parent
-#            alarm ;
-#            waitpid $pid, 0;
-            my $now = time();
-            1 while (time() - $now < %s); 
-            die "Timeout";
-#            if ( kill(0,$pid) ) {
-#                die "Timeout!"
-#            }
-#            waitpid $pid, 0;
-#            $exitcode= $?;
-        } else {    #child
-            exec @cmd;
-        }
-    } else {
-        die "Cannot fork: $!\n";
+    local $SIG{CHLD};
+    local $SIG{ALRM} = sub {die 'Timeout'};
+    $pid = fork;
+    die "Cannot fork: $!\n" unless defined $pid;
+    if ($pid) { #parent
+        alarm %s;
+        waitpid $pid, 0;
+        $exitcode = $?;
+    } else {    #child
+        exec '%s';
     }
 };
 alarm 0;
