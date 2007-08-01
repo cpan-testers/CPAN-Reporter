@@ -50,6 +50,14 @@ my @cases = (
         output => [ "foo bar=1\n" ],
         exit_code => 1 << 8,
     },
+    {
+        label => "Timeout kills process",
+        program => '$now=time(); 1 while( time() - $now < 20); print qq{foo\n}; exit 0',
+        args => '',
+        output => [],
+        timeout => 5,
+        exit_code => 1 << 8,
+    },
 );
 
 my $tests_per_case = 3;
@@ -68,11 +76,18 @@ for my $c ( @cases ) {
     $fh->flush;
     my ($output, $exit);
     my ($stdout, $stderr);
-    capture sub {
-        ($output, $exit) = 
-            CPAN::Reporter::record_command("$perl $fh $c->{args}" );
-    }, \$stdout, \$stderr;
-    is_deeply( $output, $c->{output},  "$c->{label}: captured output correct" );
-    like( $stdout, "/\Q$c->{output}[0]\E/", "$c->{label}: stdout correct" );
+    eval {
+        capture sub {
+            ($output, $exit) = CPAN::Reporter::record_command( 
+                "$perl $fh $c->{args}", $c->{timeout}
+            );
+        }, \$stdout, \$stderr;
+    };
+    diag $@ if $@;
+    like( $stdout, "/" . quotemeta(join(q{},@$output)) . "/", 
+        "$c->{label}: captured stdout" 
+    );
+    is_deeply( $output, $c->{output},  "$c->{label}: output as expected" )
+        or diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n";
     is( $exit, $c->{exit_code}, "$c->{label}: exit code correct" ); 
 }

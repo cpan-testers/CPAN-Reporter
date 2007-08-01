@@ -189,11 +189,9 @@ sub grade_test {
 }
 
 sub record_command {
-    my ($command) = @_;
+    my ($command, $timeout) = @_;
 
     my ($cmd, $redirect) = _split_redirect($command);
-
-    warn "# $cmd => $redirect\n";
 
     my $temp_out = File::Temp->new
         or die "Could not create a temporary file for output: $!";
@@ -202,8 +200,22 @@ sub record_command {
     # and print the exit code so we can read it off of output
     my $cmdwrapper = File::Temp->new
         or die "Could not create a wrapper for $cmd\: $!";
-    print {$cmdwrapper} qq{system('$cmd');\n};
-    print {$cmdwrapper} qq{print '($cmd exited with ', \$?, ")\n";};
+
+    my $wrap_code;
+    if ( $timeout ) {
+        $wrap_code = $^O eq 'MSWin32'
+                   ? _timeout_wrapper_win32($cmd, $timeout)
+                   : _timeout_wrapper($cmd, $timeout);
+    }
+    # if no timeout or timeout wrap code wasn't available
+    if ( ! $wrap_code ) {
+        $wrap_code = << "HERE";
+system('$cmd');
+print '($cmd exited with ', \$?, ")\\n";
+HERE
+    }
+
+    print {$cmdwrapper} $wrap_code;
     $cmdwrapper->close;
     
     # tee the command wrapper
@@ -1045,6 +1057,47 @@ sub _split_redirect {
     else { # didn't match a redirection
         return $command
     }
+}
+
+#--------------------------------------------------------------------------#
+# _timeout_wrapper
+#--------------------------------------------------------------------------#
+
+sub _timeout_wrapper {
+    return;
+}
+
+#--------------------------------------------------------------------------#
+# _timeout_wrapper_win32
+#--------------------------------------------------------------------------#
+
+sub _timeout_wrapper_win32 {
+    my ($cmd, $timeout) = @_;
+
+    eval "require Win32; require Win32::Process;";
+    return if $@;
+
+    my ($program) = split " ", $cmd;
+    my $wrapper = sprintf << 'HERE', $program, $cmd, $cmd, $timeout, $cmd;
+use strict;
+use Win32;
+use Win32::Process qw/STILL_ACTIVE NORMAL_PRIORITY_CLASS/;
+my ($process,$exitcode);
+Win32::Process::Create(
+    $process,
+    '%s',
+    '%s',
+    0,
+    NORMAL_PRIORITY_CLASS,
+    "."
+) or die 'Could not spawn %s: ' . "$^E\n";
+$process->Wait(%s * 1000);
+$process->GetExitCode($exitcode);
+$process->Kill(9) if $exitcode == STILL_ACTIVE;
+$process->GetExitCode($exitcode);
+print '(%s exited with ', $exitcode, ")\n";
+HERE
+    return $wrapper;
 }
 
 #--------------------------------------------------------------------------#-
