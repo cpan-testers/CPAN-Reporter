@@ -15,8 +15,6 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
-- implement an alarm() timeout in record_command for use with CPAN.pm
-
 - integrate PL/make reporting into CPAN.pm (RT#21566)
 
 - make duplicate checks specific to phase (i.e. PL, make, test)

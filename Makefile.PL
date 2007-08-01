@@ -17,7 +17,7 @@ WriteMakefile
                            'Test::More' => '0.45',
                            'Probe::Perl' => 0,
                            'File::Temp' => '0.16',
-                           'Test::Reporter' => '1.27',
+                           'Test::Reporter' => '1.3',
                            'File::Path' => 0,
                            'File::Copy::Recursive' => '0.28',
                            'CPAN' => '1.88',

@@ -1,8 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_01
-
-    *** Major API additions and configuration changes ***
+0.99_01 Tue Jul 31 22:28:25 EDT 2007
+    
+    *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
+        
+    * Major API additions and configuration changes in preparation for
+      adding Makefile/Build.PL and make/Build support into CPAN.pm 
 
         * Deprecated test() function; test() separated into record_command()
           and grade_test() functions to support CPAN.pm sending
@@ -11,8 +14,9 @@ Revision history for Perl module CPAN::Reporter
 
         * Added record_command() to wrap and tee a system() command and 
           return results for further evaluation in grade_*() functions;
-          wrapping used to capture exit values that would otherwise
-          be lost from pipe to tee
+          wrapping used to capture exit values that would otherwise be lost
+          from pipe to tee; will support CPAN inactivity timouts on both *nix
+          and Win32
 
         * Added grade_PL() function to evaluate results of 'perl Makefile.PL'
           or 'perl Build.PL'; recognizes 'require 5.xxxxx' and unsupported
