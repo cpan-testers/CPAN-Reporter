@@ -49,6 +49,16 @@ Revision history for Perl module CPAN::Reporter
 
     - fixed bug in distribution-version string creation for .tar.bz2
 
+0.47_01 Sat Aug  4 00:09:54 EDT 2007
+ 
+    - Added TEMP and TMPDIR to environment variables included in report
+
+    - Changed inclusion of AUTHOR_TESTING environment variable 
+      to any matching /AUTHOR_TEST/
+    
+    - Changed how "Build.PL" is executed in tests to diagnose odd Cygwin
+      failure; increased test diagnostics
+
 0.46 Tue Jul 17 22:05:50 EDT 2007
     
     *** Significant improvements to NA report handling ***

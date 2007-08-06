@@ -575,8 +575,10 @@ my @env_vars= qw(
     SHELL
     COMSPEC
     TERM
+    TEMP
+    TMPDIR
     AUTOMATED_TESTING
-    AUTHOR_TESTING
+    /AUTHOR_TEST/
     INCLUDE
     LIB
     LD_LIBRARY_PATH
