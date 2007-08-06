@@ -24,7 +24,7 @@ $class->new(
         'IO::CaptureOutput'     => 1.03,  # build_requires
         'Probe::Perl'           => 0,
         'Tee'                   => 0.13,
-        'Test::More'            => 0.45,   # thread-safe
+        'Test::More'            => 0.62, # various features/fixes
         'Test::Reporter'        => 1.30,
     },
     meta_add            => { 
