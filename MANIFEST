@@ -1,5 +1,5 @@
-author_t/98_pod.t
-author_t/99_pod_coverage.t
+author_t/pod-coverage.t
+author_t/pod.t
 Build.PL
 Changes
 examples/config.ini
