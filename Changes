@@ -4,7 +4,11 @@ Revision history for Perl module CPAN::Reporter
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
 
-    - 
+    - Author tests (e.g. pod/pod-coverage) moved to 'author_t' directory
+
+    - Module::Build subclass used for development moved to inc
+
+    - Pulled forward maintenance changes from 0.47_01
 
 0.99_01 Tue Jul 31 22:28:25 EDT 2007
     

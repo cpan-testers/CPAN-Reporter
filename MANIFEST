@@ -1,11 +1,16 @@
+author_t/98_pod.t
+author_t/99_pod_coverage.t
 Build.PL
 Changes
 examples/config.ini
+inc/Module/Build/WikiDoc.pm
 INSTALL
 lib/CPAN/Reporter.pm
 lib/CPAN/Reporter.pod
 lib/CPAN/Reporter/API.pm
+lib/CPAN/Reporter/API.pod
 lib/CPAN/Reporter/Config.pm
+lib/CPAN/Reporter/Config.pod
 lib/CPAN/Reporter/FAQ.pm
 lib/CPAN/Reporter/FAQ.pod
 LICENSE
@@ -36,8 +41,6 @@ t/61_bad_dist_names.t
 t/62_duplicate_reports.t
 t/70_darwin_move_config.t
 t/71_missing_config.t
-t/98_pod.t
-t/99_pod_coverage.t
 t/dist/make-Fail/Build.PL
 t/dist/make-Fail/Die.PL
 t/dist/make-Fail/lib/Bogus/Module.pm
@@ -185,5 +188,3 @@ t/perl5lib/Bogus/LTE.pm
 t/perl5lib/Bogus/NoVersion.pm
 t/perl5lib/Bogus/TooOld.pm
 Todo
-lib/CPAN/Reporter/Config.pod
-lib/CPAN/Reporter/API.pod

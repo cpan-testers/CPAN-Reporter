@@ -4,10 +4,6 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
-- Look into Andreas' test failures -- "out of memory"??
-
-- In test programs, check that temp space gets created -- skip if can't 
-  set up the test properly
 
 #--------------------------------------------------------------------------#
 # Features, etc
