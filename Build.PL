@@ -32,8 +32,11 @@ $class->new(
             file => [ qw{ 
                 lib/CPAN/Reporter/API.pm
                 lib/CPAN/Reporter/FAQ.pm
-            } ],
-            directory => [ 'examples' ],
+            }],
+            directory => [ qw{
+                examples
+                inc
+            }],
         } 
     },
 )->create_build_script;

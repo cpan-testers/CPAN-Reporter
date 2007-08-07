@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_02
+0.99_02 Tue Aug  7 06:54:59 EDT 2007
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
 
@@ -9,6 +9,8 @@ Revision history for Perl module CPAN::Reporter
     - Module::Build subclass used for development moved to inc
 
     - Pulled forward maintenance changes from 0.47_01
+
+    - Bumped Test::More prereq to 0.62
 
 0.99_01 Tue Jul 31 22:28:25 EDT 2007
     

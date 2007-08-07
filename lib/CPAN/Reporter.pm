@@ -522,9 +522,8 @@ DUPLICATE_REPORT
     }
     
     if ( _prompt( $config, "edit_report", $tr->grade ) =~ /^y/ ) {
-        local $ENV{VISUAL} = $ENV{VISUAL};
         my $editor = $config->{editor};
-        $ENV{VISUAL} = $editor if $editor;
+        local $ENV{VISUAL} = $editor if $editor;
         $tr->edit_comments;
     }
     

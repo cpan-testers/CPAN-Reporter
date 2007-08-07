@@ -14,7 +14,7 @@ WriteMakefile
                            'File::Spec' => '3.19',
                            'ExtUtils::MakeMaker' => '6.26',
                            'Tee' => '0.13',
-                           'Test::More' => '0.45',
+                           'Test::More' => '0.62',
                            'Probe::Perl' => 0,
                            'File::Temp' => '0.16',
                            'Test::Reporter' => '1.3',
