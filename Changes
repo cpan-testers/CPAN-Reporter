@@ -1,5 +1,17 @@
 Revision history for Perl module CPAN::Reporter
 
+0.99_03
+
+    - Reordered Changes to be chronological
+
+0.48 Tue Aug  7 16:28:42 EDT 2007
+ 
+    - Bumped Test::More prereq to 0.62 (from 0.99_02)
+
+    - More portable directory checks in test helper module
+
+    - Cleaned up DOS/unix line endings in many files
+
 0.99_02 Tue Aug  7 06:54:59 EDT 2007
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
@@ -12,6 +24,15 @@ Revision history for Perl module CPAN::Reporter
 
     - Bumped Test::More prereq to 0.62
 
+0.47_01 Sat Aug  4 00:09:54 EDT 2007
+ 
+    - Added TEMP and TMPDIR to environment variables included in report
+
+    - Changed inclusion of AUTHOR_TESTING environment variable 
+      to any matching /AUTHOR_TEST/
+    
+    - Changed how "Build.PL" is executed in tests to diagnose odd Cygwin
+      failure; increased test diagnostics
 0.99_01 Tue Jul 31 22:28:25 EDT 2007
     
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
@@ -55,15 +76,6 @@ Revision history for Perl module CPAN::Reporter
 
     - fixed bug in distribution-version string creation for .tar.bz2
 
-0.47_01 Sat Aug  4 00:09:54 EDT 2007
- 
-    - Added TEMP and TMPDIR to environment variables included in report
-
-    - Changed inclusion of AUTHOR_TESTING environment variable 
-      to any matching /AUTHOR_TEST/
-    
-    - Changed how "Build.PL" is executed in tests to diagnose odd Cygwin
-      failure; increased test diagnostics
 
 0.46 Tue Jul 17 22:05:50 EDT 2007
     
