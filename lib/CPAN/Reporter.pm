@@ -1345,10 +1345,10 @@ From the CPAN shell:
 
 = DESCRIPTION
 
-CPAN::Reporter is an add-on for the CPAN.pm module that uses
-[Test::Reporter] to send the results of module tests to the CPAN
-Testers project.  Support for CPAN::Reporter is available in CPAN.pm 
-as of version 1.88.
+CPAN::Reporter is an add-on for the CPAN.pm module that uses [Test::Reporter]
+to send the results of module tests to the CPAN Testers project.  Partial
+support for CPAN::Reporter is available in CPAN.pm as of version 1.88; full
+support is available in CPAN.pm as of version 1.91_53.
 
 The goal of the CPAN Testers project ([http://testers.cpan.org/]) is to
 test as many CPAN packages as possible on as many platforms as

@@ -2,6 +2,10 @@ Revision history for Perl module CPAN::Reporter
 
 0.99_03
 
+    *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
+
+    - Noted in Pod that CPAN 1.91_53 is required for full support
+
     - Reordered Changes to be chronological
 
 0.48 Tue Aug  7 16:28:42 EDT 2007
@@ -33,6 +37,7 @@ Revision history for Perl module CPAN::Reporter
     
     - Changed how "Build.PL" is executed in tests to diagnose odd Cygwin
       failure; increased test diagnostics
+
 0.99_01 Tue Jul 31 22:28:25 EDT 2007
     
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
@@ -75,7 +80,6 @@ Revision history for Perl module CPAN::Reporter
       defaults and validation into Config.pm
 
     - fixed bug in distribution-version string creation for .tar.bz2
-
 
 0.46 Tue Jul 17 22:05:50 EDT 2007
     
