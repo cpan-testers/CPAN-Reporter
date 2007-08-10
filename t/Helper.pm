@@ -110,7 +110,7 @@ sub test_grade_PL {
                                             : "$perl Build.PL";
 
             eval "require $tool_mod";
-            skip "$tool_mod not installed", test_grade_iter_plan()
+            skip "$tool_mod not installed", test_grade_PL_iter_plan()
                 if $@;
             
             my $pushd = pushd( _ok_clone_dist_dir( $case->{name} ) );
@@ -141,7 +141,7 @@ sub test_grade_PL {
 
             # correct grade identified?
             my $is_grade_correct;
-            like( $stdout, "/^\Q$tool_PL\E result is '$case_grade'/ms",
+            like( $stdout, "/^CPAN::Reporter: \Q$tool_PL\E result is '$case_grade'/ms",
                 "$case->{name}: $tool_PL grade identified as '$case_grade'"
             ) and $is_grade_correct++;
             my $case_msg = $case->{"$tool\_msg"};
@@ -234,7 +234,7 @@ sub test_grade_make {
 
             # correct grade identified?
             my $is_grade_correct;
-            like( $stdout, "/^\Q$tool_label\E result is '$case_grade'/ms",
+            like( $stdout, "/^CPAN::Reporter: \Q$tool_label\E result is '$case_grade'/ms",
                 "$case->{name}: $tool_label grade identified as '$case_grade'"
             ) and $is_grade_correct++;
             my $case_msg = $case->{"$tool\_msg"};
@@ -323,7 +323,7 @@ sub test_grade_test {
             # Special case if discarding
             if ( $case->{"$tool\_grade"} eq 'discard' ) {
                 $is_grade_correct = 
-                    $stdout =~ /Test results were not valid/ms;
+                    $stdout =~ /^CPAN::Reporter: Test results were not valid/ms;
 
                 ok( $is_grade_correct,
                     "$case->{name}: '$tool_label' prerequisites not satisifed"
@@ -341,7 +341,7 @@ sub test_grade_test {
             else {
                 my $case_grade = $case->{"$tool\_grade"};
                 $is_grade_correct = 
-                    $stdout =~ /^Test result is '$case_grade'/ms;
+                    $stdout =~ /^CPAN::Reporter: Test result is '$case_grade'/ms;
                 ok( $is_grade_correct, 
                     "$case->{name}: '$tool_label' grade reported as '$case_grade'"
                 );

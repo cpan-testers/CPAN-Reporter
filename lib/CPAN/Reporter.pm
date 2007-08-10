@@ -176,7 +176,7 @@ sub grade_test {
     _compute_test_grade($result);
     if ( $result->{grade} eq 'discard' ) {
         $CPAN::Frontend->mywarn( 
-            "\nTest results were not valid: $result->{grade_msg}\n\n",
+            "\nCPAN::Reporter: Test results were not valid, $result->{grade_msg}\n\n",
             $result->{prereq_pm}, "\n",
             "Test results for $result->{dist_name} will be discarded"
         );
@@ -875,8 +875,8 @@ sub _prereq_report {
 sub _print_grade_msg {
     my ($phase, $result) = @_;
     my ($grade, $msg) = ($result->{grade}, $result->{grade_msg});
-    $CPAN::Frontend->myprint( "$phase result is '$grade'");
-    $CPAN::Frontend->myprint(": $msg") if defined $msg && length $msg;
+    $CPAN::Frontend->myprint( "CPAN::Reporter: $phase result is '$grade'");
+    $CPAN::Frontend->myprint(", $msg") if defined $msg && length $msg;
     $CPAN::Frontend->myprint(".\n");
     return;
 }

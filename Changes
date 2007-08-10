@@ -4,6 +4,10 @@ Revision history for Perl module CPAN::Reporter
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
 
+    - Fixed broken PL tests when Module::Build is not available
+
+    - Tweaked grade result message printed to screen
+
     - Noted in Pod that CPAN 1.91_53 is required for full support
 
     - Reordered Changes to be chronological
