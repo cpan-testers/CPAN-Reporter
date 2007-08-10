@@ -36,7 +36,7 @@ provides:
   CPAN::Reporter::FAQ:
     file: lib/CPAN/Reporter/FAQ.pm
     version: 0.99_03
-generated_by: Module::Build version 0.2805
+generated_by: Module::Build version 0.2808
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
   version: 1.2
