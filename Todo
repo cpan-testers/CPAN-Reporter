@@ -11,8 +11,6 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
-- integrate PL/make reporting into CPAN.pm (RT#21566)
-
 - make duplicate checks specific to phase (i.e. PL, make, test)
 
 # Medium priority 
@@ -47,17 +45,10 @@ TODO list for Perl module CPAN::Reporter
 
 - add timeout to prompt (RT#28034)
 
-- Check for system() call $? & 127 (only on Unix, though) or set a $SIG{INT}
-  handler (for Win32); abort test without sending; key question: is this
-  success or fail for return code to CPAN?  Probably the latter.  Or, prompt
-  for both parts -- so hanging tests can be reported.
-
 - Figure out if forced tests should be handled differently than normal
   tests
 
 - Add interactive config for editor?
-
-- Figure out what Andreas is doing with locally applied patches in CPAN.pm
 
 - Look at CPANPLUS::Internals::Constants::Reports and try to 
   replicate that logic
@@ -66,9 +57,9 @@ TODO list for Perl module CPAN::Reporter
 
 - Check email addresses for validity (cf. Email::Valid, etc.)
 
-- ability to turn on/off via an environment variable (David Cantrell)
-
 # Probably won't implement
+
+- ability to turn on/off via an environment variable (David Cantrell)
 
 - ability to only report on what I asked to install, not on its dependencies
   (David Cantrell)
