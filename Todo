@@ -15,6 +15,12 @@ TODO list for Perl module CPAN::Reporter
 
 # Medium priority 
 
+- add advanced options and have them supersede "send_report" if they exist
+  (requested by Cantrell)
+    * send_PL_report
+    * send_make_report
+    * send_test_report
+
 - add T::R transport() support  if T::R is >= 1.34
 
 - refactor all config, history, etc code into separate modules
