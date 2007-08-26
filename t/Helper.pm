@@ -525,7 +525,7 @@ sub _ok_clone_dist_dir {
     my $dist_dir = File::Spec->catdir( qw/t dist /, $dist_name );
     my $work_dir = tempdir( 
         "CPAN-Reporter-testdist-XXXXXXXX", TMPDIR => 1, CLEANUP => 1
-    ) or die "Couldn't create temporary config dir: $!\n";
+    ) or die "Couldn't create temporary distribution dir: $!\n";
     ok( dircopy($dist_dir, $work_dir),
         "Copying $dist_name to temporary build directory"
     );
