@@ -530,12 +530,12 @@ sub _ok_clone_dist_dir {
     # workaround badly broken F::C::R 0.34 on Windows
     if ( File::Copy::Recursive->VERSION eq '0.34' && $^O eq 'MSWin32' ) {
         ok( 0 == system("xcopy /q /e $dist_dir $work_dir"),
-            "Copying $case->{name} to temporary build directory (XCOPY)"
+            "Copying $dist_name to temporary build directory (XCOPY)"
         ) or diag $!;
     }
     else {
         ok( defined( dircopy($dist_dir, $work_dir) ),
-            "Copying $case->{name} to temporary build directory"
+            "Copying $dist_name to temporary build directory"
         ) or diag $!;
     }
 

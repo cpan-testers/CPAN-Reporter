@@ -1,8 +1,13 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_04 Mon Aug 27 07:40:59 EDT 2007
+0.99_05 Mon Aug 27 16:16:50 EDT 2007
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
+
+    - Fixed copy/paste typo that caused testing to fail; (serves me right
+      for rushing out 0.99_04 without using my normal release-testing script)
+    
+0.99_04 Mon Aug 27 07:40:59 EDT 2007
 
     - Merged changes from 0.4801
 
