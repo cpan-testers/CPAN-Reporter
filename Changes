@@ -1,14 +1,17 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_04
+0.99_04 Mon Aug 27 07:40:59 EDT 2007
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
 
-    - Changed error message when cloning test distro fails
+    - Merged changes from 0.4801
+
+0.4801 Mon Aug 27 07:30:24 EDT 2007
+
+    - File::Copy::Recursive 0.34 is badly broken on Windows, causing our
+      tests to fail; added an "xcopy" workaround
 
 0.99_03 Fri Aug 10 12:03:07 EDT 2007
-
-    *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
 
     - Fixed broken PL tests when Module::Build is not available
 
@@ -27,8 +30,6 @@ Revision history for Perl module CPAN::Reporter
     - Cleaned up DOS/unix line endings in many files
 
 0.99_02 Tue Aug  7 06:54:59 EDT 2007
-
-    *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
 
     - Author tests (e.g. pod/pod-coverage) moved to 'author_t' directory
 
@@ -50,8 +51,6 @@ Revision history for Perl module CPAN::Reporter
 
 0.99_01 Tue Jul 31 22:28:25 EDT 2007
     
-    *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
-        
     * Major API additions and configuration changes in preparation for
       adding Makefile/Build.PL and make/Build support into CPAN.pm 
 

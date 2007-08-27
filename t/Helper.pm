@@ -526,9 +526,19 @@ sub _ok_clone_dist_dir {
     my $work_dir = tempdir( 
         "CPAN-Reporter-testdist-XXXXXXXX", TMPDIR => 1, CLEANUP => 1
     ) or die "Couldn't create temporary distribution dir: $!\n";
-    ok( dircopy($dist_dir, $work_dir),
-        "Copying $dist_name to temporary build directory"
-    );
+
+    # workaround badly broken F::C::R 0.34 on Windows
+    if ( File::Copy::Recursive->VERSION eq '0.34' && $^O eq 'MSWin32' ) {
+        ok( 0 == system("xcopy /q /e $dist_dir $work_dir"),
+            "Copying $case->{name} to temporary build directory (XCOPY)"
+        ) or diag $!;
+    }
+    else {
+        ok( defined( dircopy($dist_dir, $work_dir) ),
+            "Copying $case->{name} to temporary build directory"
+        ) or diag $!;
+    }
+
     return $work_dir;
 }
 
