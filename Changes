@@ -1,8 +1,15 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_05 Mon Aug 27 16:16:50 EDT 2007
+0.99_06
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
+
+    - Bumped File::Copy::Recursive dependency to 0.35 (fixes Win32 bug)
+
+    - changed to the Apache License, version 2.0; (it's clearer, relicensable,
+      and is explicit about contributions)
+
+0.99_05 Mon Aug 27 16:16:50 EDT 2007
 
     - Fixed copy/paste typo that caused testing to fail; (serves me right
       for rushing out 0.99_04 without using my normal release-testing script)

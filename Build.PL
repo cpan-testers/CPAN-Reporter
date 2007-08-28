@@ -6,7 +6,7 @@ eval "require $class";
 $class->new( 
     module_name         => 'CPAN::Reporter',
     dist_author         => 'David A. Golden <dagolden@cpan.org>',
-    license             => 'perl',
+    license             => 'apache',
     create_readme       => 1,
     create_makefile_pl  => 'traditional',
     requires        => {
@@ -15,7 +15,7 @@ $class->new(
         'CPAN'                  => 1.88,
         'ExtUtils::MakeMaker'   => 6.26, # sane ExtUtils::Command::MM
         'File::Basename'        => 0,
-        'File::Copy::Recursive' => 0.28,
+        'File::Copy::Recursive' => 0.35,
         'File::HomeDir'         => 0.58, 
         'File::Path'            => 0,
         'File::pushd'           => 0.32,

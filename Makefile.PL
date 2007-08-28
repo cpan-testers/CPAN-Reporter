@@ -19,7 +19,7 @@ WriteMakefile
                            'File::Temp' => '0.16',
                            'Test::Reporter' => '1.3',
                            'File::Path' => 0,
-                           'File::Copy::Recursive' => '0.28',
+                           'File::Copy::Recursive' => '0.35',
                            'CPAN' => '1.88',
                            'File::Basename' => 0,
                            'Config::Tiny' => '2.08'
