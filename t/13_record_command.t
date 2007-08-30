@@ -99,6 +99,9 @@ plan tests => 1 + $tests_per_case * @cases;
 require_ok( "CPAN::Reporter" );
 
 for my $c ( @cases ) {
+SKIP: {
+    skip "Couldn't run perl with relative path", $tests_per_case
+        if $c->{relative} && system("perl -e 1") == -1;
     my $fh = File::Temp->new() 
         or die "Couldn't create a temporary file: $!\nIs your temp drive full?";
     print {$fh} $c->{program}, "\n";
@@ -134,4 +137,5 @@ for my $c ( @cases ) {
     is_deeply( $output, $c->{output},  "$c->{label}: output as expected" )
         or diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n";
     is( $exit, $c->{exit_code}, "$c->{label}: exit code correct" ); 
+} # SKIP
 }

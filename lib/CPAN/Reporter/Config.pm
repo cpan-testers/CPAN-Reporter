@@ -1,8 +1,6 @@
 package CPAN::Reporter::Config;
-# Not really a .pm file, but holds wikidoc which will be
-# turned into .pod by the Build.PL
 $VERSION = '0.99_06';
-use strict; # make CPANTS happy
+use strict; 
 use File::HomeDir (); 
 use File::Path (qw/mkpath/);
 use File::Spec ();
