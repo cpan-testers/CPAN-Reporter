@@ -1,5 +1,5 @@
 NAME
-    CPAN::Reporter - Provides CPAN Testers support for CPAN.pm
+    CPAN::Reporter - Adds CPAN Testers reporting to CPAN.pm
 
 VERSION
     This documentation describes version 0.99_06.
@@ -12,22 +12,18 @@ SYNOPSIS
       cpan> o conf init test_report
 
 DESCRIPTION
-    CPAN::Reporter is an add-on for the CPAN.pm module that uses
-    Test::Reporter to send the results of module tests to the CPAN Testers
-    project. Partial support for CPAN::Reporter is available in CPAN.pm as
-    of version 1.88; full support is available in CPAN.pm as of version
-    1.91_53.
+    The CPAN Testers project captures and analyses detailed results from
+    building and testing CPAN distributions on multiple operating systems
+    and multiple versions of Perl. This provides valuable feedback to module
+    authors and potential users to identify bugs or platform compatibility
+    issues and improves the overall quality and value of CPAN.
 
-    The goal of the CPAN Testers project (<http://testers.cpan.org/>) is to
-    test as many CPAN packages as possible on as many platforms as possible.
-    This provides valuable feedback to module authors and potential users to
-    identify bugs or platform compatibility issues and improves the overall
-    quality and value of CPAN.
-
-    One way individuals can contribute is to send test results for each
-    module that they test or install. Installing CPAN::Reporter gives the
-    option of automatically generating and emailing test reports whenever
-    tests are run via CPAN.pm.
+    One way individuals can contribute is to send a report for each module
+    that they test or install. CPAN::Reporter is an add-on for the CPAN.pm
+    module to send the results of building and testing modules to the CPAN
+    Testers project. Partial support for CPAN::Reporter is available in
+    CPAN.pm as of version 1.88; full support is available in CPAN.pm as of
+    version 1.91_53.
 
 GETTING STARTED
   Installation
@@ -143,15 +139,19 @@ BUGS
     to an existing test-file that illustrates the bug or desired feature.
 
 SEE ALSO
-    *   CPAN::Reporter::Config -- advanced configuration settings
-
-    *   CPAN::Reporter::FAQ -- hints and tips
+    Information about CPAN::Testers:
 
     *   CPAN::Testers -- overview of CPAN Testers architecture stack
 
     *   <http://cpantesters.perl.org> -- project home with all reports
 
     *   <http://cpantest.grango.org> -- documentation and wiki
+
+    Additional Documentation:
+
+    *   CPAN::Reporter::Config -- advanced configuration settings
+
+    *   CPAN::Reporter::FAQ -- hints and tips
 
 AUTHOR
     David A. Golden (DAGOLDEN)

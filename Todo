@@ -12,6 +12,7 @@ TODO list for Perl module CPAN::Reporter
 # High priority
 
 - make duplicate checks specific to phase (i.e. PL, make, test)
+    * upgrade old history files; add a version header for future
 
 # Medium priority 
 

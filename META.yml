@@ -3,7 +3,7 @@ name: CPAN-Reporter
 version: 0.99_06
 author:
   - 'David A. Golden <dagolden@cpan.org>'
-abstract: Provides CPAN Testers support for CPAN.pm
+abstract: Adds CPAN Testers reporting to CPAN.pm
 license: apache
 resources:
   license: http://apache.org/licenses/LICENSE-2.0
