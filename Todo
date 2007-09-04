@@ -4,6 +4,8 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
+- Games-Literati-0.01 -- recursive Makefile.PL with only test.pl in a 
+  subdirectory; test.pl passes but returns unknown
 
 #--------------------------------------------------------------------------#
 # Features, etc
