@@ -21,7 +21,7 @@ my $mock_dist = t::MockCPANDist->new(
     author_fullname => "John Q. Public",
 );
 
-my $command = "make test";
+my $command = "make test"; 
 
 # includes new and old Test::Harness strings
 my %report_output = (

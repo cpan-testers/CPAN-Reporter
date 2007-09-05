@@ -9,6 +9,9 @@ Revision history for Perl module CPAN::Reporter
     - Changed grading for test files with no output from FAIL to UNKNOWN to
       harmonize with new Test::Harness approach
 
+    - Falls back to overall 'make test' exit code for success or failure if 
+      recursive Makefile.PL's are detected; (File::Find added to prereqs)
+
     - Bumped File::Copy::Recursive dependency to 0.35 (fixes Win32 bug)
 
     - More defensive test coding

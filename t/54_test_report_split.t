@@ -39,6 +39,24 @@ my @test_distros = (
         mb_grade => "fail",
         mb_msg => "One or more tests failed",
     },
+    {
+        name => 't-Recurse-Fail-t',
+        eumm_success => 0,
+        eumm_grade => "fail",
+        eumm_msg => "'make test' error detected",
+        mb_success => 1,
+        mb_grade => "unknown",
+        mb_msg => "No tests provided",
+    },
+    {
+        name => 't-Recurse-Fail-test.pl',
+        eumm_success => 0,
+        eumm_grade => "fail",
+        eumm_msg => "'make test' error detected",
+        mb_success => 1,
+        mb_grade => "unknown",
+        mb_msg => "No tests provided",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() 

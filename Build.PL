@@ -16,6 +16,7 @@ $class->new(
         'ExtUtils::MakeMaker'   => 6.26, # sane ExtUtils::Command::MM
         'File::Basename'        => 0,
         'File::Copy::Recursive' => 0.35,
+        'File::Find'            => 0,
         'File::HomeDir'         => 0.58, 
         'File::Path'            => 0,
         'File::pushd'           => 0.32,

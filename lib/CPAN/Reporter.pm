@@ -9,6 +9,7 @@ use CPAN ();
 use CPAN::Version ();
 use Fcntl qw/:flock :seek/;
 use File::Basename qw/basename/;
+use File::Find ();
 use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
 use File::Spec ();
@@ -314,6 +315,16 @@ sub _compute_PL_grade {
 
 #--------------------------------------------------------------------------#
 # _compute_test_grade
+#
+# Don't shortcut to unknown unless _has_tests because a custom
+# Makefile.PL or Build.PL might define tests in a non-standard way
+# 
+# With test.pl and 'make test', any t/*.t might pass Test::Harness, but
+# test.pl might still fail, or there might only be test.pl,
+# so use exit code directly
+#
+# Likewise, if we have recursive Makefile.PL, then we don't trust the
+# recursive parsing and should just take the exit code
 #--------------------------------------------------------------------------#
 
 sub _compute_test_grade {
@@ -321,52 +332,11 @@ sub _compute_test_grade {
     my ($grade,$msg);
     my $output = $result->{output};
 
-    # we need to know prerequisites early
+    # we need to find prerequisites and toolchain earlier than usual
     _expand_result( $result );
 
-    # figure out the right harness parser
-    my $harness_version = $result->{toolchain}{'Test::Harness'}{have};
-    my $harness_parser = CPAN::Version->vgt($harness_version, '2.99_01')
-                ? \&_parse_tap_harness
-                : \&_parse_test_harness;
-
-    # XXX don't shortcut to unknown with _has_tests here because a custom
-    # Makefile.PL or Build.PL might define tests in a non-standard way
-    
-    # parse in reverse order for Test::Harness results
-    for my $i ( reverse 0 .. $#{$output} ) {
-        if ( $output->[$i] =~ m{No support for OS|OS unsupported}ims ) { # from any *.t file
-            $grade = 'na';
-            $msg = 'This platform is not supported';
-        }
-        elsif ( $output->[$i] =~ m{^.?No tests defined}ms ) { # from EU::MM
-            $grade = 'unknown';
-            $msg = 'No tests provided';
-        }
-        else {
-            ($grade, $msg) = $harness_parser->( $output->[$i] );
-            next if ! $grade;
-        }
-#        if ( $grade eq 'unknown' && _has_tests() ) {
-#            # probably a spurious message from recursive make, so ignore and
-#            # continue if we can find any standard test files
-#            $grade = $msg = undef;
-#            next;
-#        }
-        last if $grade;
-    }
-    
-    # didn't find Test::Harness output we recognized
-    if ( ! $grade ) {
-        $grade = "unknown";
-        $msg = "Couldn't determine a result";
-    }
-
-    # With test.pl and 'make test', any t/*.t might pass Test::Harness, but
-    # test.pl might still fail, or there might only be test.pl,
-    # so use exit code directly
-    
-    if ( $result->{is_make} && -f "test.pl" && $grade ne 'fail' ) {
+    # Get a result from the exit code
+    if ( $result->{is_make} && ( -f "test.pl" || _has_recursive_make() ) ) {
         if ( $result->{exit_value} ) {
             $grade = "fail";
             $msg = "'make test' error detected";
@@ -376,13 +346,42 @@ sub _compute_test_grade {
             $msg = "'make test' no errors";
         }
     }
+    # Otherwise, get a result from Test::Harness output
+    else {
+        # figure out the right harness parser
+        my $harness_version = $result->{toolchain}{'Test::Harness'}{have};
+        my $harness_parser = CPAN::Version->vgt($harness_version, '2.99_01')
+                    ? \&_parse_tap_harness
+                    : \&_parse_test_harness;
+        # parse lines in reverse
+        for my $i ( reverse 0 .. $#{$output} ) {
+            if ( $output->[$i] =~ m{No support for OS|OS unsupported}ims ) { # from any *.t file
+                $grade = 'na';
+                $msg = 'This platform is not supported';
+            }
+            elsif ( $output->[$i] =~ m{^.?No tests defined}ms ) { # from EU::MM
+                $grade = 'unknown';
+                $msg = 'No tests provided';
+            }
+            else {
+                ($grade, $msg) = $harness_parser->( $output->[$i] );
+            }
+            last if $grade;
+        }
+        # fallback if we didn't find Test::Harness output we recognized
+        if ( ! $grade ) {
+            $grade = "unknown";
+            $msg = "Couldn't determine a result";
+        }
+    }
 
     # Downgrade failure/unknown grade if we can determine a cause
+    # If platform not supported => 'na'
     # If perl version is too low => 'na'
     # If stated prereqs missing => 'discard'
 
     if ( $grade eq 'fail' || $grade eq 'unknown' ) {
-        # check for unsupported OS
+        # check again for unsupported OS in case we took 'fail' from exit value
         if ( $output =~ m{No support for OS|OS unsupported}ims ) {
             $grade = 'na';
             $msg = 'This platform is not supported';
@@ -679,6 +678,28 @@ sub _has_tests {
         }
     }
     return 0;
+}
+
+#--------------------------------------------------------------------------#
+# _has_recursive_make
+#
+# Ignore Makefile.PL in t directories 
+#--------------------------------------------------------------------------#
+
+sub _has_recursive_make {
+    my $PL_count = 0;
+    File::Find::find(
+        sub {
+            if ( $_ eq 't' ) {
+                $File::Find::prune = 1;
+            }
+            elsif ( $_ eq 'Makefile.PL' ) {
+                $PL_count++;
+            }
+        },
+        File::Spec->curdir()
+    );
+    return $PL_count > 1;
 }
 
 #--------------------------------------------------------------------------#
