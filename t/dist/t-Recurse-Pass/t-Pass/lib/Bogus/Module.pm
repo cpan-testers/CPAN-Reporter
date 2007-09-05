@@ -1,4 +1,4 @@
-package SubModule;
+package Bogus::Module;
 
 $VERSION     = "0.01";
 

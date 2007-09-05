@@ -4,9 +4,9 @@ WriteMakefile
 (
           'PL_FILES' => {},
           'INSTALLDIRS' => 'site',
-          'NAME' => 'SubModule',
+          'NAME' => 'Bogus::Module',
           'EXE_FILES' => [],
-          'VERSION_FROM' => 'SubModule.pm',
+          'VERSION_FROM' => 'lib/Bogus/Module.pm',
           'PREREQ_PM' => {}
         )
 ;
