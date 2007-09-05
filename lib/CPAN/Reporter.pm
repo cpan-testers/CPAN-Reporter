@@ -1183,10 +1183,10 @@ HERE
 sub _timeout_wrapper_win32 {
     my ($cmd, $timeout) = @_;
 
-    eval "require Win32::Process;";
+    eval "use Win32::Process 0.10 ();";
     if ($@) {
         $CPAN::Frontend->mywarn( << 'HERE' );
-CPAN::Reporter needs Win32::Process for inactivity_timeout support.
+CPAN::Reporter needs Win32::Process 0.10 for inactivity_timeout support.
 Continuing without timeout...
 HERE
         return;

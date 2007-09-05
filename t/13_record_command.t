@@ -102,6 +102,12 @@ for my $c ( @cases ) {
 SKIP: {
     skip "Couldn't run perl with relative path", $tests_per_case
         if $c->{relative} && system("perl -e 1") == -1;
+    if ( $^O eq 'MSWin32' && $c->{timeout} ) {
+        eval "use Win32::Process 0.10 ()";
+        skip "Win32::Process 0.10 needed for timeout testing", $tests_per_case
+            if $@;
+    }
+
     my $fh = File::Temp->new() 
         or die "Couldn't create a temporary file: $!\nIs your temp drive full?";
     print {$fh} $c->{program}, "\n";
