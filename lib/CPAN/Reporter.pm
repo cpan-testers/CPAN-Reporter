@@ -323,10 +323,6 @@ sub _compute_test_grade {
     # we need to know prerequisites early
     _expand_result( $result );
 
-    # Output strings taken from Test::Harness::
-    # _show_results()  -- for versions < 2.57_03 
-    # get_results()    -- for versions >= 2.57_03
-
     # XXX don't shortcut to unknown with _has_tests here because a custom
     # Makefile.PL or Build.PL might define tests in a non-standard way
     
@@ -334,36 +330,17 @@ sub _compute_test_grade {
     
     # parse in reverse order for Test::Harness results
     for my $i ( reverse 0 .. $#{$output} ) {
-        if ( $output->[$i] =~ m{^All tests successful}ms ) {
-            $grade = 'pass';
-            $msg = 'All tests successful';
-        }
-        elsif ( $output->[$i] =~ m{No support for OS|OS unsupported}ims ) {
+        if ( $output->[$i] =~ m{No support for OS|OS unsupported}ims ) { # from any *.t file
             $grade = 'na';
             $msg = 'This platform is not supported';
         }
-        elsif ( $output->[$i] =~ m{^.?No tests defined}ms ) {
+        elsif ( $output->[$i] =~ m{^.?No tests defined}ms ) { # from EU::MM
             $grade = 'unknown';
             $msg = 'No tests provided';
         }
-        elsif ( $output->[$i] =~ m{^FAILED--no tests were run}ms ) {
-            $grade = 'unknown';
-            $msg = 'No tests were run';
-        }
-        elsif ( $output->[$i] =~ m{^FAILED--.*--no output}ms ) {
-            $grade = 'fail';
-            $msg = 'Tests had no output';
-        }
-        elsif ( $output->[$i] =~ m{FAILED--Further testing stopped}ms ) {
-            $grade = 'fail';
-            $msg = 'Bailed out of tests';
-        }
-        elsif ( $output->[$i] =~ m{^Failed }ms ) {  # must be lowercase
-            $grade = 'fail';
-            $msg = "Distribution had failing tests";
-        }
         else {
-            next;
+            ($grade, $msg) = _parse_test_harness( $output->[$i] );
+            next if ! $grade;
         }
         if ( $grade eq 'unknown' && _has_tests() ) {
             # probably a spurious message from recursive make, so ignore and
@@ -805,6 +782,61 @@ sub _open_history_file {
     }
 
     return $history; 
+}
+
+#--------------------------------------------------------------------------#
+# _parse_tap_harness
+# 
+# As of Test::Harness 2.99_02, the final line is provided by TAP::Harness
+# as "Result: STATUS" where STATUS is "PASS", "FAIL" or "NOTESTS"
+#--------------------------------------------------------------------------#
+
+
+sub _parse_tap_harness {
+    my ($line) = @_;
+    return unless $line =~ m{^Result: ([A-Z]+)};
+    if    ( $1 eq 'PASS' ) {
+        return ('pass', 'All tests successful');
+    }
+    elsif ( $1 eq 'FAIL' ) {
+        return ('fail', 'One or more tests failed');
+    }
+    elsif ( $1 eq 'NOTESTS' ) {
+        return ('unknown', 'No tests were found');
+    }
+    else {
+        return;
+    }
+}
+
+#--------------------------------------------------------------------------#
+# _parse_test_harness
+#
+# Output strings taken from Test::Harness::
+# _show_results()  -- for versions < 2.57_03 
+# get_results()    -- for versions >= 2.57_03
+#--------------------------------------------------------------------------#
+
+sub _parse_test_harness {
+    my ($line) = @_;
+    if ( $line =~ m{^All tests successful}ms ) {
+        return ( 'pass', 'All tests successful' );
+    }
+    elsif ( $line =~ m{^FAILED--no tests were run}ms ) {
+        return ( 'unknown', 'No tests were run' );
+    }
+    elsif ( $line =~ m{^FAILED--.*--no output}ms ) {
+        return ( 'fail', 'Tests had no output');
+    }
+    elsif ( $line =~ m{FAILED--Further testing stopped}ms ) {
+        return ( 'fail', 'Bailed out of tests');
+    }
+    elsif ( $line =~ m{^Failed }ms ) {  # must be lowercase
+        return ( 'fail', "Distribution had failing tests");
+    }
+    else {
+        return;
+    }
 }
 
 #--------------------------------------------------------------------------#
