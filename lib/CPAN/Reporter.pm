@@ -6,6 +6,7 @@ $CPAN::Reporter::VERSION = '0.99_06';
 use Config;
 use Config::Tiny ();
 use CPAN ();
+use CPAN::Version ();
 use Fcntl qw/:flock :seek/;
 use File::Basename qw/basename/;
 use File::HomeDir ();
@@ -319,14 +320,14 @@ sub _compute_test_grade {
     my $result = shift;
     my ($grade,$msg);
     my $output = $result->{output};
-    
+
     # we need to know prerequisites early
     _expand_result( $result );
 
+    my $harness_version = $result->{toolchain}{'Test::Harness'}{have};
+
     # XXX don't shortcut to unknown with _has_tests here because a custom
     # Makefile.PL or Build.PL might define tests in a non-standard way
-    
-    # check for make or Build
     
     # parse in reverse order for Test::Harness results
     for my $i ( reverse 0 .. $#{$output} ) {
@@ -339,7 +340,9 @@ sub _compute_test_grade {
             $msg = 'No tests provided';
         }
         else {
-            ($grade, $msg) = _parse_test_harness( $output->[$i] );
+            ($grade, $msg) = CPAN::Version->vgt($harness_version, '2.99_01')
+                ? _parse_tap_harness( $output->[$1] )
+                : _parse_test_harness( $output->[$i] );
             next if ! $grade;
         }
         if ( $grade eq 'unknown' && _has_tests() ) {
@@ -533,7 +536,7 @@ sub _expand_result {
     $result->{prereq_pm} = _prereq_report( $result->{dist} );
     $result->{env_vars} = _env_report();
     $result->{special_vars} = _special_vars_report();
-    $result->{toolchain_versions} = _toolchain_report();
+    $result->{toolchain_versions} = _toolchain_report( $result );
     return;
 }
 
@@ -1218,7 +1221,10 @@ my @toolchain_mods= qw(
 );
 
 sub _toolchain_report {
+    my ($result) = @_;
+
     my $installed = _version_finder( map { $_ => 0 } @toolchain_mods );
+    $result->{toolchain} = $installed;
 
     my $mod_width = _max_length( keys %$installed );
     my $ver_width = _max_length( 

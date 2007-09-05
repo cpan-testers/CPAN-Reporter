@@ -121,13 +121,20 @@ sub test_grade_PL {
             my ($stdout, $stderr, $build_rc, $test_build_rc, 
                 $output, $exit_value, $rc);
 
-            capture sub {
-                ($output, $exit_value) = 
-                    CPAN::Reporter::record_command($tool_cmd);
-                $rc = CPAN::Reporter::grade_PL(
-                    $dist, $tool_cmd, $output, $exit_value
-                );
-            }, \$stdout, \$stderr;
+            eval {
+                capture sub {
+                    ($output, $exit_value) = 
+                        CPAN::Reporter::record_command($tool_cmd);
+                    $rc = CPAN::Reporter::grade_PL(
+                        $dist, $tool_cmd, $output, $exit_value
+                    );
+                }, \$stdout, \$stderr;
+            };
+            if ( $@ ) {
+                diag "DIED WITH:\n$@";
+                _diag_output( $stdout, $stderr );
+                skip "died grading PL", test_grade_PL_iter_plan() - 1;
+            }
             
             my $is_rc_correct = $case->{"$tool\_success"} 
                               ? $rc : ! $rc;
@@ -213,14 +220,20 @@ sub test_grade_make {
                     _diag_output( $stdout, $stderr );
                     skip "$tool_PL failed", test_grade_make_iter_plan() - 1;
                 };
-
-            capture sub {
-                ($output, $exit_value) = 
-                CPAN::Reporter::record_command($tool_cmd);
-                $rc = CPAN::Reporter::grade_make(
-                    $dist, $tool_cmd, $output, $exit_value
-                );
-            }, \$stdout, \$stderr;
+            eval {
+                capture sub {
+                    ($output, $exit_value) = 
+                    CPAN::Reporter::record_command($tool_cmd);
+                    $rc = CPAN::Reporter::grade_make(
+                        $dist, $tool_cmd, $output, $exit_value
+                    );
+                }, \$stdout, \$stderr;
+            };
+            if ( $@ ) {
+                diag "DIED WITH:\n$@";
+                _diag_output( $stdout, $stderr );
+                skip "died grading make", test_grade_make_iter_plan() - 1;
+            }
 
             my $is_rc_correct = $case->{"$tool\_success"} 
             ? $rc : ! $rc;
@@ -307,13 +320,19 @@ sub test_grade_test {
                     skip "$tool_PL failed", test_grade_test_iter_plan() - 1;
                 };
 
-            capture sub {
-                $test_build_rc = CPAN::Reporter::test( $dist, $tool_cmd )
-            }, \$stdout, \$stderr;
+            eval {
+                capture sub {
+                    $test_build_rc = CPAN::Reporter::test( $dist, $tool_cmd )
+                }, \$stdout, \$stderr;
+            };
+            if ( $@ ) {
+                diag "DIED WITH:\n$@";
+                _diag_output( $stdout, $stderr );
+                skip "test() died", test_grade_test_iter_plan() - 1;
+            }
 
             my $is_rc_correct = $case->{"$tool\_success"} 
                               ? $test_build_rc : ! $test_build_rc;
-
             ok( $is_rc_correct, 
                 "$case->{name}: '$tool_label' returned " . 
                 $case->{"$tool\_success"}
@@ -569,6 +588,10 @@ sub _run_report {
             CPAN::Reporter::_dispatch_report( $result );
         } => \$stdout, \$stderr;
     }; 
+    if ( $@ ) {
+        diag "DIED WITH:\n$@";
+        _diag_output( $stdout, $stderr );
+    }
 
     return ($result, $stdout, $stderr, $@);
 }
