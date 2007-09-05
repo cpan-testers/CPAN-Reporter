@@ -8,7 +8,7 @@ CPAN::Reporter::Config - Config file options for CPAN::Reporter
 
 =head1 VERSION
 
-This documentation refers to version 0.99_06
+This documentation refers to version 0.99_07
 
 =head1 SYNOPSIS
 

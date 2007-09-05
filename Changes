@@ -1,8 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_06 Wed Sep  5 16:56:23 EDT 2007
+0.99_07
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
+
+0.99_06 Wed Sep  5 16:56:23 EDT 2007
 
     - Added support for new message format from Test::Harness alpha (2.99_02)
 
