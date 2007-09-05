@@ -7,6 +7,8 @@ Revision history for Perl module CPAN::Reporter
     - Skips inactivity timeout on Win32 without Win32::Process >= 0.10
       (bug found by Corion)
 
+    - Bails out on Test::Harness 2.99_01 (not supported)
+
 0.99_06 Wed Sep  5 16:56:23 EDT 2007
 
     - Added support for new message format from Test::Harness alpha (2.99_02)
