@@ -16,7 +16,7 @@ WriteMakefile
                            'File::Path' => 0,
                            'File::HomeDir' => '0.58',
                            'File::pushd' => '0.32',
-                           'ExtUtils::MakeMaker' => '6.26',
+                           'ExtUtils::MakeMaker' => '6.36',
                            'Tee' => '0.13',
                            'Test::More' => '0.62',
                            'File::Temp' => '0.16',

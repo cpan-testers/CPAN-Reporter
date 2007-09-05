@@ -10,7 +10,7 @@ resources:
 requires:
   CPAN: 1.88
   Config::Tiny: 2.08
-  ExtUtils::MakeMaker: 6.26
+  ExtUtils::MakeMaker: 6.36
   File::Basename: 0
   File::Copy::Recursive: 0.35
   File::Find: 0
