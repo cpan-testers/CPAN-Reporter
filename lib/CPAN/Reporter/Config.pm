@@ -1,5 +1,5 @@
 package CPAN::Reporter::Config;
-$VERSION = '0.99_07';
+$VERSION = '0.99_08';
 use strict; 
 use File::HomeDir (); 
 use File::Path (qw/mkpath/);

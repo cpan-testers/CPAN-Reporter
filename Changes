@@ -1,8 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_07 Wed Sep  5 18:20:37 EDT 2007
+0.99_08 
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
+
+0.99_07 Wed Sep  5 18:20:37 EDT 2007
 
     - Skips inactivity timeout on Win32 without Win32::Process >= 0.10
       (bug found by Corion)
