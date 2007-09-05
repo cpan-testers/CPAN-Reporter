@@ -13,7 +13,7 @@ $class->new(
         # module requirements here
         'Config::Tiny'          => 2.08,
         'CPAN'                  => 1.88,
-        'ExtUtils::MakeMaker'   => 6.26, # sane ExtUtils::Command::MM
+        'ExtUtils::MakeMaker'   => 6.36, # many bug fixes
         'File::Basename'        => 0,
         'File::Copy::Recursive' => 0.35,
         'File::Find'            => 0,

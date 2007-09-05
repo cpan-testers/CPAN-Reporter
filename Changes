@@ -10,7 +10,8 @@ Revision history for Perl module CPAN::Reporter
       harmonize with new Test::Harness approach
 
     - Falls back to overall 'make test' exit code for success or failure if 
-      recursive Makefile.PL's are detected; (File::Find added to prereqs)
+      recursive Makefile.PL's are detected; File::Find added to prereqs;
+      Bumped EU::MM prereq to 6.36 to get bug fixes for recursion and more
 
     - Bumped File::Copy::Recursive dependency to 0.35 (fixes Win32 bug)
 
