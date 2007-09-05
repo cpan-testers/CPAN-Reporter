@@ -23,9 +23,11 @@ my $mock_dist = t::MockCPANDist->new(
 
 my $command = "make test";
 
+# includes new and old Test::Harness strings
 my %report_output = (
     'pass' => << 'HERE',
 t\01_CPAN_Reporter....ok
+Result: PASS
 All tests successful.
 Files=1, Tests=3,  0 wallclock secs ( 0.00 cusr +  0.00 csys =  0.00 CPU)
 HERE
@@ -34,6 +36,7 @@ HERE
 t\09_option_parsing....
 t\09_option_parsing....NOK 2#   Failed test 'foo'
 DIED. FAILED test 2
+Result: FAIL
 Failed 1/1 test programs. 1/2 subtests failed.
 HERE
 
@@ -43,9 +46,7 @@ HERE
 HERE
 
     'na' => << 'HERE',
-t/01_Bogus....dubious
-        Test returned status 2 (wstat 512, 0x200)
-FAILED--1 test script could be run, alas--no output ever seen
+OS unsupported
 HERE
 
 );

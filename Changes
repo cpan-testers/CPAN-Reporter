@@ -4,6 +4,11 @@ Revision history for Perl module CPAN::Reporter
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
 
+    - Added support for new message format from Test::Harness alpha (2.99_02)
+
+    - Changed grading for test files with no output from FAIL to UNKNOWN to
+      harmonize with new Test::Harness approach
+
     - Bumped File::Copy::Recursive dependency to 0.35 (fixes Win32 bug)
 
     - More defensive test coding

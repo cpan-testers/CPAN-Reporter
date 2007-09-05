@@ -30,6 +30,15 @@ my @test_distros = (
         mb_grade => "unknown",
         mb_msg => "No tests provided",
     },
+    {
+        name => 't-NoOutput',
+        eumm_success => 1,
+        eumm_grade => "unknown",
+        eumm_msg => "No tests were run",
+        mb_success => 1,
+        mb_grade => "unknown",
+        mb_msg => "No tests were run",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() 

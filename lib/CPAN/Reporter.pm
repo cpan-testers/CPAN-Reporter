@@ -177,7 +177,7 @@ sub grade_test {
     _compute_test_grade($result);
     if ( $result->{grade} eq 'discard' ) {
         $CPAN::Frontend->mywarn( 
-            "\nCPAN::Reporter: Test results were not valid, $result->{grade_msg}\n\n",
+            "\nCPAN::Reporter: Test results were not valid, $result->{grade_msg}.\n\n",
             $result->{prereq_pm}, "\n",
             "Test results for $result->{dist_name} will be discarded"
         );
@@ -324,7 +324,11 @@ sub _compute_test_grade {
     # we need to know prerequisites early
     _expand_result( $result );
 
+    # figure out the right harness parser
     my $harness_version = $result->{toolchain}{'Test::Harness'}{have};
+    my $harness_parser = CPAN::Version->vgt($harness_version, '2.99_01')
+                ? \&_parse_tap_harness
+                : \&_parse_test_harness;
 
     # XXX don't shortcut to unknown with _has_tests here because a custom
     # Makefile.PL or Build.PL might define tests in a non-standard way
@@ -340,17 +344,15 @@ sub _compute_test_grade {
             $msg = 'No tests provided';
         }
         else {
-            ($grade, $msg) = CPAN::Version->vgt($harness_version, '2.99_01')
-                ? _parse_tap_harness( $output->[$1] )
-                : _parse_test_harness( $output->[$i] );
+            ($grade, $msg) = $harness_parser->( $output->[$i] );
             next if ! $grade;
         }
-        if ( $grade eq 'unknown' && _has_tests() ) {
-            # probably a spurious message from recursive make, so ignore and
-            # continue if we can find any standard test files
-            $grade = $msg = undef;
-            next;
-        }
+#        if ( $grade eq 'unknown' && _has_tests() ) {
+#            # probably a spurious message from recursive make, so ignore and
+#            # continue if we can find any standard test files
+#            $grade = $msg = undef;
+#            next;
+#        }
         last if $grade;
     }
     
@@ -797,19 +799,21 @@ sub _open_history_file {
 
 sub _parse_tap_harness {
     my ($line) = @_;
-    return unless $line =~ m{^Result: ([A-Z]+)};
-    if    ( $1 eq 'PASS' ) {
-        return ('pass', 'All tests successful');
+    if ( $line =~ m{^Result:\s+([A-Z]+)} ) {
+        if    ( $1 eq 'PASS' ) {
+            return ('pass', 'All tests successful');
+        }
+        elsif ( $1 eq 'FAIL' ) {
+            return ('fail', 'One or more tests failed');
+        }
+        elsif ( $1 eq 'NOTESTS' ) {
+            return ('unknown', 'No tests were run');
+        }
     }
-    elsif ( $1 eq 'FAIL' ) {
-        return ('fail', 'One or more tests failed');
+    elsif ( $line =~ m{Bailout called\.\s+Further testing stopped}ms ) {
+        return ( 'fail', 'Bailed out of tests');
     }
-    elsif ( $1 eq 'NOTESTS' ) {
-        return ('unknown', 'No tests were found');
-    }
-    else {
-        return;
-    }
+    return;
 }
 
 #--------------------------------------------------------------------------#
@@ -829,13 +833,13 @@ sub _parse_test_harness {
         return ( 'unknown', 'No tests were run' );
     }
     elsif ( $line =~ m{^FAILED--.*--no output}ms ) {
-        return ( 'fail', 'Tests had no output');
+        return ( 'unknown', 'No tests were run');
     }
     elsif ( $line =~ m{FAILED--Further testing stopped}ms ) {
         return ( 'fail', 'Bailed out of tests');
     }
     elsif ( $line =~ m{^Failed }ms ) {  # must be lowercase
-        return ( 'fail', "Distribution had failing tests");
+        return ( 'fail', 'One or more tests failed');
     }
     else {
         return;

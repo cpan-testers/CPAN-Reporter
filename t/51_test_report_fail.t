@@ -13,15 +13,6 @@ use t::Frontend;
 my @test_distros = (
     # fail
     {
-        name => 't-NoOutput',
-        eumm_success => 0,
-        eumm_grade => "fail",
-        eumm_msg => "Tests had no output",
-        mb_success => 0,
-        mb_grade => "fail",
-        mb_msg => "Tests had no output",
-    },
-    {
         name => 't-BailOut',
         eumm_success => 0,
         eumm_grade => "fail",
@@ -34,19 +25,19 @@ my @test_distros = (
         name => 't-Fail',
         eumm_success => 0,
         eumm_grade => "fail",
-        eumm_msg => "Distribution had failing tests",
+        eumm_msg => "One or more tests failed",
         mb_success => 0,
         mb_grade => "fail",
-        mb_msg => "Distribution had failing tests",
+        mb_msg => "One or more tests failed",
     },
     {
         name => 't-MultipleMatch',
         eumm_success => 0,
         eumm_grade => "fail",
-        eumm_msg => "Distribution had failing tests",
+        eumm_msg => "One or more tests failed",
         mb_success => 0,
         mb_grade => "fail",
-        mb_msg => "Distribution had failing tests",
+        mb_msg => "One or more tests failed",
     },
     {
         name => 'test.pl-Fail',
@@ -55,25 +46,16 @@ my @test_distros = (
         eumm_msg => "'make test' error detected",
         mb_success => 0,
         mb_grade => "fail",
-        mb_msg => "Distribution had failing tests",
-    },
-    {
-        name => 'test.pl-NoOutput-NOK',
-        eumm_success => 0,
-        eumm_grade => "fail",
-        eumm_msg => "'make test' error detected",
-        mb_success => 0,
-        mb_grade => "fail",
-        mb_msg => "Tests had no output",
+        mb_msg => "One or more tests failed",
     },
     {
         name => 't-test.pl-Fail-Pass',
         eumm_success => 0,
         eumm_grade => "fail",
-        eumm_msg => "Distribution had failing tests",
+        eumm_msg => "One or more tests failed",
         mb_success => 0,
         mb_grade => "fail",
-        mb_msg => "Distribution had failing tests",
+        mb_msg => "One or more tests failed",
     },
     {
         name => 't-test.pl-Pass-NoOutput-NOK',
@@ -82,7 +64,7 @@ my @test_distros = (
         eumm_msg => "'make test' error detected",
         mb_success => 0,
         mb_grade => "fail",
-        mb_msg => "Distribution had failing tests",
+        mb_msg => "One or more tests failed",
     },
 );
 

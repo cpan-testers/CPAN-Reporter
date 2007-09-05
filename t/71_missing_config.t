@@ -26,10 +26,10 @@ my @test_distros = (
         name => 't-Fail',
         eumm_success => 0,
         eumm_grade => "fail",
-        eumm_msg => "Distribution had failing tests",
+        eumm_msg => "One or more tests failed",
         mb_success => 0,
         mb_grade => "fail",
-        mb_msg => "Distribution had failing tests",
+        mb_msg => "One or more tests failed",
     },
 );
 

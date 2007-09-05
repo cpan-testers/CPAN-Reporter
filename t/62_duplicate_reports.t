@@ -34,10 +34,12 @@ my %mock_dist_info = (
 
 my $command = "make test";
 
+# Includes both old and new T::H failure text
 my $mock_output = << 'HERE',
 t\09_option_parsing....
 t\09_option_parsing....NOK 2#   Failed test 'foo'
 DIED. FAILED test 2
+Result: FAIL
 Failed 1/1 test programs. 1/2 subtests failed.
 HERE
     

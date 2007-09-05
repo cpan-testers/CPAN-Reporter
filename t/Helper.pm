@@ -338,13 +338,11 @@ sub test_grade_test {
                 $case->{"$tool\_success"}
             );
             
-            my $is_grade_correct;
-            # Special case if discarding
+            # Grade evaluation with special case if discarding
+            my ($found_grade_result, $found_msg) = 
+                ( $stdout =~ /^CPAN::Reporter: ([^,]+), ([^\n]+)/ms );
             if ( $case->{"$tool\_grade"} eq 'discard' ) {
-                $is_grade_correct = 
-                    $stdout =~ /^CPAN::Reporter: Test results were not valid/ms;
-
-                ok( $is_grade_correct,
+                is ($found_grade_result, "Test results were not valid",
                     "$case->{name}: '$tool_label' prerequisites not satisifed"
                 );
                     
@@ -359,11 +357,10 @@ sub test_grade_test {
             }
             else {
                 my $case_grade = $case->{"$tool\_grade"};
-                $is_grade_correct = 
-                    $stdout =~ /^CPAN::Reporter: Test result is '$case_grade'/ms;
-                ok( $is_grade_correct, 
+                my ($found_grade) = ( $found_grade_result =~ /Test result is '([^']+)'/ );
+                is( $found_grade, $case_grade, 
                     "$case->{name}: '$tool_label' grade reported as '$case_grade'"
-                );
+                ) or _diag_output( $stdout, $stderr );
                 
                 like( $stdout, "/Preparing a CPAN Testers report for \Q$short_name\E/",
                     "$case->{name}: report notification correct"
@@ -381,13 +378,11 @@ sub test_grade_test {
                 }
             }
             
-            my $case_msg = $case->{"$tool\_msg"};
-            like( $stdout, "/\Q$case_msg\E/",
+            # Grade explanation message
+            is( $found_msg, $case->{"$tool\_msg"} . ".",
                 "$case->{name}: '$tool_label' grade explanation correct"
             );
 
-            _diag_output( $stdout, $stderr )
-                unless ( $is_rc_correct && $is_grade_correct );
         } #SKIP
     } #for
 }

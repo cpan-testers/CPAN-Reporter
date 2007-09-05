@@ -24,9 +24,11 @@ my $mock_dist = t::MockCPANDist->new(
 
 my $command = "make test";
 
+# Includes both old and new T::H result text
 my $report_output =  << 'HERE';
 t\01_Bogus_Module....ok
 All tests successful.
+Result: PASS
 Files=1, Tests=3,  0 wallclock secs ( 0.00 cusr +  0.00 csys =  0.00 CPU)
 HERE
 
