@@ -208,13 +208,13 @@ sub record_command {
         $wrap_code = $^O eq 'MSWin32'
                    ? _timeout_wrapper_win32($cmd, $timeout)
                    : _timeout_wrapper($cmd, $timeout);
-        warn "$wrap_code\n";
     }
     # if no timeout or timeout wrap code wasn't available
     if ( ! $wrap_code ) {
         $wrap_code = << "HERE";
-system('$cmd');
-print '($cmd exited with ', \$?, ")\\n";
+my \$rc = system('$cmd');
+my \$ec = \$rc == -1 ? -1 : \$?;
+print '($cmd exited with ', \$ec, ")\\n";
 HERE
     }
 
@@ -247,6 +247,12 @@ HERE
     if ( $cmd_output[-1] =~ m{exited with} ) {
         ($exit_value) = $cmd_output[-1] =~ m{exited with ([-0-9]+)};
         delete $cmd_output[-1];
+    }
+    if ( ! defined $exit_value || $exit_value == -1 ) {
+        $CPAN::Frontend->mywarn( 
+            "CPAN::Reporter couldn't execute '$cmd'\n"
+        );
+        return;
     }
 
     return \@cmd_output, $exit_value;
@@ -1150,18 +1156,20 @@ eval {
     die "Cannot fork: $!\n" unless defined $pid;
     if ($pid) { #parent
         alarm %s;
-        waitpid $pid, 0;
-        $exitcode = $?;
+        my $wstat = waitpid $pid, 0;
+        $exitcode = $wstat == -1 ? -1 : $?;
     } else {    #child
         exec '%s';
     }
 };
 alarm 0;
-die $@ if $@ =~ /Cannot fork/;
-if ($@){
-    kill 9, $pid if $@ =~ /Timeout/;
-    waitpid $pid, 0;
-    $exitcode = $?;
+if ($pid && $@ =~ /Timeout/){
+    kill 9, $pid;
+    my $wstat = waitpid $pid, 0;
+    $exitcode = $wstat == -1 ? -1 : $?;
+}
+elsif ($@) {
+    die $@;
 }
 print '(%s exited with ', $exitcode, ")\n";
 HERE

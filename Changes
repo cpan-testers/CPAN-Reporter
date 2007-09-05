@@ -13,6 +13,8 @@ Revision history for Perl module CPAN::Reporter
       recursive Makefile.PL's are detected; File::Find added to prereqs;
       Bumped EU::MM prereq to 6.36 to get bug fixes for recursion and more
 
+    - record_command() wrappers do better error checking for exec failures
+
     - Bumped File::Copy::Recursive dependency to 0.35 (fixes Win32 bug)
 
     - More defensive test coding
