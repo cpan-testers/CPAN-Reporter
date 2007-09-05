@@ -1,5 +1,3 @@
-author_t/pod-coverage.t
-author_t/pod.t
 Build.PL
 Changes
 examples/config.ini
@@ -187,4 +185,6 @@ t/perl5lib/Bogus/LT.pm
 t/perl5lib/Bogus/LTE.pm
 t/perl5lib/Bogus/NoVersion.pm
 t/perl5lib/Bogus/TooOld.pm
+t_extra/pod-coverage.t
+t_extra/pod.t
 Todo
