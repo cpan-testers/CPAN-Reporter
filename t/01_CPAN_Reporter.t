@@ -13,7 +13,7 @@ use t::Frontend;
 # Bailout if we're on a broken dev version of Test::Harness
 #--------------------------------------------------------------------------#
 require Test::Harness;
-if ( Test::Harness->VERSION eq "2.99_01" ) {
+if ( $Test::Harness::VERSION eq "2.99_01" ) {
     warn "Detected Test::Harness 2.99_01\n";
     BAIL_OUT("Your Test::Harness conflicts with CPAN::Reporter")
 }
