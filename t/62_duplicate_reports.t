@@ -73,7 +73,7 @@ for my $c ( @cases ) {
     $expected_history_lines++ if not $c->{is_dup}
 }
 
-plan tests => 4 + $expected_history_lines 
+plan tests => 5 + $expected_history_lines 
                 + @cases * ( test_fake_config_plan() + test_dispatch_plan() );
 
 #--------------------------------------------------------------------------#
@@ -81,6 +81,7 @@ plan tests => 4 + $expected_history_lines
 #--------------------------------------------------------------------------#
 
 require_ok('CPAN::Reporter');
+require_ok('CPAN::Reporter::History');
 require_ok('Test::Reporter');
 
 my @results;
@@ -115,7 +116,7 @@ for my $case ( @cases ) {
 # Check history file format
 #--------------------------------------------------------------------------#
 
-my $history_fh = CPAN::Reporter::_open_history_file('<');
+my $history_fh = CPAN::Reporter::History::_open_history_file('<');
 
 ok( $history_fh,
     "found history file"

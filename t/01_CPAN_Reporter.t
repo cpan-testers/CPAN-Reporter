@@ -29,11 +29,15 @@ my @api = qw(
     test 
 );
 
-plan tests =>  1 + @api ;
+my @modules = qw(
+    CPAN::Reporter
+    CPAN::Reporter::Config
+    CPAN::Reporter::History
+);
 
-require_ok( 'CPAN::Reporter' );
+plan tests =>  @api + @modules;
 
-for my $fcn ( @api ) {
-    can_ok( 'CPAN::Reporter', $fcn );
-}
+require_ok( $_ ) for @modules;
+
+can_ok( 'CPAN::Reporter', $_ ) for @api;
 

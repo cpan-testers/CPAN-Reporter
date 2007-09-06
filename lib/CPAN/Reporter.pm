@@ -4,10 +4,8 @@ use strict;
 $CPAN::Reporter::VERSION = '0.99_08'; 
 
 use Config;
-use Config::Tiny ();
 use CPAN ();
 use CPAN::Version ();
-use Fcntl qw/:flock :seek/;
 use File::Basename qw/basename/;
 use File::Find ();
 use File::HomeDir ();
@@ -20,137 +18,14 @@ use Symbol qw/gensym/;
 use Tee qw/tee/;
 use Test::Reporter ();
 use CPAN::Reporter::Config ();
-
-#--------------------------------------------------------------------------#
-# Some platforms don't implement flock, so fake it if necessary
-#--------------------------------------------------------------------------#
-
-BEGIN {
-    eval {
-        my $fh = File::Temp->new() or return;
-        flock $fh, LOCK_EX;
-    };
-    if ( $@ ) {
-        *CORE::GLOBAL::flock = sub () { 1 };
-    }
-}
+use CPAN::Reporter::History ();
 
 #--------------------------------------------------------------------------#
 # public API
 #--------------------------------------------------------------------------#
 
 sub configure {
-    my $config_dir = _get_config_dir();
-    my $config_file = _get_config_file();
-    
-    mkpath $config_dir if ! -d $config_dir;
-    if ( ! -d $config_dir ) {
-        $CPAN::Frontend->myprint(
-            "\nCouldn't create configuration directory '$config_dir': $!"
-        );
-        return;
-    }
-
-    my $config;
-    my $existing_options;
-    
-    # explain grade:action pairs
-    $CPAN::Frontend->myprint( CPAN::Reporter::Config::_grade_action_prompt() );
-    
-    # read or create
-    if ( -f $config_file ) {
-        $CPAN::Frontend->myprint(
-            "\nFound your CPAN::Reporter config file at:\n$config_file\n"
-        );
-        $config = _open_config_file();
-        # if we can't read it, bail out
-        if ( ! $config ) {
-            $CPAN::Frontend->mywarn("\n
-                CPAN::Reporter configuration will not be changed\n");
-            return;
-        }
-        # clone what's in the config file
-        $existing_options = { %{$config->{_}} } if $config;
-        $CPAN::Frontend->myprint(
-            "\nUpdating your CPAN::Reporter configuration settings:\n"
-        );
-    }
-    else {
-        $CPAN::Frontend->myprint(
-            "\nNo CPAN::Reporter config file found; creating a new one.\n"
-        );
-        $config = Config::Tiny->new();
-    }
-    
-    my %spec = CPAN::Reporter::Config::_config_spec();
-
-    for my $k ( CPAN::Reporter::Config::_config_order() ) {
-        my $option_data = $spec{$k};
-        $CPAN::Frontend->myprint( "\n" . $option_data->{info}. "\n");
-        # options with defaults are mandatory
-        if ( defined $option_data->{default} ) {
-            # if we have a default, always show as a sane recommendation
-            if ( length $option_data->{default} ) {
-                $CPAN::Frontend->myprint(
-                    "(Recommended: '$option_data->{default}')\n\n"
-                );
-            }
-            # repeat until validated
-            PROMPT:
-            while ( defined ( 
-                my $answer = CPAN::Shell::colorable_makemaker_prompt(
-                    "$k?", 
-                    $existing_options->{$k} || $option_data->{default} 
-                )
-            )) {
-                if  ( ! $option_data->{validate} ||
-                        $option_data->{validate}->($k, $answer)
-                    ) {
-                    $config->{_}{$k} = $answer;
-                    last PROMPT;
-                }
-            }
-        }
-        else {
-            # only initialize options without default if
-            # answer matches non white space and validates, 
-            # otherwise reset it
-            my $answer = CPAN::Shell::colorable_makemaker_prompt( 
-                "$k?", 
-                $existing_options->{$k} || q{} 
-            ); 
-            if ( $answer =~ /\S/ ) {
-                $config->{_}{$k} = $answer;
-            }
-            else {
-                delete $config->{_}{$k};
-            }
-        }
-        # delete existing as we proceed so we know what's left
-        delete $existing_options->{$k};
-    }
-
-    # initialize remaining existing options
-    $CPAN::Frontend->myprint(
-        "\nYour CPAN::Reporter config file also contains these advanced " .
-          "options:\n\n") if keys %$existing_options;
-    for my $k ( keys %$existing_options ) {
-        $config->{_}{$k} = CPAN::Shell::colorable_makemaker_prompt( 
-            "$k?", $existing_options->{$k} 
-        ); 
-    }
-
-    $CPAN::Frontend->myprint( 
-        "\nWriting CPAN::Reporter config file to '$config_file'.\n"
-    );
-    if ( $config->write( $config_file ) ) {
-        return $config->{_};
-    }
-    else {
-        $CPAN::Frontend->mywarn( "\nError writing config file to '$config_file':" . 
-             Config::Tiny->errstr(). "\n");
-        return;
-    }
+    goto &CPAN::Reporter::Config::configure; 
 }
 
 sub grade_make {
@@ -429,9 +304,10 @@ sub _dispatch_report {
     );
 
     # Get configuration options
-    my $config_obj = _open_config_file();
+    my $config_obj = CPAN::Reporter::Config::_open_config_file();
     my $config;
-    $config = _get_config_options( $config_obj ) if $config_obj;
+    $config = CPAN::Reporter::Config::_get_config_options( $config_obj ) 
+        if $config_obj;
     if ( ! $config->{email_from} ) {
         $CPAN::Frontend->mywarn( << "EMAIL_REQUIRED");
         
@@ -472,7 +348,7 @@ END_BAD_DISTNAME
     $tr->distribution( $result->{dist_name}  );
 
     # Skip if duplicate and not sending duplicates
-    my $is_duplicate = _is_duplicate( $tr->subject );
+    my $is_duplicate = CPAN::Reporter::History::_is_duplicate( $tr->subject );
     if ( $is_duplicate ) {
         if ( _prompt( $config, "send_duplicates", $tr->grade) =~ /^n/ ) {
             $CPAN::Frontend->mywarn(<< "DUPLICATE_REPORT");
@@ -518,7 +394,8 @@ DUPLICATE_REPORT
         $CPAN::Frontend->myprint( "Sending test report with '" . $tr->grade . 
               "' to " . join(q{, }, $tr->address, @cc) . "\n");
         if ( $tr->send( @cc ) ) {
-                _record_history( $tr->subject ) if not $is_duplicate;
+            CPAN::Reporter::History::_record_history( $tr->subject ) 
+                if not $is_duplicate;
         }
         else {
             $CPAN::Frontend->mywarn( $tr->errstr. "\n");
@@ -601,71 +478,6 @@ sub _format_distname {
     return $basename;
 }
 
-#--------------------------------------------------------------------------#
-# _format_history -- append perl version to subject
-#--------------------------------------------------------------------------#
-
-sub _format_history {
-    my $line = shift(@_) . " $]"; # append perl version to subject
-    $line .= " patch $Config{perl_patchlevel}" if $Config{perl_patchlevel};
-    return $line . "\n";
-}
-
-#--------------------------------------------------------------------------#
-# _get_config_dir
-#--------------------------------------------------------------------------#
-
-sub _get_config_dir {
-    return ( $^O eq 'MSWin32' )
-        ? File::Spec->catdir(File::HomeDir->my_documents, ".cpanreporter")
-        : File::Spec->catdir(File::HomeDir->my_home, ".cpanreporter") ;
-}
-
-#--------------------------------------------------------------------------#
-# _get_config_file
-#--------------------------------------------------------------------------#
-
-sub _get_config_file {
-    return File::Spec->catdir( _get_config_dir, "config.ini" );
-}
-
-#--------------------------------------------------------------------------#
-# _get_config_options
-#--------------------------------------------------------------------------#
-
-sub _get_config_options {
-    my $config = shift;
-    # extract and return valid options, with fallback to defaults
-    my %spec = CPAN::Reporter::Config::_config_spec();
-    my %active;
-    OPTION: for my $option ( keys %spec ) {
-        if ( exists $config->{_}{$option} ) {
-            my $val = $config->{_}{$option};
-            if  (   $spec{$option}{validate} &&
-                    ! $spec{$option}{validate}->($option, $val)
-                ) {
-                    $CPAN::Frontend->mywarn( "\nInvalid option '$val' in '$option'. Using default instead.\n\n" );
-                    $active{$option} = $spec{$option}{default};
-                    next OPTION;
-            }
-            $active{$option} = $val;
-        }
-        else {
-            $active{$option} = $spec{$option}{default}
-                if defined $spec{$option}{default};
-        }
-    }
-    return \%active;
-}
-
-
-#--------------------------------------------------------------------------#
-# _get_history_file
-#--------------------------------------------------------------------------#
-
-sub _get_history_file {
-    return File::Spec->catdir( _get_config_dir, "history.db" );
-}
 
 #--------------------------------------------------------------------------#
 # _has_tests
@@ -741,22 +553,6 @@ sub _init_result {
 }
 
 #--------------------------------------------------------------------------#
-# _is_duplicate
-#--------------------------------------------------------------------------#
-
-sub _is_duplicate {
-    my $subject = _format_history( shift );
-    my $history = _open_history_file('<') or return;
-    my $found = 0;
-    flock $history, LOCK_SH;
-    while ( defined (my $line = <$history>) ) {
-        $found++, last if $line eq $subject
-    }
-    $history->close;
-    return $found;
-}
-
-#--------------------------------------------------------------------------#
 # _is_make
 #--------------------------------------------------------------------------#
 
@@ -778,44 +574,6 @@ sub _max_length {
 }
 
     
-#--------------------------------------------------------------------------#
-# _open_config_file
-#--------------------------------------------------------------------------#
-
-sub _open_config_file {
-    my $config_file = _get_config_file();
-    my $config = Config::Tiny->read( $config_file )
-        or $CPAN::Frontend->mywarn("Couldn't read CPAN::Reporter configuration file " .
-                "'$config_file': " . Config::Tiny->errstr() . "\n");
-    return $config; 
-}
-
-#--------------------------------------------------------------------------#
-# _open_history_file
-#--------------------------------------------------------------------------#
-
-sub _open_history_file {
-    my $mode = shift || '<';
-    my $history_filename = _get_history_file();
-    my $file_exists = -f $history_filename;
-
-    # shortcut if reading and doesn't exist
-    return if ( $mode eq '<' && ! $file_exists );
-
-    # open it in the desired mode
-    my $history = IO::File->new( $history_filename, $mode )
-        or $CPAN::Frontend->mywarn("Couldn't open CPAN::Reporter history file "
-        . "'$history_filename': $!\n");
-    
-    # if writing and it didn't exist before, initialize with header
-    if ( substr($mode,0,1) eq '>' && ! $file_exists ) {
-        print {$history} "# Generated by CPAN::Reporter " .
-                         CPAN::Reporter->VERSION, "\n";
-    }
-
-    return $history; 
-}
-
 #--------------------------------------------------------------------------#
 # _parse_tap_harness
 # 
@@ -989,23 +747,6 @@ sub _prompt {
         $prompt = $action;
     }
     return lc $prompt;
-}
-
-#--------------------------------------------------------------------------#
-# _record_history
-#--------------------------------------------------------------------------#
-
-sub _record_history {
-    my $subject = _format_history( shift );
-    my $history = _open_history_file('>>') or return;
-
-    flock( $history, LOCK_EX );
-    seek( $history, 0, SEEK_END );
-    $history->print( $subject );
-    flock( $history, LOCK_UN );
-    
-    $history->close;
-    return;
 }
 
 #--------------------------------------------------------------------------#

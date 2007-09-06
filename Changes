@@ -4,8 +4,10 @@ Revision history for Perl module CPAN::Reporter
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
 
-- More robust check for Test::Harness 2.99_01 (works even with out-of-date
+    - More robust check for Test::Harness 2.99_01 (works even with out-of-date
       releases of version.pm)
+
+    - More refactoring of config/history functions into separate modules
 
 0.99_07 Wed Sep  5 18:20:37 EDT 2007
 

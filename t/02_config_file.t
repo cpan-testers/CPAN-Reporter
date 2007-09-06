@@ -12,7 +12,7 @@ use File::Spec;
 use File::Temp qw/tempdir/;
 use t::Frontend;
 
-plan tests => 33;
+plan tests => 34;
 #plan 'no_plan';
 
 #--------------------------------------------------------------------------#
@@ -57,12 +57,13 @@ package main;
 #--------------------------------------------------------------------------#
 
 require_ok('CPAN::Reporter');
+require_ok('CPAN::Reporter::Config');
 
-is( CPAN::Reporter::_get_config_dir(), $config_dir,
+is( CPAN::Reporter::Config::_get_config_dir(), $config_dir,
     "get config dir path"
 );
 
-is( CPAN::Reporter::_get_config_file(), $config_file,
+is( CPAN::Reporter::Config::_get_config_file(), $config_file,
     "get config file path"
 );
 
@@ -70,7 +71,7 @@ ok( ! -f $config_file,
     "no config file yet"
 );
 
-is( capture(sub{CPAN::Reporter::_open_config_file()}, \$stdout, \$stderr),
+is( capture(sub{CPAN::Reporter::Config::_open_config_file()}, \$stdout, \$stderr),
     undef,
     "opening non-existent file returns undef"
 );
@@ -250,7 +251,7 @@ SKIP:
     $tiny = Config::Tiny->read( $config_file );
     my $parsed_config;
     capture sub{         
-        $parsed_config = CPAN::Reporter::_get_config_options( $tiny );
+        $parsed_config = CPAN::Reporter::Config::_get_config_options( $tiny );
     }, \$stdout, \$stderr;
 
     like( $stdout, "/Invalid option 'invalid:invalid' in 'cc_author'. Using default instead./",
