@@ -41,6 +41,7 @@ t/61_bad_dist_names.t
 t/62_duplicate_reports.t
 t/70_darwin_move_config.t
 t/71_missing_config.t
+t/72_rename_history.t
 t/dist/make-Fail/Build.PL
 t/dist/make-Fail/Die.PL
 t/dist/make-Fail/lib/Bogus/Module.pm
@@ -205,6 +206,8 @@ t/dist/test.pl-PrereqPerl-OK/Makefile.PL
 t/dist/test.pl-PrereqPerl-OK/test.pl
 t/Frontend.pm
 t/Helper.pm
+t/history/history.db
+t/history/reports-sent.db
 t/MockCPANDist.pm
 t/perl5lib/Bogus/Complex.pm
 t/perl5lib/Bogus/Conflict.pm

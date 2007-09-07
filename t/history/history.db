@@ -1,0 +1,4 @@
+PASS File-Marker-0.12 i686-linux-64int-ld 2.6.17-10-generic 5.008008
+FAIL DateTime-0.38 i686-linux-64int-ld 2.6.17-10-generic 5.008
+NA DateTime-0.38 i686-linux-64int-ld 2.6.17-10-generic 5.00504
+PASS File-Marker-0.12 i686-linux-64int-ld 2.6.20-16-generic 5.009005 patch 31706

@@ -4,6 +4,9 @@ Revision history for Perl module CPAN::Reporter
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
 
+    * History file of sent reports has a new name ('reports-sent.db') and a 
+      new format with phase of testing for report ('PL', 'make', 'test')
+
     - More robust check for Test::Harness 2.99_01 (works even with out-of-date
       releases of version.pm)
 

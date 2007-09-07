@@ -25,11 +25,11 @@ use CPAN::Reporter::History ();
 #--------------------------------------------------------------------------#
 
 sub configure {
-    goto &CPAN::Reporter::Config::configure; 
+    goto &CPAN::Reporter::Config::_configure; 
 }
 
 sub grade_make {
-    my $result = _init_result( @_ );
+    my $result = _init_result( 'make', @_ );
     _compute_make_grade($result);
     _print_grade_msg($result->{is_make} ? $Config{make} : 'Build' , $result);
     if( $result->{grade} ne 'pass' ) {
@@ -39,7 +39,7 @@ sub grade_make {
 }
 
 sub grade_PL {
-    my $result = _init_result( @_ );
+    my $result = _init_result( 'PL', @_ );
     _compute_PL_grade($result);
     _print_grade_msg($result->{PL_file} , $result);
     if( $result->{grade} ne 'pass' ) {
@@ -49,7 +49,7 @@ sub grade_PL {
 }
 
 sub grade_test {
-    my $result = _init_result( @_ );
+    my $result = _init_result( 'test', @_ );
     _compute_test_grade($result);
     if ( $result->{grade} eq 'discard' ) {
         $CPAN::Frontend->mywarn( 
@@ -348,7 +348,7 @@ END_BAD_DISTNAME
     $tr->distribution( $result->{dist_name}  );
 
     # Skip if duplicate and not sending duplicates
-    my $is_duplicate = CPAN::Reporter::History::_is_duplicate( $tr->subject );
+    my $is_duplicate = CPAN::Reporter::History::_is_duplicate( $result );
     if ( $is_duplicate ) {
         if ( _prompt( $config, "send_duplicates", $tr->grade) =~ /^n/ ) {
             $CPAN::Frontend->mywarn(<< "DUPLICATE_REPORT");
@@ -394,7 +394,7 @@ DUPLICATE_REPORT
         $CPAN::Frontend->myprint( "Sending test report with '" . $tr->grade . 
               "' to " . join(q{, }, $tr->address, @cc) . "\n");
         if ( $tr->send( @cc ) ) {
-            CPAN::Reporter::History::_record_history( $tr->subject ) 
+            CPAN::Reporter::History::_record_history( $result ) 
                 if not $is_duplicate;
         }
         else {
@@ -528,9 +528,10 @@ sub _has_recursive_make {
 #--------------------------------------------------------------------------#
 
 sub _init_result {
-    my ($dist, $system_command, $output, $exit_value) = @_;
+    my ($phase, $dist, $system_command, $output, $exit_value) = @_;
     
     my $result = {
+        phase => $phase,
         dist => $dist,
         command => $system_command,
         is_make => _is_make( $system_command ),

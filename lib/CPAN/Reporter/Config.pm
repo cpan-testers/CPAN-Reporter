@@ -45,7 +45,7 @@ HERE
 # Public
 #--------------------------------------------------------------------------#
 
-sub configure {
+sub _configure {
     my $config_dir = _get_config_dir();
     my $config_file = _get_config_file();
     

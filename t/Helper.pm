@@ -574,6 +574,7 @@ sub _run_report {
     eval {
         capture sub {
             $result = CPAN::Reporter::_init_result( 
+                "test",
                 $case->{dist},
                 $case->{command},
                 $case->{output},

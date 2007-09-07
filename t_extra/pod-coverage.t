@@ -11,4 +11,19 @@ eval "use Pod::Coverage $min_pc";
 plan skip_all => "Pod::Coverage $min_pc required for testing POD coverage"
     if $@;
 
-all_pod_coverage_ok( { pod_from => 'lib/CPAN/Reporter/API.pod' } );
+my @modules = all_modules();
+
+plan tests => scalar @modules;
+
+my %doc_map = (
+    'CPAN::Reporter' => 'CPAN::Reporter::API'
+);
+
+for my $mod ( @modules ) {
+    my %opts;
+    if ( my $doc = $doc_map{$mod} ) {
+        $doc =~ s{::}{/}g;
+        $opts{pod_from} = "blib/lib/$doc\.pod";
+    }
+    pod_coverage_ok( $mod, \%opts );
+}
