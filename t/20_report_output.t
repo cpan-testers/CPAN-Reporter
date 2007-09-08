@@ -9,6 +9,7 @@ use Test::More;
 use t::MockCPANDist;
 use t::Helper;
 use t::Frontend;
+use Config;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -25,7 +26,7 @@ my ($got, $prereq_pm);
 
 my %standard_case_info = (
     phase => "test",
-    command => "make test",
+    command => "$Config{make} test",
 );
 
 my @cases = (

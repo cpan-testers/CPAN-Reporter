@@ -9,6 +9,7 @@ use Test::More;
 use t::MockCPANDist;
 use t::Helper;
 use t::Frontend;
+use Probe::Perl;
 
 #--------------------------------------------------------------------------#
 # We need Config to be writeable, so modify the tied hash
@@ -25,6 +26,9 @@ BEGIN {
 # Fixtures
 #--------------------------------------------------------------------------#
 
+my $make = $Config{make};
+my $perl = Probe::Perl->find_perl_interpreter();
+
 my %mock_dist_info = ( 
     prereq_pm       => {
         'File::Spec' => 0,
@@ -40,7 +44,7 @@ my @cases = (
         version => 1.23,
         grade => "fail",
         phase => "PL",
-        command => "perl Makefile.PL",
+        command => "$perl Makefile.PL",
         send_dup => "no",
         is_dup => 0,
     },
@@ -50,7 +54,7 @@ my @cases = (
         version => 1.23,
         grade => "fail",
         phase => "PL",
-        command => "perl Makefile.PL",
+        command => "$perl Makefile.PL",
         send_dup => "no",
         is_dup => 1,
     },
@@ -60,7 +64,7 @@ my @cases = (
         version => 1.23,
         grade => "na",
         phase => "PL",
-        command => "perl Makefile.PL",
+        command => "$perl Makefile.PL",
         send_dup => "no",
         is_dup => 0,
     },
@@ -70,7 +74,7 @@ my @cases = (
         version => 1.23,
         grade => "fail",
         phase => "make",
-        command => "make",
+        command => "$make",
         send_dup => "no",
         is_dup => 0,
     },
@@ -80,7 +84,7 @@ my @cases = (
         version => 1.23,
         grade => "fail",
         phase => "make",
-        command => "make",
+        command => "$make",
         send_dup => "no",
         is_dup => 1,
     },
@@ -90,7 +94,7 @@ my @cases = (
         version => 1.23,
         grade => "unknown",
         phase => "test",
-        command => "make test",
+        command => "$make test",
         send_dup => "no",
         is_dup => 0,
     },
@@ -100,7 +104,7 @@ my @cases = (
         version => 1.23,
         grade => "fail",
         phase => "test",
-        command => "make test",
+        command => "$make test",
         send_dup => "no",
         is_dup => 0,
     },
@@ -110,7 +114,7 @@ my @cases = (
         version => 1.23,
         grade => "fail",
         phase => "test",
-        command => "make test",
+        command => "$make test",
         send_dup => "yes",
         is_dup => 1,
     },
@@ -120,7 +124,7 @@ my @cases = (
         version => 1.24,
         grade => "fail",
         phase => "test",
-        command => "make test",
+        command => "$make test",
         send_dup => "no",
         is_dup => 0,
     },

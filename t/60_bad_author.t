@@ -9,6 +9,7 @@ use Test::More;
 use t::MockCPANDist qw/bad_author/;
 use t::Helper;
 use t::Frontend;
+use Config;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -52,7 +53,7 @@ my $case = {
     phase => "test",
     expected_grade => "fail",
     dist => $mock_dist,
-    command => "make test"
+    command => "$Config{make} test"
 };
 
 test_report( $case );

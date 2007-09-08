@@ -9,7 +9,6 @@ use Config::Tiny;
 use IO::CaptureOutput qw/capture/;
 use File::Copy::Recursive qw/fcopy/;
 use File::Path qw/mkpath/;
-use File::Slurp qw/read_file/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
 use File::Temp qw/tempdir/;
 use t::Frontend;
@@ -67,7 +66,13 @@ sub re_require {
 }
 
 sub mtime {
- return (stat shift)[9];
+    return (stat shift)[9];
+}
+
+sub read_file {
+    my $fh = IO::File->new(shift);
+    local $/;
+    return scalar <$fh>;
 }
 
 #--------------------------------------------------------------------------##
