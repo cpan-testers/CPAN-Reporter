@@ -92,11 +92,12 @@ sub _format_history {
     my ($result) = @_;
     my $phase = $result->{phase};
     my $grade = uc $result->{grade};
+    my $dist_name = $result->{dist_name};
     my $perlver = $^V ? sprintf("perl-%vd", $^V) : "perl-$]";
     $perlver .= " patch $Config{perl_patchlevel}" 
         if $Config{perl_patchlevel};
     my $arch = "$Config{archname} $Config{osvers}";    
-    return "$phase $grade ($perlver) $arch\n";
+    return "$phase $grade $dist_name ($perlver) $arch\n";
 }
 
 #--------------------------------------------------------------------------#

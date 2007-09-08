@@ -26,44 +26,103 @@ BEGIN {
 #--------------------------------------------------------------------------#
 
 my %mock_dist_info = ( 
-    pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
-    prereq_pm => {},
+    prereq_pm       => {
+        'File::Spec' => 0,
+    },
     author_id       => "JOHNQP",
     author_fullname => "John Q. Public",
 );
-
-my $command = "make test";
-
-# Includes both old and new T::H failure text
-my $mock_output = << 'HERE',
-t\09_option_parsing....
-t\09_option_parsing....NOK 2#   Failed test 'foo'
-DIED. FAILED test 2
-Result: FAIL
-Failed 1/1 test programs. 1/2 subtests failed.
-HERE
     
 my @cases = (
     {
-        label => "first run",
+        label => "first PL failure",
+        name => "PL-Fail",
+        version => 1.23,
+        grade => "fail",
+        phase => "PL",
+        command => "perl Makefile.PL",
         send_dup => "no",
         is_dup => 0,
     },
     {
-        label => "second run (no duplicates)",
+        label => "second PL failure",
+        name => "PL-Fail",
+        version => 1.23,
+        grade => "fail",
+        phase => "PL",
+        command => "perl Makefile.PL",
         send_dup => "no",
         is_dup => 1,
     },
     {
-        label => "third run (send duplicates)",
+        label => "first PL unsupported",
+        name => "PL-NoSupport",
+        version => 1.23,
+        grade => "na",
+        phase => "PL",
+        command => "perl Makefile.PL",
+        send_dup => "no",
+        is_dup => 0,
+    },
+    {
+        label => "first make failure",
+        name => "make-Fail",
+        version => 1.23,
+        grade => "fail",
+        phase => "make",
+        command => "make",
+        send_dup => "no",
+        is_dup => 0,
+    },
+    {
+        label => "second make failure",
+        name => "make-Fail",
+        version => 1.23,
+        grade => "fail",
+        phase => "make",
+        command => "make",
+        send_dup => "no",
+        is_dup => 1,
+    },
+    {
+        label => "first test unknown",
+        name => "NoTestFiles",
+        version => 1.23,
+        grade => "unknown",
+        phase => "test",
+        command => "make test",
+        send_dup => "no",
+        is_dup => 0,
+    },
+    {
+        label => "first test failure",
+        name => "t-Fail",
+        version => 1.23,
+        grade => "fail",
+        phase => "test",
+        command => "make test",
+        send_dup => "no",
+        is_dup => 0,
+    },
+    {
+        label => "second test failure (but send dup)",
+        name => "t-Fail",
+        version => 1.23,
+        grade => "fail",
+        phase => "test",
+        command => "make test",
         send_dup => "yes",
         is_dup => 1,
     },
     {
-        label => "fourth run (with perl_patchlevel)",
+        label => "third test failure (new version)",
+        name => "t-Fail",
+        version => 1.24,
+        grade => "fail",
+        phase => "test",
+        command => "make test",
         send_dup => "no",
         is_dup => 0,
-        patch => 314159,
     },
 );
 
@@ -73,8 +132,23 @@ for my $c ( @cases ) {
     $expected_history_lines++ if not $c->{is_dup}
 }
 
-plan tests => 5 + $expected_history_lines 
+plan tests => 4 + $expected_history_lines 
                 + @cases * ( test_fake_config_plan() + test_dispatch_plan() );
+
+#--------------------------------------------------------------------------#
+# subs
+#--------------------------------------------------------------------------#
+
+sub history_format {
+    my ($case) = @_;
+    my ($phase, $grade, $dist) = @{%$case}{qw/phase grade dist/};
+    $grade = uc $grade;
+    my $perl_ver = $^V ? sprintf("perl-%vd",$^V) : "perl-$]";
+    $perl_ver .= " patch $Config{perl_patchlevel}" if $Config{perl_patchlevel};
+    my $arch = "$Config{archname} $Config{osvers}";
+    my $dist_name = CPAN::Reporter::_format_distname($dist);
+    return "$phase $grade $dist_name ($perl_ver) $arch\n";
+}
 
 #--------------------------------------------------------------------------#
 # tests
@@ -82,33 +156,25 @@ plan tests => 5 + $expected_history_lines
 
 require_ok('CPAN::Reporter');
 require_ok('CPAN::Reporter::History');
-require_ok('Test::Reporter');
 
 my @results;
 
 for my $case ( @cases ) {
-    # localize Config in same scope if there is one
+    # localize Config in same scope if there is a patchlevel
     local $Config{perl_patchlevel} = $case->{patch} if $case->{patch};
     # and set it once localized 
 
     test_fake_config( send_duplicates => $case->{send_dup} );
-    $case->{dist} = t::MockCPANDist->new( %mock_dist_info );
-    $case->{command} = $command;
-    $case->{output} = [ map {$_ . "\n" } 
-                        split( "\n", $mock_output) ];
+    $case->{dist} = t::MockCPANDist->new( 
+        %mock_dist_info,
+        pretty_id => "JOHNQP/Bogus-Module-$case->{version}.tar.gz",
+    );
     test_dispatch( 
         $case, 
         will_send => (! $case->{is_dup}) || ( $case->{send_dup} eq 'yes' )
     );
     if ( not $case->{is_dup} ) {
-        my $fake_dist = t::MockCPANDist->new( %mock_dist_info );
-        my $tr = Test::Reporter->new;
-        $tr->distribution( CPAN::Reporter::_format_distname($fake_dist) );
-        $tr->grade( 'FAIL' );
-        my $line = $tr->subject . " $]";
-        $line .= " patch $Config{perl_patchlevel}" 
-            if $Config{perl_patchlevel};
-        push @results, $line . "\n";
+        push @results, history_format($case);
     }
 }
 

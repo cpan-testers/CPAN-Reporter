@@ -10,7 +10,7 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
-- Test that duplicate checks are specific to phase 
+- Fix tests that broke from t/Helper changes to _run_report
 
 # Medium priority 
 

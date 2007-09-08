@@ -21,15 +21,13 @@ my %mock_dist_info = (
     author_fullname => "John Q. Public",
 );
 
-my $command = "make test";
+my %standard_case_info = (
+    name => "t-Fail",
+    grade => "fail",
+    phase => "test",
+    command => "make test",
+);
 
-my $mock_output = << 'HERE',
-t\09_option_parsing....
-t\09_option_parsing....NOK 2#   Failed test 'foo'
-DIED. FAILED test 2
-Failed 1/1 test programs. 1/2 subtests failed.
-HERE
-    
 my @cases = (
     {
         label => "proper distribution name (tar.gz)",
@@ -108,9 +106,7 @@ test_fake_config();
 for my $case ( @cases ) {
     $case->{dist} = t::MockCPANDist->new( %mock_dist_info );
     $case->{dist}{pretty_id} = $case->{pretty_id};
-    $case->{command} = $command;
-    $case->{output} = [ map {$_ . "\n" } 
-                        split( "\n", $mock_output) ];
+    $case->{$_} = $standard_case_info{$_} for keys %standard_case_info;
     test_dispatch( $case, will_send => $case->{will_send} );
 }
 
