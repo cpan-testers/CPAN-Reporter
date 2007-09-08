@@ -14,7 +14,6 @@ use File::Spec ();
 use File::Temp ();
 use IO::File ();
 use Probe::Perl ();
-use Symbol qw/gensym/;
 use Tee qw/tee/;
 use Test::Reporter ();
 use CPAN::Reporter::Config ();
