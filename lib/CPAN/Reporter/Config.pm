@@ -1,5 +1,5 @@
 package CPAN::Reporter::Config;
-$VERSION = '0.99_08';
+$VERSION = '0.99_09';
 use strict; 
 use Config::Tiny ();
 use File::HomeDir (); 
