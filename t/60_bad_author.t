@@ -22,16 +22,6 @@ my $mock_dist = t::MockCPANDist->new(
     author_fullname => "John Q. Public",
 );
 
-my $command = "make test";
-
-# Includes both old and new T::H result text
-my $report_output =  << 'HERE';
-t\01_Bogus_Module....ok
-All tests successful.
-Result: PASS
-Files=1, Tests=3,  0 wallclock secs ( 0.00 cusr +  0.00 csys =  0.00 CPU)
-HERE
-
 my ($got, $prereq_pm);
 
 plan tests => 3 + test_fake_config_plan() + test_report_plan();
@@ -44,17 +34,9 @@ require_ok('CPAN::Reporter');
 
 test_fake_config();
 
-my $case = {};
-$case->{label} = "bad author";
-$case->{expected_grade} = "pass";
-$case->{dist} = $mock_dist;
-$case->{dist}{prereq_pm} = $case->{prereq_pm};
-$case->{command} = $command;
-$case->{output} = [ map {$_ . "\n" } 
-                    split( "\n", $report_output) ];
-$case->{original} = $report_output;
-
-my $result = test_report( $case ); 
+my $result = CPAN::Reporter::_init_result( 
+    "test", $mock_dist, "make test", [], 0  
+); 
  
 is( $result->{author}, "Author",
     "generic author name used"
@@ -64,4 +46,13 @@ is( $result->{author_id}, q{},
     "author id left blank"
 );
 
+my $case = {
+    label => "bad author",
+    name => "t-Fail",
+    phase => "test",
+    expected_grade => "fail",
+    dist => $mock_dist,
+    command => "make test"
+};
 
+test_report( $case );

@@ -429,14 +429,12 @@ sub test_report {
     my $prereq = CPAN::Reporter::_prereq_report( $case->{dist} );
     my $msg_re = $report_para{ $expected_grade };
 
-    my ($result, $stdout, $stderr, $err) = _run_report( $case );
+    my $pushd = pushd( _ok_clone_dist_dir( $case->{name} ) );
+                
+    my ($stdout, $stderr, $err, $test_output) = _run_report( $case );
     
     is( $err, q{}, 
         "report for $label ran without error" 
-    );
-
-    is( $result->{grade}, $expected_grade,
-        "result graded correctly"
     );
 
     ok( defined $msg_re && length $msg_re,
@@ -469,7 +467,8 @@ sub test_report {
         "toolchain versions found for $label"
     );
     
-    like( $t::Helper::sent_report, '/' . quotemeta($case->{original}) . '/ms',
+    my $joined_output = join("", @$test_output);
+    like( $t::Helper::sent_report, '/' . quotemeta($joined_output) . '/ms',
         "test output found for $label"
     );
 
@@ -482,7 +481,7 @@ sub test_report {
         "cc list correct"
     );
 
-    return $result;
+    return;
 };
 
 #--------------------------------------------------------------------------#
@@ -576,7 +575,7 @@ sub _run_report {
     # automate CPAN::Reporter prompting
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
     
-    my ($stdout, $stderr);
+    my ($stdout, $stderr, $output, $exit_value);
     
     $t::Helper::sent_report = undef;
     @t::Helper::cc_list = ();
@@ -590,7 +589,7 @@ sub _run_report {
             if ( $phase eq 'test' ) {
                 system("$make");
             }
-            my ($output, $exit_value) = 
+            ($output, $exit_value) = 
                 CPAN::Reporter::record_command( $case->{command} );
             no strict 'refs';
             &{"CPAN::Reporter::grade_$phase"}(
@@ -606,7 +605,7 @@ sub _run_report {
         _diag_output( $stdout, $stderr );
     }
 
-    return ($stdout, $stderr, $@);
+    return ($stdout, $stderr, $@, $output);
 }
 
 #--------------------------------------------------------------------------#

@@ -21,62 +21,29 @@ my $mock_dist = t::MockCPANDist->new(
     author_fullname => "John Q. Public",
 );
 
-my $command = "make test"; 
-
-# includes new and old Test::Harness strings
-my %report_output = (
-    'pass' => << 'HERE',
-t\01_CPAN_Reporter....ok
-Result: PASS
-All tests successful.
-Files=1, Tests=3,  0 wallclock secs ( 0.00 cusr +  0.00 csys =  0.00 CPU)
-HERE
-
-    'fail' => << 'HERE',
-t\09_option_parsing....
-t\09_option_parsing....NOK 2#   Failed test 'foo'
-DIED. FAILED test 2
-Result: FAIL
-Failed 1/1 test programs. 1/2 subtests failed.
-HERE
-
-    'unknown' => << 'HERE',
-'No tests defined for Bogus::Module extension.'
-}
-HERE
-
-    'na' => << 'HERE',
-OS unsupported
-HERE
-
-);
-    
 my ($got, $prereq_pm);
+
+my %standard_case_info = (
+    phase => "test",
+    command => "make test",
+);
 
 my @cases = (
     {
         label => "pass",
-        prereq_pm => {
-            'File::Spec' => 0,
-        },
+        name => "t-Pass",
     },
     {
         label => "fail",
-        prereq_pm => {
-            'File::Spec' => 0,
-        },
+        name => "t-Fail",
     },
     {
         label => "unknown",
-        prereq_pm => {
-            'File::Spec' => 0,
-        },
+        name => "NoTestFiles",
     },
     {
         label => "na",
-        prereq_pm => {
-            'perl' => 7,
-        },
+        name => "t-NoSupport",
     },
 );
 
@@ -92,17 +59,12 @@ require_ok('CPAN::Reporter');
 
 test_fake_config( send_report => "yes" );
 
-$prereq_pm = CPAN::Reporter::_prereq_report( $mock_dist );
-
 for my $case ( @cases ) {
     $case->{expected_grade} = $case->{label};
     $case->{dist} = $mock_dist;
-    $case->{dist}{prereq_pm} = $case->{prereq_pm};
-    $case->{command} = $command;
-    $case->{output} = [ map {$_ . "\n" } 
-                        split( "\n", $report_output{$case->{label}}) ];
-    $case->{exit_value} = $case->{label} eq 'pass' ? 0 : 1 << 8 ;
-    $case->{original} = $report_output{$case->{label}};
+    $case->{$_} = $standard_case_info{$_} for keys %standard_case_info;
+#    $case->{exit_value} = $case->{label} eq 'pass' ? 0 : 1 << 8 ;
+#    $case->{original} = $report_output{$case->{label}};
     test_report( $case );
 }
 

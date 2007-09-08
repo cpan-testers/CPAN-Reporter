@@ -4,13 +4,15 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
+- none 
+
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
 
 # High priority
 
-- Fix tests that broke from t/Helper changes to _run_report
+- none
 
 # Medium priority 
 
