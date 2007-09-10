@@ -1,8 +1,12 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_08 Sat Sep  8 18:07:08 EDT 2007
+0.99_09 Mon Sep 10 09:50:57 EDT 2007
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
+
+    - Fix test failure on bleadperl
+
+0.99_08 Sat Sep  8 18:07:08 EDT 2007
 
     * History file of sent reports has a new name ('reports-sent.db') and a 
       new format with phase of testing for report ('PL', 'make', 'test')
