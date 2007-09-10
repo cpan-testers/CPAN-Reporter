@@ -1,5 +1,5 @@
 package CPAN::Reporter::History;
-$VERSION = '0.99_09';
+$VERSION = '0.99_10';
 use strict; 
 use Config;
 use Fcntl qw/:flock :seek/;
