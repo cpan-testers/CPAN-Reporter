@@ -182,7 +182,7 @@ sub _config_order {
 #
 # Keys include
 #   default     --  recommended value, used in prompts and as a fallback
-#                   if an options is not set
+#                   if an options is not set; mandatory if defined
 #   prompt      --  short prompt for EU::MM prompting
 #   info        --  long description shown before prompting
 #   validate    --  CODE ref; return normalized option or undef if invalid
@@ -201,14 +201,16 @@ Note: unless this email address is subscribed to the cpan-testers mailing
 list, your test reports will not appear until manually reviewed.
 HERE
     },
-    cc_author => {
-        default => 'default:yes pass/na:no',
-        prompt => "Do you want to CC the the module author?",
-        validate => \&_validate_grade_action_pair,
+    smtp_server => {
+        default => undef, # optional
         info => <<'HERE',
-If you would like, CPAN::Reporter will copy the module author with
-the results of your tests.  By default, authors are copied only on 
-failed/unknown results. This option takes "grade:action" pairs.  
+If your computer is behind a firewall or your ISP blocks
+outbound mail traffic, CPAN::Reporter will not be able to send
+test reports unless you provide an alternate outbound (SMTP) 
+email server.  Enter the full name of your outbound mail server
+(e.g. smtp.your-ISP.com) or leave this blank to send mail 
+directly to perl.org.  Use a space character to reset this value
+to sending to perl.org.
 HERE
     },
     edit_report => {
@@ -235,6 +237,16 @@ reports if you need to (e.g. if you caused the failure).
 This option takes "grade:action" pairs.
 HERE
     },
+    cc_author => {
+        default => 'default:yes pass/na:no',
+        prompt => "Do you want to CC the the module author?",
+        validate => \&_validate_grade_action_pair,
+        info => <<'HERE',
+If you would like, CPAN::Reporter will copy the module author with
+the results of your tests.  By default, authors are copied only on 
+failed/unknown results. This option takes "grade:action" pairs.  
+HERE
+    },
     send_duplicates => {
         default => 'default:no',
         prompt => "This report is identical to a previous one.  Send it anyway?",
@@ -246,27 +258,24 @@ all, regardless of the value of the "send_report" option.  This option takes
 "grade:action" pairs.
 HERE
     },
-    smtp_server => {
-        default => undef, # not written to starter config
-        info => <<'HERE',
-If your computer is behind a firewall or your ISP blocks
-outbound mail traffic, CPAN::Reporter will not be able to send
-test reports unless you provide an alternate outbound (SMTP) 
-email server.  Enter the full name of your outbound mail server
-(e.g. smtp.your-ISP.com) or leave this blank to send mail 
-directly to perl.org.  Use a space character to reset this value
-to sending to perl.org.
-HERE
+    send_PL_report => {
+        default => undef, 
+    },
+    send_make_report => {
+        default => undef,
+    },
+    send_test_report => {
+        default => undef,
     },
     email_to => {
-        default => undef, # not written to starter config
+        default => undef,
     },
     editor => {
-        default => undef, # not written to starter config
+        default => undef,
     },
     debug => {
-        default => undef, # not written to starter config
-    }
+        default => undef,
+    },
 );
 
 sub _config_spec { return %option_specs }
@@ -575,22 +584,34 @@ A better way to disable CPAN::Reporter temporarily is with the CPAN option
 
 = ADVANCED CONFIGURATION OPTIONS
 
-These additional options are only necessary in special cases, such as for
-testing, debugging or if a default editor cannot be found.
+These additional options are only necessary in special cases, for example if
+the default editor cannot be found or if reports shouldn't be sent in 
+certain situations.
 
+* {cc_author = <grade:action> ...} -- should module authors should be sent a copy of 
+the test report at their {author@cpan.org} address? (default:yes pass/na:no)
 * {editor = <editor>} -- editor to use to edit the test report; if not set,
 Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
 (in that order) to find an editor 
-* {cc_author = <grade:action> ...} -- should module authors should be sent a copy of 
-the test report at their {author@cpan.org} address? (default:yes pass/na:no)
 * {send_duplicates = <grade:action> ...} -- should duplicates of previous 
 reports be sent, regardless of {send_report}? (default:no)
-* {email_to = <email address>} -- alternate destination for reports instead of
-{cpan-testers@perl.org}; used for testing
-* {debug = <boolean>} -- turns debugging on/off
+* {send_PL_report = <grade:action> ...} -- if defined, used in place of 
+{send_report} during the PL phase
+* {send_make_report = <grade:action> ...} -- if defined, used in place of 
+{send_report} during the make phase
+* {send_test_report = <grade:action> ...} -- if defined, used in place of 
+{send_report} during the test phase
 
 If these options are manually added to the configuration file, they will
 be included (and preserved) in subsequent interactive configuration.
+
+= CONFIGURATION OPTIONS FOR DEBUGGING
+
+These options are useful for debugging only:
+
+* {debug = <boolean>} -- turns debugging on/off
+* {email_to = <email address>} -- alternate destination for reports instead of
+{cpan-testers@perl.org}; used for testing
 
 = SEE ALSO
 

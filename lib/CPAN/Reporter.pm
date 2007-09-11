@@ -297,6 +297,7 @@ sub _compute_test_grade {
 
 sub _dispatch_report {
     my $result = shift;
+    my $phase = $result->{phase};
 
     $CPAN::Frontend->myprint(
         "Preparing a CPAN Testers report for $result->{dist_name}\n"
@@ -353,7 +354,8 @@ END_BAD_DISTNAME
             $CPAN::Frontend->mywarn(<< "DUPLICATE_REPORT");
 
 It seems that "@{[$tr->subject]}"
-is a duplicate of a previous report you sent to CPAN Testers.
+during the $phase phase is a duplicate of a previous report you 
+sent to CPAN Testers.
 
 Test report will not be sent.
 
@@ -389,7 +391,11 @@ DUPLICATE_REPORT
         $tr->edit_comments;
     }
     
-    if ( _prompt( $config, "send_report", $tr->grade ) =~ /^y/ ) {
+    # send_*_report can override send_report
+    my $send_config = defined $config->{"send_$phase\_report"}
+                    ? "send_$phase\_report"
+                    : "send_report" ;
+    if ( _prompt( $config, $send_config, $tr->grade ) =~ /^y/ ) {
         $CPAN::Frontend->myprint( "Sending test report with '" . $tr->grade . 
               "' to " . join(q{, }, $tr->address, @cc) . "\n");
         if ( $tr->send( @cc ) ) {
@@ -401,7 +407,7 @@ DUPLICATE_REPORT
         }
     }
     else {
-        $CPAN::Frontend->myprint("Test report not sent\n");
+        $CPAN::Frontend->myprint("Test report will not be sent\n");
     }
 
     return;

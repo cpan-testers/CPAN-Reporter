@@ -145,7 +145,7 @@ plan tests => 4 + $expected_history_lines
 
 sub history_format {
     my ($case) = @_;
-    my ($phase, $grade, $dist) = ($case->{phase},$case->{grade},$case->{dist});
+    my ($phase, $grade, $dist) = @{$case}{qw/phase grade dist/};
     $grade = uc $grade;
     my $perl_ver = $^V ? sprintf("perl-%vd",$^V) : "perl-$]";
     $perl_ver .= " patch $Config{perl_patchlevel}" if $Config{perl_patchlevel};

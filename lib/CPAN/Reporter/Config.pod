@@ -167,10 +167,16 @@ C<<< test_report >>>:
 
 =head1 ADVANCED CONFIGURATION OPTIONS
 
-These additional options are only necessary in special cases, such as for
-testing, debugging or if a default editor cannot be found.
+These additional options are only necessary in special cases, for example if
+the default editor cannot be found or if reports shouldn't be sent in 
+certain situations.
 
 =over
+
+=item *
+
+C<<< cc_author = <grade:action> ... >>> -- should module authors should be sent a copy of 
+the test report at their C<<< author@cpan.org >>> address? (default:yes passE<sol>na:no)
 
 =item *
 
@@ -180,27 +186,45 @@ Test::Reporter will use environment variables C<<< VISUAL >>>, C<<< EDITOR >>> o
 
 =item *
 
-C<<< cc_author = <grade:action> ... >>> -- should module authors should be sent a copy of 
-the test report at their C<<< author@cpan.org >>> address? (default:yes passE<sol>na:no)
+C<<< send_duplicates = <grade:action> ... >>> -- should duplicates of previous 
+reports be sent, regardless of C<<< send_report >>>? (default:no)
 
 =item *
 
-C<<< send_duplicates = <grade:action> ... >>> -- should duplicates of previous 
-reports be sent, regardless of C<<< send_report >>>? (default:no)
+C<<< send_PL_report = <grade:action> ... >>> -- if defined, used in place of 
+C<<< send_report >>> during the PL phase
+
+=item *
+
+C<<< send_make_report = <grade:action> ... >>> -- if defined, used in place of 
+C<<< send_report >>> during the make phase
+
+=item *
+
+C<<< send_test_report = <grade:action> ... >>> -- if defined, used in place of 
+C<<< send_report >>> during the test phase
+
+=back
+
+If these options are manually added to the configuration file, they will
+be included (and preserved) in subsequent interactive configuration.
+
+=head1 CONFIGURATION OPTIONS FOR DEBUGGING
+
+These options are useful for debugging only:
+
+=over
+
+=item *
+
+C<<< debug = <boolean> >>> -- turns debugging onE<sol>off
 
 =item *
 
 C<<< email_to = <email address> >>> -- alternate destination for reports instead of
 C<<< cpan-testers@perl.org >>>; used for testing
 
-=item *
-
-C<<< debug = <boolean> >>> -- turns debugging onE<sol>off
-
 =back
-
-If these options are manually added to the configuration file, they will
-be included (and preserved) in subsequent interactive configuration.
 
 =head1 SEE ALSO
 

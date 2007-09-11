@@ -1,8 +1,14 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_09 Mon Sep 10 09:50:57 EDT 2007
+0.99_10 Tue Sep 11 17:29:18 EDT 2007
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
+
+    - Added advanced options "send_PL_report", "send_make_report" and
+      "send_test_report" to override "send_report" for individual phases
+      (requested by David Cantrell)
+
+0.99_09 Mon Sep 10 09:50:57 EDT 2007
 
     - Fix test failure on bleadperl
 

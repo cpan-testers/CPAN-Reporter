@@ -16,12 +16,6 @@ TODO list for Perl module CPAN::Reporter
 
 # Medium priority 
 
-- add advanced options and have them supersede "send_report" if they exist
-  (requested by Cantrell)
-    * send_PL_report
-    * send_make_report
-    * send_test_report
-
 - add T::R transport() support  if T::R is >= 1.34
 
 - set alternate configuration file via environment variable
@@ -32,7 +26,13 @@ TODO list for Perl module CPAN::Reporter
   (David Cantrell) -- i.e. keep discards somehow ("DISCARD" just like rest 
   of subject line?)
 
+- Reorder report sections to put test results after tester comments
+
 # Low priority
+
+- figure out how to support color output from Test::Harness 3.0 -- probably
+  set an environment variable to get them to pass color strings to the pipe
+  and then strip color escape codes from the teed file.
 
 - switch from a single flat file for history. e.g.
     - SDBM_File for history (key on subject line, with phase as value?
@@ -51,6 +51,8 @@ TODO list for Perl module CPAN::Reporter
   tests
 
 - Add interactive config for editor?
+
+- consolidate UID/EUID/GID/EGID output to 1 or 2 lines
 
 - Look at CPANPLUS::Internals::Constants::Reports and try to 
   replicate that logic

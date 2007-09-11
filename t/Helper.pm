@@ -116,6 +116,7 @@ sub test_grade_PL {
             my $pushd = pushd( _ok_clone_dist_dir( $case->{name} ) );
             
             $t::Helper::sent_report = undef;
+            $t::Helper::comments = undef;
             @t::Helper::cc_list = ();
 
             my ($stdout, $stderr, $build_rc, $test_build_rc, 
@@ -206,6 +207,7 @@ sub test_grade_make {
             my $pushd = pushd( _ok_clone_dist_dir( $case->{name} ) );
 
             $t::Helper::sent_report = undef;
+            $t::Helper::comments = undef;
             @t::Helper::cc_list = ();
 
             my ($stdout, $stderr, $build_err, $test_build_rc, 
@@ -306,6 +308,7 @@ sub test_grade_test {
             my $pushd = pushd( _ok_clone_dist_dir( $case->{name} ) );
                 
             $t::Helper::sent_report = undef;
+            $t::Helper::comments = undef;
             @t::Helper::cc_list = ();
 
             my ($stdout, $stderr, $build_err, $test_build_rc);
@@ -578,6 +581,7 @@ sub _run_report {
     my ($stdout, $stderr, $output, $exit_value);
     
     $t::Helper::sent_report = undef;
+    $t::Helper::comments = undef;
     @t::Helper::cc_list = ();
 
     eval {
@@ -640,9 +644,14 @@ package Test::Reporter::Mocked;
 use Config;
 use vars qw/$AUTOLOAD/;
 
-sub comments { shift; $t::Helper::sent_report = shift }
+sub comments { shift; $t::Helper::comments = shift }
 
-sub send { shift; @t::Helper::cc_list = ( @_ ); return 1 } 
+sub send { 
+    shift; 
+    $t::Helper::sent_report = $t::Helper::comments; 
+    @t::Helper::cc_list = ( @_ ); 
+    return 1 
+} 
 
 sub subject {
     my $self = shift;
