@@ -43,6 +43,14 @@ t/63_config_send_report.t
 t/70_darwin_move_config.t
 t/71_missing_config.t
 t/72_rename_history.t
+t/dist/custom-NoOutput-NOK/Build.PL
+t/dist/custom-NoOutput-NOK/lib/Bogus/Module.pm
+t/dist/custom-NoOutput-NOK/Makefile.PL
+t/dist/custom-NoOutput-NOK/test/Tester.pl
+t/dist/custom-NoOutput-OK/Build.PL
+t/dist/custom-NoOutput-OK/lib/Bogus/Module.pm
+t/dist/custom-NoOutput-OK/Makefile.PL
+t/dist/custom-NoOutput-OK/test/Tester.pl
 t/dist/make-Fail/Build.PL
 t/dist/make-Fail/Die.PL
 t/dist/make-Fail/lib/Bogus/Module.pm
