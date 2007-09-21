@@ -6,7 +6,7 @@ Revision history for Perl module CPAN::Reporter
 
     - Fallback to "make test" or "Build test" exit value when output parsing
       fails.  This supports custom testing in Makefile.PL or Build.PL
-      (Reported on Prima by XXX)
+      (Reported on Prima by Dmitry Karasik)
 
 0.99_10 Tue Sep 11 17:29:18 EDT 2007
 
