@@ -54,9 +54,6 @@ TODO list for Perl module CPAN::Reporter
 
 - consolidate UID/EUID/GID/EGID output to 1 or 2 lines
 
-- Look at CPANPLUS::Internals::Constants::Reports and try to 
-  replicate that logic
-
 - Improve test coverage for utility subs and error handling
 
 - Check email addresses for validity (cf. Email::Valid, etc.)

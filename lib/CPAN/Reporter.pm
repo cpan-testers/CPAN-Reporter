@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = '0.99_10'; 
+$CPAN::Reporter::VERSION = '0.99_11'; 
 
 use Config;
 use CPAN ();
@@ -204,7 +204,13 @@ sub _compute_PL_grade {
 # so use exit code directly
 #
 # Likewise, if we have recursive Makefile.PL, then we don't trust the
-# recursive parsing and should just take the exit code
+# reverse-order parsing and should just take the exit code directly 
+#
+# Otherwise, parse in reverse order for Test::Harness output or a couple
+# other significant strings and stop after the first match.  Going in 
+# reverse and stopping is done to (hopefully) avoid picking up spurious 
+# results from any test output.  But then we have to check for 
+# unsupported OS strings in case those were printed but were not fatal.
 #--------------------------------------------------------------------------#
 
 sub _compute_test_grade {
@@ -215,7 +221,7 @@ sub _compute_test_grade {
     # we need to find prerequisites and toolchain earlier than usual
     _expand_result( $result );
 
-    # Get a result from the exit code
+    # In some cases, get a result straight from the exit code 
     if ( $result->{is_make} && ( -f "test.pl" || _has_recursive_make() ) ) {
         if ( $result->{exit_value} ) {
             $grade = "fail";
@@ -248,10 +254,11 @@ sub _compute_test_grade {
             }
             last if $grade;
         }
-        # fallback if we didn't find Test::Harness output we recognized
+        # fallback on exit value if no recognizable Test::Harness output
         if ( ! $grade ) {
-            $grade = "unknown";
-            $msg = "Couldn't determine a result";
+            $grade = $result->{exit_value} ? "fail" : "pass";
+            $msg = ( $result->{is_make} ? "'make test' " : "'Build test' " )
+                 . ( $result->{exit_value} ? "error detected" : "no errors");
         }
     }
 

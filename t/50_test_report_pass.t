@@ -66,6 +66,15 @@ my @test_distros = (
         mb_grade => "pass",
         mb_msg => "All tests successful",
     },
+    {
+        name => 'custom-NoOutput-OK',
+        eumm_success => 1,
+        eumm_grade => "pass",
+        eumm_msg => "'make test' no errors",
+        mb_success => 1,
+        mb_grade => "pass",
+        mb_msg => "'Build test' no errors",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() 
