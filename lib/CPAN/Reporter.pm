@@ -433,7 +433,7 @@ sub _expand_result {
     $result->{env_vars} = _env_report();
     $result->{special_vars} = _special_vars_report();
     $result->{toolchain_versions} = _toolchain_report( $result );
-    $result->{perl_version} = CPAN::Reporter::History::_perl_version();
+    $result->{perl_version} = CPAN::Reporter::History::_format_perl_version();
     return;
 }
 
@@ -775,7 +775,7 @@ HERE
 
     'fail' => <<'HERE',
 Thank you for uploading your work to CPAN.  However, it appears that
-there were some problems testing your distribution.
+there were some problems with your distribution.
 HERE
 
     'unknown' => <<'HERE',
@@ -787,9 +787,9 @@ the results of the tests could not be parsed by CPAN::Reporter.
 HERE
 
     'na' => <<'HERE',
-Thank you for uploading your work to CPAN.  While attempting to test this
-distribution, the distribution signaled that support is not available either
-for this operating system or this version of Perl.  Nevertheless, any 
+Thank you for uploading your work to CPAN.  While attempting to build or test 
+this distribution, the distribution signaled that support is not available 
+either for this operating system or this version of Perl.  Nevertheless, any 
 diagnostic output produced is provided below for reference.
 HERE
     
@@ -802,9 +802,9 @@ sub _report_text {
     my $output = << "ENDREPORT";
 Dear $data->{author},
     
-This is a computer-generated test report for $data->{dist_name}
-on $data->{perl_version}, created automatically by CPAN::Reporter, 
-version $CPAN::Reporter::VERSION, and sent to the CPAN Testers mailing list.  
+This is a computer-generated report for $data->{dist_name}
+on $data->{perl_version}, created automatically by CPAN-Reporter-$CPAN::Reporter::VERSION and sent 
+to the CPAN Testers mailing list.  
 
 If you have received this email directly, it is because the person testing 
 your distribution chose to send a copy to your CPAN email address; there 
@@ -815,7 +815,7 @@ $intro_para{ $data->{grade} }
 Sections of this report:
 
     * Tester comments
-    * Test output
+    * Program output
     * Prerequisites
     * Environment and other context
 
@@ -828,7 +828,7 @@ Additional comments from tester:
 [none provided]
 
 ------------------------------
-TEST OUTPUT
+PROGRAM OUTPUT
 ------------------------------
 
 Output from '$data->{command}':
@@ -866,7 +866,9 @@ ENDREPORT
 sub _special_vars_report {
     my $special_vars = << "HERE";
     \$^X = $^X
-    \$UID/\$EUID/\$GID/\$EGID = $</$>/$(/$)
+    \$UID/\$EUID = $< / $>
+    \$GID = $(
+    \$EGID = $)
 HERE
     if ( $^O eq 'MSWin32' && eval "require Win32" ) { ## no critic
         my @getosversion = Win32::GetOSVersion();

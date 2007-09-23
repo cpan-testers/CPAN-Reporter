@@ -402,7 +402,7 @@ HERE
 
     'fail' => <<'HERE',
 Thank you for uploading your work to CPAN.  However, it appears that
-there were some problems testing your distribution.
+there were some problems with your distribution.
 HERE
 
     'unknown' => << 'HERE',
@@ -414,9 +414,9 @@ the results of the tests could not be parsed by CPAN::Reporter.
 HERE
 
     'na' => << 'HERE',
-Thank you for uploading your work to CPAN.  While attempting to test this
-distribution, the distribution signaled that support is not available either
-for this operating system or this version of Perl.  Nevertheless, any 
+Thank you for uploading your work to CPAN.  While attempting to build or test 
+this distribution, the distribution signaled that support is not available 
+either for this operating system or this version of Perl.  Nevertheless, any 
 diagnostic output produced is provided below for reference.
 HERE
     

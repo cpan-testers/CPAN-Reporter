@@ -43,7 +43,9 @@ for my $var ( @env_vars ) {
 
 my %special_vars = (
     '$^X' => $^X,
-    '$UID/$EUID/$GID/$EGID' => "$</$>/$(/$)",
+    '$UID/$EUID' => "$< / $>",
+    '$GID' => "$(",
+    '$EGID' => "$)",
 );
 
 if ( $^O eq 'MSWin32' && eval "require Win32" ) {
