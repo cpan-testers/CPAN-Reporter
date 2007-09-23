@@ -60,14 +60,11 @@ BEGIN {
         chomp $line;
         # strip off perl version and convert
         $line =~ s{ (\d\.\d+) ?(patch \d+)?$}{};
-        my ($perl_ver, $perl_patch) = ($1, $2);
-        $perl_ver ||= "unknown perl";
-        $perl_ver =~ /(\d).(\d{3})(\d{0,3})/;
-        my ($rel, $major,$minor) = (0 + $1, 0 + $2, 0 + ($3 || 0));
-        $perl_ver = "$rel\.$major\.$minor" if $major >= 6;
-        $perl_ver .= " $perl_patch" if $perl_patch;
+        my ($old_version, $perl_patch) = ($1, $2);
+        my $pv = $old_version ? _perl_version($old_version) : "unknown perl";
+        $pv .= " $perl_patch" if $perl_patch;
         my ($grade_dist, $arch_os) = ($line =~ /(\S+ \S+) (.+)/);
-        print {$new_fh} "test $grade_dist (perl-$perl_ver) $arch_os\n";
+        print {$new_fh} "test $grade_dist (perl-$pv) $arch_os\n";
     }
     close $old_fh;
     close $new_fh;
@@ -93,11 +90,20 @@ sub _format_history {
     my $phase = $result->{phase};
     my $grade = uc $result->{grade};
     my $dist_name = $result->{dist_name};
-    my $perlver = "perl-" . _perl_version();
-    $perlver .= " patch $Config{perl_patchlevel}" 
-        if $Config{perl_patchlevel};
+    my $perlver = _format_perl_version();
     my $arch = "$Config{archname} $Config{osvers}";    
     return "$phase $grade $dist_name ($perlver) $arch\n";
+}
+
+#--------------------------------------------------------------------------#
+# _format_perl_version
+#--------------------------------------------------------------------------#
+
+sub _format_perl_version {
+    my $pv = "perl-" . _perl_version();
+    $pv .= " patch $Config{perl_patchlevel}" 
+        if $Config{perl_patchlevel};
+    return $pv;
 }
 
 #--------------------------------------------------------------------------#
@@ -168,15 +174,17 @@ sub _open_history_file {
 #--------------------------------------------------------------------------#
 
 sub _perl_version {
-    my $ver = "$]";
+    my $ver = shift || "$]";
     $ver =~ qr/(\d)\.(\d{3})(\d{0,3})/;
     my ($maj,$min,$pat) = (0 + $1, 0 + $2, 0 + ($3||0));
+    my $pv;
     if ( $min < 6 ) {
-        return "$]";
+        $pv = $ver;
     }
     else {
-        return "$maj\.$min\.$pat";
+        $pv = "$maj\.$min\.$pat";
     }
+    return $pv;
 }
 
 #--------------------------------------------------------------------------#

@@ -41,15 +41,10 @@ for my $var ( @env_vars ) {
     }
 }
 
-my @special_vars = qw/
-    $^X
-    $<
-    $>
-    $(
-    $)
-/;
-
-my %special_vars = map { $_ => eval "$_" } @special_vars;
+my %special_vars = (
+    '$^X' => $^X,
+    '$UID/$EUID/$GID/$EGID' => "$</$>/$(/$)",
+);
 
 if ( $^O eq 'MSWin32' && eval "require Win32" ) {
     my @getosversion = Win32::GetOSVersion();

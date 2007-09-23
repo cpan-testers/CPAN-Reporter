@@ -18,7 +18,7 @@ use Config;
 use File::Basename qw/basename/;
 use File::Copy::Recursive qw/dircopy/;
 use File::Path qw/mkpath/;
-use File::pushd qw/pushd/;
+use File::pushd qw/tempd/;
 use File::Spec ();
 use File::Temp qw/tempdir/;
 use IO::CaptureOutput qw/capture/;
@@ -113,7 +113,7 @@ sub test_grade_PL {
             skip "$tool_mod not installed", test_grade_PL_iter_plan()
                 if $@;
             
-            my $pushd = pushd( _ok_clone_dist_dir( $case->{name} ) );
+            my $tempd = _ok_clone_dist_dir( $case->{name} );
             
             $t::Helper::sent_report = undef;
             $t::Helper::comments = undef;
@@ -204,7 +204,7 @@ sub test_grade_make {
                 if $@;
             
             # Set up temporary directory for the case
-            my $pushd = pushd( _ok_clone_dist_dir( $case->{name} ) );
+            my $tempd = _ok_clone_dist_dir( $case->{name} );
 
             $t::Helper::sent_report = undef;
             $t::Helper::comments = undef;
@@ -305,7 +305,7 @@ sub test_grade_test {
             skip "$tool_mod not installed", test_grade_test_iter_plan()
                 if $@;
 
-            my $pushd = pushd( _ok_clone_dist_dir( $case->{name} ) );
+            my $tempd = _ok_clone_dist_dir( $case->{name} );
                 
             $t::Helper::sent_report = undef;
             $t::Helper::comments = undef;
@@ -432,7 +432,7 @@ sub test_report {
     my $prereq = CPAN::Reporter::_prereq_report( $case->{dist} );
     my $msg_re = $report_para{ $expected_grade };
 
-    my $pushd = pushd( _ok_clone_dist_dir( $case->{name} ) );
+    my $tempd = _ok_clone_dist_dir( $case->{name} );
                 
     my ($stdout, $stderr, $err, $test_output) = _run_report( $case );
     
@@ -504,7 +504,7 @@ sub test_dispatch {
     my $case = shift;
     my %opt = @_;
 
-    my $pushd = pushd( _ok_clone_dist_dir( $case->{name} ) );
+    my $tempd = _ok_clone_dist_dir( $case->{name} );
                 
     my ($stdout, $stderr, $err) = _run_report( $case );
 
@@ -547,10 +547,11 @@ sub _diag_output {
 sub _ok_clone_dist_dir {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my $dist_name = shift;
-    my $dist_dir = File::Spec->catdir( qw/t dist /, $dist_name );
-    my $work_dir = tempdir( 
-        "CPAN-Reporter-testdist-XXXXXXXX", TMPDIR => 1, CLEANUP => 1
-    ) or die "Couldn't create temporary distribution dir: $!\n";
+    my $dist_dir = File::Spec->rel2abs(
+        File::Spec->catdir( qw/t dist /, $dist_name )
+    );
+    my $work_dir = tempd() 
+        or die "Couldn't create temporary distribution dir: $!\n";
 
     # workaround badly broken F::C::R 0.34 on Windows
     if ( File::Copy::Recursive->VERSION eq '0.34' && $^O eq 'MSWin32' ) {
@@ -559,8 +560,8 @@ sub _ok_clone_dist_dir {
         ) or diag $!;
     }
     else {
-        ok( defined( dircopy($dist_dir, $work_dir) ),
-            "Copying $dist_name to temporary build directory"
+        ok( defined( dircopy($dist_dir, "$work_dir") ),
+            "Copying $dist_name to temporary build directory $work_dir"
         ) or diag $!;
     }
 

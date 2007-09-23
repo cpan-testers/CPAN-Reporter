@@ -4,9 +4,20 @@ Revision history for Perl module CPAN::Reporter
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
 
+    - Reordered test report sections to move test output to immediately
+      after tester comments; this keeps most relevant information at the
+      top and prereqs and other context follows
+
+    - Added perl version to the report intro paragraph since otherwise it
+      doesn't appear until the "perl -V" output at the end of the report
+    
+    - compressed UID/EUID/GID/EGID variables to a single line in the report
+
     - Changed the way perl version is stringified for history file entries to 
       workaround an old bleadperl bug; (a "better safe than sorry" fix)
       (Reported by Andreas Koenig)
+
+    - Cleans up temp directories in testing more frequently
 
 0.99_11 Fri Sep 21 17:02:18 EDT 2007
 

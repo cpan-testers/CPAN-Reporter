@@ -433,6 +433,7 @@ sub _expand_result {
     $result->{env_vars} = _env_report();
     $result->{special_vars} = _special_vars_report();
     $result->{toolchain_versions} = _toolchain_report( $result );
+    $result->{perl_version} = CPAN::Reporter::History::_perl_version();
     return;
 }
 
@@ -801,20 +802,22 @@ sub _report_text {
     my $output = << "ENDREPORT";
 Dear $data->{author},
     
-This is a computer-generated test report for $data->{dist_name}, created
-automatically by CPAN::Reporter, version $CPAN::Reporter::VERSION, and sent to the CPAN 
-Testers mailing list.  If you have received this email directly, it is 
-because the person testing your distribution chose to send a copy to your 
-CPAN email address; there may be a delay before the official report is
-received and processed by CPAN Testers.
+This is a computer-generated test report for $data->{dist_name}
+on $data->{perl_version}, created automatically by CPAN::Reporter, 
+version $CPAN::Reporter::VERSION, and sent to the CPAN Testers mailing list.  
+
+If you have received this email directly, it is because the person testing 
+your distribution chose to send a copy to your CPAN email address; there 
+may be a delay before the official report is received and processed 
+by CPAN Testers.
 
 $intro_para{ $data->{grade} }
 Sections of this report:
 
     * Tester comments
+    * Test output
     * Prerequisites
     * Environment and other context
-    * Test output
 
 ------------------------------
 TESTER COMMENTS
@@ -824,6 +827,13 @@ Additional comments from tester:
 
 [none provided]
 
+------------------------------
+TEST OUTPUT
+------------------------------
+
+Output from '$data->{command}':
+
+$test_log
 ------------------------------
 PREREQUISITES
 ------------------------------
@@ -844,13 +854,6 @@ $data->{special_vars}
 Perl module toolchain versions installed:
 
 $data->{toolchain_versions}
-------------------------------
-TEST OUTPUT
-------------------------------
-
-Output from '$data->{command}':
-
-$test_log
 ENDREPORT
 
     return $output;
@@ -862,11 +865,8 @@ ENDREPORT
 
 sub _special_vars_report {
     my $special_vars = << "HERE";
-    Perl: \$^X = $^X
-    UID:  \$<  = $<
-    EUID: \$>  = $>
-    GID:  \$(  = $(
-    EGID: \$)  = $)
+    \$^X = $^X
+    \$UID/\$EUID/\$GID/\$EGID = $</$>/$(/$)
 HERE
     if ( $^O eq 'MSWin32' && eval "require Win32" ) { ## no critic
         my @getosversion = Win32::GetOSVersion();

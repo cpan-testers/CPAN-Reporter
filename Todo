@@ -24,7 +24,7 @@ TODO list for Perl module CPAN::Reporter
   (David Cantrell) -- i.e. keep discards somehow ("DISCARD" just like rest 
   of subject line?)
 
-- Reorder report sections to put test results after tester comments
+- heuristics for missing library files --> discard report
 
 # Low priority
 
@@ -50,11 +50,11 @@ TODO list for Perl module CPAN::Reporter
 
 - Add interactive config for editor?
 
-- consolidate UID/EUID/GID/EGID output to 1 or 2 lines
-
 - Improve test coverage for utility subs and error handling
 
 - Check email addresses for validity (cf. Email::Valid, etc.)
+
+- Other Config items like make or cc
 
 # Probably won't implement
 
