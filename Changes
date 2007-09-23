@@ -1,12 +1,14 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_12
+0.99_12 Sun Sep 23 13:14:08 EDT 2007
 
-    *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
+    *** RELEASE CANDIDATE ***
+
+    * Bumped CPAN.pm prereq to 1.92 (full support for PL/make)
 
     - Reordered report sections to move program output to immediately
       after tester comments; this keeps most relevant information at the
-      top and prereqs and other context follows
+      top and prereqs and other context follow
 
     - Added perl version to the report intro paragraph since otherwise it
       doesn't appear until the "perl -V" output at the end of the report

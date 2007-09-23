@@ -21,9 +21,8 @@ DESCRIPTION
     One way individuals can contribute is to send a report for each module
     that they test or install. CPAN::Reporter is an add-on for the CPAN.pm
     module to send the results of building and testing modules to the CPAN
-    Testers project. Partial support for CPAN::Reporter is available in
-    CPAN.pm as of version 1.88; full support is available in CPAN.pm as of
-    version 1.91_53.
+    Testers project. Full support for CPAN::Reporter is available in CPAN.pm
+    as of version 1.92.
 
 GETTING STARTED
   Installation

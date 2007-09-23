@@ -8,7 +8,7 @@ license: apache
 resources:
   license: http://apache.org/licenses/LICENSE-2.0
 requires:
-  CPAN: 1.88
+  CPAN: 1.92
   Config::Tiny: 2.08
   ExtUtils::MakeMaker: 6.36
   File::Basename: 0
