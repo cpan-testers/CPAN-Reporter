@@ -1,5 +1,5 @@
 package CPAN::Reporter::History;
-$VERSION = '0.99_11';
+$VERSION = '0.99_12';
 use strict; 
 use Config;
 use Fcntl qw/:flock :seek/;
@@ -93,7 +93,7 @@ sub _format_history {
     my $phase = $result->{phase};
     my $grade = uc $result->{grade};
     my $dist_name = $result->{dist_name};
-    my $perlver = $^V ? sprintf("perl-%vd", $^V) : "perl-$]";
+    my $perlver = "perl-" . _perl_version();
     $perlver .= " patch $Config{perl_patchlevel}" 
         if $Config{perl_patchlevel};
     my $arch = "$Config{archname} $Config{osvers}";    
@@ -161,6 +161,22 @@ sub _open_history_file {
     }
 
     return $history; 
+}
+
+#--------------------------------------------------------------------------#
+# _perl_version
+#--------------------------------------------------------------------------#
+
+sub _perl_version {
+    my $ver = "$]";
+    $ver =~ qr/(\d)\.(\d{3})(\d{0,3})/;
+    my ($maj,$min,$pat) = (0 + $1, 0 + $2, 0 + ($3||0));
+    if ( $min < 6 ) {
+        return "$]";
+    }
+    else {
+        return "$maj\.$min\.$pat";
+    }
 }
 
 #--------------------------------------------------------------------------#

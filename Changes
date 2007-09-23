@@ -1,8 +1,14 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_11 Fri Sep 21 17:02:18 EDT 2007
+0.99_12
 
     *** DEVELOPMENT RELEASE FOR TESTING: Not recommended for general use ***
+
+    - Changed the way perl version is stringified for history file entries to 
+      workaround an old bleadperl bug; (a "better safe than sorry" fix)
+      (Reported by Andreas Koenig)
+
+0.99_11 Fri Sep 21 17:02:18 EDT 2007
 
     - Fallback to "make test" or "Build test" exit value when output parsing
       fails.  This supports custom testing in Makefile.PL or Build.PL

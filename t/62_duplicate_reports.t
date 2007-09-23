@@ -147,7 +147,7 @@ sub history_format {
     my ($case) = @_;
     my ($phase, $grade, $dist) = @{$case}{qw/phase grade dist/};
     $grade = uc $grade;
-    my $perl_ver = $^V ? sprintf("perl-%vd",$^V) : "perl-$]";
+    my $perl_ver = "perl-" . CPAN::Reporter::History::_perl_version(); 
     $perl_ver .= " patch $Config{perl_patchlevel}" if $Config{perl_patchlevel};
     my $arch = "$Config{archname} $Config{osvers}";
     my $dist_name = CPAN::Reporter::_format_distname($dist);
