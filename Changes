@@ -1,8 +1,12 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_12 Sun Sep 23 13:14:08 EDT 2007
+0.99_13
 
     *** RELEASE CANDIDATE ***
+
+    - Minor report format tweaks
+
+0.99_12 Sun Sep 23 13:14:08 EDT 2007
 
     * Bumped CPAN.pm prereq to 1.92 (full support for PL/make)
 

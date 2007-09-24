@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = '0.99_12'; 
+$CPAN::Reporter::VERSION = '0.99_13'; 
 
 use Config;
 use CPAN ();
@@ -803,8 +803,8 @@ sub _report_text {
 Dear $data->{author},
     
 This is a computer-generated report for $data->{dist_name}
-on $data->{perl_version}, created automatically by CPAN-Reporter-$CPAN::Reporter::VERSION and sent 
-to the CPAN Testers mailing list.  
+on $data->{perl_version}, created automatically by CPAN-Reporter-$CPAN::Reporter::VERSION 
+and sent to the CPAN Testers mailing list.  
 
 If you have received this email directly, it is because the person testing 
 your distribution chose to send a copy to your CPAN email address; there 
