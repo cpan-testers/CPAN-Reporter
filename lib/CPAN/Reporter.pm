@@ -1132,7 +1132,8 @@ while ( <STDIN> ) {
     print "$mod $ok $have\n"
 }
 END
-close VERSIONFINDER;
+
+$version_finder->close;
 
 sub _version_finder {
     my %prereqs = @_;

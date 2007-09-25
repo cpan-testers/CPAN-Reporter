@@ -4,6 +4,9 @@ Revision history for Perl module CPAN::Reporter
 
     *** RELEASE CANDIDATE ***
 
+    - Improved robustness of conversion of old history files on Win32 for 
+      really old CPAN::Reporter history formats
+
     - Minor report format tweaks
 
 0.99_12 Sun Sep 23 13:14:08 EDT 2007

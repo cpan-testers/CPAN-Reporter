@@ -59,12 +59,18 @@ BEGIN {
     while ( my $line = <$old_fh> ) {
         chomp $line;
         # strip off perl version and convert
-        $line =~ s{ (\d\.\d+) ?(patch \d+)?$}{};
-        my ($old_version, $perl_patch) = ($1, $2);
-        my $pv = $old_version ? _perl_version($old_version) : "unknown perl";
+        # try not to match 5.1 from "MSWin32-x86-multi-thread 5.1"
+        # from really old CPAN::Reporter history formats
+        my ($old_version, $perl_patch);
+        if ( $line =~ m{ (5\.0\d{2,5}) ?(patch \d+)?\z} ) {
+            ($old_version, $perl_patch) = ($1, $2);
+            $line =~ s{ (5\.0\d{2,5}) ?(patch \d+)?\z}{};
+        }
+        my $pv = $old_version ? "perl-" . _perl_version($old_version) 
+                              : "unknown";
         $pv .= " $perl_patch" if $perl_patch;
         my ($grade_dist, $arch_os) = ($line =~ /(\S+ \S+) (.+)/);
-        print {$new_fh} "test $grade_dist (perl-$pv) $arch_os\n";
+        print {$new_fh} "test $grade_dist ($pv) $arch_os\n";
     }
     close $old_fh;
     close $new_fh;
@@ -176,7 +182,7 @@ sub _open_history_file {
 sub _perl_version {
     my $ver = shift || "$]";
     $ver =~ qr/(\d)\.(\d{3})(\d{0,3})/;
-    my ($maj,$min,$pat) = (0 + $1, 0 + $2, 0 + ($3||0));
+    my ($maj,$min,$pat) = (0 + ($1||0), 0 + ($2||0), 0 + ($3||0));
     my $pv;
     if ( $min < 6 ) {
         $pv = $ver;
