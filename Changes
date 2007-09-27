@@ -4,6 +4,10 @@ Revision history for Perl module CPAN::Reporter
 
     *** RELEASE CANDIDATE ***
 
+    * Bump Test::Reporter prereq to 1.34 for transport() method.  Added
+      "transport" advanced configuration option.  Defaults to Net::SMTP
+      (Requested by Andreas Koenig)
+      
     - Improved robustness of conversion of old history files on Win32 for 
       really old CPAN::Reporter history formats
 

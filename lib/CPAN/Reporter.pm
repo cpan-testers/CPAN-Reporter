@@ -372,8 +372,19 @@ DUPLICATE_REPORT
         }
     }
 
-    # Continue report setup
+    # Set debug and transport options, if supported
     $tr->debug( $config->{debug} ) if defined $config->{debug};
+    my $transport = $config->{transport} || 'Net::SMTP';
+    if (length $transport && ( $transport !~ /\ANet::SMTP|Mail::Send\z/ )) {
+        $CPAN::Frontend->mywarn(
+            "CPAN::Reporter doesn't recognize '$config->{transport}' as a valid transport.\n" .
+            "Falling back to Net::SMTP\n"
+        );
+        $transport = 'Net::SMTP';
+    }
+    $tr->transport( $transport );
+
+    # prepare mail transport
     $tr->from( $config->{email_from} );
     $tr->address( $config->{email_to} ) if $config->{email_to};
     if ( $config->{smtp_server} ) {

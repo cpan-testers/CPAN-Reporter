@@ -529,6 +529,7 @@ sub test_dispatch {
         );
     }
 
+    return ($stdout, $stderr, $err);
 }
 
 #--------------------------------------------------------------------------#
@@ -639,6 +640,8 @@ sub my_home { return $home_dir };
 sub my_data { return $home_dir };
 
 package Test::Reporter;
+use vars qw/$AUTOLOAD/;
+
 sub new { return bless {}, 'Test::Reporter::Mocked' }
 
 package Test::Reporter::Mocked;
@@ -660,12 +663,13 @@ sub subject {
         " $Config{archname} $Config{osvers}";
 }
 
+my %mocked_data;
 sub AUTOLOAD {
     my $self = shift;
     if ( @_ ) {
-        $self->{ $AUTOLOAD } = shift;
+        $mocked_data{ $AUTOLOAD } = shift;
     }
-    return $self->{ $AUTOLOAD };
+    return $mocked_data{ $AUTOLOAD };
 }
 
 

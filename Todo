@@ -14,9 +14,7 @@ TODO list for Perl module CPAN::Reporter
 
 # Medium priority 
 
-- add T::R transport() support  if T::R is >= 1.34
-
-- set alternate configuration file via environment variable
+- set alternate configuration file/dir via environment variable
 
 - Add config to save reports to a file (Jerry Hedden) (RT#24816)
 
