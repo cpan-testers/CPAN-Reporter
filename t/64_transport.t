@@ -59,8 +59,8 @@ test_dispatch(
     will_send => $case->{will_send},
 );
 
-is( Test::Reporter::Mocked->transport(), "Net::SMTP", 
-    "by default, transport should be set to Net::SMTP"
+is( Test::Reporter::Mocked->transport(), undef,
+    "by default, transport should be not be set"
 );
 
 #--------------------------------------------------------------------------#

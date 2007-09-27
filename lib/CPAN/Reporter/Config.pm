@@ -606,7 +606,7 @@ reports be sent, regardless of {send_report}? (default:no)
 {send_report} during the test phase
 * {transport = <transport>} -- if defined, passed to the {transport()} 
 method of [Test::Reporter].  Valid options are 'Net::SMTP' or 
-'Mail::Send'.  If not set, CPAN::Reporter will always use 'Net::SMTP'
+'Mail::Send'.  
 
 If these options are manually added to the configuration file, they will
 be included (and preserved) in subsequent interactive configuration.
