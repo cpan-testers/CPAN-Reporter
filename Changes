@@ -1,8 +1,20 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_13 Thu Sep 27 06:24:00 EDT 2007
+0.99_14
 
     *** RELEASE CANDIDATE ***
+
+    * Bumped CPAN.pm prereq to 1.9203 -- fixes a bug where make/build
+      continues even if Makefile/Build is missing, causing FAIL 
+      reports for modules that exit(0) without generating a Makefile.
+
+    - Set transport() default to Net::SMTP; ensures CPAN::Reporter can
+      work out-of-the-box on systems with Mail::Send and a broken
+      sendmail installation
+    
+    - eliminated several Perl::Critic level 4-5 complaints
+
+0.99_13 Thu Sep 27 06:24:00 EDT 2007
 
     * Bump Test::Reporter prereq to 1.34 for transport() method.  Added
       "transport" advanced configuration option.

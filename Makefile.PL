@@ -20,7 +20,7 @@ WriteMakefile
                            'Tee' => '0.13',
                            'Test::More' => '0.62',
                            'File::Temp' => '0.16',
-                           'CPAN' => '1.92',
+                           'CPAN' => '1.9203',
                            'File::Copy::Recursive' => '0.35',
                            'File::Basename' => 0,
                            'Config::Tiny' => '2.08'

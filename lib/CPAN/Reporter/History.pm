@@ -1,5 +1,5 @@
 package CPAN::Reporter::History;
-$VERSION = '0.99_13';
+$VERSION = '0.99_14'; ## no critic
 use strict; 
 use Config;
 use Fcntl qw/:flock :seek/;
@@ -143,7 +143,10 @@ sub _is_duplicate {
     my $found = 0;
     flock $history, LOCK_SH;
     while ( defined (my $line = <$history>) ) {
-        $found++, last if $line eq $log_line
+        if ( $line eq $log_line ) {
+            $found++;
+            last;
+        }
     }
     $history->close;
     return $found;

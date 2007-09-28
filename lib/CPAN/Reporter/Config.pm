@@ -1,5 +1,5 @@
 package CPAN::Reporter::Config;
-$VERSION = '0.99_13';
+$VERSION = '0.99_14'; ## no critic
 use strict; 
 use Config::Tiny ();
 use File::HomeDir (); 
@@ -606,7 +606,7 @@ reports be sent, regardless of {send_report}? (default:no)
 {send_report} during the test phase
 * {transport = <transport>} -- if defined, passed to the {transport()} 
 method of [Test::Reporter].  Valid options are 'Net::SMTP' or 
-'Mail::Send'.  
+'Mail::Send'.  (CPAN::Reporter uses Net::SMTP for this by default.)
 
 If these options are manually added to the configuration file, they will
 be included (and preserved) in subsequent interactive configuration.

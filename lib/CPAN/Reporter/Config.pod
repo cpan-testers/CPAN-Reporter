@@ -8,7 +8,7 @@ CPAN::Reporter::Config - Config file options for CPAN::Reporter
 
 =head1 VERSION
 
-This documentation refers to version 0.99_13
+This documentation refers to version 0.99_14
 
 =head1 SYNOPSIS
 
@@ -208,7 +208,7 @@ C<<< send_report >>> during the test phase
 
 C<<< transport = <transport> >>> -- if defined, passed to the C<<< transport() >>> 
 method of L<Test::Reporter>.  Valid options are 'Net::SMTP' or 
-'Mail::Send'.  
+'Mail::Send'.  (CPAN::Reporter uses Net::SMTP for this by default.)
 
 =back
 

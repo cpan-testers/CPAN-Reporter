@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = '0.99_13'; 
+$CPAN::Reporter::VERSION = '0.99_14'; 
 
 use Config;
 use CPAN ();
@@ -27,8 +27,9 @@ sub configure {
     goto &CPAN::Reporter::Config::_configure; 
 }
 
-sub grade_make {
-    my $result = _init_result( 'make', @_ );
+sub grade_make { 
+    my @args = @_;
+    my $result = _init_result( 'make', @args ); 
     _compute_make_grade($result);
     _print_grade_msg($result->{is_make} ? $Config{make} : 'Build' , $result);
     if( $result->{grade} ne 'pass' ) {
@@ -38,7 +39,8 @@ sub grade_make {
 }
 
 sub grade_PL {
-    my $result = _init_result( 'PL', @_ );
+    my @args = @_;
+    my $result = _init_result( 'PL', @args ); ## no critic
     _compute_PL_grade($result);
     _print_grade_msg($result->{PL_file} , $result);
     if( $result->{grade} ne 'pass' ) {
@@ -48,7 +50,8 @@ sub grade_PL {
 }
 
 sub grade_test {
-    my $result = _init_result( 'test', @_ );
+    my @args = @_;
+    my $result = _init_result( 'test', @args ); ## no critic
     _compute_test_grade($result);
     if ( $result->{grade} eq 'discard' ) {
         $CPAN::Frontend->mywarn( 
@@ -141,7 +144,7 @@ sub test {
         );
         return;
     }
-    grade_test( $dist, $system_command, $output, $exit_value );
+    return grade_test( $dist, $system_command, $output, $exit_value );
 }
 
 #--------------------------------------------------------------------------#
@@ -171,11 +174,12 @@ sub _compute_PL_grade {
     my $result = shift;
     my ($grade,$msg);
     if ( $result->{exit_value} ) {
-        if (grep /Perl .*? required.*?--this is only .*?/, @{$result->{output}}) {
+        if (grep { /Perl .*? required.*?--this is only .*?/ } 
+                    @{$result->{output}}) {
             $result->{grade} = "na";
             $result->{grade_msg} = "Perl version too low";
         }
-        elsif ( grep /OS Unsupported|No support for OS/i, 
+        elsif ( grep { /OS Unsupported|No support for OS/i }  
                     @{$result->{output}}) {
             $result->{grade} = "na";
             $result->{grade_msg} = "This platform is not supported"
@@ -374,7 +378,7 @@ DUPLICATE_REPORT
 
     # Set debug and transport options, if supported
     $tr->debug( $config->{debug} ) if defined $config->{debug};
-    my $transport = $config->{transport} || '';
+    my $transport = $config->{transport} || 'Net::SMTP';
     if (length $transport && ( $transport !~ /\ANet::SMTP|Mail::Send\z/ )) {
         $CPAN::Frontend->mywarn(
             "CPAN::Reporter doesn't recognize '$config->{transport}' as a valid transport.\n" .
@@ -382,7 +386,7 @@ DUPLICATE_REPORT
         );
         $transport = 'Net::SMTP';
     }
-    $tr->transport( $transport ) if $transport;
+    $tr->transport( $transport );
 
     # prepare mail transport
     $tr->from( $config->{email_from} );
@@ -405,7 +409,7 @@ DUPLICATE_REPORT
     
     if ( _prompt( $config, "edit_report", $tr->grade ) =~ /^y/ ) {
         my $editor = $config->{editor};
-        local $ENV{VISUAL} = $editor if $editor;
+        local $ENV{VISUAL} = $editor if $editor; ## no critic
         $tr->edit_comments;
     }
     
@@ -591,8 +595,9 @@ sub _is_make {
 #--------------------------------------------------------------------------#
 
 sub _max_length {
-    my $max = length shift;
-    for my $term ( @_ ) {
+    my ($first, @rest) = @_;
+    my $max = length $first;
+    for my $term ( @rest ) {
         $max = length $term if length $term > $max;
     }
     return $max;
