@@ -229,5 +229,7 @@ t/perl5lib/Bogus/LTE.pm
 t/perl5lib/Bogus/NoVersion.pm
 t/perl5lib/Bogus/TooOld.pm
 Todo
-xt/pod-coverage.t
-xt/pod.t
+xt/10-pod.t
+xt/11-pod-coverage.t
+xt/20-perl-critic.t
+xt/perlcriticrc
