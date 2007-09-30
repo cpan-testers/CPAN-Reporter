@@ -12,6 +12,8 @@ Revision history for Perl module CPAN::Reporter
       work out-of-the-box on systems with Mail::Send and a broken
       sendmail installation
     
+    - Improved test/temp directory cleanup
+
     - eliminated several Perl::Critic level 4-5 complaints
 
 0.99_13 Thu Sep 27 06:24:00 EDT 2007
