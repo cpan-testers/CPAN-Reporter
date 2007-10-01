@@ -185,7 +185,7 @@ sub test_grade_PL {
 # Test grade_make
 #--------------------------------------------------------------------------#
 
-sub test_grade_make_iter_plan() { 8 }
+sub test_grade_make_iter_plan() { 7 }
 sub test_grade_make_plan() { test_grade_make_iter_plan() * 2 } 
 sub test_grade_make {
     my ($case, $dist) = @_;
@@ -278,10 +278,6 @@ sub test_grade_make {
             _diag_output( $stdout, $stderr )
                 unless ( $is_rc_correct && $is_grade_correct );
 
-            # try to be nice and cleanup
-            ok( ! system("$tool_cmd clean"), 
-                "$case->{name}: $tool_cmd clean" 
-            );
         } #SKIP
     } #for   
 }
@@ -290,7 +286,7 @@ sub test_grade_make {
 # Test grade_test
 #--------------------------------------------------------------------------#
 
-sub test_grade_test_iter_plan() { 8 }
+sub test_grade_test_iter_plan() { 7 }
 sub test_grade_test_plan() { 2 * test_grade_test_iter_plan() }
 sub test_grade_test {
     my ($case, $dist) = @_;
@@ -389,13 +385,6 @@ sub test_grade_test {
             # Grade explanation message
             is( $found_msg, $case->{"$tool\_msg"} . ".",
                 "$case->{name}: '$tool_label' grade explanation correct"
-            );
-
-            # try to be nice and cleanup
-            my $clean_cmd = $tool eq 'eumm' ?  "$make clean"
-                                            :  "$perl Build clean" ;
-            ok( ! system("$clean_cmd"), 
-                "$case->{name}: $clean_cmd" 
             );
 
         } #SKIP
