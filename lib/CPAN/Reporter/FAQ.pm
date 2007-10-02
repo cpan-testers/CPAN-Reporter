@@ -73,7 +73,18 @@ If your email address is subscribed to the list but your test reports are still
 not showing up, your outbound email may have been silently blocked by your
 ISP.  See the question above about errors sending reports.
 
+== Why don't you support sending reports via HTTP or authenticated SMTP?
+
+CPAN::Reporter uses [Test::Reporter] as its conduit to CPAN Testers.  
+As soon as Test::Reporter provides support for alternative transport 
+methods, support for them will be added to CPAN::Reporter.
+
 = CPAN TESTERS
+
+== Where can I find out more about CPAN Testers?
+
+A good place to start is the CPAN Testers Wiki: 
+[http://cpantest.grango.org/]
 
 == Where can I find statistics about reports sent to CPAN Testers?
 
@@ -95,6 +106,7 @@ email address in the {email_from} option.
 
 = SEE ALSO
 
+* [CPAN::Testers]
 * [CPAN::Reporter]
 * [Test::Reporter]
 
