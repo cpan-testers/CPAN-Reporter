@@ -22,6 +22,17 @@ TODO list for Perl module CPAN::Reporter
   (David Cantrell) -- i.e. keep discards somehow ("DISCARD" just like rest 
   of subject line?)
 
+- public API for CPAN::Reporter::History for external querying 
+  (requested by Andreas; Cantrell)
+    e.g CPAN::Reporter::History->have_tested( 
+            dist => $dist, grade => "pass", perl_version => "$]"
+        )
+
+   "The result could be an array of hashes or light objects that
+   know about all 5 (or more) constituents of a line in the history file.
+   If some qualifying parameter is missing, this could be taken as ANY. I
+   think this provides about everything I would ever need." -- Andreas
+
 - heuristics for missing library files --> discard report
 
 # Low priority
