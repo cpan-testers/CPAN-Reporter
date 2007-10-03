@@ -1,5 +1,5 @@
 package CPAN::Reporter::History;
-$VERSION = '0.99_14'; ## no critic
+$VERSION = '0.99_15'; ## no critic
 use strict; 
 use Config;
 use Fcntl qw/:flock :seek/;
@@ -227,11 +227,11 @@ CPAN::Reporter::History - Read or write a CPAN::Reporter history log
 
 This documentation refers to version %%VERSION%%
 
-= SYNOPSIS
-
-
 = DESCRIPTION
 
+Currently, all methods are private.  Future versions may add methods to
+allow programs outside CPAN::Reporter to query a CPAN::Reporter
+history file.
 
 = SEE ALSO
 

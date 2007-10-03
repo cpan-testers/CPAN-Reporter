@@ -1,3 +1,7 @@
+# .pm files that just generate wikidoc with no code
+^lib/CPAN/Reporter/API.pm$
+^lib/CPAN/Reporter/FAQ.pm$
+
 # Version control files and dirs.
 \bRCS\b
 \bCVS\b

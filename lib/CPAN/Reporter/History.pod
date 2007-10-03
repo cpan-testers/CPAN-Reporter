@@ -8,11 +8,13 @@ CPAN::Reporter::History - Read or write a CPAN::Reporter history log
 
 =head1 VERSION
 
-This documentation refers to version 0.99_14
-
-=head1 SYNOPSIS
+This documentation refers to version 0.99_15
 
 =head1 DESCRIPTION
+
+Currently, all methods are private.  Future versions may add methods to
+allow programs outside CPAN::Reporter to query a CPAN::Reporter
+history file.
 
 =head1 SEE ALSO
 

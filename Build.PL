@@ -30,10 +30,6 @@ $class->new(
     },
     meta_add            => { 
         no_index => { 
-            file => [ qw{ 
-                lib/CPAN/Reporter/API.pm
-                lib/CPAN/Reporter/FAQ.pm
-            }],
             directory => [ qw{
                 examples
                 inc

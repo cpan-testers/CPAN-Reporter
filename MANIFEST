@@ -5,11 +5,9 @@ inc/Module/Build/WikiDoc.pm
 INSTALL
 lib/CPAN/Reporter.pm
 lib/CPAN/Reporter.pod
-lib/CPAN/Reporter/API.pm
 lib/CPAN/Reporter/API.pod
 lib/CPAN/Reporter/Config.pm
 lib/CPAN/Reporter/Config.pod
-lib/CPAN/Reporter/FAQ.pm
 lib/CPAN/Reporter/FAQ.pod
 lib/CPAN/Reporter/History.pm
 lib/CPAN/Reporter/History.pod

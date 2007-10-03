@@ -1,8 +1,16 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_14 Tue Oct  2 14:49:40 EDT 2007
+0.99_15
 
     *** RELEASE CANDIDATE -- hopefully the last one before 1.00 ***
+
+    - Added documentation note in History.pm that all methods are 
+      currently private
+
+    - Removed API.pm and FAQ.pm from MANIFEST and tarball -- these are
+      just source files for API.pod and FAQ.pod
+
+0.99_14 Tue Oct  2 14:49:40 EDT 2007
 
     * Bumped CPAN.pm prereq to 1.9203 -- fixes a bug where make/build
       continues even if Makefile/Build is missing, causing FAIL 
