@@ -2,7 +2,10 @@ Revision history for Perl module CPAN::Reporter
 
 0.99_15
 
-    *** RELEASE CANDIDATE -- hopefully the last one before 1.00 ***
+    *** RELEASE CANDIDATE -- still hopefully the last one before 1.00 ***
+
+    - test output truncated at 100K to ensure reports will be accepted
+      by perl.org's MX (noted by Slaven Rezic)
 
     - 5.005 compatibility fixes (noted by Slaven Rezic)
 

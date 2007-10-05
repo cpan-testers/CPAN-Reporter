@@ -31,20 +31,24 @@ my %standard_case_info = (
 
 my @cases = (
     {
-        label => "pass",
+        expected_grade => "pass",
         name => "t-Pass",
     },
     {
-        label => "fail",
+        expected_grade => "fail",
         name => "t-Fail",
     },
     {
-        label => "unknown",
+        expected_grade => "unknown",
         name => "NoTestFiles",
     },
     {
-        label => "na",
+        expected_grade => "na",
         name => "t-NoSupport",
+    },
+    {
+        expected_grade => "fail",
+        name => "t-Fail-LongOutput",
     },
 );
 
@@ -61,11 +65,9 @@ require_ok('CPAN::Reporter');
 test_fake_config( send_report => "yes" );
 
 for my $case ( @cases ) {
-    $case->{expected_grade} = $case->{label};
+    $case->{label} = $case->{name};
     $case->{dist} = $mock_dist;
     $case->{$_} = $standard_case_info{$_} for keys %standard_case_info;
-#    $case->{exit_value} = $case->{label} eq 'pass' ? 0 : 1 << 8 ;
-#    $case->{original} = $report_output{$case->{label}};
     test_report( $case );
 }
 

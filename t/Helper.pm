@@ -56,6 +56,8 @@ my %tool_constants = (
     },
 );
 
+my $max_report_length = 100_000; # 100K
+
 # used to capture from fixtures
 use vars qw/$sent_report @cc_list/;
 
@@ -423,12 +425,12 @@ HERE
     
 );
 
-sub test_report_plan() { 10 };
+sub test_report_plan() { 13 };
 sub test_report {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     my ($case) = @_;
-    my $label = $case->{label};
+    my $label = "$case->{label}:";
     my $expected_grade = $case->{expected_grade};
     my $prereq = CPAN::Reporter::_prereq_report( $case->{dist} );
     my $msg_re = $report_para{ $expected_grade };
@@ -438,11 +440,11 @@ sub test_report {
     my ($stdout, $stderr, $err, $test_output) = _run_report( $case );
     
     is( $err, q{}, 
-        "report for $label ran without error" 
+        "$label report ran without error" 
     );
 
     ok( defined $msg_re && length $msg_re,
-        "$expected_grade grade paragraph selected for $label"
+        "$label found '$expected_grade' grade paragraph"
     );
     
     # set PERL_MM_USE_DEFAULT to mirror _run_report
@@ -452,28 +454,83 @@ sub test_report {
     my $toolchain_versions = CPAN::Reporter::_toolchain_report();
     
     like( $t::Helper::sent_report, '/' . quotemeta($msg_re) . '/ms',
-        "correct intro paragraph for $label"
+        "$label correct intro paragraph"
     );
 
     like( $t::Helper::sent_report, '/' . quotemeta($prereq) . '/ms',
-        "prereq report found for $label"
+        "$label found prereq report"
     );
     
     like( $t::Helper::sent_report, '/' . quotemeta($env_vars) . '/ms',
-        "environment variables found for $label"
+        "$label found environment variables"
     );
     
     like( $t::Helper::sent_report, '/' . quotemeta($special_vars) . '/ms',
-        "special variables found for $label"
+        "$label found special variables"
     );
     
     like( $t::Helper::sent_report, '/' . quotemeta($toolchain_versions) . '/ms',
-        "toolchain versions found for $label"
+        "$label found toolchain versions found"
     );
     
     my $joined_output = join("", @$test_output);
+
+    # extract just the test output
+    my $found_test_output = q{};
+    if ( $t::Helper::sent_report =~ m/
+        ^Output\ from\ '[^\']+':\n          # lead-in to test output
+        ^\n                                 # blank line
+        ^(.+) \n                            # test output ending in newline
+        ^------------------------------ \n  # separator
+        ^PREREQUISITES \n                   # next section
+        /xms ) 
+    {
+        $found_test_output = $1;
+    }
+    
+    my $orig_found_length = length $found_test_output;
+    ok( $orig_found_length, "$label located test output in report" );
+    
+    # if output appears longer than max, the excess should only be the
+    # error message, so look for it, strip it and check it
+    my $length_error = q{};
+    my $max_in_k = int($max_report_length / 1000) . "K";
+    if ( $found_test_output =~ m/
+        ^(.+)\n             # test output ending in a newline
+        ^\n                 # blank line
+        ^(\[[^\n]+\]) \n    # stuff in brackets
+        ^\n                 # blank line
+        \z
+        /xms
+    ) {
+        $found_test_output = $1;
+        $length_error = $2;
+    }
+
+    if ( length $joined_output > $max_report_length ) {
+        is( $length_error, "[Output truncated after $max_in_k]",
+            "$label truncated length error message correct"
+        )
+    }
+    else {
+        pass( "$label no truncation message seen" );
+    }
+
+    # after extracting error, if any, the output should now be
+    # less than the max length
+    my $found_length = length $found_test_output;
+    ok( $found_length <= $max_report_length, 
+        "$label test_output less than or equal to maximum length"
+    ) or diag "length $found_length > $max_report_length";
+
+    # confirm that we indeed got the test output we expected
+    # (whether all or just a truncated portion)
+    if ( length $joined_output > $max_report_length ) {
+        $joined_output = substr( $joined_output, 0, $max_report_length );
+    }
+
     like( $t::Helper::sent_report, '/' . quotemeta($joined_output) . '/ms',
-        "test output found for $label"
+        "$label found output matches expected output"
     );
 
     my @expected_cc;
@@ -482,7 +539,7 @@ sub test_report {
     is_deeply( 
         [ @t::Helper::cc_list ], 
         [ map { $_ . '@cpan.org' } @expected_cc ],
-        "cc list correct"
+        "$label cc list correct"
     );
 
     return;
@@ -558,12 +615,12 @@ sub _ok_clone_dist_dir {
     # workaround badly broken F::C::R 0.34 on Windows
     if ( File::Copy::Recursive->VERSION eq '0.34' && $^O eq 'MSWin32' ) {
         ok( 0 == system("xcopy /q /e $dist_dir $work_dir"),
-            "Copying $dist_name to temporary build directory (XCOPY)"
+            "Copying $dist_name to temp directory (XCOPY)"
         ) or diag $!;
     }
     else {
         ok( defined( dircopy($dist_dir, "$work_dir") ),
-            "Copying $dist_name to temporary build directory $work_dir"
+            "Copying $dist_name to temp directory $work_dir"
         ) or diag $!;
     }
 
