@@ -2,7 +2,7 @@ package CPAN::Reporter::History;
 $VERSION = '0.99_15'; ## no critic
 use strict; 
 use Config;
-use Fcntl qw/:flock :seek/;
+use Fcntl qw/:flock/;
 use File::HomeDir (); 
 use File::Path (qw/mkpath/);
 use File::Spec ();
@@ -206,7 +206,7 @@ sub _record_history {
     my $history = _open_history_file('>>') or return;
 
     flock( $history, LOCK_EX );
-    seek( $history, 0, SEEK_END );
+    seek( $history, 0, 2 );
     $history->print( $log_line );
     flock( $history, LOCK_UN );
     

@@ -4,6 +4,8 @@ Revision history for Perl module CPAN::Reporter
 
     *** RELEASE CANDIDATE -- hopefully the last one before 1.00 ***
 
+    - 5.005 compatibility fixes (noted by Slaven Rezic)
+
     - Added documentation note in History.pm that all methods are 
       currently private
 

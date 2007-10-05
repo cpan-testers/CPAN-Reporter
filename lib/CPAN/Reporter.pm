@@ -123,7 +123,7 @@ HERE
     my $exit_value;
     if ( $cmd_output[-1] =~ m{exited with} ) {
         ($exit_value) = $cmd_output[-1] =~ m{exited with ([-0-9]+)};
-        delete $cmd_output[-1];
+        pop @cmd_output;
     }
     if ( ! defined $exit_value || $exit_value == -1 ) {
         $CPAN::Frontend->mywarn( 
