@@ -40,6 +40,8 @@ TODO list for Perl module CPAN::Reporter
 
 - add test_timeout to CPAN.pm
 
+- send duplicate report if using "report" (?) or "force" (?)
+
 # Low priority
 
 - figure out how to support color output from Test::Harness 3.0 -- probably
