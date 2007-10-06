@@ -33,7 +33,12 @@ TODO list for Perl module CPAN::Reporter
    If some qualifying parameter is missing, this could be taken as ANY. I
    think this provides about everything I would ever need." -- Andreas
 
+- prefix all messages with "CPAN::Reporter: " -- possibly write my own
+  front-end to CPAN's front-end functions
+
 - heuristics for missing library files --> discard report
+
+- add test_timeout to CPAN.pm
 
 # Low priority
 
