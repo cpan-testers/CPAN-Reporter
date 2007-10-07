@@ -206,7 +206,7 @@ sub _record_history {
     my $history = _open_history_file('>>') or return;
 
     flock( $history, LOCK_EX );
-    seek( $history, 0, 2 );
+    seek( $history, 0, 2 ); # seek to end of file
     $history->print( $log_line );
     flock( $history, LOCK_UN );
     

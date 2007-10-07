@@ -82,6 +82,10 @@ t/dist/t-BailOut/Build.PL
 t/dist/t-BailOut/lib/Bogus/Module.pm
 t/dist/t-BailOut/Makefile.PL
 t/dist/t-BailOut/t/01_Bogus.t
+t/dist/t-Fail-LongOutput/Build.PL
+t/dist/t-Fail-LongOutput/lib/Bogus/Module.pm
+t/dist/t-Fail-LongOutput/Makefile.PL
+t/dist/t-Fail-LongOutput/t/01_Bogus.t
 t/dist/t-Fail/Build.PL
 t/dist/t-Fail/lib/Bogus/Module.pm
 t/dist/t-Fail/Makefile.PL

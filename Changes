@@ -1,13 +1,17 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_15
+0.99_15 Sun Oct  7 09:43:41 EDT 2007
 
     *** RELEASE CANDIDATE -- still hopefully the last one before 1.00 ***
 
-    - test output truncated at 100K to ensure reports will be accepted
-      by perl.org's MX (noted by Slaven Rezic)
+    This release is dedicated to Slaven Rezic for boldly smoking with
+    the 5.00505 release candidate.
 
-    - 5.005 compatibility fixes (noted by Slaven Rezic)
+    - Test output truncated at 50K to ensure reports will be accepted
+      by perl.org's MX (noted by Slaven Rezic); analysis of recent reports
+      suggests 50K will affect less than 1% of submissions
+
+    - Work around missing 5.005 Fcntl constants (noted by Slaven Rezic)
 
     - Added documentation note in History.pm that all methods are 
       currently private

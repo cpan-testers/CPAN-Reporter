@@ -56,7 +56,7 @@ my %tool_constants = (
     },
 );
 
-my $max_report_length = 100_000; # 100K
+my $max_report_length = 50_000; # 50K
 
 # used to capture from fixtures
 use vars qw/$sent_report @cc_list/;

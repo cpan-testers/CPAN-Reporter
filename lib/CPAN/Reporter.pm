@@ -19,7 +19,7 @@ use Test::Reporter ();
 use CPAN::Reporter::Config ();
 use CPAN::Reporter::History ();
 
-use constant MAX_OUTPUT_LENGTH => 100_000;
+use constant MAX_OUTPUT_LENGTH => 50_000;
 
 #--------------------------------------------------------------------------#
 # public API
