@@ -23,7 +23,7 @@ for my $mod ( @modules ) {
     my %opts;
     if ( my $doc = $doc_map{$mod} ) {
         $doc =~ s{::}{/}g;
-        $opts{pod_from} = "blib/lib/$doc\.pod";
+        $opts{pod_from} = "lib/$doc\.pod";
     }
     pod_coverage_ok( $mod, \%opts );
 }

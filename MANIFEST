@@ -164,6 +164,10 @@ t/dist/t-Recurse-Pass/test.pl-Pass/Build.PL
 t/dist/t-Recurse-Pass/test.pl-Pass/lib/Bogus/Module.pm
 t/dist/t-Recurse-Pass/test.pl-Pass/Makefile.PL
 t/dist/t-Recurse-Pass/test.pl-Pass/test.pl
+t/dist/t-RequirePerl/Build.PL
+t/dist/t-RequirePerl/lib/Bogus/Module.pm
+t/dist/t-RequirePerl/Makefile.PL
+t/dist/t-RequirePerl/t/01_Bogus.t
 t/dist/t-test.pl-Fail-Pass/Build.PL
 t/dist/t-test.pl-Fail-Pass/lib/Bogus/Module.pm
 t/dist/t-test.pl-Fail-Pass/Makefile.PL
@@ -196,6 +200,10 @@ t/dist/test.pl-NoOutput-OK/Build.PL
 t/dist/test.pl-NoOutput-OK/lib/Bogus/Module.pm
 t/dist/test.pl-NoOutput-OK/Makefile.PL
 t/dist/test.pl-NoOutput-OK/test.pl
+t/dist/test.pl-OSUnsupported/Build.PL
+t/dist/test.pl-OSUnsupported/lib/Bogus/Module.pm
+t/dist/test.pl-OSUnsupported/Makefile.PL
+t/dist/test.pl-OSUnsupported/test.pl
 t/dist/test.pl-Pass/Build.PL
 t/dist/test.pl-Pass/lib/Bogus/Module.pm
 t/dist/test.pl-Pass/Makefile.PL
