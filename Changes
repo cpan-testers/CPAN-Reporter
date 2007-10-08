@@ -13,11 +13,16 @@ Revision history for Perl module CPAN::Reporter
 
     - Work around missing 5.005 Fcntl constants (noted by Slaven Rezic)
 
+    - Fix bug detecting perl version failure in test output
+      (found by Slaven Rezic while testing Sub::Uplevel on 5.00505)
+
+    - Fix bug detecting OS unsupported in test.pl and make
+
     - Added documentation note in History.pm that all methods are 
       currently private
 
     - Removed API.pm and FAQ.pm from MANIFEST and tarball -- these are
-      just source files for API.pod and FAQ.pod
+      just source files for API.pod and FAQ.pod generated with Pod::WikiDoc
 
 0.99_14 Tue Oct  2 14:49:40 EDT 2007
 

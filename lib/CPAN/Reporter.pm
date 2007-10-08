@@ -275,12 +275,14 @@ sub _compute_test_grade {
 
     if ( $grade eq 'fail' || $grade eq 'unknown' ) {
         # check again for unsupported OS in case we took 'fail' from exit value
-        if ( $output =~ m{No support for OS|OS unsupported}ims ) {
+        if ( grep { /No support for OS|OS unsupported/ims } @{$output} ) {
             $grade = 'na';
             $msg = 'This platform is not supported';
         }
         # check for perl version prerequisite or outright failure
-        if ( $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ) {
+        if ( $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims 
+          || grep { /Perl .*? required.*?--this is only/ms } @{$output}
+        ) {
             $grade = 'na';
             $msg = 'Perl version too low';
         }
