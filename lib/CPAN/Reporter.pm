@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = '0.99_15'; 
+$CPAN::Reporter::VERSION = '0.99_16'; 
 
 use Config;
 use CPAN ();
@@ -795,7 +795,9 @@ HERE
 
     'fail' => <<'HERE',
 Thank you for uploading your work to CPAN.  However, it appears that
-there were some problems with your distribution.
+there were some problems with your distribution.  If these results are 
+not what you expect, please consult "Notes for CPAN Authors" on 
+the CPAN Testers Wiki: http://cpantest.grango.org
 HERE
 
     'unknown' => <<'HERE',
