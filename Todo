@@ -46,6 +46,8 @@ TODO list for Perl module CPAN::Reporter
 
 # Low priority
 
+- change report truncation to take first 25K and last 25K (?)
+
 - figure out how to support color output from Test::Harness 3.0 -- probably
   set an environment variable to get them to pass color strings to the pipe
   and then strip color escape codes from the teed file.
