@@ -2,12 +2,26 @@ Revision history for Perl module CPAN::Reporter
 
 1.00
 
-    *** New major release -- API additions and other enhancements ***
+    *** New major release -- API changes and other enhancements ***
 
-    Summary of key features from 0.99_XX development series:
+    Summary of major changes from 0.XX series:
 
-    * Major API additions and configuration changes in preparation for
-      adding Makefile/Build.PL and make/Build support into CPAN.pm 
+    * Added support for reporting for *.PL and make/Build stages; bumped 
+      CPAN.pm prerequisite to 1.9203 to take advantage of this support
+
+    * Added support for the forthcoming Test::Harness 3.00 
+    
+    * Changed the name and format of the history file of sent reports to 
+      track history by PL/make/test phase.  Old history.db will be 
+      automatically upgraded to new reports-sent.db.
+
+    * Moved 'cc_author' and 'send_duplicates' options from interactive
+      to advanced (manual) configuration; defaults are strongly recommended
+
+    * Bumped Test::Reporter prereq to 1.34 for transport() method and set
+      default transport to Net::SMTP on all platforms
+
+    Additional minor new change in 1.00:
 
     - Added CPAN Testers wiki URL to explanation paragraph for FAIL reports
       (request by Slavan Rezic)
