@@ -8,7 +8,7 @@ CPAN::Reporter::FAQ - Answers and tips for using CPAN::Reporter
 
 =head1 VERSION
 
-This documentation refers to version 0.99_15
+This documentation refers to version 1.00
 
 =head1 REPORT GRADES
 

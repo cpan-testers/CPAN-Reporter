@@ -1,8 +1,13 @@
 Revision history for Perl module CPAN::Reporter
 
-0.99_16
+1.00
 
-    *** RELEASE CANDIDATE -- still hopefully the last one before 1.00 ***
+    *** New major release -- API additions and other enhancements ***
+
+    Summary of key features from 0.99_XX development series:
+
+    * Major API additions and configuration changes in preparation for
+      adding Makefile/Build.PL and make/Build support into CPAN.pm 
 
     - Added CPAN Testers wiki URL to explanation paragraph for FAIL reports
       (request by Slavan Rezic)
