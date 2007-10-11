@@ -77,6 +77,8 @@ TODO list for Perl module CPAN::Reporter
 
 - Improve test coverage for utility subs and error handling
 
+- Improve testing of prompts
+
 - Check email addresses for validity (cf. Email::Valid, etc.)
 
 - Other Config items like make or cc

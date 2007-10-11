@@ -227,7 +227,7 @@ HERE
     },
     send_report => {
         default => 'default:ask/yes pass/na:yes',
-        prompt => "Do you want to send the test report?",
+        prompt => "Do you want to send the report?",
         validate => \&_validate_grade_action_pair,
         info => <<'HERE',
 By default, CPAN::Reporter will prompt you for confirmation that
@@ -259,13 +259,19 @@ all, regardless of the value of the "send_report" option.  This option takes
 HERE
     },
     send_PL_report => {
+        prompt => "Do you want to send the PL report?",
         default => undef, 
+        validate => \&_validate_grade_action_pair,
     },
     send_make_report => {
+        prompt => "Do you want to send the make/Build report?",
         default => undef,
+        validate => \&_validate_grade_action_pair,
     },
     send_test_report => {
+        prompt => "Do you want to send the test report?",
         default => undef,
+        validate => \&_validate_grade_action_pair,
     },
     email_to => {
         default => undef,
