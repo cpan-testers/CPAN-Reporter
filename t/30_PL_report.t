@@ -11,7 +11,6 @@ use t::Helper;
 use t::Frontend;
 
 my @test_distros = (
-    # pass
     {
         name => 't-Pass',
         eumm_success => 1,
@@ -32,6 +31,15 @@ my @test_distros = (
     },
     {
         name => 'PL-RequirePerl',
+        eumm_success => 0,
+        eumm_grade => "na",
+        eumm_msg => "Perl version too low",
+        mb_success => 0,
+        mb_grade => "na",
+        mb_msg => "Perl version too low",
+    },
+    {
+        name => 'PL-MIRequirePerl',
         eumm_success => 0,
         eumm_grade => "na",
         eumm_msg => "Perl version too low",

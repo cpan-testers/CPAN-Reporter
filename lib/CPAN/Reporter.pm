@@ -44,9 +44,16 @@ sub grade_PL {
     my @args = @_;
     my $result = _init_result( 'PL', @args ); ## no critic
     _compute_PL_grade($result);
-    _print_grade_msg($result->{PL_file} , $result);
-    if( $result->{grade} ne 'pass' ) {
-        _dispatch_report( $result );
+    if ( $result->{grade} eq 'discard' ) {
+        $CPAN::Frontend->mywarn( 
+            "\nCPAN::Reporter: Test results were not valid, $result->{grade_msg}.\n\n",
+            $result->{prereq_pm}, "\n",
+            "Test results for $result->{dist_name} will be discarded"
+        );
+    }
+    else {
+        _print_grade_msg($result->{PL_file} , $result);
+        if ( $result->{grade} ne 'pass' ) { _dispatch_report( $result ) }
     }
     return $result->{success};
 }
@@ -154,7 +161,7 @@ sub test {
 #--------------------------------------------------------------------------#
 
 #--------------------------------------------------------------------------#
-# _compute_PL_grade
+# _compute_make_grade
 #--------------------------------------------------------------------------#
 
 sub _compute_make_grade {
@@ -168,34 +175,31 @@ sub _compute_make_grade {
         $result->{grade} = "pass";
         $result->{grade_msg} = "No errors"
     }
-    $result->{success} = $result->{grade} eq "pass" ? 1 : 0;
+    $result->{success} =  $result->{grade} eq 'pass'
+                       || $result->{grade} eq 'unknown';
     return;
 }
+
+#--------------------------------------------------------------------------#
+# _compute_PL_grade
+#--------------------------------------------------------------------------#
 
 sub _compute_PL_grade {
     my $result = shift;
     my ($grade,$msg);
     if ( $result->{exit_value} ) {
-        if (grep { /Perl .*? required.*?--this is only .*?/ } 
-                    @{$result->{output}}) {
-            $result->{grade} = "na";
-            $result->{grade_msg} = "Perl version too low";
-        }
-        elsif ( grep { /OS Unsupported|No support for OS/i }  
-                    @{$result->{output}}) {
-            $result->{grade} = "na";
-            $result->{grade_msg} = "This platform is not supported"
-        }
-        else {
-            $result->{grade} = "fail";
-            $result->{grade_msg} = "Stopped with an error"
-        }
+        $result->{grade} = "fail";
+        $result->{grade_msg} = "Stopped with an error"
     }
     else {
         $result->{grade} = "pass";
         $result->{grade_msg} = "No errors"
     }
-    $result->{success} = $result->{grade} eq "pass" ? 1 : 0;
+
+    _downgrade_known_causes( $result );
+    
+    $result->{success} =  $result->{grade} eq 'pass'
+                       || $result->{grade} eq 'unknown';
     return;
 }
 
@@ -224,9 +228,6 @@ sub _compute_test_grade {
     my ($grade,$msg);
     my $output = $result->{output};
 
-    # we need to find prerequisites and toolchain earlier than usual
-    _expand_result( $result );
-
     # In some cases, get a result straight from the exit code 
     if ( $result->{is_make} && ( -f "test.pl" || _has_recursive_make() ) ) {
         if ( $result->{exit_value} ) {
@@ -241,6 +242,7 @@ sub _compute_test_grade {
     # Otherwise, get a result from Test::Harness output
     else {
         # figure out the right harness parser
+        _expand_result( $result ); 
         my $harness_version = $result->{toolchain}{'Test::Harness'}{have};
         my $harness_parser = CPAN::Version->vgt($harness_version, '2.99_01')
                     ? \&_parse_tap_harness
@@ -251,7 +253,7 @@ sub _compute_test_grade {
                 $grade = 'na';
                 $msg = 'This platform is not supported';
             }
-            elsif ( $output->[$i] =~ m{^.?No tests defined}ms ) { # from EU::MM
+            elsif ( $output->[$i] =~ m{^.?No tests defined}ms ) { # from M::B
                 $grade = 'unknown';
                 $msg = 'No tests provided';
             }
@@ -268,37 +270,11 @@ sub _compute_test_grade {
         }
     }
 
-    # Downgrade failure/unknown grade if we can determine a cause
-    # If platform not supported => 'na'
-    # If perl version is too low => 'na'
-    # If stated prereqs missing => 'discard'
-
-    if ( $grade eq 'fail' || $grade eq 'unknown' ) {
-        # check again for unsupported OS in case we took 'fail' from exit value
-        if ( grep { /No support for OS|OS unsupported/ims } @{$output} ) {
-            $grade = 'na';
-            $msg = 'This platform is not supported';
-        }
-        # check for perl version prerequisite or outright failure
-        if ( $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims 
-          || grep { /Perl .*? required.*?--this is only/ms } @{$output}
-        ) {
-            $grade = 'na';
-            $msg = 'Perl version too low';
-        }
-        # check the prereq report for missing or failure flag '!'
-        elsif ( $result->{prereq_pm} =~ m{n/a}ims ) {
-            $grade = 'discard';
-            $msg = 'Prerequisite missing';
-        }
-        elsif ( $result->{prereq_pm} =~ m{^\s+!}ims ) {
-            $grade = 'discard';
-            $msg = 'Prerequisite version too low';
-        }
-    }
-
     $result->{grade} = $grade;
     $result->{grade_msg} = $msg;
+
+    _downgrade_known_causes( $result );
+
     $result->{success} =  $result->{grade} eq 'pass'
                        || $result->{grade} eq 'unknown';
     return;
@@ -435,6 +411,63 @@ DUPLICATE_REPORT
     else {
         $CPAN::Frontend->myprint("Test report will not be sent\n");
     }
+
+    return;
+}
+
+#--------------------------------------------------------------------------#
+# _downgrade_known_causes
+# Downgrade failure/unknown grade if we can determine a cause
+# If platform not supported => 'na'
+# If perl version is too low => 'na'
+# If stated prereqs missing => 'discard'
+#--------------------------------------------------------------------------#
+
+sub _downgrade_known_causes {
+    my ($result) = @_;
+    my ($grade, $output) = ( $result->{grade}, $result->{output} );
+    my $msg = $result->{grade_msg} || q{};
+
+    # shortcut unless fail/unknown
+    return if $grade eq 'pass' || $grade eq 'na';
+
+    # get prereqs
+    _expand_result( $result ); 
+
+    # look for perl version error messages
+    my $version_error;
+    for my $line ( @$output ) {
+        if( $line =~ /Perl .*? required.*?--this is only/ims ||
+            $line =~ /ERROR: perl: Version .*? is installed, but we need version/ims 
+        ) {
+            $version_error++;
+            last;
+        }
+    }
+
+    # check for explicit version error or just a perl version prerequisite
+    if ( $version_error || $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ) {
+        $grade = 'na';
+        $msg = 'Perl version too low';
+    }
+    # check again for unsupported OS in case we took 'fail' from exit value
+    elsif ( grep { /No support for OS|OS unsupported/ims } @{$output} ) {
+        $grade = 'na';
+        $msg = 'This platform is not supported';
+    }
+    # check the prereq report for missing or failure flag '!'
+    elsif ( $result->{prereq_pm} =~ m{n/a}ims ) {
+        $grade = 'discard';
+        $msg = 'Prerequisite missing';
+    }
+    elsif ( $result->{prereq_pm} =~ m{^\s+!}ims ) {
+        $grade = 'discard';
+        $msg = 'Prerequisite version too low';
+    }
+
+    # store results
+    $result->{grade} = $grade;
+    $result->{grade_msg} = $msg;
 
     return;
 }

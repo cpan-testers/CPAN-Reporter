@@ -11,9 +11,10 @@ use t::Frontend;
 use t::Helper;
 
 my @test_distros = (
+    # discards
     {
-        name => 't-PrereqMiss',
-        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
+        name => 'PL-PrereqMiss',
+        prereq => { 'Unavailable::Module' => 0 },
         eumm_success => 0,
         eumm_grade => "discard",
         eumm_msg => "Prerequisite missing",
@@ -22,37 +23,7 @@ my @test_distros = (
         mb_msg => "Prerequisite missing",
     },
     {
-        name => 't-NoTestsButPrereqMiss',
-        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
-        eumm_success => 0,
-        eumm_grade => "discard",
-        eumm_msg => "Prerequisite missing",
-        mb_success => 0,
-        mb_grade => "discard",
-        mb_msg => "Prerequisite missing",
-    },
-    {
-        name => 'test.pl-PrereqMiss',
-        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
-        eumm_success => 0,
-        eumm_grade => "discard",
-        eumm_msg => "Prerequisite missing",
-        mb_success => 0,
-        mb_grade => "discard",
-        mb_msg => "Prerequisite missing",
-    },
-    {
-        name => 't-PrereqFail',
-        prereq => { 'File::Spec' => 99999.9 },
-        eumm_success => 0,
-        eumm_grade => "discard",
-        eumm_msg => "Prerequisite version too low",
-        mb_success => 0,
-        mb_grade => "discard",
-        mb_msg => "Prerequisite version too low",
-    },
-    {
-        name => 'test.pl-PrereqFail',
+        name => 'PL-PrereqFail',
         prereq => { 'File::Spec' => 99999.9 },
         eumm_success => 0,
         eumm_grade => "discard",
@@ -64,7 +35,7 @@ my @test_distros = (
 );
 
 plan tests => 1 + test_fake_config_plan() 
-                + test_grade_test_plan() * @test_distros;
+                + test_grade_PL_plan() * @test_distros;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -86,5 +57,5 @@ for my $case ( @test_distros ) {
         author_fullname => "John Q. Public",
     );
 
-    test_grade_test( $case, $mock_dist ); 
+    test_grade_PL( $case, $mock_dist ); 
 } 
