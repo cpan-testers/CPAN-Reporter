@@ -27,6 +27,7 @@ t/12_toolchain_versions.t
 t/13_record_command.t
 t/20_report_output.t
 t/30_PL_report.t
+t/31_PL_report_discard.t
 t/40_make_report.t
 t/50_test_report_pass.t
 t/51_test_report_fail.t
@@ -55,6 +56,10 @@ t/dist/make-Fail/Die.PL
 t/dist/make-Fail/lib/Bogus/Module.pm
 t/dist/make-Fail/Makefile.PL
 t/dist/make-Fail/t/01_Bogus.t
+t/dist/make-PrereqFail/Build.PL
+t/dist/make-PrereqFail/lib/Bogus/Module.pm
+t/dist/make-PrereqFail/Makefile.PL
+t/dist/make-PrereqFail/t/01_Bogus.t
 t/dist/NoTestDir/Build.PL
 t/dist/NoTestDir/lib/Bogus/Module.pm
 t/dist/NoTestDir/Makefile.PL
@@ -66,6 +71,10 @@ t/dist/PL-Fail/Build.PL
 t/dist/PL-Fail/lib/Bogus/Module.pm
 t/dist/PL-Fail/Makefile.PL
 t/dist/PL-Fail/t/01_Bogus.t
+t/dist/PL-MIRequirePerl/Build.PL
+t/dist/PL-MIRequirePerl/lib/Bogus/Module.pm
+t/dist/PL-MIRequirePerl/Makefile.PL
+t/dist/PL-MIRequirePerl/t/01_Bogus.t
 t/dist/PL-NoSupport/Build.PL
 t/dist/PL-NoSupport/lib/Bogus/Module.pm
 t/dist/PL-NoSupport/Makefile.PL
@@ -74,6 +83,14 @@ t/dist/PL-OSUnsupported/Build.PL
 t/dist/PL-OSUnsupported/lib/Bogus/Module.pm
 t/dist/PL-OSUnsupported/Makefile.PL
 t/dist/PL-OSUnsupported/t/01_Bogus.t
+t/dist/PL-PrereqFail/Build.PL
+t/dist/PL-PrereqFail/lib/Bogus/Module.pm
+t/dist/PL-PrereqFail/Makefile.PL
+t/dist/PL-PrereqFail/t/01_Bogus.t
+t/dist/PL-PrereqMiss/Build.PL
+t/dist/PL-PrereqMiss/lib/Bogus/Module.pm
+t/dist/PL-PrereqMiss/Makefile.PL
+t/dist/PL-PrereqMiss/t/01_Bogus.t
 t/dist/PL-RequirePerl/Build.PL
 t/dist/PL-RequirePerl/lib/Bogus/Module.pm
 t/dist/PL-RequirePerl/Makefile.PL
