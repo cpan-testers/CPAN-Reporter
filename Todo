@@ -4,12 +4,6 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
-# Fix after 1.00
-
-- check prereq failure in make phase.  (and PL phase?)
-
-- more generally, apply downgrade checks across all phases
-
 
 #--------------------------------------------------------------------------#
 # Features, etc

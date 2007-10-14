@@ -33,9 +33,16 @@ sub grade_make {
     my @args = @_;
     my $result = _init_result( 'make', @args ); 
     _compute_make_grade($result);
-    _print_grade_msg($result->{is_make} ? $Config{make} : 'Build' , $result);
-    if( $result->{grade} ne 'pass' ) {
-        _dispatch_report( $result );
+    if ( $result->{grade} eq 'discard' ) {
+        $CPAN::Frontend->mywarn( 
+            "\nCPAN::Reporter: Test results were not valid, $result->{grade_msg}.\n\n",
+            $result->{prereq_pm}, "\n",
+            "Test results for $result->{dist_name} will be discarded"
+        );
+    }
+    else {
+        _print_grade_msg($result->{make_cmd}, $result);
+        if ( $result->{grade} ne 'pass' ) { _dispatch_report( $result ) }
     }
     return $result->{success};
 }
@@ -176,6 +183,9 @@ sub _compute_make_grade {
         $result->{grade} = "pass";
         $result->{grade_msg} = "No errors"
     }
+
+    _downgrade_known_causes( $result );
+    
     $result->{success} =  $result->{grade} eq 'pass'
                        || $result->{grade} eq 'unknown';
     return;
@@ -610,6 +620,7 @@ sub _init_result {
 
     # Used in messages to user
     $result->{PL_file} = $result->{is_make} ? "Makefile.PL" : "Build.PL";
+    $result->{make_cmd} = $result->{is_make} ? $Config{make} : "Build";
 
     # CPAN might fail to find an author object for some strange dists
     my $author = $dist->author;

@@ -211,7 +211,7 @@ sub test_grade_PL {
 # Test grade_make
 #--------------------------------------------------------------------------#
 
-sub test_grade_make_iter_plan() { 7 }
+sub test_grade_make_iter_plan() { 6 }
 sub test_grade_make_plan() { test_grade_make_iter_plan() * 2 } 
 sub test_grade_make {
     my ($case, $dist) = @_;
@@ -272,33 +272,56 @@ sub test_grade_make {
             );
 
             my $case_grade = $case->{"$tool\_grade"};
-
-            # correct grade identified?
             my $is_grade_correct;
-            like( $stdout, "/^CPAN::Reporter: \Q$tool_label\E result is '$case_grade'/ms",
-                "$case->{name}: $tool_label grade identified as '$case_grade'"
-            ) and $is_grade_correct++;
-            my $case_msg = $case->{"$tool\_msg"};
-            like( $stdout, "/\Q$case_msg\E/",
-                "$case->{name}: $tool_label grade explanation correct"
-            );
 
-            # expectations are different by grade
-            if ( $case_grade =~ m{fail|unknown|na} ) {
-                # report should have been sent
-                like( $stdout, "/Preparing a CPAN Testers report for \Q$short_name\E/",
-                    "$case->{name}: report notification correct"
+            # Grade evaluation with special case if discarding
+            my ($found_grade_result, $found_msg) = 
+                ( $stdout =~ /^CPAN::Reporter: ([^,]+), ([^\n]+)/ms );
+            if ( $case_grade eq 'discard' ) {
+                is ($found_grade_result, "Test results were not valid",
+                    "$case->{name}: '$tool_label' prerequisites not satisifed"
                 );
-                ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
-                    "$case->{name}: report was mock sent"
+                    
+                like( $stdout, 
+                    "/Test results for \Q$short_name\E will be discarded/",
+                    "$case->{name}: discard message correct"
+                ) and $is_grade_correct++;
+
+                ok( ! defined $t::Helper::sent_report,
+                    "$case->{name}: test results discarded"
                 );
             }
-            else { # pass
-                # report shouldn't have been sent
-                ok( ! defined $t::Helper::sent_report ,
-                    "$case->{name}: no $tool_label report was sent"
-                );
-                pass("$case->{name}: (advancing test count)");
+            else {
+                my ($found_grade) = ( $found_grade_result =~ /$tool_label result is '([^']+)'/ );
+                is( $found_grade, $case_grade, 
+                    "$case->{name}: '$tool_label' grade reported as '$case_grade'"
+                ) or _diag_output( $stdout, $stderr );
+                
+                my $ctr_regex = "/Preparing a CPAN Testers report for \Q$short_name\E/";
+                
+                if ( $case_grade eq 'pass' ) {
+                    unlike( $stdout, $ctr_regex ,
+                        "$case->{name}: report notification correct"
+                    ) and $is_grade_correct++;
+                    ok( ! defined $t::Helper::sent_report,
+                        "$case->{name}: results not sent"
+                    );
+                }
+                else {
+                    like( $stdout, $ctr_regex ,
+                        "$case->{name}: report notification correct"
+                    ) and $is_grade_correct++;
+                    if ( -r $config_file ) {
+                        ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+                            "$case->{name}: report was mock sent"
+                        );
+                    }
+                    else {
+                        ok( ! defined $t::Helper::sent_report,
+                            "$case->{name}: results not sent"
+                        );
+                    }
+                }
             }
 
             _diag_output( $stdout, $stderr )
