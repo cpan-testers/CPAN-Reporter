@@ -4,19 +4,23 @@ Revision history for Perl module CPAN::Reporter
 
     - Bug fix: shell quotes in command passed to record_command() were not
       being properly escaped in creation of the wrapper script
-      (Andreas Koenig)
+      (found by Andreas Koenig)
 
     - Bug fix: wasn't detecting Perl version too low during make/Build 
       phase.  Reports were improperly graded as 'FAIL' instead of 'NA'
-      (David Cantrell? Slavan Rezic?)
-    
+      (found by Slaven Rezic and David Cantrell)
+   
+    - Bug fix: wasn't detecting missing prerequisites during "make" phase
+      and FAIL reports were being sent that should have been discarded
+      (found by Michel Rodriguez and David Cantrell)
+
 1.01 Sat Oct 13 03:21:40 EDT 2007
 
     - Bug fix: no prompt for sending reports was being shown if
-      advanced send_*_report options were set.  (David Cantrell)
+      advanced send_*_report options were set.  (Found by David Cantrell)
 
     - Bug fix: was not detecting Module::Install's perl version warning
-      (Slaven Rezic)
+      (found by Slaven Rezic)
 
 1.00 Wed Oct 10 20:39:42 EDT 2007
 

@@ -1,5 +1,5 @@
 package CPAN::Reporter::Config;
-$VERSION = '1.01'; ## no critic
+$VERSION = '1.02'; ## no critic
 use strict; 
 use Config::Tiny ();
 use File::HomeDir (); 

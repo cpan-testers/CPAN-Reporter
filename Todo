@@ -4,6 +4,9 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
+- Check if CPAN::Reporter is reporting under a "force X" command?  It
+  probably shouldn't.  Is that a CPAN.pm change?  Or can I get it from 
+  the dist object?  (DAGOLDEN)
 
 #--------------------------------------------------------------------------#
 # Features, etc
