@@ -5,5 +5,5 @@ Module::Build->new(
     module_name         => 'Bogus::Module',
     dist_author         => 'David A. Golden <dagolden@cpan.org>',
     PL_files            => { 'Die.PL' => 'impossible_file.pm' },
-    requires            => { 'File::Spec' => 9999.99 },
+    requires            => { 'Unavailable::Module' => '0.01' },
 )->create_build_script;
