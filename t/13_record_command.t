@@ -19,6 +19,8 @@ use Probe::Perl ();
 
 my $perl = Probe::Perl->find_perl_interpreter();
 
+my $quote = $^O eq 'MSWin32' || $^O eq 'MSDOS' ? q{"} : q{'};
+
 #--------------------------------------------------------------------------#
 # Test planning
 #--------------------------------------------------------------------------#
@@ -46,6 +48,13 @@ my @cases = (
         exit_code => 2 << 8,
     },
     {
+        label => "Exit with args in shell quotes",
+        program => 'print qq{foo $ARGV[0]\n}; exit 0',
+        args => "${quote}apples oranges bananas${quote}",
+        output => [ "foo apples oranges bananas\n" ],
+        exit_code => 0,
+    },
+    {
         label => "Exit with args and pipe",
         program => 'print qq{foo @ARGV\n}; exit 1',
         args => "bar=1 | $perl -pe 0",
@@ -66,6 +75,15 @@ my @cases = (
         program => '$now=time(); 1 while( time() - $now < 2); print qq{foo\n}; exit 0',
         args => '',
         output => ["foo\n"],
+        delay => 2,
+        timeout => 10,
+        exit_code => 0,
+    },
+    {
+        label => "Timeout not reached (with shell quotes)",
+        program => '$now=time(); 1 while( time() - $now < 2); print qq{foo $ARGV[0]\n}; exit 0',
+        args => "${quote}apples oranges bananas${quote}",
+        output => [ "foo apples oranges bananas\n" ],
         delay => 2,
         timeout => 10,
         exit_code => 0,

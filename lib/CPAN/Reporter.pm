@@ -97,10 +97,11 @@ sub record_command {
     }
     # if no timeout or timeout wrap code wasn't available
     if ( ! $wrap_code ) {
+        my $safecmd = quotemeta($cmd);
         $wrap_code = << "HERE";
-my \$rc = system('$cmd');
+my \$rc = system("$safecmd");
 my \$ec = \$rc == -1 ? -1 : \$?;
-print '($cmd exited with ', \$ec, ")\\n";
+print "($safecmd exited with \$ec)\\n";
 HERE
     }
 
@@ -962,6 +963,9 @@ sub _split_redirect {
 sub _timeout_wrapper {
     my ($cmd, $timeout) = @_;
     
+    # protect shell quotes
+    $cmd = quotemeta($cmd);
+
     my $wrapper = sprintf << 'HERE', $timeout, $cmd, $cmd;
 use strict;
 my ($pid, $exitcode);
@@ -975,7 +979,7 @@ eval {
         my $wstat = waitpid $pid, 0;
         $exitcode = $wstat == -1 ? -1 : $?;
     } else {    #child
-        exec '%s';
+        exec "%s";
     }
 };
 alarm 0;
@@ -987,7 +991,7 @@ if ($pid && $@ =~ /Timeout/){
 elsif ($@) {
     die $@;
 }
-print '(%s exited with ', $exitcode, ")\n";
+print "(%s exited with $exitcode)\n";
 HERE
     return $wrapper;
 }
@@ -1023,25 +1027,28 @@ HERE
         $program = File::Spec->catfile($path,$exe);
     }
 
+    # protect shell quotes and other things
+    $_ = quotemeta($_) for ($program, $cmd);
+
     my $wrapper = sprintf << 'HERE', $program, $cmd, $cmd, $timeout, $cmd;
 use strict;
 use Win32::Process qw/STILL_ACTIVE NORMAL_PRIORITY_CLASS/;
 my ($process,$exitcode);
 Win32::Process::Create(
     $process,
-    '%s',
-    '%s',
+    "%s",
+    "%s",
     0,
     NORMAL_PRIORITY_CLASS,
     "."
-) or die 'Could not spawn %s: ' . "$^E\n";
+) or die "Could not spawn %s: $^E\n";
 $process->Wait(%s * 1000);
 $process->GetExitCode($exitcode);
 if ($exitcode == STILL_ACTIVE) {
     $process->Kill(9);
     $exitcode = 9;
 }
-print '(%s exited with ', $exitcode, ")\n";
+print "(%s exited with $exitcode)\n";
 HERE
     return $wrapper;
 }

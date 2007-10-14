@@ -10,10 +10,6 @@ TODO list for Perl module CPAN::Reporter
 
 - more generally, apply downgrade checks across all phases
 
-- Different "Perl too low" error message from Module::Install distros
-    
-    ERROR: perl: Version 5.00505 is installed, but we need version >=
-    5.008002 at Makefile.PL line 158.
 
 #--------------------------------------------------------------------------#
 # Features, etc

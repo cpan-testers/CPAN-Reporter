@@ -1,5 +1,8 @@
 Revision history for Perl module CPAN::Reporter
 
+1.02
+    -
+    
 1.01 Sat Oct 13 03:21:40 EDT 2007
 
     - Bug fix: no prompt for sending reports was being shown if
