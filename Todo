@@ -6,7 +6,7 @@ TODO list for Perl module CPAN::Reporter
 
 - Check if CPAN::Reporter is reporting under a "force X" command?  It
   probably shouldn't.  Is that a CPAN.pm change?  Or can I get it from 
-  the dist object?  (DAGOLDEN)
+  the dist object? ie. $dist->{force_update} (DAGOLDEN)
 
 #--------------------------------------------------------------------------#
 # Features, etc
@@ -44,11 +44,9 @@ TODO list for Perl module CPAN::Reporter
 
 - add test_timeout to CPAN.pm
 
-- send duplicate report if using "report" (?) or "force" (?)
-
 # Low priority
 
-- change report truncation to take first 25K and last 25K (?)
+- change report truncation to take first 25K and last 25K (summary) (?)
 
 - figure out how to support color output from Test::Harness 3.0 -- probably
   set an environment variable to get them to pass color strings to the pipe
@@ -67,9 +65,6 @@ TODO list for Perl module CPAN::Reporter
 
 - add timeout to prompt (RT#28034)
 
-- Figure out if forced tests should be handled differently than normal
-  tests
-
 - Add interactive config for editor?
 
 - Improve test coverage for utility subs and error handling
@@ -81,6 +76,8 @@ TODO list for Perl module CPAN::Reporter
 - Other Config items like make or cc
 
 # Probably won't implement
+
+- send duplicate report if using "report" (?) or "force" (?)
 
 - ability to turn on/off via an environment variable (David Cantrell)
 

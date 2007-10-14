@@ -554,26 +554,6 @@ sub _format_distname {
     return $basename;
 }
 
-
-#--------------------------------------------------------------------------#
-# _has_tests
-#--------------------------------------------------------------------------#
-
-sub _has_tests {
-    return 1 if -f 'test.pl';
-    if ( -d 't' ) {
-        local *TESTDIR;
-        opendir TESTDIR, 't';
-        while ( my $f = readdir TESTDIR ) {
-            if ( $f =~ m{\.t$} ) {
-                close TESTDIR;
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-
 #--------------------------------------------------------------------------#
 # _has_recursive_make
 #

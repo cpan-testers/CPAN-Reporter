@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-1.02
+1.02 Sun Oct 14 08:57:38 EDT 2007
 
     - Bug fix: shell quotes in command passed to record_command() were not
       being properly escaped in creation of the wrapper script
