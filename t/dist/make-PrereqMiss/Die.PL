@@ -1,2 +1,2 @@
 use strict;
-use Unavailable::Module 0.01;
+use Unavailable::Module 0;

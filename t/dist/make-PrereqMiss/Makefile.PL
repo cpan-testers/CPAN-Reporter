@@ -7,6 +7,6 @@ WriteMakefile(
     'EXE_FILES' => [],
     'VERSION_FROM' => 'lib/Bogus/Module.pm',
     'PREREQ_PM' => {
-        'Unavailable::Module' => '0.01',
+        'Unavailable::Module' => 0,
     }
 );
