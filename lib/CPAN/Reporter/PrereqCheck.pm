@@ -1,0 +1,145 @@
+package CPAN::Reporter::PrereqCheck;
+
+$CPAN::Reporter::PrereqCheck::VERSION = '1.03'; 
+
+use strict;
+use ExtUtils::MakeMaker;
+use CPAN::Version;
+
+run() if ! caller();
+
+sub run {
+    # read module and prereq string from STDIN
+    while ( <STDIN> ) {
+        m/^(\S+)\s+([^\n]*)/;
+        my ($mod, $need) = ($1, $2);
+        die "Couldn't read module for '$_'" unless $mod;
+        $need = 0 if not defined $need;
+
+        # get installed version from file with EU::MM
+        my($have, $inst_file, $dir, @packpath);
+        if ( $mod eq "perl" ) { 
+            $have = $];
+        }
+        else {
+            @packpath = split /::/, $mod;
+            $packpath[-1] .= ".pm";
+            if (@packpath == 1 && $packpath[0] eq "readline.pm") {
+                unshift @packpath, "Term", "ReadLine"; # historical reasons
+            }
+            foreach $dir (@INC) {
+                my $pmfile = File::Spec->catfile($dir,@packpath);
+                if (-f $pmfile){
+                    $inst_file = $pmfile;
+                }
+            }
+            
+            # get version from file or else report missing
+            if ( defined $inst_file ) {
+                $have = MM->parse_version($inst_file);
+                $have = "0" if ! defined $have || $have eq 'undef';
+            }
+            else {
+                print "$mod 0 n/a\n";
+                next;
+            }
+        }
+
+        # complex requirements are comma separated
+        my ( @requirements ) = split /\s*,\s*/, $need;
+
+        my $passes = 0;
+        RQ: 
+        for my $rq (@requirements) {
+            if ($rq =~ s|>=\s*||) {
+                # no-op -- just trimmed string
+            } elsif ($rq =~ s|>\s*||) {
+                if (CPAN::Version->vgt($have,$rq)){
+                    $passes++;
+                }
+                next RQ;
+            } elsif ($rq =~ s|!=\s*||) {
+                if (CPAN::Version->vcmp($have,$rq)) { 
+                    $passes++; # didn't match
+                }
+                next RQ;
+            } elsif ($rq =~ s|<=\s*||) {
+                if (! CPAN::Version->vgt($have,$rq)){
+                    $passes++;
+                }
+                next RQ;
+            } elsif ($rq =~ s|<\s*||) {
+                if (CPAN::Version->vlt($have,$rq)){
+                    $passes++;
+                }
+                next RQ;
+            }
+            # if made it here, then it's a normal >= comparison
+            if (! CPAN::Version->vlt($have, $rq)){
+                $passes++;
+            }
+        }
+        my $ok = $passes == @requirements ? 1 : 0;
+        print "$mod $ok $have\n"
+    }
+}
+
+1;
+
+__END__
+
+#--------------------------------------------------------------------------#
+# pod documentation 
+#--------------------------------------------------------------------------#
+
+=begin wikidoc
+
+= NAME
+
+CPAN::Reporter::PrereqCheck - Modulino for prerequisite tests
+
+= VERSION
+
+This documentation describes version %%VERSION%%.
+
+= SYNOPSIS
+
+
+= DESCRIPTION
+
+
+= BUGS
+
+Please report any bugs or feature using the CPAN Request Tracker.  
+Bugs can be submitted through the web interface at 
+[http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter]
+
+When submitting a bug or request, please include a test-file or a patch to an
+existing test-file that illustrates the bug or desired feature.
+
+= SEE ALSO
+
+* [CPAN::Reporter] -- main documentation
+
+= AUTHOR
+
+David A. Golden (DAGOLDEN)
+
+= COPYRIGHT AND LICENSE
+
+Copyright (c) 2006, 2007 by David A. Golden
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+[http://www.apache.org/licenses/LICENSE-2.0]
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+=end wikidoc
+
+=cut
