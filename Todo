@@ -18,6 +18,8 @@ TODO list for Perl module CPAN::Reporter
 
 # Medium priority 
 
+- Add templates to all temp files for easier manual cleanup
+
 - set alternate configuration file/dir via environment variable
 
 - Add config to save reports to a file (Jerry Hedden) (RT#24816)
