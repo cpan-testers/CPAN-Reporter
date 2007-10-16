@@ -14,7 +14,7 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
-- none
+- Test with new File::Spec 3.25_01
 
 # Medium priority 
 
