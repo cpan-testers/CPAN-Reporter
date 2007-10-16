@@ -1,7 +1,7 @@
 package CPAN::Reporter::FAQ;
 # Not really a .pm file, but holds wikidoc which will be
 # turned into .pod by the Build.PL
-$VERSION = '1.02'; ## no critic
+$VERSION = '1.03'; ## no critic
 use strict; # make CPANTS happy
 1;
 __END__
@@ -122,11 +122,6 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
 [http://www.apache.org/licenses/LICENSE-2.0]
-
-Files produced as output though the use of this software, including
-generated copies of boilerplate templates provided with this software,
-shall not be considered Derivative Works, but shall be considered the
-original work of the Licensor.
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

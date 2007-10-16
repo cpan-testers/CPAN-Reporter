@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = '1.02'; 
+$CPAN::Reporter::VERSION = '1.03'; 
 
 use Config;
 use CPAN ();
@@ -18,6 +18,7 @@ use Tee qw/tee/;
 use Test::Reporter ();
 use CPAN::Reporter::Config ();
 use CPAN::Reporter::History ();
+use CPAN::Reporter::PrereqCheck ();
 
 use constant MAX_OUTPUT_LENGTH => 50_000;
 
@@ -88,12 +89,12 @@ sub record_command {
 
     my ($cmd, $redirect) = _split_redirect($command);
 
-    my $temp_out = File::Temp->new
+    my $temp_out = File::Temp->new( TEMPLATE => 'CR-TO-XXXXXXXX' )
         or die "Could not create a temporary file for output: $!";
 
     # Teeing a command loses its exit value so we must wrap the command 
     # and print the exit code so we can read it off of output
-    my $cmdwrapper = File::Temp->new
+    my $cmdwrapper = File::Temp->new( TEMPLATE => 'CR-CW-XXXXXXXX' )
         or die "Could not create a wrapper for $cmd\: $!";
 
     my $wrap_code;
@@ -1109,89 +1110,7 @@ sub _toolchain_report {
 #
 #--------------------------------------------------------------------------#
 
-my $version_finder = File::Temp->new
-    or die "Could not create temporary support program for versions: $!";
-$version_finder->print( << 'END' );
-use strict;
-use ExtUtils::MakeMaker;
-use CPAN::Version;
-
-# read module and prereq string from STDIN
-while ( <STDIN> ) {
-    m/^(\S+)\s+([^\n]*)/;
-    my ($mod, $need) = ($1, $2);
-    die "Couldn't read module for '$_'" unless $mod;
-    $need = 0 if not defined $need;
-
-    # get installed version from file with EU::MM
-    my($have, $inst_file, $dir, @packpath);
-    if ( $mod eq "perl" ) { 
-        $have = $];
-    }
-    else {
-        @packpath = split /::/, $mod;
-        $packpath[-1] .= ".pm";
-        if (@packpath == 1 && $packpath[0] eq "readline.pm") {
-            unshift @packpath, "Term", "ReadLine"; # historical reasons
-        }
-        foreach $dir (@INC) {
-            my $pmfile = File::Spec->catfile($dir,@packpath);
-            if (-f $pmfile){
-                $inst_file = $pmfile;
-            }
-        }
-        
-        # get version from file or else report missing
-        if ( defined $inst_file ) {
-            $have = MM->parse_version($inst_file);
-            $have = "0" if ! defined $have || $have eq 'undef';
-        }
-        else {
-            print "$mod 0 n/a\n";
-            next;
-        }
-    }
-
-    # complex requirements are comma separated
-    my ( @requirements ) = split /\s*,\s*/, $need;
-
-    my $passes = 0;
-    RQ: 
-    for my $rq (@requirements) {
-        if ($rq =~ s|>=\s*||) {
-            # no-op -- just trimmed string
-        } elsif ($rq =~ s|>\s*||) {
-            if (CPAN::Version->vgt($have,$rq)){
-                $passes++;
-            }
-            next RQ;
-        } elsif ($rq =~ s|!=\s*||) {
-            if (CPAN::Version->vcmp($have,$rq)) { 
-                $passes++; # didn't match
-            }
-            next RQ;
-        } elsif ($rq =~ s|<=\s*||) {
-            if (! CPAN::Version->vgt($have,$rq)){
-                $passes++;
-            }
-            next RQ;
-        } elsif ($rq =~ s|<\s*||) {
-            if (CPAN::Version->vlt($have,$rq)){
-                $passes++;
-            }
-            next RQ;
-        }
-        # if made it here, then it's a normal >= comparison
-        if (! CPAN::Version->vlt($have, $rq)){
-            $passes++;
-        }
-    }
-    my $ok = $passes == @requirements ? 1 : 0;
-    print "$mod $ok $have\n"
-}
-END
-
-$version_finder->close;
+my $version_finder = $INC{'CPAN/Reporter/PrereqCheck.pm'};
 
 sub _version_finder {
     my %prereqs = @_;
@@ -1199,7 +1118,7 @@ sub _version_finder {
     my $perl = Probe::Perl->find_perl_interpreter();
     my @prereq_results;
     
-    my $prereq_input = File::Temp->new
+    my $prereq_input = File::Temp->new( TEMPLATE => 'CR-PI-XXXXXXXX' )
         or die "Could not create temporary input for prereq analysis: $!";
     $prereq_input->print( map { "$_ $prereqs{$_}\n" } keys %prereqs );
     $prereq_input->close;
@@ -1392,11 +1311,6 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
 [http://www.apache.org/licenses/LICENSE-2.0]
-
-Files produced as output though the use of this software, including
-generated copies of boilerplate templates provided with this software,
-shall not be considered Derivative Works, but shall be considered the
-original work of the Licensor.
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+1.03
+
+    - Refactored prerequisite checking code into separate modulino
+      CPAN::Reporter::PrereqCheck
+
 1.02 Sun Oct 14 08:57:38 EDT 2007
 
     - Bug fix: shell quotes in command passed to record_command() were not

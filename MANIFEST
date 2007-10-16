@@ -272,3 +272,4 @@ xt/10-pod.t
 xt/11-pod-coverage.t
 xt/20-perl-critic.t
 xt/perlcriticrc
+lib/CPAN/Reporter/PrereqCheck.pod
