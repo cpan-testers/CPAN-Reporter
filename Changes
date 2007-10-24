@@ -2,8 +2,15 @@ Revision history for Perl module CPAN::Reporter
 
 1.03
 
+    - Prerequisite check reports "broken" if a prerequisite module file is
+      found but the module can't be loaded with "require" (e.g a dependency
+      of that module is missing)
+
     - Refactored prerequisite checking code into separate modulino
       CPAN::Reporter::PrereqCheck
+
+    - Testing bug fix: in the rare case where Module::Build is present but
+      broken, we would only skip Build.PL tests once instead of always
 
 1.02 Sun Oct 14 08:57:38 EDT 2007
 

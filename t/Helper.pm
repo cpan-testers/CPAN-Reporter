@@ -48,10 +48,12 @@ my $bogus_smtp = 'mail.mail.com';
 my %tool_constants = (
     'eumm'  => {
         module  => 'ExtUtils::MakeMaker',
+        have    => eval "require ExtUtils::MakeMaker" || 0,
         PL      => 'Makefile.PL',
     },
     'mb'    => {
         module  => 'Module::Build',
+        have    => eval "require Module::Build" || 0,
         PL      => 'Build.PL'
     },
 );
@@ -107,14 +109,14 @@ sub test_grade_PL {
 
     for my $tool ( qw/eumm mb/ ) {
         SKIP: {
-            my ($tool_mod,$tool_PL) = @{$tool_constants{$tool}}{qw/module PL/};
+            my ($have_tool,$tool_mod,$tool_PL) = 
+                @{$tool_constants{$tool}}{qw/have module PL/};
             my $tool_label = $tool eq 'eumm'  ? "Makefile.PL" 
                                             : "Build.PL";
             my $tool_cmd = "$perl $tool_label"; 
 
-            eval "require $tool_mod";
-            skip "$tool_mod not installed", test_grade_PL_iter_plan()
-                if $@;
+            skip "$tool_mod not installed or working", test_grade_PL_iter_plan()
+                if ! $have_tool;
             
             my $tempd = _ok_clone_dist_dir( $case->{name} );
             
@@ -221,13 +223,13 @@ sub test_grade_make {
 
     for my $tool ( qw/eumm mb/ ) {
         SKIP: {
-            my ($tool_mod,$tool_PL) = @{$tool_constants{$tool}}{qw/module PL/};
+            my ($have_tool,$tool_mod,$tool_PL) = 
+                @{$tool_constants{$tool}}{qw/have module PL/};
             my $tool_cmd = $tool eq 'eumm' ? $Config{make} : "$perl Build";
             my $tool_label = $tool eq 'eumm' ? $Config{make} : "Build";
 
-            eval "require $tool_mod";
-            skip "$tool_mod not installed", test_grade_make_iter_plan()
-                if $@;
+            skip "$tool_mod not installed or working", test_grade_make_iter_plan()
+                if ! $have_tool;
             
             # Set up temporary directory for the case
             my $tempd = _ok_clone_dist_dir( $case->{name} );
@@ -345,15 +347,15 @@ sub test_grade_test {
 
     for my $tool ( qw/eumm mb/ ) {
         SKIP: {
-            my ($tool_mod,$tool_PL) = @{$tool_constants{$tool}}{qw/module PL/};
+            my ($have_tool,$tool_mod,$tool_PL) = 
+                @{$tool_constants{$tool}}{qw/have module PL/};
             my $tool_cmd = $tool eq 'eumm'  ?  "$make test"
                                             :  "$perl Build test" ;
             my $tool_label = $tool eq 'eumm'?  "make test"
                                             :  "perl Build test" ;
 
-            eval "require $tool_mod";
-            skip "$tool_mod not installed", test_grade_test_iter_plan()
-                if $@;
+            skip "$tool_mod not installed or working", test_grade_test_iter_plan()
+                if ! $have_tool; 
 
             my $tempd = _ok_clone_dist_dir( $case->{name} );
                 

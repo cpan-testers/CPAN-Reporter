@@ -9,12 +9,16 @@ use CPAN::Version;
 run() if ! caller();
 
 sub run {
+    my %saw_mod;
     # read module and prereq string from STDIN
     while ( <STDIN> ) {
         m/^(\S+)\s+([^\n]*)/;
         my ($mod, $need) = ($1, $2);
         die "Couldn't read module for '$_'" unless $mod;
         $need = 0 if not defined $need;
+        
+        # only evaluate a module once
+        next if $saw_mod{$mod}++;
 
         # get installed version from file with EU::MM
         my($have, $inst_file, $dir, @packpath);
@@ -38,6 +42,11 @@ sub run {
             if ( defined $inst_file ) {
                 $have = MM->parse_version($inst_file);
                 $have = "0" if ! defined $have || $have eq 'undef';
+                # report broken if it can't be loaded
+                if ( ! eval "require $mod" ) {
+                    print "$mod 0 broken\n";
+                    next;
+                }
             }
             else {
                 print "$mod 0 n/a\n";
