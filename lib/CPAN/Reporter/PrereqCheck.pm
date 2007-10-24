@@ -1,14 +1,14 @@
 package CPAN::Reporter::PrereqCheck;
-
-$CPAN::Reporter::PrereqCheck::VERSION = '1.03'; 
-
 use strict;
+use vars qw/$VERSION/;
+$VERSION = '1.03'; 
+
 use ExtUtils::MakeMaker;
 use CPAN::Version;
 
-run() if ! caller();
+_run() if ! caller();
 
-sub run {
+sub _run {
     my %saw_mod;
     # read module and prereq string from STDIN
     while ( <STDIN> ) {
@@ -26,12 +26,12 @@ sub run {
             $have = $];
         }
         else {
-            @packpath = split /::/, $mod;
+            @packpath = split( /::/, $mod );
             $packpath[-1] .= ".pm";
             if (@packpath == 1 && $packpath[0] eq "readline.pm") {
                 unshift @packpath, "Term", "ReadLine"; # historical reasons
             }
-            foreach $dir (@INC) {
+            foreach my $dir (@INC) {
                 my $pmfile = File::Spec->catfile($dir,@packpath);
                 if (-f $pmfile){
                     $inst_file = $pmfile;
@@ -91,6 +91,7 @@ sub run {
         my $ok = $passes == @requirements ? 1 : 0;
         print "$mod $ok $have\n"
     }
+    return;
 }
 
 1;
@@ -113,9 +114,27 @@ This documentation describes version %%VERSION%%.
 
 = SYNOPSIS
 
+ require CPAN::Reporter::PrereqCheck;
+ my $prereq_check = $INC{'CPAN/Reporter/PrereqCheck.pm'};
+ my $result = qx/$perl $prereq_check < $prereq_file/;
 
 = DESCRIPTION
 
+This modulino determines whether a list of prerequisite modules are
+available and, if so, their version number.  It is designed to be run
+as a script in order to provide this information from the perspective of
+a subprocess, just like CPAN::Reporter's invocation of {perl Makefile.PL}
+and so on.
+
+It reads a module name and prerequisite string pair from each line of input
+and prints out the module name, 0 or 1 depending on whether the prerequisite
+is satisifed, and the installed module version.  If the module is not
+available, it will print "n/a" for the version.  If the module is available
+but can't be loaded, it will print "broken" for the version.  Modules 
+without a version will be treated as being of version "0".
+
+No user serviceable parts are inside.  This modulino is packaged for 
+internal use by CPAN::Reporter.
 
 = BUGS
 

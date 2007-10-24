@@ -1,6 +1,8 @@
 package CPAN::Reporter::Config;
-$VERSION = '1.03'; ## no critic
 use strict; 
+use vars qw/$VERSION/;
+$VERSION = '1.03'; 
+
 use Config::Tiny ();
 use File::HomeDir (); 
 use File::Path (qw/mkpath/);

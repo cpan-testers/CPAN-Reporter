@@ -21,9 +21,10 @@ my %doc_map = (
 
 for my $mod ( @modules ) {
     my %opts;
-    if ( my $doc = $doc_map{$mod} ) {
-        $doc =~ s{::}{/}g;
-        $opts{pod_from} = "lib/$doc\.pod";
+    if ( exists $doc_map{$mod} ) {
+        $mod = $doc_map{$mod};
     }
+    $opts{pod_from} = "lib/$mod\.pod";
+    $opts{pod_from} =~ s{::}{/}g;
     pod_coverage_ok( $mod, \%opts );
 }

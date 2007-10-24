@@ -12,18 +12,19 @@ use t::Frontend;
 use Config;
 
 my @prereq_cases = (
-      #module               #need   #have   #ok?
-    [ 'Bogus::Found',       1.23,   3.14,   1   ],
-    [ 'Bogus::NotFound',    1.49,   "n/a",  0   ],
-    [ 'Bogus::TooOld',      2.72,   0.01,   0   ],
-    [ 'Bogus::NoVersion',      0,      0,   1   ],
-    [ 'Bogus::GTE',     '>= 3.14',   3.14,   1   ],
-    [ 'Bogus::GT',       '>3.14',   3.14,   0   ],
-    [ 'Bogus::LTE',     '<= 3.15',   3.14,   1   ],
-    [ 'Bogus::LT',       '<3.14',   3.14,   0   ],
-    [ 'Bogus::Conflict','!= 3.14',   3.14,   0   ],
-    [ 'Bogus::Complex', '>= 3, !=3.14, < 4', 3.14, 0],
-    [ 'perl',               5.00,    $],    1   ],   
+      #module               #need       #have   #ok?
+    [ 'Bogus::Found',       1.23,                   3.14,       1 ],
+    [ 'Bogus::NotFound',    1.49,                   "n/a",      0 ],
+    [ 'Bogus::TooOld',      2.72,                   0.01,       0 ],
+    [ 'Bogus::NoVersion',   0,                      0,          1 ],
+    [ 'Bogus::GTE',         '>= 3.14',              3.14,       1 ],
+    [ 'Bogus::GT',          '>3.14',                3.14,       0 ],
+    [ 'Bogus::LTE',         '<= 3.15',              3.14,       1 ],
+    [ 'Bogus::LT',          '<3.14',                3.14,       0 ],
+    [ 'Bogus::Conflict',    '!= 3.14',              3.14,       0 ],
+    [ 'Bogus::Complex',     '>= 3, !=3.14, < 4',    3.14,       0 ],
+    [ 'Bogus::Broken',      '0',                    'broken',   0 ],
+    [ 'perl',               5.00,                   $],         1 ],   
 );
 
 my @scenarios = (

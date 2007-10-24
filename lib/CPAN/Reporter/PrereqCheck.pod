@@ -8,11 +8,31 @@ CPAN::Reporter::PrereqCheck - Modulino for prerequisite tests
 
 =head1 VERSION
 
-This documentation describes version 1.02.
+This documentation describes version 1.03.
 
 =head1 SYNOPSIS
 
+  require CPAN::Reporter::PrereqCheck;
+  my $prereq_check = $INC{'CPAN/Reporter/PrereqCheck.pm'};
+  my $result = qx/$perl $prereq_check < $prereq_file/;
+
 =head1 DESCRIPTION
+
+This modulino determines whether a list of prerequisite modules are
+available and, if so, their version number.  It is designed to be run
+as a script in order to provide this information from the perspective of
+a subprocess, just like CPAN::Reporter's invocation of C<<< perl Makefile.PL >>>
+and so on.
+
+It reads a module name and prerequisite string pair from each line of input
+and prints out the module name, 0 or 1 depending on whether the prerequisite
+is satisifed, and the installed module version.  If the module is not
+available, it will print "nE<sol>a" for the version.  If the module is available
+but can't be loaded, it will print "broken" for the version.  Modules 
+without a version will be treated as being of version "0".
+
+No user serviceable parts are inside.  This modulino is packaged for 
+internal use by CPAN::Reporter.
 
 =head1 BUGS
 
