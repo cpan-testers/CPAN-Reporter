@@ -1,13 +1,19 @@
 Revision history for Perl module CPAN::Reporter
 
-1.03
+1.03 Wed Oct 24 17:13:59 EDT 2007
 
-    - Prerequisite check reports "broken" if a prerequisite module file is
-      found but the module can't be loaded with "require" (e.g a dependency
-      of that module is missing)
+    - Added a check for prerequisites that are present but fail to load;
+      in such a case the prereq "have" field will show "broken" (e.g a 
+      dependency of that module is missing)
 
-    - Refactored prerequisite checking code into separate modulino
-      CPAN::Reporter::PrereqCheck
+    - Refactored prerequisite checking code into a separate modulino
+      CPAN::Reporter::PrereqCheck to cut down on excessive tempfile use
+      and simplify testing
+
+    - Added name templates for all tempfiles to help identify leakage
+      or left-over files if tests are interrupted.  All names are like
+      CR-ZZ-XXXXXXXX, where ZZ is unique to each File::Temp call and X's
+      are a random suffix
 
     - Testing bug fix: in the rare case where Module::Build is present but
       broken, we would only skip Build.PL tests once instead of always

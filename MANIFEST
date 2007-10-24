@@ -11,6 +11,8 @@ lib/CPAN/Reporter/Config.pod
 lib/CPAN/Reporter/FAQ.pod
 lib/CPAN/Reporter/History.pm
 lib/CPAN/Reporter/History.pod
+lib/CPAN/Reporter/PrereqCheck.pm
+lib/CPAN/Reporter/PrereqCheck.pod
 LICENSE
 Makefile.PL
 MANIFEST			This list of files
@@ -258,6 +260,7 @@ t/Helper.pm
 t/history/history.db
 t/history/reports-sent.db
 t/MockCPANDist.pm
+t/perl5lib/Bogus/Broken.pm
 t/perl5lib/Bogus/Complex.pm
 t/perl5lib/Bogus/Conflict.pm
 t/perl5lib/Bogus/Found.pm
@@ -272,4 +275,3 @@ xt/10-pod.t
 xt/11-pod-coverage.t
 xt/20-perl-critic.t
 xt/perlcriticrc
-lib/CPAN/Reporter/PrereqCheck.pod
