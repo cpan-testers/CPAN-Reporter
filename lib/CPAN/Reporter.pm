@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = '1.03'; 
+$CPAN::Reporter::VERSION = '1.04'; 
 
 use Config;
 use CPAN ();
@@ -89,13 +89,15 @@ sub record_command {
 
     my ($cmd, $redirect) = _split_redirect($command);
 
-    my $temp_out = File::Temp->new( TEMPLATE => 'CR-TO-XXXXXXXX' )
-        or die "Could not create a temporary file for output: $!";
+    my $temp_out = File::Temp->new( 
+        TEMPLATE => 'CR-TO-XXXXXXXX', DIR => File::Spec->tmpdir()
+    ) or die "Could not create a temporary file for output: $!";
 
     # Teeing a command loses its exit value so we must wrap the command 
     # and print the exit code so we can read it off of output
-    my $cmdwrapper = File::Temp->new( TEMPLATE => 'CR-CW-XXXXXXXX' )
-        or die "Could not create a wrapper for $cmd\: $!";
+    my $cmdwrapper = File::Temp->new( 
+        TEMPLATE => 'CR-CW-XXXXXXXX', DIR => File::Spec->tmpdir() 
+    ) or die "Could not create a wrapper for $cmd\: $!";
 
     my $wrap_code;
     if ( $timeout ) {
@@ -1118,8 +1120,9 @@ sub _version_finder {
     my $perl = Probe::Perl->find_perl_interpreter();
     my @prereq_results;
     
-    my $prereq_input = File::Temp->new( TEMPLATE => 'CR-PI-XXXXXXXX' )
-        or die "Could not create temporary input for prereq analysis: $!";
+    my $prereq_input = File::Temp->new( 
+        TEMPLATE => 'CR-PI-XXXXXXXX', DIR => File::Spec->tmpdir() 
+    ) or die "Could not create temporary input for prereq analysis: $!";
     $prereq_input->print( map { "$_ $prereqs{$_}\n" } keys %prereqs );
     $prereq_input->close;
 

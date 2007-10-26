@@ -1,5 +1,12 @@
 Revision history for Perl module CPAN::Reporter
 
+1.04 Fri Oct 26 06:56:32 EDT 2007
+    
+    - Bug fix: temp files were being created in the current directory,
+      not the File::Spec->tmpdir() directory; this broke distributions
+      that used their own distribution directory for signature or 
+      MANIFEST checks
+
 1.03 Wed Oct 24 17:13:59 EDT 2007
 
     - Added a check for prerequisites that are present but fail to load;
