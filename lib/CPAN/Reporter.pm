@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = '1.04'; 
+$CPAN::Reporter::VERSION = '1.05'; 
 
 use Config;
 use CPAN ();
