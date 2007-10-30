@@ -90,13 +90,13 @@ sub record_command {
     my ($cmd, $redirect) = _split_redirect($command);
 
     my $temp_out = File::Temp->new( 
-        TEMPLATE => 'CR-TO-XXXXXXXX', DIR => File::Spec->tmpdir()
+        TEMPLATE => 'CPAN-Reporter-TO-XXXXXXXX', DIR => File::Spec->tmpdir()
     ) or die "Could not create a temporary file for output: $!";
 
     # Teeing a command loses its exit value so we must wrap the command 
     # and print the exit code so we can read it off of output
     my $cmdwrapper = File::Temp->new( 
-        TEMPLATE => 'CR-CW-XXXXXXXX', DIR => File::Spec->tmpdir() 
+        TEMPLATE => 'CPAN-Reporter-CW-XXXXXXXX', DIR => File::Spec->tmpdir() 
     ) or die "Could not create a wrapper for $cmd\: $!";
 
     my $wrap_code;
@@ -1121,7 +1121,7 @@ sub _version_finder {
     my @prereq_results;
     
     my $prereq_input = File::Temp->new( 
-        TEMPLATE => 'CR-PI-XXXXXXXX', DIR => File::Spec->tmpdir() 
+        TEMPLATE => 'CPAN-Reporter-PI-XXXXXXXX', DIR => File::Spec->tmpdir() 
     ) or die "Could not create temporary input for prereq analysis: $!";
     $prereq_input->print( map { "$_ $prereqs{$_}\n" } keys %prereqs );
     $prereq_input->close;
