@@ -11,7 +11,7 @@ use File::Find ();
 use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
 use File::Spec ();
-use File::Temp ();
+use File::Temp 0.16 ();
 use IO::File ();
 use Probe::Perl ();
 use Tee qw/tee/;

@@ -2,6 +2,9 @@ Revision history for Perl module CPAN::Reporter
 
 1.05
 
+    - Bug fix: on first installation, "reload cpan" might load CPAN::Reporter
+      when an old version File::Temp is already loaded; added an explicit 
+      version check on File::Temp
 
 1.04 Fri Oct 26 06:56:32 EDT 2007
     

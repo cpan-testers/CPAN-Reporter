@@ -4,23 +4,27 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
-- Check if CPAN::Reporter is reporting under a "force X" command?  It
-  probably shouldn't.  Is that a CPAN.pm change?  Or can I get it from 
-  the dist object? ie. $dist->{force_update} (DAGOLDEN)
-
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
 
 # High priority
 
+- Add support for showing configure_requires
+
 - Test with new File::Spec 3.25_01
+
+- Test with new M::B beta
 
 # Medium priority 
 
-- Add templates to all temp files for easier manual cleanup
+- For failure in PL stage -- show configure_requires and an error message
+  that other requirements aren't available if PL fails
 
-- set alternate configuration file/dir via environment variable
+- Add M::B low perl version regex (Slaven and an RT#30299)
+
+- set alternate configuration file/dir via environment variable (RT#30314)
+  e.g. PERL_CPAN_REPORTER_CONFIG 
 
 - Add config to save reports to a file (Jerry Hedden) (RT#24816)
 
@@ -78,6 +82,11 @@ TODO list for Perl module CPAN::Reporter
 - Other Config items like make or cc
 
 # Probably won't implement
+
+- Check if CPAN::Reporter is reporting under a "force X" command?  It
+  probably shouldn't.  Is that a CPAN.pm change?  Or can I get it from 
+  the dist object? ie. $dist->{force_update} (DAGOLDEN)  -- on reflection,
+  as long as we're checking prereqs and discarding, this may be OK
 
 - send duplicate report if using "report" (?) or "force" (?)
 
