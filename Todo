@@ -52,6 +52,8 @@ TODO list for Perl module CPAN::Reporter
 
 # Low priority
 
+- add CC recipients to output message "sending test report... to..."
+
 - change report truncation to take first 25K and last 25K (summary) (?)
 
 - figure out how to support color output from Test::Harness 3.0 -- probably

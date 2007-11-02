@@ -201,8 +201,8 @@ sub _perl_version {
 #--------------------------------------------------------------------------#
 
 sub _record_history {
-    my ($result, $subject) = @_;
-    my $log_line = _format_history( $result, $subject );
+    my ($result) = @_;
+    my $log_line = _format_history( $result );
     my $history = _open_history_file('>>') or return;
 
     flock( $history, LOCK_EX );

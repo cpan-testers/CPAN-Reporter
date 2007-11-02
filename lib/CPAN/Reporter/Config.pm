@@ -241,7 +241,7 @@ HERE
     },
     cc_author => {
         default => 'default:yes pass/na:no',
-        prompt => "Do you want to CC the the module author?",
+        prompt => "Do you want to CC the module author?",
         validate => \&_validate_grade_action_pair,
         info => <<'HERE',
 If you would like, CPAN::Reporter will copy the module author with

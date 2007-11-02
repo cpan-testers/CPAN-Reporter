@@ -6,6 +6,8 @@ Revision history for Perl module CPAN::Reporter
       when an old version File::Temp is already loaded; added an explicit 
       version check on File::Temp
 
+    - Typo fix: cc_author prompt (found by Slaven Rezic)
+
 1.04 Fri Oct 26 06:56:32 EDT 2007
     
     - Bug fix: temp files were being created in the current directory,

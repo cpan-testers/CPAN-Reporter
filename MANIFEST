@@ -23,6 +23,7 @@ t/01_CPAN_Reporter.t
 t/02_config_file.t
 t/04_option_parsing.t
 t/05_prompting.t
+t/06_prompt_text.t
 t/10_prereq_pm.t
 t/11_env_config.t
 t/12_toolchain_versions.t
