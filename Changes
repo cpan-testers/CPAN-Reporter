@@ -1,16 +1,18 @@
 Revision history for Perl module CPAN::Reporter
 
-1.05
+1.05 Tue Nov  6 14:41:48 EST 2007
 
     - Added checks for Makefile.PL/Build.PL dying early on Perl < 5.6 if 
       modules define their version using "our $VERSION"; such cases will
       be graded NA (RT#30299; report and partial patch from Slaven Rezic)
 
-    - Added author cpan email to CC author prompt for clarity.  
-      Also fixed typo in the prompt. (suggested by Slaven Rezic)
+    - Added author's email address to the prompt question for whether to
+      CC the author.  Also fixed typo in the prompt. 
+      (suggested by Slaven Rezic)
 
     - Added "CPAN::Reporter" consistently as a prefix to all console 
-      messages to distinguish them from messages from CPAN.pm.
+      messages to distinguish them from messages from CPAN.pm. Noisy, but
+      helps track errors/complaints to the right source.
       
     - Bug fix: on first installation, "reload cpan" might load CPAN::Reporter
       when an old version File::Temp is already loaded; added an explicit 
