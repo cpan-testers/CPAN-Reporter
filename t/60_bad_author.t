@@ -59,6 +59,6 @@ my $case = {
 my ($stdout, $stderr) = test_report( $case );
 
 like ($stdout, 
-    "/CPAN::Reporter: couldn't determine author_id -- won't cc author/ms",
+    "/CPAN::Reporter: couldn't determine author_id and won't cc author/ms",
     "Found bad author warning"
 );

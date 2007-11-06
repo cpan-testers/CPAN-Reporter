@@ -97,6 +97,6 @@ is( Test::Reporter::Mocked->transport(), "Net::SMTP",
     "invalid transport falls back to Net::SMTP"
 );
 
-like( $stdout, "/doesn't recognize 'LWP' as a valid transport/",
+like( $stdout, "/'LWP' is not a valid transport option/",
     "saw invalid transport warnings"
 );

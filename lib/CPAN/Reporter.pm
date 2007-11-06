@@ -316,8 +316,8 @@ sub _dispatch_report {
     if ( ! $config->{email_from} ) {
         $CPAN::Frontend->mywarn( << "EMAIL_REQUIRED");
         
-CPAN::Reporter: must have an email-address in the config file.  
-Test report will not be sent. See documentation for configuration details.
+CPAN::Reporter: required 'email_from' option missing an email address, so
+test report will not be sent. See documentation for configuration details.
 
 EMAIL_REQUIRED
         return;
@@ -375,8 +375,8 @@ DUPLICATE_REPORT
     my $transport = $config->{transport} || 'Net::SMTP';
     if (length $transport && ( $transport !~ /\ANet::SMTP|Mail::Send\z/ )) {
         $CPAN::Frontend->mywarn(
-            "CPAN::Reporter: '$config->{transport}' is not a valid transport option.\n" .
-            "Falling back to Net::SMTP\n"
+            "CPAN::Reporter: '$config->{transport}' is not a valid transport option." .
+            " Falling back to Net::SMTP\n"
         );
         $transport = 'Net::SMTP';
     }
@@ -400,7 +400,7 @@ DUPLICATE_REPORT
                      ? "$result->{author_id}\@cpan.org"
                      : q{};
     if ( ! $author_email ) {
-        $CPAN::Frontend->mywarn( "CPAN::Reporter: couldn't determine author_id and won't cc author.");
+        $CPAN::Frontend->mywarn( "CPAN::Reporter: couldn't determine author_id and won't cc author.\n");
     }
     if ( $author_email && _prompt( $config, "cc_author", $tr->grade, "($author_email)?") =~ /^y/ ) {
         push @cc, $author_email;

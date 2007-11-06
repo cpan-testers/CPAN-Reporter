@@ -67,10 +67,10 @@ capture sub {
     CPAN::Reporter::_dispatch_report( {} );
 }, \$stdout, \$stderr;
 
-like( $stdout, "/Couldn't read CPAN::Reporter configuration file/",
+like( $stdout, "/couldn't read configuration file/",
     "config file not found warnings"
 );
-like( $stdout, "/requires an email-address/", 
+like( $stdout, "/required 'email_from' option missing an email address/", 
     "email address required warning"
 );
 like( $stdout, "/report will not be sent/",
