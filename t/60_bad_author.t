@@ -25,7 +25,7 @@ my $mock_dist = t::MockCPANDist->new(
 
 my ($got, $prereq_pm);
 
-plan tests => 3 + test_fake_config_plan() + test_report_plan();
+plan tests => 4 + test_fake_config_plan() + test_report_plan();
 
 #--------------------------------------------------------------------------#
 # tests
@@ -56,4 +56,9 @@ my $case = {
     command => "$Config{make} test"
 };
 
-test_report( $case );
+my ($stdout, $stderr) = test_report( $case );
+
+like ($stdout, 
+    "/CPAN::Reporter: couldn't determine author_id -- won't cc author/ms",
+    "Found bad author warning"
+);

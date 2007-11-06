@@ -593,7 +593,7 @@ sub test_report {
         "$label cc list correct"
     );
 
-    return;
+    return ($stdout, $stderr, $err, $test_output);
 };
 
 #--------------------------------------------------------------------------#

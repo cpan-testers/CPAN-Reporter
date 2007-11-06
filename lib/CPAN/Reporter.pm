@@ -396,11 +396,17 @@ DUPLICATE_REPORT
     my @cc;
 
     # User prompts for action
-    if ( _prompt( $config, "cc_author", $tr->grade) =~ /^y/ ) {
-        # CC only if we have an author_id
-        push @cc, "$result->{author_id}\@cpan.org" if $result->{author_id};
+    my $author_email = $result->{author_id} 
+                     ? "$result->{author_id}\@cpan.org"
+                     : q{};
+    if ( ! $author_email ) {
+        $CPAN::Frontend->mywarn( "CPAN::Reporter: couldn't determine author_id -- won't cc author.");
+    }
+    if ( $author_email && _prompt( $config, "cc_author", $tr->grade, "($author_email)?") =~ /^y/ ) {
+        push @cc, $author_email;
     }
     
+    # prompt for editing report
     if ( _prompt( $config, "edit_report", $tr->grade ) =~ /^y/ ) {
         my $editor = $config->{editor};
         local $ENV{VISUAL} = $editor if $editor; ## no critic
@@ -448,11 +454,16 @@ sub _downgrade_known_causes {
     # get prereqs
     _expand_result( $result ); 
 
-    # look for perl version error messages
+    # look for perl version error messages from various programs
+    # "Error evaling..." type errors happen on Perl < 5.006 when modules
+    # define their version with "our $VERSION = ..."
     my $version_error;
     for my $line ( @$output ) {
         if( $line =~ /Perl .*? required.*?--this is only/ims ||
-            $line =~ /ERROR: perl: Version .*? is installed, but we need version/ims 
+            $line =~ /ERROR: perl: Version .*? is installed, but we need version/ims ||
+            $line =~ /ERROR: perl \(.*?\) is installed, but we need version/ims ||
+            $line =~ /Error evaling version line .*? package Module::Build::ModuleInfo::_version/ims ||
+            $line =~ /Could not eval .*? package ExtUtils::MakeMaker::_version/ims
         ) {
             $version_error++;
             last;
@@ -786,24 +797,22 @@ sub _print_grade_msg {
 #--------------------------------------------------------------------------#
 
 sub _prompt {
-    my ($config, $option, $grade) = @_;
+    my ($config, $option, $grade, $extra) = @_;
+    $extra ||= q{};
+
     my %spec = CPAN::Reporter::Config::_config_spec();
 
     my $dispatch = CPAN::Reporter::Config::_validate_grade_action_pair(
         $option, join(q{ }, "default:no", $config->{$option} || '')
     );
     my $action = $dispatch->{$grade} || $dispatch->{default};
-
+    my $intro = $spec{$option}{prompt} . $extra . " (yes/no)";
     my $prompt;
     if     ( $action =~ m{^ask/yes}i ) { 
-        $prompt = CPAN::Shell::colorable_makemaker_prompt( 
-            $spec{$option}{prompt} . " (yes/no)", "yes" 
-        );
+        $prompt = CPAN::Shell::colorable_makemaker_prompt( $intro, "yes" );
     }
     elsif  ( $action =~ m{^ask(/no)?}i ) {
-        $prompt = CPAN::Shell::colorable_makemaker_prompt( 
-            $spec{$option}{prompt} . " (yes/no)", "no" 
-        );
+        $prompt = CPAN::Shell::colorable_makemaker_prompt( $intro, "no" );
     }
     else { 
         $prompt = $action;
