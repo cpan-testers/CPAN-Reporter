@@ -106,7 +106,7 @@ my @bad_cases = (
         input   => "failed",
         output  => undef,
         msg     => 
-            "/Ignoring invalid grade:action 'failed' for 'edit_report'/",
+            "/ignoring invalid grade:action 'failed' for 'edit_report'/",
     },
     {
         label   => "bad action",
@@ -114,7 +114,7 @@ my @bad_cases = (
         input   => "fail:run-away",
         output  => undef,
         msg     => 
-            "/Ignoring invalid action 'run-away' in 'fail:run-away' for 'edit_report'/",
+            "/ignoring invalid action 'run-away' in 'fail:run-away' for 'edit_report'/",
     },
 );
 

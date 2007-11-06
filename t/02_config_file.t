@@ -76,7 +76,7 @@ is( capture(sub{CPAN::Reporter::Config::_open_config_file()}, \$stdout, \$stderr
     "opening non-existent file returns undef"
 );
 
-like( $stdout, "/^couldn't read configuration file/",
+like( $stdout, "/couldn't read configuration file/ms",
     "opening non-existent file gives a warning"
 );
 
