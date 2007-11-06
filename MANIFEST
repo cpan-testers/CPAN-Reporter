@@ -154,6 +154,11 @@ t/dist/t-PrereqMiss/Build.PL
 t/dist/t-PrereqMiss/lib/Bogus/Module.pm
 t/dist/t-PrereqMiss/Makefile.PL
 t/dist/t-PrereqMiss/t/01_Bogus.t
+t/dist/t-PrereqPerl-NOK-our/Build.PL
+t/dist/t-PrereqPerl-NOK-our/lib/Bogus/Module.pm
+t/dist/t-PrereqPerl-NOK-our/Makefile
+t/dist/t-PrereqPerl-NOK-our/Makefile.PL
+t/dist/t-PrereqPerl-NOK-our/t/01_Bogus.t
 t/dist/t-PrereqPerl-NOK/Build.PL
 t/dist/t-PrereqPerl-NOK/lib/Bogus/Module.pm
 t/dist/t-PrereqPerl-NOK/Makefile.PL
