@@ -21,7 +21,8 @@ if ( $^O eq 'darwin' ) {
     my $new = File::Spec->catdir(File::HomeDir->my_home,".cpanreporter");
     if ( ( -d $old ) && (! -d $new ) ) {
         $CPAN::Frontend->mywarn( << "HERE");
-Since CPAN::Reporter 0.28_51, the Mac OSX config directory has changed. 
+CPAN::Reporter: since CPAN::Reporter 0.28_51, the Mac OSX config directory 
+has changed. 
 
   Old: $old
   New: $new  
@@ -54,7 +55,7 @@ sub _configure {
     mkpath $config_dir if ! -d $config_dir;
     if ( ! -d $config_dir ) {
         $CPAN::Frontend->myprint(
-            "\nCouldn't create configuration directory '$config_dir': $!"
+            "\nCPAN::Reporter: couldn't create configuration directory '$config_dir': $!"
         );
         return;
     }
@@ -68,24 +69,24 @@ sub _configure {
     # read or create
     if ( -f $config_file ) {
         $CPAN::Frontend->myprint(
-            "\nFound your CPAN::Reporter config file at:\n$config_file\n"
+            "\nCPAN::Reporter: found your CPAN::Reporter config file at:\n$config_file\n"
         );
         $config = _open_config_file();
         # if we can't read it, bail out
         if ( ! $config ) {
             $CPAN::Frontend->mywarn("\n
-                CPAN::Reporter configuration will not be changed\n");
+                CPAN::Reporter: configuration will not be changed\n");
             return;
         }
         # clone what's in the config file
         $existing_options = { %{$config->{_}} } if $config;
         $CPAN::Frontend->myprint(
-            "\nUpdating your CPAN::Reporter configuration settings:\n"
+            "\nCPAN::Reporter: Updating your CPAN::Reporter configuration settings:\n"
         );
     }
     else {
         $CPAN::Frontend->myprint(
-            "\nNo CPAN::Reporter config file found; creating a new one.\n"
+            "\nCPAN::Reporter: no config file found; creating a new one.\n"
         );
         $config = Config::Tiny->new();
     }
@@ -149,14 +150,14 @@ sub _configure {
     }
 
     $CPAN::Frontend->myprint( 
-        "\nWriting CPAN::Reporter config file to '$config_file'.\n"
+        "\nCPAN::Reporter: writing config file to '$config_file'.\n"
     );
     if ( $config->write( $config_file ) ) {
         return $config->{_};
     }
     else {
-        $CPAN::Frontend->mywarn( "\nError writing config file to '$config_file':" . 
-             Config::Tiny->errstr(). "\n");
+        $CPAN::Frontend->mywarn( "\nCPAN::Reporter: error writing config file to '$config_file':\n" 
+            .  Config::Tiny->errstr(). "\n");
         return;
     }
 }
@@ -324,7 +325,7 @@ sub _get_config_options {
             if  (   $spec{$option}{validate} &&
                     ! $spec{$option}{validate}->($option, $val)
                 ) {
-                    $CPAN::Frontend->mywarn( "\nInvalid option '$val' in '$option'. Using default instead.\n\n" );
+                    $CPAN::Frontend->mywarn( "\nCPAN::Reporter: invalid option '$val' in '$option'. Using default instead.\n\n" );
                     $active{$option} = $spec{$option}{default};
                     next OPTION;
             }
@@ -388,8 +389,8 @@ sub _is_valid_grade {
 sub _open_config_file {
     my $config_file = _get_config_file();
     my $config = Config::Tiny->read( $config_file )
-        or $CPAN::Frontend->mywarn("Couldn't read CPAN::Reporter configuration file " .
-                "'$config_file': " . Config::Tiny->errstr() . "\n");
+        or $CPAN::Frontend->mywarn("CPAN::Reporter: couldn't read configuration file " .
+                "'$config_file': \n" . Config::Tiny->errstr() . "\n");
     return $config; 
 }
 
@@ -430,7 +431,7 @@ sub _validate_grade_action_pair {
         else {
             # something weird, so warn and skip
             $CPAN::Frontend->mywarn( 
-                "\nIgnoring invalid grade:action '$grade_action' for '$name'.\n\n" 
+                "\nCPAN::Reporter: ignoring invalid grade:action '$grade_action' for '$name'.\n\n" 
             );
             next PAIR;
         }
@@ -440,7 +441,7 @@ sub _validate_grade_action_pair {
         for my $g ( keys %grades ) { 
             if ( ! _is_valid_grade($g) ) {
                 $CPAN::Frontend->mywarn( 
-                    "\nIgnoring invalid grade '$g' in '$grade_action' for '$name'.\n\n" 
+                    "\nCPAN::Reporter: ignoring invalid grade '$g' in '$grade_action' for '$name'.\n\n" 
                 );
                 delete $grades{$g};
             }
@@ -449,7 +450,7 @@ sub _validate_grade_action_pair {
         # check action
         if ( ! _is_valid_action($action) ) {
             $CPAN::Frontend->mywarn( 
-                "\nIgnoring invalid action '$action' in '$grade_action' for '$name'.\n\n" 
+                "\nCPAN::Reporter: ignoring invalid action '$action' in '$grade_action' for '$name'.\n\n" 
             );
             next PAIR;
         }

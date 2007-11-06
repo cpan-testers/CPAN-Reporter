@@ -162,7 +162,7 @@ sub test_grade_PL {
                 );
                     
                 like( $stdout, 
-                    "/Test results for \Q$short_name\E will be discarded/",
+                    "/test results for \Q$short_name\E will be discarded/",
                     "$case->{name}: discard message correct"
                 ) and $is_grade_correct++;
 
@@ -285,7 +285,7 @@ sub test_grade_make {
                 );
                     
                 like( $stdout, 
-                    "/Test results for \Q$short_name\E will be discarded/",
+                    "/test results for \Q$short_name\E will be discarded/",
                     "$case->{name}: discard message correct"
                 ) and $is_grade_correct++;
 
@@ -402,7 +402,7 @@ sub test_grade_test {
                 );
                     
                 like( $stdout, 
-                    "/Test results for \Q$short_name\E will be discarded/",
+                    "/test results for \Q$short_name\E will be discarded/",
                     "$case->{name}: discard message correct"
                 );
 
@@ -417,7 +417,7 @@ sub test_grade_test {
                     "$case->{name}: '$tool_label' grade reported as '$case_grade'"
                 ) or _diag_output( $stdout, $stderr );
                 
-                like( $stdout, "/Preparing a CPAN Testers report for \Q$short_name\E/",
+                like( $stdout, "/preparing a CPAN Testers report for \Q$short_name\E/",
                     "$case->{name}: report notification correct"
                 );
 
@@ -625,7 +625,7 @@ sub test_dispatch {
         ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
             "report was sent for $case->{label}"
         );
-        like( $stdout, "/Sending test report with/",
+        like( $stdout, "/sending test report with/",
             "saw report sent message for $case->{label}"
         );
     }

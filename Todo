@@ -10,18 +10,10 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
-- Add support for showing configure_requires
-
-- Test with new File::Spec 3.25_01
-
-- Test with new M::B beta
-
 # Medium priority 
 
 - For failure in PL stage -- show configure_requires and an error message
   that other requirements aren't available if PL fails
-
-- Add M::B low perl version regex (Slaven and an RT#30299)
 
 - set alternate configuration file/dir via environment variable (RT#30314)
   e.g. PERL_CPAN_REPORTER_CONFIG 
@@ -42,11 +34,6 @@ TODO list for Perl module CPAN::Reporter
    know about all 5 (or more) constituents of a line in the history file.
    If some qualifying parameter is missing, this could be taken as ANY. I
    think this provides about everything I would ever need." -- Andreas
-
-- prefix all messages with "CPAN::Reporter: " -- possibly write my own
-  front-end to CPAN's front-end functions
-
-- heuristics for missing library files --> discard report
 
 - add test_timeout to CPAN.pm
 
@@ -77,11 +64,11 @@ TODO list for Perl module CPAN::Reporter
 
 - Improve test coverage for utility subs and error handling
 
-- Improve testing of prompts
-
 - Check email addresses for validity (cf. Email::Valid, etc.)
 
 - Other Config items like make or cc
+
+- heuristics for missing library files --> discard report
 
 # Probably won't implement
 

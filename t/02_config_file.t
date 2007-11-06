@@ -76,7 +76,7 @@ is( capture(sub{CPAN::Reporter::Config::_open_config_file()}, \$stdout, \$stderr
     "opening non-existent file returns undef"
 );
 
-like( $stdout, "/^Couldn't read CPAN::Reporter configuration file/",
+like( $stdout, "/^couldn't read configuration file/",
     "opening non-existent file gives a warning"
 );
 
@@ -134,7 +134,7 @@ SKIP:
         );
     }
 
-    like( $stdout, "/Couldn't read CPAN::Reporter configuration file/",
+    like( $stdout, "/couldn't read configuration file/",
         "opening non-readable file gives a warning"
     );
 }
@@ -163,7 +163,7 @@ SKIP:
         );
     }
 
-    like( $stdout, "/Error writing config file/",
+    like( $stdout, "/error writing config file/",
         "opening non-writeable file gives a warning"
     );
 }
@@ -254,7 +254,7 @@ SKIP:
         $parsed_config = CPAN::Reporter::Config::_get_config_options( $tiny );
     }, \$stdout, \$stderr;
 
-    like( $stdout, "/Invalid option 'invalid:invalid' in 'cc_author'. Using default instead./",
+    like( $stdout, "/invalid option 'invalid:invalid' in 'cc_author'. Using default instead./",
         "bad option warning seen"
     );
 
