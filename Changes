@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-1.06 Wed Nov  7 00:05:29 EST 2007
+1.06 
 
     - Bug fix: "our $VERSION" check still wasn't working on 5.005; now
       fixed (reported by Slaven Rezic).  Note, this situation only 
