@@ -56,6 +56,16 @@ my @test_distros = (
         mb_grade => "na",
         mb_msg => "This platform is not supported",
     },
+    {
+        name => 't-PrereqPerl-NOK-our',
+        prereq => { perl => 42 },
+        eumm_success => 1,
+        eumm_grade => "pass",
+        eumm_msg => "No errors",
+        mb_success => 0,
+        mb_grade => "na",
+        mb_msg => "Perl version too low",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() 
@@ -65,7 +75,7 @@ plan tests => 1 + test_fake_config_plan()
 # Fixtures
 #--------------------------------------------------------------------------#
 
-my $mock_dist = t::MockCPANDist->new( 
+my %mock_dist_args = ( 
     pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
     prereq_pm       => {
         'File::Spec' => 0,
@@ -83,5 +93,8 @@ require_ok('CPAN::Reporter');
 test_fake_config();
 
 for my $case ( @test_distros ) {
+    my $mock_dist = t::MockCPANDist->new( 
+        %mock_dist_args, %{$case->{prereq_pm}}
+    );
     test_grade_PL( $case, $mock_dist ); 
 } 

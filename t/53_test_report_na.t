@@ -23,16 +23,6 @@ my @test_distros = (
         mb_msg => "Perl version too low",
     },
     {
-        name => 't-PrereqPerl-NOK-our',
-        prereq => { perl => 42 },
-        eumm_success => 0,
-        eumm_grade => "na",
-        eumm_msg => "Perl version too low",
-        mb_success => 0,
-        mb_grade => "na",
-        mb_msg => "Perl version too low",
-    },
-    {
         name => 'test.pl-PrereqPerl-NOK',
         prereq => { perl => 42 },
         eumm_success => 0,

@@ -1,5 +1,15 @@
 Revision history for Perl module CPAN::Reporter
 
+1.06 Wed Nov  7 00:05:29 EST 2007
+
+    - Bug fix: "our $VERSION" check still wasn't working on 5.005; now
+      fixed (reported by Slaven Rezic).  Note, this situation only 
+      applies to Module::Build <= 0.2808, where Build.PL dies before a 
+      legitimate "require => { perl => 5.006 }" is processed. (Makefile.PL
+      does not die in this situation and Makefile.PL has no way of 
+      signaling a required perl version other than "use 5.006" or equivalent
+      in the Makefile.PL)
+     
 1.05 Tue Nov  6 14:41:48 EST 2007
 
     - Added checks for Makefile.PL/Build.PL dying early on Perl < 5.6 if 
