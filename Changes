@@ -2,6 +2,10 @@ Revision history for Perl module CPAN::Reporter
 
 1.06 
 
+    - Changed FAIL report boilerplate about CPAN::Testers wiki to be
+      more explicit that it can teach how to deal with dependencies, OS, etc.
+      (suggested by Olly Betts)
+
     - Bug fix: "our $VERSION" check still wasn't working on 5.005; now
       fixed (reported by Slaven Rezic).  Note, this situation only 
       applies to Module::Build <= 0.2808, where Build.PL dies before a 

@@ -455,8 +455,10 @@ HERE
     'fail' => <<'HERE',
 Thank you for uploading your work to CPAN.  However, it appears that
 there were some problems with your distribution.  If these results are 
-not what you expect, please consult "Notes for CPAN Authors" on 
-the CPAN Testers Wiki: http://cpantest.grango.org
+not what you expect or if you would like to learn how to avoid FAIL 
+reports for missing dependencies, unsupported operating systems, etc.,
+please consult "Notes for CPAN Authors" on the CPAN Testers Wiki: 
+http://cpantest.grango.org
 HERE
 
     'unknown' => << 'HERE',
