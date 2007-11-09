@@ -39,6 +39,19 @@ TODO list for Perl module CPAN::Reporter
 
 # Low priority
 
+- add warnings::compat to toolchain or else add config to allow local
+  modules to be added to toolchain report
+    - SAPER: 
+        Hmm... ok. The fact is that warnings::compat isn't listed in
+        Sys::Syslog prereqs, but it should in order to make it work under
+        5.5. So I guess that Slaven manually installed it in his 5.5.5 smoker
+        in order to ease the process, but in that case, it becomes (in a
+        sense) part of the toolchain, because it masks a potentially missing
+        prereq (this is what happened here). warnings::compat is a little
+        special because it provides a way to make a core module available on
+        old Perls. So maybe CPAN::Reporter should allow one to add locally
+        installed modules in the toolchain section.
+
 - add CC recipients to output message "sending test report... to..."
 
 - change report truncation to take first 25K and last 25K (summary) (?)
