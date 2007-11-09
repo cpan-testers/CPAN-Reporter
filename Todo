@@ -57,6 +57,9 @@ TODO list for Perl module CPAN::Reporter
         special because it provides a way to make a core module available on
         old Perls. So maybe CPAN::Reporter should allow one to add locally
         installed modules in the toolchain section.
+    - SREZIC:
+        To add my 0.02EUR: maybe warnings::compat could/should be shown only
+        if 5.5.x is used.
 
 - add CC recipients to output message "sending test report... to..."
 
