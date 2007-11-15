@@ -156,7 +156,6 @@ t/dist/t-PrereqMiss/Makefile.PL
 t/dist/t-PrereqMiss/t/01_Bogus.t
 t/dist/t-PrereqPerl-NOK-our/Build.PL
 t/dist/t-PrereqPerl-NOK-our/lib/Bogus/Module.pm
-t/dist/t-PrereqPerl-NOK-our/Makefile
 t/dist/t-PrereqPerl-NOK-our/Makefile.PL
 t/dist/t-PrereqPerl-NOK-our/t/01_Bogus.t
 t/dist/t-PrereqPerl-NOK/Build.PL
@@ -266,6 +265,7 @@ t/Helper.pm
 t/history/history.db
 t/history/reports-sent.db
 t/MockCPANDist.pm
+t/perl5lib-shadow/Bogus/Shadow.pm
 t/perl5lib/Bogus/Broken.pm
 t/perl5lib/Bogus/Complex.pm
 t/perl5lib/Bogus/Conflict.pm
@@ -275,6 +275,7 @@ t/perl5lib/Bogus/GTE.pm
 t/perl5lib/Bogus/LT.pm
 t/perl5lib/Bogus/LTE.pm
 t/perl5lib/Bogus/NoVersion.pm
+t/perl5lib/Bogus/Shadow.pm
 t/perl5lib/Bogus/TooOld.pm
 Todo
 xt/10-pod.t
