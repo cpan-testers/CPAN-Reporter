@@ -10,6 +10,8 @@ use t::MockCPANDist;
 use t::Helper;
 use t::Frontend;
 
+my $lt_5006 = $] < 5.006;
+
 my @test_distros = (
     {
         name => 't-Pass',
@@ -62,9 +64,9 @@ my @test_distros = (
         eumm_success => 1,
         eumm_grade => "pass",
         eumm_msg => "No errors",
-        mb_success => 0,
-        mb_grade => "na",
-        mb_msg => "Perl version too low",
+        mb_success => $lt_5006 ? 0 : 1,
+        mb_grade => $lt_5006 ? "na" : "pass",
+        mb_msg => $lt_5006 ? "Perl version too low" : "No errors",
     },
 );
 

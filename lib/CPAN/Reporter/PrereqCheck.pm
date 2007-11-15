@@ -31,10 +31,12 @@ sub _run {
             if (@packpath == 1 && $packpath[0] eq "readline.pm") {
                 unshift @packpath, "Term", "ReadLine"; # historical reasons
             }
+            INCDIR:
             foreach my $dir (@INC) {
                 my $pmfile = File::Spec->catfile($dir,@packpath);
                 if (-f $pmfile){
                     $inst_file = $pmfile;
+                    last INCDIR;
                 }
             }
             

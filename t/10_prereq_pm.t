@@ -14,6 +14,7 @@ use Config;
 my @prereq_cases = (
       #module               #need       #have   #ok?
     [ 'Bogus::Found',       1.23,                   3.14,       1 ],
+    [ 'Bogus::Shadow',      3.14,                   3.14,       1 ],
     [ 'Bogus::NotFound',    1.49,                   "n/a",      0 ],
     [ 'Bogus::TooOld',      2.72,                   0.01,       0 ],
     [ 'Bogus::NoVersion',   0,                      0,          1 ],
@@ -78,7 +79,10 @@ my ($got, @got, $expect);
 #--------------------------------------------------------------------------#
 
 my $perl5lib = File::Spec->rel2abs( File::Spec->catdir( qw/ t perl5lib / ) );
-local $ENV{PERL5LIB} = join $Config{path_sep}, $perl5lib, $ENV{PERL5LIB};
+my $shadowlib = File::Spec->rel2abs( 
+    File::Spec->catdir( qw/ t perl5lib-shadow / ) );
+local $ENV{PERL5LIB} = join $Config{path_sep}, 
+                            $perl5lib, $shadowlib, $ENV{PERL5LIB};
 
 require_ok('CPAN::Reporter');
 
@@ -159,15 +163,15 @@ for my $scene ( @scenarios ) {
             );
             is( $bang, ($exp_ok ? ' ' : '!'),
                 "$label ($prereq_type): '$exp_module' flag correct"
-            );
+            ) or diag "LINE: $line";
             is( $exp_need, $need,
                 "$label ($prereq_type): '$exp_module' needed version correct"
-            );
+            ) or diag "LINE: $line";
             # Check numerically, too, since version.pm/bleadperl will make 
             # 1.2 into 1.200
             ok( $exp_have eq $have || $exp_have == $have,
                 "$label ($prereq_type): '$exp_module' installed version correct"
-            );
+            ) or diag "LINE: $line";
         }
     }
 }

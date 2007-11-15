@@ -425,7 +425,7 @@ DUPLICATE_REPORT
                 if not $is_duplicate;
         }
         else {
-            $CPAN::Frontend->mywarn( "CPAN::Reporter: $tr->errstr\n");
+            $CPAN::Frontend->mywarn( "CPAN::Reporter: " . $tr->errstr . "\n");
         }
     }
     else {

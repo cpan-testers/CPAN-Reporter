@@ -2,9 +2,10 @@ Revision history for Perl module CPAN::Reporter
 
 1.06 
 
-    - Changed FAIL report boilerplate about CPAN::Testers wiki to be
-      more explicit that it can teach how to deal with dependencies, OS, etc.
-      (suggested by Olly Betts)
+    - Bug fix: if older versions of a module are in multiple
+      locations in @INC, CPAN::Reporter could detect the older version
+      instead of the newer one; fixed in CPAN::Reporter::PrereqCheck
+      (RT#30345; additional investigation by Andy Armstrong) 
 
     - Bug fix: "our $VERSION" check still wasn't working on 5.005; now
       fixed (reported by Slaven Rezic).  Note, this situation only 
@@ -13,7 +14,14 @@ Revision history for Perl module CPAN::Reporter
       does not die in this situation and Makefile.PL has no way of 
       signaling a required perl version other than "use 5.006" or equivalent
       in the Makefile.PL)
+
+    - Bug fix: wasn't printing Test::Reporter error message if a report
+      couldn't be sent (RT#30730 by BLOONIX)
      
+    - Changed FAIL report boilerplate about CPAN::Testers wiki to be
+      more explicit that it can teach how to deal with dependencies, OS, etc.
+      (suggested by Olly Betts)
+
 1.05 Tue Nov  6 14:41:48 EST 2007
 
     - Added checks for Makefile.PL/Build.PL dying early on Perl < 5.6 if 
