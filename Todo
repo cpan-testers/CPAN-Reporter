@@ -12,6 +12,12 @@ TODO list for Perl module CPAN::Reporter
 
 # Medium priority 
 
+- add earlier, successful phases to output in reverse order.  Probably have to
+  bump up the test-length cutoff, though to deal with lengthy make output
+    - Test phase output
+    - make phase output
+    - PL phase output
+
 - For failure in PL stage -- show configure_requires and an error message
   that other requirements aren't available if PL fails
 
@@ -39,11 +45,7 @@ TODO list for Perl module CPAN::Reporter
 
 # Low priority
 
-- add earlier, successful phases to output in reverse order.  Probably have to
-  bump up the test-length cutoff, though to deal with lengthy make output
-    - Test phase output
-    - make phase output
-    - PL phase output
+- add link to Wiki for UNKNOWN (and NA) reports
 
 - add warnings::compat to toolchain or else add config to allow local
   modules to be added to toolchain report
