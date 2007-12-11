@@ -1,3 +1,6 @@
+# private testing scripts
+^private
+
 # .pm files that just generate wikidoc with no code
 ^lib/CPAN/Reporter/API.pm$
 ^lib/CPAN/Reporter/FAQ.pm$

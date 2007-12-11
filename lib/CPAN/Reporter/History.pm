@@ -1,5 +1,5 @@
 package CPAN::Reporter::History;
-$VERSION = '1.06'; ## no critic
+$VERSION = '1.0601'; ## no critic
 use strict; 
 use Config;
 use Fcntl qw/:flock/;

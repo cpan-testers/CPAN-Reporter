@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+1.0601 Tue Dec 11 12:19:25 EST 2007
+
+    - Test fix: Test::Harness 3.05 fixed a long standing bug; the fix
+      broke our tests
+
 1.06 Thu Nov 15 14:17:04 EST 2007
 
     - Bug fix: if older versions of a module are in multiple

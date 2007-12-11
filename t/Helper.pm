@@ -434,7 +434,8 @@ sub test_grade_test {
             }
             
             # Grade explanation message
-            is( $found_msg, $case->{"$tool\_msg"} . ".",
+            is( $found_msg, 
+                $case->{"$tool\_msg"} ? $case->{"$tool\_msg"} . q{.} : q{},
                 "$case->{name}: '$tool_label' grade explanation correct"
             );
 

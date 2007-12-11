@@ -39,6 +39,7 @@ t/52_test_report_unknown.t
 t/53_test_report_na.t
 t/54_test_report_split.t
 t/55_test_report_discard.t
+t/56_test_report_harness_versions.t
 t/60_bad_author.t
 t/61_bad_dist_names.t
 t/62_duplicate_reports.t
@@ -127,6 +128,10 @@ t/dist/t-MultipleMatch/lib/Bogus/Module.pm
 t/dist/t-MultipleMatch/Makefile.PL
 t/dist/t-MultipleMatch/report-pass
 t/dist/t-MultipleMatch/t/01_Bogus.t
+t/dist/t-NoOutput-die/Build.PL
+t/dist/t-NoOutput-die/lib/Bogus/Module.pm
+t/dist/t-NoOutput-die/Makefile.PL
+t/dist/t-NoOutput-die/t/01_Bogus.t
 t/dist/t-NoOutput/Build.PL
 t/dist/t-NoOutput/lib/Bogus/Module.pm
 t/dist/t-NoOutput/Makefile.PL

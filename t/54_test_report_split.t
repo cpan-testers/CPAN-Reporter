@@ -13,24 +13,6 @@ use t::Frontend;
 my @test_distros = (
     # split pass/fail
     {
-        name => 'test.pl-NoOutput-OK',
-        eumm_success => 1,
-        eumm_grade => "pass",
-        eumm_msg => "'make test' no errors",
-        mb_success => 1,
-        mb_grade => "unknown",
-        mb_msg => "No tests were run",
-    },
-    {
-        name => 'test.pl-NoOutput-NOK',
-        eumm_success => 0,
-        eumm_grade => "fail",
-        eumm_msg => "'make test' error detected",
-        mb_success => 1,
-        mb_grade => "unknown",
-        mb_msg => "No tests were run",
-    },
-    {
         name => 't-test.pl-Pass-NoOutput-OK',
         eumm_success => 1,
         eumm_grade => "pass",
