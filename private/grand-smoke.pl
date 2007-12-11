@@ -70,6 +70,8 @@ sub test_makefile {
     my $output;
     say "* Testing with $name ...";
 
+    my $start_time = time();
+
     # Makefile.PL
     $output = qxy($perl, 'Makefile.PL');
     if ( $? ) {
@@ -78,10 +80,13 @@ sub test_makefile {
 
     # make test
     $output = qxy(qw/make test/);
+    printf "  Elapsed time: %d seconds\n", (time - $start_time); 
     if ( $? ) {
+        qxy("make realclean");
         return [ $name, 0, $output ];
     }
     else {
+        qxy("make realclean");
         return [ $name, 1, $output ];
     }
 }
@@ -92,6 +97,8 @@ sub test_build {
     my $output;
     say "* Testing with $name ...";
 
+    my $start_time = time();
+
     # Build.PL
     $output = qxy($perl, 'Build.PL');
     if ( $? ) {
@@ -100,10 +107,13 @@ sub test_build {
 
     # Build test
     $output = qxy(qw/Build test/);
+    printf "  Elapsed time: %d seconds\n", (time - $start_time); 
     if ( $? ) {
+        qxy("Build realclean");
         return [ $name, 0, $output ];
     }
     else {
+        qxy("Build realclean");
         return [ $name, 1, $output ];
     }
 }
