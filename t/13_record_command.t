@@ -151,7 +151,7 @@ SKIP: {
                         :  (    $run_time <= $c->{timeout} 
                             &&  $run_time >= $c->{delay}    )
                         ;   
-        ok( $right_range, "$c->{label}: runtime in right range");
+        ok( $right_range, "$c->{label}: runtime ($run_time) in right range");
     }
     else {
         pass "$c->{label}: No timeout requested";
