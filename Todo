@@ -45,7 +45,10 @@ TODO list for Perl module CPAN::Reporter
 
 - add test_timeout to CPAN.pm
 
+- Don't cc author if running under bleadperl
+
 # Low priority
+
 
 - add link to Wiki for UNKNOWN (and NA) reports
 
