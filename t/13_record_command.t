@@ -63,10 +63,10 @@ my @cases = (
     },
     {
         label => "Timeout kills process",
-        program => '$now=time(); 1 while( time() - $now < 20); print qq{foo\n}; exit 0',
+        program => '$now=time(); 1 while( time() - $now < 60); print qq{foo\n}; exit 0',
         args => '',
         output => [],
-        delay => 20,
+        delay => 60,
         timeout => 5,
         exit_code => 9,
     },
@@ -76,16 +76,16 @@ my @cases = (
         args => '',
         output => ["foo\n"],
         delay => 2,
-        timeout => 10,
+        timeout => 30,
         exit_code => 0,
     },
     {
-        label => "Timeout not reached (with shell quotes)",
+        label => "Timeout not reached (quoted args)",
         program => '$now=time(); 1 while( time() - $now < 2); print qq{foo $ARGV[0]\n}; exit 0',
         args => "${quote}apples oranges bananas${quote}",
         output => [ "foo apples oranges bananas\n" ],
         delay => 2,
-        timeout => 10,
+        timeout => 30,
         exit_code => 0,
     },
     {
@@ -99,10 +99,10 @@ my @cases = (
     {
         label => "Relative and timeout",
         relative => 1,
-        program => '$now=time(); 1 while( time() - $now < 20); print qq{foo\n}; exit 0',
+        program => '$now=time(); 1 while( time() - $now < 60); print qq{foo\n}; exit 0',
         args => '',
         output => [],
-        delay => 20,
+        delay => 60,
         timeout => 5,
         exit_code => 9,
     },
@@ -145,13 +145,22 @@ SKIP: {
     my $run_time = time() - $start_time;
     diag $@ if $@;
     if ( $c->{timeout} ) {
-        my $right_range =  $c->{timeout} < $c->{delay}  
-                        ?  (    $run_time >= $c->{timeout} 
-                            &&  $run_time <= $c->{delay}    )
-                        :  (    $run_time <= $c->{timeout} 
-                            &&  $run_time >= $c->{delay}    )
-                        ;   
-        ok( $right_range, "$c->{label}: runtime ($run_time) in right range");
+        my ($time_ok, $verb, $range);
+        if ( $c->{timeout} < $c->{delay} ) { # if process should time out
+            $time_ok = $run_time >= $c->{timeout} && $run_time <= $c->{delay};
+            $verb = "stopped";
+            $range = sprintf( "timeout (%d) <= ran (%.6f) <= sleep (%d)", 
+                $c->{timeout}, $run_time, $c->{delay} 
+            );
+        }
+        else { # process should exit before timeout
+            $time_ok = $run_time >= $c->{delay} && $run_time <= $c->{timeout};
+            $verb = "didn't stop";
+            $range = sprintf( "sleep (%d) <= ran (%.6f) <= timeout (%d)", 
+                $c->{delay}, $run_time, $c->{timeout} 
+            );
+        }
+        ok( $time_ok, "$c->{label}: timeout $verb process") or diag $range;
     }
     else {
         pass "$c->{label}: No timeout requested";

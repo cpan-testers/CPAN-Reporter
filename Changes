@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+1.0602
+
+    - Test fix: a timeout test would sometimes appear to fail on a highly
+      loaded system; changed the runtime and timeout timings to try to 
+      prevent false failures; added better diagnostic output
+    
 1.0601 Tue Dec 11 12:19:25 EST 2007
 
     - Test fix: Test::Harness 3.05 fixed a long standing bug; the fix
