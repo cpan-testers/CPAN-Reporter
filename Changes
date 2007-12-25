@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-1.0602
+1.0602 Tue Dec 25 08:59:07 EST 2007
 
     - Test fix: a timeout test would sometimes appear to fail on a highly
       loaded system; changed the runtime and timeout timings to try to 

@@ -11,7 +11,7 @@ _run() if ! caller();
 sub _run {
     my %saw_mod;
     # read module and prereq string from STDIN
-    while ( <STDIN> ) {
+    while ( <> ) {
         m/^(\S+)\s+([^\n]*)/;
         my ($mod, $need) = ($1, $2);
         die "Couldn't read module for '$_'" unless $mod;
