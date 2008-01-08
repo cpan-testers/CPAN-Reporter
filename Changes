@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+1.07
+
+    - Added "skipfile" advanced config option to specify a text file of 
+      regex patterns; if a distribution ID ('AUTHOR/Dist-Name-0.01.tar.gz') 
+      matches any pattern in the file, no reports will be sent
+      
 1.0602 Tue Dec 25 08:59:07 EST 2007
 
     - Test fix: a timeout test would sometimes appear to fail on a highly

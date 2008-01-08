@@ -10,6 +10,7 @@ use t::Helper;
 use t::Frontend;
 use Config;
 use Probe::Perl;
+use File::Temp;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -36,7 +37,7 @@ my @cases = (
     {
         label => "dist *not* in skipfile",
         pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
-        name => "t-fail",
+        name => "t-Fail",
         version => 1.23,
         grade => "fail",
         phase => "test",
@@ -46,7 +47,7 @@ my @cases = (
     {
         label => "dist author in skipfile",
         pretty_id => "JOHNDOE/Bogus-Module-1.23.tar.gz",
-        name => "t-fail",
+        name => "t-Fail",
         version => 1.23,
         grade => "fail",
         phase => "test",
@@ -56,7 +57,7 @@ my @cases = (
     {
         label => "dist name in skipfile",
         pretty_id => "JOHNQP/Bogus-SkipModule-1.23.tar.gz",
-        name => "t-fail",
+        name => "t-Fail",
         version => 1.23,
         grade => "fail",
         phase => "test",

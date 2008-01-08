@@ -1,7 +1,7 @@
 package CPAN::Reporter::Config;
 use strict; 
 use vars qw/$VERSION/;
-$VERSION = '1.0602'; 
+$VERSION = '1.07'; 
 
 use Config::Tiny ();
 use File::HomeDir (); 
@@ -629,7 +629,8 @@ reports be sent, regardless of {send_report}? (default:no)
 {send_report} during the test phase
 * {skipfile = <skipfile>} -- filename containing regular expressions (one
 per line) to match against the distribution ID (e.g. 
-'AUTHOR/Dist-Name-0.01.tar.gz'); no report will be sent if a match is found
+'AUTHOR/Dist-Name-0.01.tar.gz'); no report will be sent if a match is found;
+non-absolute filename must be in the .cpanreporter config directory
 * {transport = <transport>} -- if defined, passed to the {transport()} 
 method of [Test::Reporter].  Valid options are 'Net::SMTP' or 
 'Mail::Send'.  (CPAN::Reporter uses Net::SMTP for this by default.)
