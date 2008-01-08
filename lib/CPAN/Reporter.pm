@@ -348,7 +348,7 @@ END_BAD_DISTNAME
     _expand_result( $result);
 
     # Skip if distribution name matches the skipfile
-    if ( -r $config->{skipfile} ) {
+    if ( $config->{skipfile} && -r $config->{skipfile} ) {
         my $skipfile = IO::File->new( $config->{skipfile}, "r" );
         my $dist_id = $result->{dist}->pretty_id;
         while ( my $pattern = <$skipfile> ) {
