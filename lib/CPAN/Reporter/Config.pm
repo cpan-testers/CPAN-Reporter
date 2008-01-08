@@ -621,6 +621,11 @@ certain situations.
 
 * {cc_author = <grade:action> ...} -- should module authors should be sent a copy of 
 the test report at their {author@cpan.org} address? (default:yes pass/na:no)
+* {cc_skipfile = <skipfile>} -- filename containing regular expressions (one
+per line) to match against the distribution ID (e.g. 
+'AUTHOR/Dist-Name-0.01.tar.gz'); the author will not be copied if a match is 
+found regardless of cc_author; non-absolute filename must be in the .cpanreporter 
+config directory
 * {editor = <editor>} -- editor to use to edit the test report; if not set,
 Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
 (in that order) to find an editor 
@@ -632,10 +637,8 @@ reports be sent, regardless of {send_report}? (default:no)
 {send_report} during the make phase
 * {send_test_report = <grade:action> ...} -- if defined, used in place of 
 {send_report} during the test phase
-* {skipfile = <skipfile>} -- filename containing regular expressions (one
-per line) to match against the distribution ID (e.g. 
-'AUTHOR/Dist-Name-0.01.tar.gz'); no report will be sent if a match is found;
-non-absolute filename must be in the .cpanreporter config directory
+* {send_skipfile = <skipfile>} -- like {cc_skipfile} but no report will be 
+sent at all if a match is found
 * {transport = <transport>} -- if defined, passed to the {transport()} 
 method of [Test::Reporter].  Valid options are 'Net::SMTP' or 
 'Mail::Send'.  (CPAN::Reporter uses Net::SMTP for this by default.)

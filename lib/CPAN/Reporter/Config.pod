@@ -180,6 +180,14 @@ the test report at their C<<< author@cpan.org >>> address? (default:yes passE<so
 
 =item *
 
+C<<< cc_skipfile = <skipfile> >>> -- filename containing regular expressions (one
+per line) to match against the distribution ID (e.g. 
+'AUTHORE<sol>Dist-Name-0.01.tar.gz'); the author will not be copied if a match is 
+found regardless of cc_author; non-absolute filename must be in the .cpanreporter 
+config directory
+
+=item *
+
 C<<< editor = <editor> >>> -- editor to use to edit the test report; if not set,
 Test::Reporter will use environment variables C<<< VISUAL >>>, C<<< EDITOR >>> or C<<< EDIT >>>
 (in that order) to find an editor 
@@ -206,10 +214,8 @@ C<<< send_report >>> during the test phase
 
 =item *
 
-C<<< skipfile = <skipfile> >>> -- filename containing regular expressions (one
-per line) to match against the distribution ID (e.g. 
-'AUTHORE<sol>Dist-Name-0.01.tar.gz'); no report will be sent if a match is found;
-non-absolute filename must be in the .cpanreporter config directory
+C<<< send_skipfile = <skipfile> >>> -- like C<<< cc_skipfile >>> but no report will be 
+sent at all if a match is found
 
 =item *
 
