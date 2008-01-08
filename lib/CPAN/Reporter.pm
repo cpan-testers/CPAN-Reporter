@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = '1.07'; 
+$CPAN::Reporter::VERSION = '1.07_01'; 
 
 use Config;
 use CPAN ();
@@ -415,19 +415,8 @@ DUPLICATE_REPORT
     # Populate the test report
     $tr->comments( _report_text( $result ) );
     $tr->via( 'CPAN::Reporter ' . $CPAN::Reporter::VERSION );
-    my @cc;
+    my @cc = _should_copy_author( $result, $config );
 
-    # User prompts for action
-    my $author_email = $result->{author_id} 
-                     ? "$result->{author_id}\@cpan.org"
-                     : q{};
-    if ( ! $author_email ) {
-        $CPAN::Frontend->mywarn( "CPAN::Reporter: couldn't determine author_id and won't cc author.\n");
-    }
-    if ( $author_email && _prompt( $config, "cc_author", $tr->grade, "($author_email)?") =~ /^y/ ) {
-        push @cc, $author_email;
-    }
-    
     # prompt for editing report
     if ( _prompt( $config, "edit_report", $tr->grade ) =~ /^y/ ) {
         my $editor = $config->{editor};
@@ -945,6 +934,50 @@ $data->{toolchain_versions}
 ENDREPORT
 
     return $output;
+}
+
+
+#--------------------------------------------------------------------------#
+# _should_copy_author
+#--------------------------------------------------------------------------#
+
+sub _should_copy_author {
+    my ($result, $config) = @_;
+
+    # User prompts for action
+    my $author_email = $result->{author_id} 
+                     ? "$result->{author_id}\@cpan.org"
+                     : q{};
+    if ( ! $author_email ) {
+        $CPAN::Frontend->mywarn( "CPAN::Reporter: couldn't determine author_id and won't cc author.\n");
+        return;
+    }
+
+    # Skip if distribution name matches the cc_skipfile
+    if ( $config->{cc_skipfile} && -r $config->{cc_skipfile} ) {
+        my $cc_skipfile = IO::File->new( $config->{cc_skipfile}, "r" );
+        my $dist_id = $result->{dist}->pretty_id;
+        while ( my $pattern = <$cc_skipfile> ) {
+            chomp($pattern);
+            # ignore comments
+            next if substr($pattern,0,1) eq '#';
+            # if it doesn't match, continue with next pattern
+            next if $dist_id !~ /$pattern/;
+            # if it matches, warn and return
+            $CPAN::Frontend->mywarn( << "END_SKIP_DIST" );
+CPAN::Reporter: '$dist_id' matched against the cc_skipfile.  Won't copy author.
+END_SKIP_DIST
+            return;
+        }
+    }
+
+    # Finally, prompt user if necessary
+    if ( _prompt( $config, "cc_author", $result->{grade}, "($author_email)?") =~ /^y/ ) {
+        return $author_email;
+    }
+    else {
+        return;
+    }
 }
 
 #--------------------------------------------------------------------------#
