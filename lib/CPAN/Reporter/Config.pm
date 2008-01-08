@@ -276,6 +276,11 @@ HERE
         default => undef,
         validate => \&_validate_grade_action_pair,
     },
+    skipfile => {
+        prompt => "What file contains regexes for distribution to skip?",
+        default => undef,
+        validate => \&_validate_skipfile,
+    },
     email_to => {
         default => undef,
     },
@@ -338,6 +343,7 @@ sub _get_config_options {
     }
     return \%active;
 }
+
 
 #--------------------------------------------------------------------------#
 # _grade_action_prompt -- describes grade action pairs
@@ -460,6 +466,14 @@ sub _validate_grade_action_pair {
     }
 
     return scalar(keys %ga_map) ? \%ga_map : undef;
+}
+
+sub _validate_skipfile {
+    my ($name, $option) = @_;
+    return unless $option;
+    my $skipfile = File::Spec->file_name_is_absolute( $option )
+                 ? $option : File::Spec->catfile( _get_config_dir(), $option );
+    return -r $skipfile ? $skipfile : undef;
 }
 
 1;
@@ -613,6 +627,9 @@ reports be sent, regardless of {send_report}? (default:no)
 {send_report} during the make phase
 * {send_test_report = <grade:action> ...} -- if defined, used in place of 
 {send_report} during the test phase
+* {skipfile = <skipfile>} -- filename containing regular expressions (one
+per line) to match against the distribution ID (e.g. 
+'AUTHOR/Dist-Name-0.01.tar.gz'); no report will be sent if a match is found
 * {transport = <transport>} -- if defined, passed to the {transport()} 
 method of [Test::Reporter].  Valid options are 'Net::SMTP' or 
 'Mail::Send'.  (CPAN::Reporter uses Net::SMTP for this by default.)

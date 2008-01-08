@@ -10,6 +10,9 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
+- add a "skipfile" property pointing to a file with regexes on distname that
+reports should not be sent for
+
 # Medium priority 
 
 - refactor t/Helper.pm
@@ -113,5 +116,3 @@ TODO list for Perl module CPAN::Reporter
 - ability to only report on what I asked to install, not on its dependencies
   (David Cantrell)
 
-- use environment variable and/or external file to indicate modules to 
-  skip for reporting
