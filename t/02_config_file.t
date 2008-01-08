@@ -13,7 +13,7 @@ use File::Spec;
 use File::Temp qw/tempdir/;
 use t::Frontend;
 
-plan tests => 45;
+plan tests => 56;
 #plan 'no_plan';
 
 #--------------------------------------------------------------------------#
@@ -277,79 +277,82 @@ SKIP:
 
 SKIP:
 {
-    skip "Couldn't set config file writable again; skipping additional tests", 4
+    skip "Couldn't set config file writable again; skipping other tests", 11
         if ! -w $config_file;
 
-    my $tiny = Config::Tiny->read( $config_file );
-    $tiny->{_}{skipfile} = 'bogus.skipfile';
+    for my $skip_type ( qw/ send_skipfile cc_skipfile / ) {
+        my $tiny = Config::Tiny->read( $config_file );
+        $tiny->{_}{$skip_type} = 'bogus.skipfile';
 
-    ok( $tiny->write( $config_file ),
-        "updated config file with a bad skipfile"
-    );
+        ok( $tiny->write( $config_file ),
+            "updated config file with a bad $skip_type"
+        );
 
-    $tiny = Config::Tiny->read( $config_file );
-    my $parsed_config;
-    capture sub{         
-        $parsed_config = CPAN::Reporter::Config::_get_config_options( $tiny );
-    }, \$stdout, \$stderr;
+        $tiny = Config::Tiny->read( $config_file );
+        my $parsed_config;
+        capture sub{         
+            $parsed_config = CPAN::Reporter::Config::_get_config_options( $tiny );
+        }, \$stdout, \$stderr;
 
-    like( $stdout, "/invalid option 'bogus.skipfile' in 'skipfile'. Using default instead./",
-        "bad skipfile option warning seen"
-    );
+        like( $stdout, "/invalid option 'bogus.skipfile' in '$skip_type'. Using default instead./",
+            "bad $skip_type option warning seen"
+        );
 
-    is( $parsed_config->{skipfile}, undef,
-        "skipfile default returned"
-    );
+        is( $parsed_config->{skipfile}, undef,
+            "$skip_type default returned"
+        );
 
-    $tiny = Config::Tiny->read( $config_file );
-    is( $tiny->{_}{skipfile}, "bogus.skipfile",
-        "empty skipfile preserved in config.ini"
-    );
+        $tiny = Config::Tiny->read( $config_file );
+        is( $tiny->{_}{$skip_type}, "bogus.skipfile",
+            "bogus $skip_type preserved in config.ini"
+        );
 
-    my $skipfile = File::Temp->new(
-        TEMPLATE => "CPAN-Reporter-testskip-XXXXXXXX",
-        DIR => File::Spec->tmpdir(),
-    );
-    ok( -r $skipfile, "generated a skipfile in the temp directory" );
-    $tiny->{_}{skipfile} = "$skipfile";
-    ok( $tiny->write( $config_file ),
-        "updated config file with an absolute skipfile path"
-    );
+        my $skipfile = File::Temp->new(
+            TEMPLATE => "CPAN-Reporter-testskip-XXXXXXXX",
+            DIR => File::Spec->tmpdir(),
+        );
+        ok( -r $skipfile, "generated a $skip_type in the temp directory" );
+        $tiny->{_}{$skip_type} = "$skipfile";
+        ok( $tiny->write( $config_file ),
+            "updated config file with an absolute $skip_type path"
+        );
 
-    $tiny = Config::Tiny->read( $config_file );
-    capture sub{         
-        $parsed_config = CPAN::Reporter::Config::_get_config_options( $tiny );
-    }, \$stdout, \$stderr;
+        $tiny = Config::Tiny->read( $config_file );
+        capture sub{         
+            $parsed_config = CPAN::Reporter::Config::_get_config_options( $tiny );
+        }, \$stdout, \$stderr;
 
-    is( $stdout, q{},
-        "absolute skipfile ok"
-    );
+        is( $stdout, q{},
+            "absolute $skip_type ok"
+        );
 
-    $skipfile = File::Temp->new( 
-        TEMPLATE => "CPAN-Reporter-testskip-XXXXXXXX",
-        DIR => $config_dir,
-    );
-    ok( -r $skipfile, "generated a skipfile in the config directory" );
+        $skipfile = File::Temp->new( 
+            TEMPLATE => "CPAN-Reporter-testskip-XXXXXXXX",
+            DIR => $config_dir,
+        );
+        ok( -r $skipfile, "generated a $skip_type in the config directory" );
 
-    my $relative_skipfile = basename($skipfile);
-    ok( ! File::Spec->file_name_is_absolute( $relative_skipfile ),
-        "generated a relative skipfile name"
-    );
-    $tiny->{_}{skipfile} = $relative_skipfile;
-    ok( $tiny->write( $config_file ),
-        "updated config file with a relative skipfile path"
-    );
+        my $relative_skipfile = basename($skipfile);
+        ok( ! File::Spec->file_name_is_absolute( $relative_skipfile ),
+            "generated a relative $skip_type name"
+        );
+        $tiny->{_}{$skip_type} = $relative_skipfile;
+        ok( $tiny->write( $config_file ),
+            "updated config file with a relative $skip_type path"
+        );
 
-    $tiny = Config::Tiny->read( $config_file );
-    capture sub{         
-        $parsed_config = CPAN::Reporter::Config::_get_config_options( $tiny );
-    }, \$stdout, \$stderr;
+        $tiny = Config::Tiny->read( $config_file );
+        capture sub{         
+            $parsed_config = CPAN::Reporter::Config::_get_config_options( $tiny );
+        }, \$stdout, \$stderr;
 
-    is( $stdout, q{},
-        "relative skipfile ok"
-    );
+        is( $stdout, q{},
+            "relative $skip_type ok"
+        );
 
-    delete $tiny->{_}{skipfile};
-    $tiny->write( $config_file );
+        delete $tiny->{_}{$skip_type};
+        $tiny->write( $config_file );
+    }
 }
+
 

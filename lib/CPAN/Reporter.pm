@@ -347,11 +347,11 @@ END_BAD_DISTNAME
     # Gather 'expensive' data for the report
     _expand_result( $result);
 
-    # Skip if distribution name matches the skipfile
-    if ( $config->{skipfile} && -r $config->{skipfile} ) {
-        my $skipfile = IO::File->new( $config->{skipfile}, "r" );
+    # Skip if distribution name matches the send_skipfile
+    if ( $config->{send_skipfile} && -r $config->{send_skipfile} ) {
+        my $send_skipfile = IO::File->new( $config->{send_skipfile}, "r" );
         my $dist_id = $result->{dist}->pretty_id;
-        while ( my $pattern = <$skipfile> ) {
+        while ( my $pattern = <$send_skipfile> ) {
             chomp($pattern);
             # ignore comments
             next if substr($pattern,0,1) eq '#';
@@ -359,7 +359,7 @@ END_BAD_DISTNAME
             next if $dist_id !~ /$pattern/;
             # if it matches, warn and return
             $CPAN::Frontend->mywarn( << "END_SKIP_DIST" );
-CPAN::Reporter: '$dist_id' matched against the skipfile.  
+CPAN::Reporter: '$dist_id' matched against the send_skipfile.  
 
 Test report will not be sent.
 

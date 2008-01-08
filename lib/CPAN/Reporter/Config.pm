@@ -276,8 +276,13 @@ HERE
         default => undef,
         validate => \&_validate_grade_action_pair,
     },
-    skipfile => {
-        prompt => "What file contains regexes for distribution to skip?",
+    send_skipfile => {
+        prompt => "What file has patterns for things that shouldn't be reported?",
+        default => undef,
+        validate => \&_validate_skipfile,
+    },
+    cc_skipfile => {
+        prompt => "What file has patterns for things that shouldn't CC to authors?",
         default => undef,
         validate => \&_validate_skipfile,
     },

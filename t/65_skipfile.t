@@ -82,11 +82,12 @@ for my $case ( @cases ) {
     test_fake_config( 
         send_report => "yes",
         send_duplicates => "yes",
-        skipfile => "$skipfile", 
+        send_skipfile => "$skipfile", 
     );
     test_dispatch( 
         $case, 
         will_send => $case->{will_send},
     );
 }
+
 
