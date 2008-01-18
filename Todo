@@ -12,6 +12,7 @@ TODO list for Perl module CPAN::Reporter
 
 - add a "skipfile" property pointing to a file with regexes on distname that
 reports should not be sent for
+    - have this in alpha form
 
 # Medium priority 
 
@@ -46,12 +47,11 @@ reports should not be sent for
    If some qualifying parameter is missing, this could be taken as ANY. I
    think this provides about everything I would ever need." -- Andreas
 
-- add test_timeout to CPAN.pm
-
 - Don't cc author if running under bleadperl
 
 # Low priority
 
+- add test_timeout to CPAN.pm
 
 - add link to Wiki for UNKNOWN (and NA) reports
 
@@ -89,6 +89,8 @@ reports should not be sent for
       first to make "have_tested()" easier to write
     - Use filesystem to index -- one file per distname? hash with directories
       to keep number of files/directory down?
+    - Or flat file per perl/archname/osver (usually constant)
+    - use File::ReadBackwards for searches on flat file
 
 - add timeout to prompt (RT#28034)
 
@@ -115,4 +117,6 @@ reports should not be sent for
 
 - ability to only report on what I asked to install, not on its dependencies
   (David Cantrell)
+  - this is a CPAN issue -- it would need to be able to set test_report on
+    a per-distribution basis
 

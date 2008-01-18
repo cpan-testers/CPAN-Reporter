@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 
-$CPAN::Reporter::VERSION = '1.07_01'; 
+$CPAN::Reporter::VERSION = '1.07_02'; 
 
 use Config;
 use CPAN ();
@@ -380,9 +380,8 @@ END_SKIP_DIST
         if ( _prompt( $config, "send_duplicates", $tr->grade) =~ /^n/ ) {
             $CPAN::Frontend->mywarn(<< "DUPLICATE_REPORT");
 
-CPAN::Reporter: it seems that "@{[$tr->subject]}"
-during the $phase phase is a duplicate of a previous report you 
-sent to CPAN Testers.
+CPAN::Reporter: this appears to be a duplicate report for the $phase phase:
+@{[$tr->subject]}
 
 Test report will not be sent.
 
