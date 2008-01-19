@@ -1,6 +1,9 @@
 package CPAN::Reporter::History;
-$VERSION = '1.07_02'; ## no critic
 use strict; 
+use vars qw/$VERSION/;
+$VERSION = '1.07_02'; 
+$VERSION = eval $VERSION;
+
 use Config;
 use Carp;
 use Fcntl qw/:flock/;

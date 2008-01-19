@@ -1,8 +1,10 @@
 package CPAN::Reporter::FAQ;
 # Not really a .pm file, but holds wikidoc which will be
 # turned into .pod by the Build.PL
-$VERSION = '1.07_02'; ## no critic
 use strict; # make CPANTS happy
+use vars qw/$VERSION/;
+$VERSION = '1.07_02'; 
+$VERSION = eval $VERSION;
 1;
 __END__
 
