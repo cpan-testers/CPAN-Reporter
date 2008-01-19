@@ -459,8 +459,10 @@ sub _downgrade_known_causes {
     my ($grade, $output) = ( $result->{grade}, $result->{output} );
     my $msg = $result->{grade_msg} || q{};
 
-    # shortcut unless fail/unknown
-    return if $grade eq 'pass' || $grade eq 'na';
+    # shortcut unless fail/unknown; but PL might look like pass but actually
+    # have "OS Unsupported" messages
+    return if $grade eq 'na';
+    return if $grade eq 'pass' && $result->{phase} ne 'PL';
 
     # get prereqs
     _expand_result( $result ); 

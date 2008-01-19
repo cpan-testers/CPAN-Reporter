@@ -6,6 +6,6 @@ Module::Build->new(
     dist_author         => 'David A. Golden <dagolden@cpan.org>',
     create_makefile_pl  => 'traditional',
     requires => {
-        'perl' => 42,
+        'perl' => 5.006,
     }
 )->create_build_script;

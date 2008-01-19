@@ -2,12 +2,16 @@ Revision history for Perl module CPAN::Reporter
 
 1.07_02
 
-    - added rudimentary have_tested() function to CPAN::Reporter::History
+    - Bug fix: PL files that warned "OS Unsupported" and exited with 0 will
+      now be flagged as NA; this bends the CPAN Testers "rules" slightly, but
+      "OS Unsupported" is a hack anyway, so this should help things DWIM
     
-    - changed "edit_report" prompt to clarify this can be used to review
+    - Added rudimentary have_tested() function to CPAN::Reporter::History
+    
+    - Changed "edit_report" prompt to clarify this can be used to review
       reports in addition to just editing them
 
-    - shortened duplicate report warning to fit on one line
+    - Shortened duplicate report warning to fit on one line
     
 1.07_01 Tue Jan  8 01:41:02 EST 2008
 
