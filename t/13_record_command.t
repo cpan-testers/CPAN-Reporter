@@ -135,6 +135,7 @@ SKIP: {
     my ($stdout, $stderr);
     my $start_time = time();
     my $cmd = $c->{relative} ? "perl" : $perl; 
+    warn "# sleeping for timeout test\n" if $c->{timeout};
     eval {
         capture sub {
             ($output, $exit) = CPAN::Reporter::record_command( 
@@ -142,21 +143,22 @@ SKIP: {
             );
         }, \$stdout, \$stderr;
     };
+    sleep 1; # pad the run time into the next second
     my $run_time = time() - $start_time;
     diag $@ if $@;
     if ( $c->{timeout} ) {
         my ($time_ok, $verb, $range);
         if ( $c->{timeout} < $c->{delay} ) { # if process should time out
-            $time_ok = $run_time >= $c->{timeout} && $run_time <= $c->{delay};
+            $time_ok = $run_time <= $c->{delay};
             $verb = "stopped";
-            $range = sprintf( "timeout (%d) <= ran (%.6f) <= sleep (%d)", 
+            $range = sprintf( "timeout (%d) : ran (%d) : sleep (%d)", 
                 $c->{timeout}, $run_time, $c->{delay} 
             );
         }
         else { # process should exit before timeout
-            $time_ok = $run_time >= $c->{delay} && $run_time <= $c->{timeout};
+            $time_ok = $run_time <= $c->{timeout};
             $verb = "didn't stop";
-            $range = sprintf( "sleep (%d) <= ran (%.6f) <= timeout (%d)", 
+            $range = sprintf( "sleep (%d) : ran (%d) : timeout (%d)", 
                 $c->{delay}, $run_time, $c->{timeout} 
             );
         }

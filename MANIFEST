@@ -46,6 +46,7 @@ t/62_duplicate_reports.t
 t/63_config_send_report.t
 t/64_transport.t
 t/65_skipfile.t
+t/66_have_tested.t
 t/70_darwin_move_config.t
 t/71_missing_config.t
 t/72_rename_history.t
@@ -112,6 +113,10 @@ t/dist/PL-RequirePerl/Build.PL
 t/dist/PL-RequirePerl/lib/Bogus/Module.pm
 t/dist/PL-RequirePerl/Makefile.PL
 t/dist/PL-RequirePerl/t/01_Bogus.t
+t/dist/PL-warn-OSUnsupported/Build.PL
+t/dist/PL-warn-OSUnsupported/lib/Bogus/Module.pm
+t/dist/PL-warn-OSUnsupported/Makefile.PL
+t/dist/PL-warn-OSUnsupported/t/01_Bogus.t
 t/dist/t-BailOut/Build.PL
 t/dist/t-BailOut/lib/Bogus/Module.pm
 t/dist/t-BailOut/Makefile.PL
@@ -269,6 +274,7 @@ t/dist/test.pl-PrereqPerl-OK/test.pl
 t/Frontend.pm
 t/Helper.pm
 t/history/history.db
+t/history/reports-sent-longer.db
 t/history/reports-sent.db
 t/MockCPANDist.pm
 t/perl5lib-shadow/Bogus/Shadow.pm

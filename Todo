@@ -4,20 +4,11 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
-- fix timeout testing -- find a more robust way to do it
-
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
 
 # High priority
-
-- split have_tested platform into archname and osvers components
-
-- improve have_tested to support more stringent options -- i.e. current
-  perl, arch, particular phases, grades, etc.
-  - when not specified (doesn't exist), use current perl, arch, etc.
-  - if specified as empty string, use any of that type
 
 - Log entire history of reporting, regardless of whether a report is sent
   (David Cantrell) -- i.e. keep discards somehow ("DISCARD" just like rest 
