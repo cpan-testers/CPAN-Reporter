@@ -2,7 +2,12 @@ Revision history for Perl module CPAN::Reporter
 
 1.07_02
 
-    - shortened duplicate report warning
+    - added rudimentary have_tested() function to CPAN::Reporter::History
+    
+    - changed "edit_report" prompt to clarify this can be used to review
+      reports in addition to just editing them
+
+    - shortened duplicate report warning to fit on one line
     
 1.07_01 Tue Jan  8 01:41:02 EST 2008
 

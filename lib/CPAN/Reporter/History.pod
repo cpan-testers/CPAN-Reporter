@@ -12,9 +12,51 @@ This documentation refers to version 1.07_02
 
 =head1 DESCRIPTION
 
-Currently, all methods are private.  Future versions may add methods to
-allow programs outside CPAN::Reporter to query a CPAN::Reporter
-history file.
+Interface for interacting with the CPAN::Reporter history file.  Most
+methods are private for use only within CPAN::Reporter itself.  
+
+However, a public function is provided to query the history file for
+results for a particular distribution.
+
+=head1 USAGE
+
+=head2 C<<< have_tested() >>>
+
+     @results = CPAN::Reporter::History::have_tested(
+         dist => 'Dist-Name-1.23'
+     );
+
+The C<<< dist >>> argument should be the distribution tarball name without 
+any filename suffix. From a C<<< CPAN::Distribution >>> object, this is provided
+by the C<<< base_id >>> method.
+
+If the named distribution is found in the CPAN::Reporter history file, this
+function returns an array of hashes representing each test result.  Fields in
+the hash include:
+
+=over
+
+=item *
+
+C<<< dist >>> -- the base id
+
+=item *
+
+C<<< phase >>> -- phase the report was generated: either 'PL', 'make' or 'test'
+
+=item *
+
+C<<< grade >>> -- CPAN Testers grade: 'PASS', 'FAIL', 'NA' or 'UNKNOWN'
+
+=item *
+
+C<<< perl >>> -- perl version and patchlevel (if one exists)
+
+=item *
+
+C<<< platform >>> -- architecture name and OS version string
+
+=back
 
 =head1 SEE ALSO
 
@@ -36,7 +78,7 @@ David A. Golden (DAGOLDEN)
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2006, 2007 by David A. Golden
+Copyright (c) 2006, 2007, 2008 by David A. Golden
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

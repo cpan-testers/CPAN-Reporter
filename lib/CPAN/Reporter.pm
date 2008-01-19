@@ -568,17 +568,6 @@ sub _env_report {
 }
 
 #--------------------------------------------------------------------------#
-# _format_distname
-#--------------------------------------------------------------------------#
-
-sub _format_distname {
-    my $dist = shift;
-    my $basename = basename( $dist->pretty_id );
-    $basename =~ s/(\.tar\.(?:gz|bz2)|\.tgz|\.zip)$//i;
-    return $basename;
-}
-
-#--------------------------------------------------------------------------#
 # _has_recursive_make
 #
 # Ignore Makefile.PL in t directories 
@@ -619,7 +608,7 @@ sub _init_result {
         exit_value => $exit_value,
         # Note: pretty_id is like "DAGOLDEN/CPAN-Reporter-0.40.tar.gz"
         dist_basename => basename($dist->pretty_id),
-        dist_name => _format_distname( $dist ),
+        dist_name => $dist->base_id,
     };
 
     # Used in messages to user
@@ -1373,7 +1362,7 @@ David A. Golden (DAGOLDEN)
 
 = COPYRIGHT AND LICENSE
 
-Copyright (c) 2006, 2007 by David A. Golden
+Copyright (c) 2006, 2007, 2008 by David A. Golden
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -2,6 +2,7 @@ package CPAN::Reporter::History;
 $VERSION = '1.07_02'; ## no critic
 use strict; 
 use Config;
+use Carp;
 use Fcntl qw/:flock/;
 use File::HomeDir (); 
 use File::Path (qw/mkpath/);
@@ -82,6 +83,32 @@ BEGIN {
 #--------------------------------------------------------------------------#
 
 #--------------------------------------------------------------------------#
+# have_tested
+#
+# search for dist in history file -- takes dist named argument that is 
+# either a dist->base_id
+#--------------------------------------------------------------------------#
+
+sub have_tested { ## no critic RequireArgUnpacking
+    croak "arguments to have_tested() must be key value pairs"
+      if @_ % 2; 
+    my %args = @_;
+
+    my @found;
+    my $history = _open_history_file('<') or return;
+    flock $history, LOCK_SH;
+    <$history>; # throw away format line;
+    while ( defined (my $line = <$history>) ) {
+        my $fields = _split_history( $line ) or next;
+        push @found, $fields if $fields->{dist} eq $args{dist};
+    }
+    $history->close;
+    return @found;
+}
+
+
+    
+#--------------------------------------------------------------------------#
 # Private methods
 #--------------------------------------------------------------------------#
 
@@ -97,8 +124,8 @@ sub _format_history {
     my $grade = uc $result->{grade};
     my $dist_name = $result->{dist_name};
     my $perlver = _format_perl_version();
-    my $arch = "$Config{archname} $Config{osvers}";    
-    return "$phase $grade $dist_name ($perlver) $arch\n";
+    my $platform = "$Config{archname} $Config{osvers}";    
+    return "$phase $grade $dist_name ($perlver) $platform\n";
 }
 
 #--------------------------------------------------------------------------#
@@ -137,8 +164,8 @@ sub _get_old_history_file {
 #--------------------------------------------------------------------------#
 
 sub _is_duplicate {
-    my ($result, $subject) = @_;
-    my $log_line = _format_history( $result, $subject );
+    my ($result) = @_;
+    my $log_line = _format_history( $result );
     my $history = _open_history_file('<') or return;
     my $found = 0;
     flock $history, LOCK_SH;
@@ -214,6 +241,31 @@ sub _record_history {
     return;
 }
 
+#--------------------------------------------------------------------------#
+# _split_history
+#
+# splits lines created with _format_history. Returns hash ref with
+#   phase, grade, dist, perl, platform
+#--------------------------------------------------------------------------#
+
+sub _split_history {
+    my ($line) = @_;
+    my %fields;
+    @fields{qw/phase grade dist perl platform/} =
+        $line =~ m{
+            ^(\S+) \s+          # phase
+             (\S+) \s+          # grade
+             (\S+) \s+          # dist
+             \( [^)]+ \) \s+    # (perl)
+             (.+)$              # platform
+        }xms;
+    
+    # return nothing if parse fails
+    return if scalar keys %fields == 0;# grep { ! defined($_) } values %fields;
+    # otherwise return hashref
+    return \%fields;
+}
+
 1;
 __END__
 
@@ -229,9 +281,33 @@ This documentation refers to version %%VERSION%%
 
 = DESCRIPTION
 
-Currently, all methods are private.  Future versions may add methods to
-allow programs outside CPAN::Reporter to query a CPAN::Reporter
-history file.
+Interface for interacting with the CPAN::Reporter history file.  Most
+methods are private for use only within CPAN::Reporter itself.  
+
+However, a public function is provided to query the history file for
+results for a particular distribution.
+
+= USAGE
+
+== {have_tested()}
+
+    @results = CPAN::Reporter::History::have_tested(
+        dist => 'Dist-Name-1.23'
+    );
+
+The {dist} argument should be the distribution tarball name without 
+any filename suffix. From a {CPAN::Distribution} object, this is provided
+by the {base_id} method.
+
+If the named distribution is found in the CPAN::Reporter history file, this
+function returns an array of hashes representing each test result.  Fields in
+the hash include:
+
+* {dist} -- the base id
+* {phase} -- phase the report was generated: either 'PL', 'make' or 'test'
+* {grade} -- CPAN Testers grade: 'PASS', 'FAIL', 'NA' or 'UNKNOWN'
+* {perl} -- perl version and patchlevel (if one exists)
+* {platform} -- architecture name and OS version string
 
 = SEE ALSO
 
@@ -244,7 +320,7 @@ David A. Golden (DAGOLDEN)
 
 = COPYRIGHT AND LICENSE
 
-Copyright (c) 2006, 2007 by David A. Golden
+Copyright (c) 2006, 2007, 2008 by David A. Golden
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

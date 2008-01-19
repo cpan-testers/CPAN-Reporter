@@ -1,6 +1,7 @@
 package t::MockCPANDist;
 use strict;
 BEGIN { if ( not $] < 5.006 ) { require warnings; warnings->import } }
+use File::Basename;
 
 #--------------------------------------------------------------------------#
 
@@ -44,5 +45,13 @@ sub prereq_pm { return shift->{prereq_pm} }
 sub pretty_id { return shift->{pretty_id} }
 sub id { return shift->{author_id} }
 sub fullname { return shift->{author_fullname} }
+sub base_id {
+    my $self = shift;
+    my $id = $self->pretty_id();
+    my $base_id = File::Basename::basename($id);
+    $base_id =~ s{\.(?:tar\.(bz2|gz|Z)|t(?:gz|bz)|zip)$}{}i;
+    return $base_id;
+}
+
 
 1;

@@ -136,8 +136,9 @@ for my $c ( @cases ) {
     $expected_history_lines++ if not $c->{is_dup}
 }
 
-plan tests => 4 + $expected_history_lines 
-                + @cases * ( test_fake_config_plan() + test_dispatch_plan() );
+plan tests => 5 + $expected_history_lines 
+                + @cases * ( 3 + test_fake_config_plan() 
+                               + test_dispatch_plan() );
 
 #--------------------------------------------------------------------------#
 # subs
@@ -150,7 +151,7 @@ sub history_format {
     my $perl_ver = "perl-" . CPAN::Reporter::History::_perl_version(); 
     $perl_ver .= " patch $Config{perl_patchlevel}" if $Config{perl_patchlevel};
     my $arch = "$Config{archname} $Config{osvers}";
-    my $dist_name = CPAN::Reporter::_format_distname($dist);
+    my $dist_name = $dist->base_id;
     return "$phase $grade $dist_name ($perl_ver) $arch\n";
 }
 
@@ -180,7 +181,27 @@ for my $case ( @cases ) {
     if ( not $case->{is_dup} ) {
         push @results, history_format($case);
     }
+    my @found;
+    ok( @found = CPAN::Reporter::History::have_tested(
+            dist => $case->{dist}->base_id ),
+        "$case->{label}: have_tested( base_id ) is true"
+    );
+    is( ref($found[0]), 'HASH',
+        "$case->{label}: have_tested returns AoH"
+    );
+    is( $found[0]{dist}, $case->{dist}->base_id,
+        "$case->{label}: have_tested struct has dist name"
+    ); 
+
 }
+
+#--------------------------------------------------------------------------#
+# have_tested fails
+#--------------------------------------------------------------------------#
+
+ok( ! CPAN::Reporter::History::have_tested( dist => "AADFASDFADSFASD" ),
+    "have_tested() returns false if not found"
+);
 
 #--------------------------------------------------------------------------#
 # Check history file format
@@ -207,7 +228,5 @@ for my $i ( 0 .. $#results ) {
         "history matched results[$i]"
     );
 }
-
- 
 
 

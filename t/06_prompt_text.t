@@ -40,7 +40,7 @@ my $case = {
 
 my %prompts = (
     cc_author => "Do you want to CC the module author (JOHNQP\@cpan.org)?",
-    edit_report => "Do you want to edit the test report?",
+    edit_report => "Do you want to review or edit the test report?",
     send_report => "Do you want to send the report?",
     send_duplicates => "This report is identical to a previous one.  Send it anyway?",
 );

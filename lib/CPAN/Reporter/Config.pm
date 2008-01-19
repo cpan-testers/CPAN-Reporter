@@ -218,12 +218,12 @@ HERE
     },
     edit_report => {
         default => 'default:ask/no pass/na:no',
-        prompt => "Do you want to edit the test report?",
+        prompt => "Do you want to review or edit the test report?",
         validate => \&_validate_grade_action_pair,
         info => <<'HERE',
-Before test reports are sent, you may want to edit the test report
-and add additional comments about the result or about your system or
-Perl configuration.  By default, CPAN::Reporter will ask after
+Before test reports are sent, you may want to review or edit the test 
+report and add additional comments about the result or about your system 
+or Perl configuration.  By default, CPAN::Reporter will ask after
 each report is generated whether or not you would like to edit the 
 report. This option takes "grade:action" pairs.
 HERE
@@ -665,7 +665,7 @@ David A. Golden (DAGOLDEN)
 
 = COPYRIGHT AND LICENSE
 
-Copyright (c) 2006, 2007 by David A. Golden
+Copyright (c) 2006, 2007, 2008 by David A. Golden
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

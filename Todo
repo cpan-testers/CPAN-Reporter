@@ -4,21 +4,15 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
+- fix timeout testing -- find a more robust way to do it
+
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
 
 # High priority
 
-- add a "skipfile" property pointing to a file with regexes on distname that
-  reports should not be sent for
-    - have this in alpha form
-
 # Medium priority 
-
-- change "edit report" prompt to "review or edit report"
-
-- refactor t/Helper.pm
 
 - add earlier, successful phases to output in reverse order.  Probably have to
   bump up the test-length cutoff, though, to deal with lengthy make output
@@ -51,11 +45,17 @@ TODO list for Perl module CPAN::Reporter
 
 - Don't cc author if running under bleadperl
 
+- add results back to CPAN::Distribution object
+
 # Low priority
+
+- refactor t/Helper.pm
 
 - add test_timeout to CPAN.pm
 
 - add link to Wiki for UNKNOWN (and NA) reports
+
+- simplify boilerplate -- more readable
 
 - add warnings::compat to toolchain or else add config to allow local
   modules to be added to toolchain report
