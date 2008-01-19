@@ -12,6 +12,9 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
+- improve have_tested to support more stringent options -- i.e. current
+  perl, arch, particular phases, grades, etc.
+
 # Medium priority 
 
 - add earlier, successful phases to output in reverse order.  Probably have to
