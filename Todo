@@ -6,6 +6,8 @@ TODO list for Perl module CPAN::Reporter
 
 - fix timeout testing -- find a more robust way to do it
 
+- downgrade pass to NA if in PL phase
+
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
