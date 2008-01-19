@@ -6,16 +6,22 @@ TODO list for Perl module CPAN::Reporter
 
 - fix timeout testing -- find a more robust way to do it
 
-- downgrade pass to NA if in PL phase
-
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
 
 # High priority
 
+- split have_tested platform into archname and osvers components
+
 - improve have_tested to support more stringent options -- i.e. current
   perl, arch, particular phases, grades, etc.
+  - when not specified (doesn't exist), use current perl, arch, etc.
+  - if specified as empty string, use any of that type
+
+- Log entire history of reporting, regardless of whether a report is sent
+  (David Cantrell) -- i.e. keep discards somehow ("DISCARD" just like rest 
+  of subject line?)
 
 # Medium priority 
 
@@ -32,21 +38,6 @@ TODO list for Perl module CPAN::Reporter
   e.g. PERL_CPAN_REPORTER_CONFIG 
 
 - Add config to save reports to a file (Jerry Hedden) (RT#24816)
-
-- Log entire history of reporting, regardless of whether a report is sent
-  (David Cantrell) -- i.e. keep discards somehow ("DISCARD" just like rest 
-  of subject line?)
-
-- public API for CPAN::Reporter::History for external querying 
-  (requested by Andreas; Cantrell)
-    e.g CPAN::Reporter::History->have_tested( 
-            dist => $dist, grade => "pass", perl_version => "$]"
-        )
-
-   "The result could be an array of hashes or light objects that
-   know about all 5 (or more) constituents of a line in the history file.
-   If some qualifying parameter is missing, this could be taken as ANY. I
-   think this provides about everything I would ever need." -- Andreas
 
 - Don't cc author if running under bleadperl
 
