@@ -119,6 +119,17 @@ my @cases = (
         is_dup => 1,
     },
     {
+        label => "first discard",
+        name => 't-PrereqMiss',
+        version => 9.11,
+        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
+        grade => "discard",
+        phase => "test",
+        command => "$make test",
+        send_dup => "no",
+        is_dup => 0,
+    },
+    {
         label => "third test failure (new version)",
         name => "t-Fail",
         version => 1.24,
@@ -127,6 +138,17 @@ my @cases = (
         command => "$make test",
         send_dup => "no",
         is_dup => 0,
+    },
+    {
+        label => "second discard",
+        name => 't-PrereqMiss',
+        version => 9.11,
+        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
+        grade => "discard",
+        phase => "test",
+        command => "$make test",
+        send_dup => "no",
+        is_dup => 1,
     },
 );
 
@@ -174,9 +196,11 @@ for my $case ( @cases ) {
         %mock_dist_info,
         pretty_id => "JOHNQP/Bogus-Module-$case->{version}.tar.gz",
     );
+    $case->{dist}{prereq_pm} = $case->{prereq} if $case->{prereq};
     test_dispatch( 
         $case, 
-        will_send => (! $case->{is_dup}) || ( $case->{send_dup} eq 'yes' )
+        will_send => ($case->{grade} ne 'discard') && 
+                     (! $case->{is_dup}) || ( $case->{send_dup} eq 'yes' )
     );
     if ( not $case->{is_dup} ) {
         push @results, history_format($case);

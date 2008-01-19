@@ -37,7 +37,7 @@ The following function is available.  It is not exported by default.
      # all reports on the current Perl/platform
      @results = have_tested();
 
-Searches the CPAN::Reporter history file for records matching search
+Searches the CPAN::Reporter history file for records exactly matching search
 criteria, given as pairs of field-names and desired values.  
 
 Ordinary search criteria include:
@@ -56,7 +56,8 @@ C<<< phase >>> -- phase the report was generated during: either 'PL',
 
 =item *
 
-C<<< grade >>> -- CPAN Testers grade: 'PASS', 'FAIL', 'NA' or 'UNKNOWN'
+C<<< grade >>> -- CPAN Testers grade: 'PASS', 'FAIL', 'NA' or'UNKNOWN'; Also may
+be 'DISCARD' for any failing reports not sent due to missing prerequisites
 
 =back
 

@@ -339,7 +339,7 @@ The following function is available.  It is not exported by default.
     # all reports on the current Perl/platform
     @results = have_tested();
 
-Searches the CPAN::Reporter history file for records matching search
+Searches the CPAN::Reporter history file for records exactly matching search
 criteria, given as pairs of field-names and desired values.  
 
 Ordinary search criteria include:
@@ -348,7 +348,8 @@ Ordinary search criteria include:
 a {CPAN::Distribution} object, this is provided by the {base_id} method.
 * {phase} -- phase the report was generated during: either 'PL', 
 'make' or 'test'
-* {grade} -- CPAN Testers grade: 'PASS', 'FAIL', 'NA' or 'UNKNOWN'
+* {grade} -- CPAN Testers grade: 'PASS', 'FAIL', 'NA' or'UNKNOWN'; Also may
+be 'DISCARD' for any failing reports not sent due to missing prerequisites
 
 Without additional criteria, a search will be limited to the current
 version of Perl and the current architecture and OS version.  

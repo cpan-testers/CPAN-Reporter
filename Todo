@@ -10,10 +10,6 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
-- Log entire history of reporting, regardless of whether a report is sent
-  (David Cantrell) -- i.e. keep discards somehow ("DISCARD" just like rest 
-  of subject line?)
-
 # Medium priority 
 
 - add earlier, successful phases to output in reverse order.  Probably have to
@@ -29,8 +25,6 @@ TODO list for Perl module CPAN::Reporter
   e.g. PERL_CPAN_REPORTER_CONFIG 
 
 - Add config to save reports to a file (Jerry Hedden) (RT#24816)
-
-- Don't cc author if running under bleadperl
 
 - add results back to CPAN::Distribution object
 

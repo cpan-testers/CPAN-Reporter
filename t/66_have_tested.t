@@ -10,7 +10,7 @@ use File::Temp qw/tempdir/;
 use t::Frontend;
 
 #plan 'no_plan';
-plan tests => 19;
+plan tests => 20;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -35,6 +35,7 @@ my @fake_results = (
     { dist_name => 'Wibble-42',    phase => 'test',  grade => 'pass' },
     { dist_name => 'Wobble-23',    phase => 'PL',    grade => 'na'   },
     { dist_name => 'Inline-0.44',  phase => 'test',  grade => 'pass' },
+    { dist_name => 'Crappy-0.01',  phase => 'PL',    grade => 'discard' },
 );
 
 #--------------------------------------------------------------------------#
@@ -81,7 +82,7 @@ ok ( $@, "have_tested() dies with unknown parameter" );
 
 # have_tested without any parameters should return everything on this platform
 @aoh = have_tested();
-is( scalar @aoh, 7, 
+is( scalar @aoh, scalar @fake_results, 
     "have_tested() with no args gives everything on this platform"
 );
 
@@ -135,6 +136,12 @@ is( scalar @aoh, 1,
 @aoh = have_tested( grade => 'NA' );
 is( scalar @aoh, 1, 
     "asking for all NA grade reports (defaults to this platform)"
+);
+
+# just grade returns all reports of that grade on current platform
+@aoh = have_tested( grade => 'DISCARD' );
+is( scalar @aoh, 1, 
+    "asking for all DISCARD grade reports (defaults to this platform)"
 );
 
 # restrict to just a particular dist and phase

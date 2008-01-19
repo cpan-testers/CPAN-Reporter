@@ -162,7 +162,7 @@ sub test_grade_PL {
                 );
                     
                 like( $stdout, 
-                    "/Test results for \Q$short_name\E will be discarded/",
+                    "/Test report will not be sent/",
                     "$case->{name}: discard message correct"
                 ) and $is_grade_correct++;
 
@@ -285,7 +285,7 @@ sub test_grade_make {
                 );
                     
                 like( $stdout, 
-                    "/Test results for \Q$short_name\E will be discarded/",
+                    "/Test report will not be sent/",
                     "$case->{name}: discard message correct"
                 ) and $is_grade_correct++;
 
@@ -402,7 +402,7 @@ sub test_grade_test {
                 );
                     
                 like( $stdout, 
-                    "/Test results for \Q$short_name\E will be discarded/",
+                    "/Test report will not be sent/",
                     "$case->{name}: discard message correct"
                 );
 

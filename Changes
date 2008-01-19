@@ -11,6 +11,13 @@ Revision history for Perl module CPAN::Reporter
     
     - Test fix: more changes to timeout testing to avoid false failures
 
+    - Authors will never be CC'd on reports when running maint/blead perl
+      (anything with $Config{perl_patchlevel} set)
+
+    - Reports discarded due to missing prerequisites will now be recorded
+      in the history file with a 'grade' of DISCARD (unless a duplicate
+      DISCARD already exists)
+    
     - Changed "edit_report" prompt to clarify this can be used to review
       reports in addition to just editing them
 

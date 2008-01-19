@@ -39,8 +39,10 @@ sub grade_make {
         $CPAN::Frontend->mywarn( 
             "\nCPAN::Reporter: test results were not valid, $result->{grade_msg}.\n\n",
             $result->{prereq_pm}, "\n",
-            "Test results for $result->{dist_name} will be discarded"
+            "Test report will not be sent"
         );
+        CPAN::Reporter::History::_record_history( $result ) 
+            if not CPAN::Reporter::History::_is_duplicate( $result );
     }
     else {
         _print_grade_msg($result->{make_cmd}, $result);
@@ -57,8 +59,10 @@ sub grade_PL {
         $CPAN::Frontend->mywarn( 
             "\nCPAN::Reporter: test results were not valid, $result->{grade_msg}.\n\n",
             $result->{prereq_pm}, "\n",
-            "Test results for $result->{dist_name} will be discarded"
+            "Test report will not be sent"
         );
+        CPAN::Reporter::History::_record_history( $result ) 
+            if not CPAN::Reporter::History::_is_duplicate( $result );
     }
     else {
         _print_grade_msg($result->{PL_file} , $result);
@@ -75,8 +79,10 @@ sub grade_test {
         $CPAN::Frontend->mywarn( 
             "\nCPAN::Reporter: test results were not valid, $result->{grade_msg}.\n\n",
             $result->{prereq_pm}, "\n",
-            "Test results for $result->{dist_name} will be discarded"
+            "Test report will not be sent"
         );
+        CPAN::Reporter::History::_record_history( $result ) 
+            if not CPAN::Reporter::History::_is_duplicate( $result );
     }
     else {
         _print_grade_msg( "Test", $result );
@@ -934,6 +940,9 @@ ENDREPORT
 
 sub _should_copy_author {
     my ($result, $config) = @_;
+
+    # Don't copy author on perls with patchlevels
+    return if $Config{perl_patchlevel};
 
     # User prompts for action
     my $author_email = $result->{author_id} 
