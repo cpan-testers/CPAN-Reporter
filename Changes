@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-1.07_02
+1.07_02 Sat Jan 19 20:33:55 EST 2008
 
     - Added have_tested() function to CPAN::Reporter::History; provide ability
       to search the CPAN::Reporter history file
