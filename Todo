@@ -10,6 +10,10 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
+- add a command_timeout config option that is the fallback if a timeout
+  isn't provided by CPAN -- use for smoking to kill anything PL/make/test 
+  after some amount of time (e.g. 1800 seconds)
+
 # Medium priority 
 
 - add earlier, successful phases to output in reverse order.  Probably have to
@@ -24,15 +28,11 @@ TODO list for Perl module CPAN::Reporter
 - set alternate configuration file/dir via environment variable (RT#30314)
   e.g. PERL_CPAN_REPORTER_CONFIG 
 
-- Add config to save reports to a file (Jerry Hedden) (RT#24816)
-
 - add results back to CPAN::Distribution object
 
 # Low priority
 
 - refactor t/Helper.pm
-
-- add test_timeout to CPAN.pm
 
 - add link to Wiki for UNKNOWN (and NA) reports
 
@@ -55,10 +55,6 @@ TODO list for Perl module CPAN::Reporter
         if 5.5.x is used.
 
 - change report truncation to take first 25K and last 25K (summary) (?)
-
-- figure out how to support color output from Test::Harness 3.0 -- probably
-  set an environment variable to get them to pass color strings to the pipe
-  and then strip color escape codes from the teed file.
 
 - switch from a single flat file for history. e.g.
     - SDBM_File for history (key on subject line, with phase as value?
@@ -85,7 +81,15 @@ TODO list for Perl module CPAN::Reporter
 
 - heuristics for missing library files --> discard report
 
+- figure out how to support color output from Test::Harness 3.0 -- probably
+  set an environment variable to get them to pass color strings to the pipe
+  and then strip color escape codes from the teed file.
+
 # Probably won't implement
+
+- Add config to save reports to a file (Jerry Hedden) (RT#24816)
+    - may not do this until we have the new CPAN::Testers::Report
+      object and associated transports
 
 - Check if CPAN::Reporter is reporting under a "force X" command?  It
   probably shouldn't.  Is that a CPAN.pm change?  Or can I get it from 
