@@ -1,5 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+1.07_03 Sat Jan 19 22:16:44 EST 2008
+
+    - Test fix: set sample history file writeable after copy
+
 1.07_02 Sat Jan 19 20:33:55 EST 2008
 
     - Added have_tested() function to CPAN::Reporter::History; provide ability

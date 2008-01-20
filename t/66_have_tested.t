@@ -10,7 +10,7 @@ use File::Temp qw/tempdir/;
 use t::Frontend;
 
 #plan 'no_plan';
-plan tests => 20;
+plan tests => 21;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -64,6 +64,10 @@ ok( -d $config_dir, "temporary config dir created" );
 # If old history exists, convert it
 fcopy( $sample_history_file, $history_file);
 ok( -f $history_file, "copied sample old history file to config directory");
+
+# make it writeable
+chmod 0644, $history_file;
+ok( -w $history_file, "history file is writeable" );
 
 # load CPAN::Reporter::History and import have_tested for convenience
 require_ok( 'CPAN::Reporter::History' );
