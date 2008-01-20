@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 use vars qw/$VERSION/;
-$VERSION = '1.07_03'; 
+$VERSION = '1.07_04'; 
 $VERSION = eval $VERSION;
 
 use Config;
@@ -941,9 +941,6 @@ ENDREPORT
 sub _should_copy_author {
     my ($result, $config) = @_;
 
-    # Don't copy author on perls with patchlevels
-    return if $Config{perl_patchlevel};
-
     # User prompts for action
     my $author_email = $result->{author_id} 
                      ? "$result->{author_id}\@cpan.org"
@@ -970,6 +967,9 @@ END_SKIP_DIST
             return;
         }
     }
+
+    # Don't copy author on perls with patchlevels
+    return if $Config{perl_patchlevel};
 
     # Finally, prompt user if necessary
     if ( _prompt( $config, "cc_author", $result->{grade}, "($author_email)?") =~ /^y/ ) {

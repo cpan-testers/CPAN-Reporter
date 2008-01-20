@@ -2,7 +2,7 @@ NAME
     CPAN::Reporter - Adds CPAN Testers reporting to CPAN.pm
 
 VERSION
-    This documentation describes version 1.07_03.
+    This documentation describes version 1.07_04.
 
 SYNOPSIS
     From the CPAN shell:

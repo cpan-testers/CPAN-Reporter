@@ -13,8 +13,22 @@ use Probe::Perl;
 use File::Temp;
 
 #--------------------------------------------------------------------------#
+# We need Config to be writeable, so modify the tied hash
+#--------------------------------------------------------------------------#
+
+use Config;
+
+BEGIN {
+    BEGIN { if (not $] < 5.006 ) { warnings->unimport('redefine') } }
+    *Config::STORE = sub { $_[0]->{$_[1]} = $_[2] }
+}
+
+#--------------------------------------------------------------------------#
 # Fixtures
 #--------------------------------------------------------------------------#
+
+# Need to have bleadperls pretend to be normal for these tests
+local $Config{perl_patchlevel};
 
 my $make = $Config{make};
 my $perl = Probe::Perl->find_perl_interpreter();

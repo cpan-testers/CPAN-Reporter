@@ -589,7 +589,7 @@ sub test_report {
 
     my @expected_cc;
     my $author = $case->{dist}->author;
-    push @expected_cc, $author->id if defined $author;
+    push @expected_cc, $author->id if defined $author && !$Config{perl_patchlevel};
     is_deeply( 
         [ @t::Helper::cc_list ], 
         [ map { $_ . '@cpan.org' } @expected_cc ],

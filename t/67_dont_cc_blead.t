@@ -72,7 +72,8 @@ require_ok('CPAN::Reporter');
 
 # test send_skipfile
 for my $case ( @cases ) {
-    local $Config{perl_patchlevel} = $case->{patch} if $case->{patch};
+    # override this -- if we're on blead we need to turn it off anyway
+    local $Config{perl_patchlevel} = $case->{patch} ? $case->{patch} : q{};
     $case->{dist} = t::MockCPANDist->new(
         pretty_id => $case->{pretty_id},
         %mock_dist_options,

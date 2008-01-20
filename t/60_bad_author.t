@@ -1,4 +1,3 @@
-#!perl
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
