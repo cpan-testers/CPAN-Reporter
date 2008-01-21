@@ -1,10 +1,12 @@
 Revision history for Perl module CPAN::Reporter
 
-1.07_04 Sun Jan 20 09:57:36 EST 2008
+1.07_04 Sun Jan 20 22:06:56 EST 2008
 
     - Test fix: stopping cc on blead broke lots of other tests.  Fixed those.
       Built my own blead perl so I can actually check these things in the 
       future instead of relying on Andreas' blead smoking
+    
+    - Test fix: testing skipfile wasn't being created properly on Perl 5.005 
     
 1.07_03 Sat Jan 19 22:16:44 EST 2008
 

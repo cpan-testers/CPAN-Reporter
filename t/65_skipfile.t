@@ -39,6 +39,8 @@ print {$skipfile} << 'SKIPFILE';
 Bogus-SkipModule
 SKIPFILE
 
+$skipfile->close;
+
 my %mock_dist_options = (
     prereq_pm       => {
         'File::Spec' => 0,
