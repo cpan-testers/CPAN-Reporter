@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-1.07_xx
+1.07_05
 
     - Added PERL_CPAN_REPORTER_DIR and PERL_CPAN_REPORTER_CONFIG environment
       variables to specify alternate locations for default configuration 

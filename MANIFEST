@@ -20,7 +20,8 @@ MANIFEST.SKIP
 META.yml
 README
 t/01_CPAN_Reporter.t
-t/02_config_file.t
+t/02_config_env_vars.t
+t/03_config_file.t
 t/04_option_parsing.t
 t/05_prompting.t
 t/06_prompt_text.t
