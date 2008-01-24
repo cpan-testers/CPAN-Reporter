@@ -10,7 +10,6 @@ use t::Helper;
 use t::Frontend;
 use Config;
 use Probe::Perl;
-use File::Temp;
 
 #--------------------------------------------------------------------------#
 # We need Config to be writeable, so modify the tied hash

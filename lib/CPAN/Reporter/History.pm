@@ -10,7 +10,6 @@ use Fcntl qw/:flock/;
 use File::HomeDir (); 
 use File::Path (qw/mkpath/);
 use File::Spec ();
-use File::Temp 0.16 ();
 use IO::File ();
 use CPAN (); # for printing warnings
 use CPAN::Reporter::Config ();
@@ -25,8 +24,13 @@ require Exporter;
 
 BEGIN {
     eval {
-        my $fh = File::Temp->new() or return;
+        my $temp_file = File::Spec->catfile( 
+            File::Spec->tmpdir(), $$ . time() 
+        ); 
+        my $fh = IO::File->new( $temp_file, "w" );
         flock $fh, LOCK_EX;
+        $fh->close;
+        unlink $temp_file;
     };
     if ( $@ ) {
         *CORE::GLOBAL::flock = sub (*$) { 1 };
