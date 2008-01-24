@@ -35,7 +35,7 @@ sub grade_make {
     my $result = _init_result( 'make', @args ); 
     _compute_make_grade($result);
     if ( $result->{grade} eq 'discard' ) {
-        $CPAN::Frontend->mywarn( 
+        $CPAN::Frontend->myprint( 
             "\nCPAN::Reporter: test results were not valid, $result->{grade_msg}.\n\n",
             $result->{prereq_pm}, "\n",
             "Test report will not be sent"
@@ -55,7 +55,7 @@ sub grade_PL {
     my $result = _init_result( 'PL', @args ); ## no critic
     _compute_PL_grade($result);
     if ( $result->{grade} eq 'discard' ) {
-        $CPAN::Frontend->mywarn( 
+        $CPAN::Frontend->myprint( 
             "\nCPAN::Reporter: test results were not valid, $result->{grade_msg}.\n\n",
             $result->{prereq_pm}, "\n",
             "Test report will not be sent"
@@ -75,7 +75,7 @@ sub grade_test {
     my $result = _init_result( 'test', @args ); ## no critic
     _compute_test_grade($result);
     if ( $result->{grade} eq 'discard' ) {
-        $CPAN::Frontend->mywarn( 
+        $CPAN::Frontend->myprint( 
             "\nCPAN::Reporter: test results were not valid, $result->{grade_msg}.\n\n",
             $result->{prereq_pm}, "\n",
             "Test report will not be sent"
@@ -377,7 +377,7 @@ END_BAD_DISTNAME
             # if it doesn't match, continue with next pattern
             next if $dist_id !~ /$pattern/;
             # if it matches, warn and return
-            $CPAN::Frontend->mywarn( << "END_SKIP_DIST" );
+            $CPAN::Frontend->myprint( << "END_SKIP_DIST" );
 CPAN::Reporter: '$dist_id' matched against the send_skipfile.  
 
 Test report will not be sent.
@@ -397,7 +397,7 @@ END_SKIP_DIST
     my $is_duplicate = CPAN::Reporter::History::_is_duplicate( $result );
     if ( $is_duplicate ) {
         if ( _prompt( $config, "send_duplicates", $tr->grade) =~ /^n/ ) {
-            $CPAN::Frontend->mywarn(<< "DUPLICATE_REPORT");
+            $CPAN::Frontend->myprint(<< "DUPLICATE_REPORT");
 
 CPAN::Reporter: this appears to be a duplicate report for the $phase phase:
 @{[$tr->subject]}
@@ -973,7 +973,7 @@ sub _should_copy_author {
             # if it doesn't match, continue with next pattern
             next if $dist_id !~ /$pattern/;
             # if it matches, warn and return
-            $CPAN::Frontend->mywarn( << "END_SKIP_DIST" );
+            $CPAN::Frontend->myprint( << "END_SKIP_DIST" );
 CPAN::Reporter: '$dist_id' matched against the cc_skipfile.  Won't copy author.
 END_SKIP_DIST
             return;

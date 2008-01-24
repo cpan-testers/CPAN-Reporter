@@ -12,8 +12,6 @@ TODO list for Perl module CPAN::Reporter
 
 # Medium priority 
 
-- downgrade "duplicate report" from warning to ordinary status message
-
 - add earlier, successful phases to output in reverse order.  Probably have to
   bump up the test-length cutoff, though, to deal with lengthy make output
     - Test phase output
@@ -27,13 +25,11 @@ TODO list for Perl module CPAN::Reporter
 
 # Low priority
 
-- remove File::Temp as a build_requires dependency
-
 - refactor t/Helper.pm
 
 - add link to Wiki for UNKNOWN (and NA) reports
 
-- simplify boilerplate -- more readable
+- simplify report boilerplate -- more readable, more relevent
 
 - add warnings::compat to toolchain or else add config to allow local
   modules to be added to toolchain report
@@ -66,8 +62,6 @@ TODO list for Perl module CPAN::Reporter
     - Or flat file per perl/archname/osver (usually constant)
     - use File::ReadBackwards for searches on flat file
 
-- add timeout to prompts (RT#28034)
-
 - Add interactive config for editor?
 
 - Improve test coverage for utility subs and error handling
@@ -83,6 +77,10 @@ TODO list for Perl module CPAN::Reporter
   and then strip color escape codes from the teed file.
 
 # Probably won't implement
+
+- add timeout to EU::MM prompts (RT#28034)
+
+- remove File::Temp as a build_requires dependency
 
 - Add config to save reports to a file (Jerry Hedden) (RT#24816)
     - may not do this until we have the new CPAN::Testers::Report

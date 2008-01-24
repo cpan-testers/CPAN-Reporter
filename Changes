@@ -4,6 +4,8 @@ Revision history for Perl module CPAN::Reporter
 
     - Added 'command_timeout' config to halt commands after a period of time
 
+    - Downgraded lots of progress messages from CPAN's 'mywarn' to 'myprint'
+
 1.07_05 Thu Jan 24 08:27:48 EST 2008
 
     - Added PERL_CPAN_REPORTER_DIR and PERL_CPAN_REPORTER_CONFIG environment
