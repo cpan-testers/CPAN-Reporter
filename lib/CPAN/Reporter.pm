@@ -1017,6 +1017,26 @@ sub _split_redirect {
 }
 
 #--------------------------------------------------------------------------#
+# _temp_filename -- stand-in for File::Temp for backwards compatibility
+#
+# takes an optional prefix, adds 8 random chars and returns 
+# an absolute pathname
+#--------------------------------------------------------------------------#
+
+# @CHARS from File::Temp
+my @CHARS = (qw/ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+                 a b c d e f g h i j k l m n o p q r s t u v w x y z
+                 0 1 2 3 4 5 6 7 8 9 _
+             /);
+
+sub _temp_filename {
+    my ($prefix) = @_;
+    $prefix = q{} unless defined $prefix;
+    $prefix .= $CHARS[ int( rand(@CHARS) ) ] for 0 .. 7;
+    return File::Spec->catfile(File::Spec->tmpdir(), $prefix);
+}
+
+#--------------------------------------------------------------------------#
 # _timeout_wrapper
 #--------------------------------------------------------------------------#
 
@@ -1186,11 +1206,11 @@ sub _version_finder {
     my $perl = Probe::Perl->find_perl_interpreter();
     my @prereq_results;
     
-    my $prereq_input = File::Temp->new( 
-        TEMPLATE => 'CPAN-Reporter-PI-XXXXXXXX', DIR => File::Spec->tmpdir() 
-    ) or die "Could not create temporary input for prereq analysis: $!";
-    $prereq_input->print( map { "$_ $prereqs{$_}\n" } keys %prereqs );
-    $prereq_input->close;
+    my $prereq_input = _temp_filename( 'CPAN-Reporter-PI-' );
+    my $fh = IO::File->new( $prereq_input, "w" )
+        or die "Could not create temporary '$prereq_input' for prereq analysis: $!";
+    $fh->print( map { "$_ $prereqs{$_}\n" } keys %prereqs );
+    $fh->close;
 
     my $prereq_result = qx/$perl $version_finder < $prereq_input/;
 
