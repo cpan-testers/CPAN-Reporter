@@ -93,6 +93,15 @@ sub grade_test {
 sub record_command {
     my ($command, $timeout) = @_;
 
+    # XXX refactor this! 
+    # Get configuration options
+    my $config_obj = CPAN::Reporter::Config::_open_config_file();
+    my $config;
+    $config = CPAN::Reporter::Config::_get_config_options( $config_obj ) 
+        if $config_obj;
+
+    $timeout ||= $config->{command_timeout}; # might still be undef
+
     my ($cmd, $redirect) = _split_redirect($command);
 
     my $temp_out = _temp_filename( 'CPAN-Reporter-TO-' );

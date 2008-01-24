@@ -10,10 +10,6 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
-- add a command_timeout config option that is the fallback if a timeout
-  isn't provided by CPAN -- use for smoking to kill anything PL/make/test 
-  after some amount of time (e.g. 1800 seconds)
-
 # Medium priority 
 
 - downgrade "duplicate report" from warning to ordinary status message

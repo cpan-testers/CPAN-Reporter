@@ -91,7 +91,7 @@ sub test_fake_config {
         $tiny->{_}{$key} = $overrides{$key};
     }
     ok( $tiny->write( $config_file ),
-        "created temp config file with a new email address and smtp server"
+        "created temp config file"
     );
 }
 
