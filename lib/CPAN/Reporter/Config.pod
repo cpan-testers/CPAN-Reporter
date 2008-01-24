@@ -8,7 +8,7 @@ CPAN::Reporter::Config - Config file options for CPAN::Reporter
 
 =head1 VERSION
 
-This documentation refers to version 1.07_04
+This documentation refers to version 1.07_05
 
 =head1 SYNOPSIS
 
@@ -245,6 +245,29 @@ C<<< cpan-testers@perl.org >>>; used for testing
 
 =back
 
+=head1 ENVIRONMENT
+
+The following environment variables may be set to alter the default locations 
+for CPAN::Reporter files:
+
+=over
+
+=item *
+
+C<<< PERL_CPAN_REPORTER_DIR >>> -- if set, this directory is used in place of
+the default .cpanreporter directory; this will affect not only the location
+of the default C<<< config.ini >>>, but also the location of the 
+L<CPAN::Reporter::History> database and any other files that live in that
+directory
+
+=item *
+
+C<<< PERL_CPAN_REPORTER_CONFIG >>> -- if set, this file is used in place of 
+the default C<<< config.ini >>> file; it may be in any directory, regardless of the 
+choice of configuration directory
+
+=back
+
 =head1 SEE ALSO
 
 =over
@@ -252,6 +275,10 @@ C<<< cpan-testers@perl.org >>>; used for testing
 =item *
 
 L<CPAN::Reporter>
+
+=item *
+
+L<CPAN::Reporter::History>
 
 =item *
 
