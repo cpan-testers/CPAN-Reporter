@@ -3,7 +3,7 @@ package CPAN::Reporter::API;
 # turned into .pod by the Build.PL
 use strict; # make CPANTS happy
 use vars qw/$VERSION/;
-$VERSION = '1.07_05'; 
+$VERSION = '1.07_06'; 
 $VERSION = eval $VERSION;
 1;
 __END__
