@@ -308,9 +308,14 @@ sub _config_spec { return %option_specs }
 #--------------------------------------------------------------------------#
 
 sub _get_config_dir {
-    return ( $^O eq 'MSWin32' )
-        ? File::Spec->catdir(File::HomeDir->my_documents, ".cpanreporter")
-        : File::Spec->catdir(File::HomeDir->my_home, ".cpanreporter") ;
+    if ( defined $ENV{PERL_CPAN_REPORTER_DIR} ) {
+        return $ENV{PERL_CPAN_REPORTER_DIR};
+    }
+    else {
+        return ( $^O eq 'MSWin32' )
+            ? File::Spec->catdir(File::HomeDir->my_documents, ".cpanreporter")
+            : File::Spec->catdir(File::HomeDir->my_home, ".cpanreporter") ;
+    }
 }
 
 #--------------------------------------------------------------------------#
@@ -318,7 +323,12 @@ sub _get_config_dir {
 #--------------------------------------------------------------------------#
 
 sub _get_config_file {
-    return File::Spec->catdir( _get_config_dir, "config.ini" );
+    if ( defined $ENV{PERL_CPAN_REPORTER_CONFIG} ) {
+        return $ENV{PERL_CPAN_REPORTER_CONFIG};
+    }
+    else {
+        return File::Spec->catdir( _get_config_dir, "config.ini" );
+    }
 }
 
 #--------------------------------------------------------------------------#
@@ -655,9 +665,24 @@ These options are useful for debugging only:
 * {email_to = <email address>} -- alternate destination for reports instead of
 {cpan-testers@perl.org}; used for testing
 
+= ENVIRONMENT
+
+The following environment variables may be set to alter the default locations 
+for CPAN::Reporter files:
+
+* {PERL_CPAN_REPORTER_DIR} -- if set, this directory is used in place of
+the default .cpanreporter directory; this will affect not only the location
+of the default {config.ini}, but also the location of the 
+[CPAN::Reporter::History] database and any other files that live in that
+directory
+* {PERL_CPAN_REPORTER_CONFIG} -- if set, this file is used in place of 
+the default {config.ini} file; it may be in any directory, regardless of the 
+choice of configuration directory
+
 = SEE ALSO
 
 * [CPAN::Reporter]
+* [CPAN::Reporter::History]
 * [CPAN::Reporter::FAQ]
 
 = AUTHOR

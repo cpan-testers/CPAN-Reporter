@@ -21,7 +21,7 @@ $class->new(
         'File::Path'            => 0,
         'File::pushd'           => 0.32,
         'File::Spec'            => 3.19,
-        'File::Temp'            => 0.16,
+        'File::Temp'            => 0.16,  # build_requires
         'IO::CaptureOutput'     => 1.03,  # build_requires
         'Probe::Perl'           => 0,
         'Tee'                   => 0.13,

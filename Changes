@@ -1,5 +1,14 @@
 Revision history for Perl module CPAN::Reporter
 
+1.07_xx
+
+    - Added PERL_CPAN_REPORTER_DIR and PERL_CPAN_REPORTER_CONFIG environment
+      variables to specify alternate locations for default configuration 
+      directory and file (RT#30314)
+
+    - Removed File::Temp as a full prerequisite; now only used in testing
+      (Requested by Adam Foxson to extract features to CPAN::Testers::*)
+
 1.07_04 Sun Jan 20 22:06:56 EST 2008
 
     - Test fix: stopping cc on blead broke lots of other tests.  Fixed those.

@@ -25,12 +25,11 @@ TODO list for Perl module CPAN::Reporter
 - For failure in PL stage -- show configure_requires and an error message
   that other requirements aren't available if PL fails
 
-- set alternate configuration file/dir via environment variable (RT#30314)
-  e.g. PERL_CPAN_REPORTER_CONFIG 
-
 - add results back to CPAN::Distribution object
 
 # Low priority
+
+- remove File::Temp as a build_requires dependency
 
 - refactor t/Helper.pm
 
@@ -69,7 +68,7 @@ TODO list for Perl module CPAN::Reporter
     - Or flat file per perl/archname/osver (usually constant)
     - use File::ReadBackwards for searches on flat file
 
-- add timeout to prompt (RT#28034)
+- add timeout to prompts (RT#28034)
 
 - Add interactive config for editor?
 
@@ -77,9 +76,9 @@ TODO list for Perl module CPAN::Reporter
 
 - Check email addresses for validity (cf. Email::Valid, etc.)
 
-- Other Config items like make or cc
+- Add other Config items like 'make' to report context
 
-- heuristics for missing library files --> discard report
+- heuristics for missing library files --> discard report ??
 
 - figure out how to support color output from Test::Harness 3.0 -- probably
   set an environment variable to get them to pass color strings to the pipe
