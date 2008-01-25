@@ -29,6 +29,7 @@ t/10_prereq_pm.t
 t/11_env_config.t
 t/12_toolchain_versions.t
 t/13_record_command.t
+t/14_command_timeout.t
 t/20_report_output.t
 t/30_PL_report.t
 t/31_PL_report_discard.t
@@ -41,6 +42,7 @@ t/53_test_report_na.t
 t/54_test_report_split.t
 t/55_test_report_discard.t
 t/56_test_report_harness_versions.t
+t/57_hang_interrupt.t
 t/60_bad_author.t
 t/61_bad_dist_names.t
 t/62_duplicate_reports.t
@@ -91,6 +93,10 @@ t/dist/PL-Fail/Build.PL
 t/dist/PL-Fail/lib/Bogus/Module.pm
 t/dist/PL-Fail/Makefile.PL
 t/dist/PL-Fail/t/01_Bogus.t
+t/dist/PL-Hang/Build.PL
+t/dist/PL-Hang/lib/Bogus/Module.pm
+t/dist/PL-Hang/Makefile.PL
+t/dist/PL-Hang/t/01_Bogus.t
 t/dist/PL-MIRequirePerl/Build.PL
 t/dist/PL-MIRequirePerl/lib/Bogus/Module.pm
 t/dist/PL-MIRequirePerl/Makefile.PL
@@ -131,6 +137,10 @@ t/dist/t-Fail/Build.PL
 t/dist/t-Fail/lib/Bogus/Module.pm
 t/dist/t-Fail/Makefile.PL
 t/dist/t-Fail/t/01_Bogus.t
+t/dist/t-Hang/Build.PL
+t/dist/t-Hang/lib/Bogus/Module.pm
+t/dist/t-Hang/Makefile.PL
+t/dist/t-Hang/t/01_Bogus.t
 t/dist/t-MultipleMatch/Build.PL
 t/dist/t-MultipleMatch/lib/Bogus/Module.pm
 t/dist/t-MultipleMatch/Makefile.PL
