@@ -1,12 +1,20 @@
 Revision history for Perl module CPAN::Reporter
 
-1.07_06
+1.07_06 Fri Jan 25 11:27:28 EST 2008
 
     - Added 'command_timeout' config to halt commands after a period of time
 
-    - XXX timeout improvements: discard, robustness, etc.
+    - Added detection of commands killed with a signal; reports are discarded
+      (N.B. this may change in a future version)
+    
+    - Bug fix: processes timing out could still hang with child processes 
+      (killing 'make test' still leaves the harness running); fixed by making
+      'make test' its own process group and killing the process group; hoping
+      that's portable across non-Win32; Win32 timeouts use Win32::Process and
+      do the right thing already
     
     - Downgraded lots of progress messages from CPAN's 'mywarn' to 'myprint'
+      (from red to blue if you use CPAN's colored output)
 
 1.07_05 Thu Jan 24 08:27:48 EST 2008
 

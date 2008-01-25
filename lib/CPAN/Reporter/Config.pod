@@ -169,14 +169,15 @@ C<<< test_report >>>:
 
 These additional options are only necessary in special cases, for example if
 the default editor cannot be found or if reports shouldn't be sent in 
-certain situations.
+certain situations or for automated testing, and so on.
 
 =over
 
 =item *
 
-C<<< cc_author = <grade:action> ... >>> -- should module authors should be sent a copy of 
-the test report at their C<<< author@cpan.org >>> address? (default:yes passE<sol>na:no)
+C<<< cc_author = <grade:action> ... >>> -- should module authors should be sent a 
+copy of the test report at their C<<< author@cpan.org >>> address? 
+(default:yes passE<sol>na:no)
 
 =item *
 
@@ -185,6 +186,14 @@ per line) to match against the distribution ID (e.g.
 'AUTHORE<sol>Dist-Name-0.01.tar.gz'); the author will not be copied if a match is 
 found regardless of cc_author; non-absolute filename must be in the .cpanreporter 
 config directory
+
+=item *
+
+C<<< command_timeout >>> -- if set and the CPAN config C<<< inactivity_timeout >>> is not, 
+then any commands executed by CPAN::Reporter will be halted after this many 
+seconds; useful for unattended smoke testing to stop after some amount of time;
+generally, this should be large -- 900 seconds or more -- as some 
+distributions' tests take quite a long time to run
 
 =item *
 
