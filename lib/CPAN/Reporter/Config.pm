@@ -651,7 +651,7 @@ found regardless of cc_author; non-absolute filename must be in the .cpanreporte
 config directory
 * {command_timeout} -- if set and the CPAN config {inactivity_timeout} is not, 
 then any commands executed by CPAN::Reporter will be halted after this many 
-seconds
+seconds; useful for unattended smoke testing to stop after some amount of time
 * {editor = <editor>} -- editor to use to edit the test report; if not set,
 Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
 (in that order) to find an editor 

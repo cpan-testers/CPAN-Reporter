@@ -10,6 +10,8 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
+- check for how to confirm portability of setpgrp and kill
+
 # Medium priority 
 
 - add earlier, successful phases to output in reverse order.  Probably have to

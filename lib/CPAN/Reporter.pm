@@ -32,7 +32,7 @@ sub configure {
 
 sub grade_make { 
     my @args = @_;
-    my $result = _init_result( 'make', @args ); 
+    my $result = _init_result( 'make', @args ) or return; 
     _compute_make_grade($result);
     if ( $result->{grade} eq 'discard' ) {
         $CPAN::Frontend->myprint( 
@@ -52,7 +52,7 @@ sub grade_make {
 
 sub grade_PL {
     my @args = @_;
-    my $result = _init_result( 'PL', @args ); ## no critic
+    my $result = _init_result( 'PL', @args ) or return; 
     _compute_PL_grade($result);
     if ( $result->{grade} eq 'discard' ) {
         $CPAN::Frontend->myprint( 
@@ -72,7 +72,7 @@ sub grade_PL {
 
 sub grade_test {
     my @args = @_;
-    my $result = _init_result( 'test', @args ); ## no critic
+    my $result = _init_result( 'test', @args ) or return; 
     _compute_test_grade($result);
     if ( $result->{grade} eq 'discard' ) {
         $CPAN::Frontend->myprint( 
@@ -177,12 +177,6 @@ HERE
 sub test {
     my ($dist, $system_command) = @_;
     my ($output, $exit_value) = record_command( $system_command );
-    unless ( defined $output && defined $exit_value ) {
-        $CPAN::Frontend->mywarn(
-            "CPAN::Reporter: had errors capturing output. Tests abandoned"
-        );
-        return;
-    }
     return grade_test( $dist, $system_command, $output, $exit_value );
 }
 
@@ -485,6 +479,13 @@ sub _downgrade_known_causes {
     # get prereqs
     _expand_result( $result ); 
 
+    # if process was halted with a signal, just set for discard and return
+    if ( $result->{exit_value} & 127 ) {
+        $result->{grade} = 'discard';
+        $result->{grade_msg} = 'Command interrupted';
+        return;
+    }
+
     # look for perl version error messages from various programs
     # "Error evaling..." type errors happen on Perl < 5.006 when modules
     # define their version with "our $VERSION = ..."
@@ -620,6 +621,13 @@ sub _has_recursive_make {
 sub _init_result {
     my ($phase, $dist, $system_command, $output, $exit_value) = @_;
     
+    unless ( defined $output && defined $exit_value ) {
+        $CPAN::Frontend->mywarn(
+            "CPAN::Reporter: had errors capturing output. Tests abandoned"
+        );
+        return;
+    }
+
     my $result = {
         phase => $phase,
         dist => $dist,
@@ -1073,12 +1081,13 @@ eval {
         my $wstat = waitpid $pid, 0;
         $exitcode = $wstat == -1 ? -1 : $?;
     } else {    #child
+        setpgrp; # new process group for targeted kill
         exec "%s";
     }
 };
 alarm 0;
 if ($pid && $@ =~ /Timeout/){
-    kill 9, $pid;
+    kill -9, $pid;
     my $wstat = waitpid $pid, 0;
     $exitcode = $wstat == -1 ? -1 : $?;
 }
