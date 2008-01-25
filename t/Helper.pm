@@ -395,7 +395,7 @@ sub test_grade_test {
             
             # Grade evaluation with special case if discarding
             my ($found_grade_result, $found_msg) = 
-                ( $stdout =~ /^CPAN::Reporter: ([^,]+), ([^\n]+)/ms );
+                ( $stdout =~ /^CPAN::Reporter: (Test result[^,]+), ([^\n]+)$/ims );
             if ( $case->{"$tool\_grade"} eq 'discard' ) {
                 is ($found_grade_result, "test results were not valid",
                     "$case->{name}: '$tool_label' prerequisites not satisifed"
