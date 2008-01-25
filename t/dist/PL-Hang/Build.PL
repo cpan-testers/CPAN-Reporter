@@ -1,10 +1,9 @@
 use strict;
 use Module::Build;
 
-# just spin forever and should be interrupted by command_timeout
-while (1) {
-    sleep 30;
-}
+# just spin and be interrupted by command_timeout
+sleep 30;
+die "Fail, fail, fail!";
 
 Module::Build->new( 
     module_name         => 'Bogus::Module',

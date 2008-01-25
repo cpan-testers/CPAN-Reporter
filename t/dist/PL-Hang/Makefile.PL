@@ -1,9 +1,8 @@
 use ExtUtils::MakeMaker;
 
-# just spin forever and should be interrupted by command_timeout
-while (1) {
-    sleep 30;
-}
+# just spin and be interrupted by command_timeout
+sleep 30;
+die "Fail, fail, fail!";
 
 WriteMakefile
 (

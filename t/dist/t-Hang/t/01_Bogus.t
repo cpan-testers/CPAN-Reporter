@@ -7,7 +7,9 @@ plan tests =>  2 ;
 
 fail( "Failed this test" );
 
-while (1) { sleep 30; } # spin until killed by command_timeout
+# just spin and be interrupted by command_timeout
+sleep 30;
+die "Fail, fail, fail!";
 
 pass( "Won't reach this test" );
 
