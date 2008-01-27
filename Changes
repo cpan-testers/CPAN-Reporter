@@ -1,5 +1,20 @@
 Revision history for Perl module CPAN::Reporter
 
+1.08 Sat Jan 26 18:52:45 EST 2008
+
+    - No changes from 1.07_06 (seems to pass smoke tests)
+
+    - Summary of new features since 1.06:
+
+        - Added have_tested() function to CPAN::Reporter::History    
+
+        - Added 'cc_skipfile' and 'send_skipfile' advanced config options
+
+        - Added 'command_timeout' advanced config option
+
+        - Added support for PERL_CPAN_REPORTER_DIR and
+          PERL_CPAN_REPORTER_CONFIG environment variables 
+
 1.07_06 Fri Jan 25 11:27:28 EST 2008
 
     - Added 'command_timeout' config to halt commands after a period of time
