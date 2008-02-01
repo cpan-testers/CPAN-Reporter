@@ -4,6 +4,9 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
+- skipfiles patterns should match case-insensitive (Cantrell); also, 
+  document lack of starting anchor
+
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
@@ -13,6 +16,9 @@ TODO list for Perl module CPAN::Reporter
 - check for how to confirm portability of setpgrp and kill
 
 # Medium priority 
+
+- add support for an 'opt-in' file for authors that want CC and then set
+  default cc to none -- possibly kept in author's CPAN directory?
 
 - 'force_prompt' config to locally unset PERL_MM_USE_DEFAULT (Rezic)
 
@@ -34,6 +40,7 @@ TODO list for Perl module CPAN::Reporter
 - add link to Wiki for UNKNOWN (and NA) reports
 
 - simplify report boilerplate -- more readable, more relevent
+    - full link to http://cpantest.grango.org/wiki/CPANAuthorNotes
 
 - add warnings::compat to toolchain or else add config to allow local
   modules to be added to toolchain report
