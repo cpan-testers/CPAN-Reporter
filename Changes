@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+1.0801 Sun Feb 10 00:27:05 EST 2008
+
+    - Test fix: adjust timeout timings in t/14_command_timeout.t to try to
+      avoid failures on heavily loaded machines
+
 1.08 Sat Jan 26 18:52:45 EST 2008
 
     - No changes from 1.07_06 (seems to pass smoke tests)
