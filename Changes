@@ -4,6 +4,9 @@ Revision history for Perl module CPAN::Reporter
     
     - Simplified and shortened boilerplate
 
+    - Bug fix (minor): better detection of make vs Build for progress
+      messages
+    
     - Test fix: skip interrupt testing on MSWin32 if Win32::Process 
       is not installed
 

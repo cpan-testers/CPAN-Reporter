@@ -660,7 +660,7 @@ sub _init_result {
 
 sub _is_make {
     my $command = shift;
-    return $command =~ m{^\S*make|Makefile.PL$}ims ? 1 : 0;
+    return $command =~ m{\b(?:\S*make|Makefile.PL)\b}ims ? 1 : 0;
 }
 
 #--------------------------------------------------------------------------#
