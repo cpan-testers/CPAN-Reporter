@@ -17,6 +17,9 @@ TODO list for Perl module CPAN::Reporter
 
 # Medium priority 
 
+- add support for a "comment.txt" file in the config directory to use
+  in place of the default comment
+
 - add support for an 'opt-in' file for authors that want CC and then set
   default cc to none -- possibly kept in author's CPAN directory?
 
