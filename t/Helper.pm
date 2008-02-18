@@ -454,32 +454,41 @@ All tests were successful.
 HERE
 
     'fail' => <<'HERE',
-Thank you for uploading your work to CPAN.  However, it appears that
-there were some problems with your distribution.  If these results are 
-not what you expect or if you would like to learn how to avoid FAIL 
-reports for missing dependencies, unsupported operating systems, etc.,
-please consult "Notes for CPAN Authors" on the CPAN Testers Wiki: 
-http://cpantest.grango.org
+Thank you for uploading your work to CPAN.  However, there was a problem
+testing your distribution.
+
+If you think this report is invalid, please consult the CPAN Testers Wiki
+for suggestions on how to avoid getting FAIL reports for missing library
+or binary dependencies, unsupported operating systems, and so on:
+
+http://cpantest.grango.org/wiki/CPANAuthorNotes
 HERE
 
     'unknown' => << 'HERE',
 Thank you for uploading your work to CPAN.  However, attempting to
-test your distribution gave an inconclusive result.  This could be because
-you did not define tests (or tests could not be found), because
-your tests were interrupted before they finished, or because
-the results of the tests could not be parsed by CPAN::Reporter.
+test your distribution gave an inconclusive result.  
+
+This could be because you did not define tests, tests could not be 
+found, because your tests were interrupted before they finished, or 
+because the results of the tests could not be parsed.  You may wish to 
+consult the CPAN Testers Wiki:
+
+http://cpantest.grango.org/wiki/CPANAuthorNotes
 HERE
 
     'na' => << 'HERE',
 Thank you for uploading your work to CPAN.  While attempting to build or test 
 this distribution, the distribution signaled that support is not available 
 either for this operating system or this version of Perl.  Nevertheless, any 
-diagnostic output produced is provided below for reference.
+diagnostic output produced is provided below for reference.  If this is not 
+what you expect, you may wish to consult the CPAN Testers Wiki:
+
+http://cpantest.grango.org/wiki/CPANAuthorNotes
 HERE
     
 );
 
-sub test_report_plan() { 13 };
+sub test_report_plan() { 14 };
 sub test_report {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -488,6 +497,9 @@ sub test_report {
     my $expected_grade = $case->{expected_grade};
     my $prereq = CPAN::Reporter::_prereq_report( $case->{dist} );
     my $msg_re = $report_para{ $expected_grade };
+    my $default_comment = $ENV{AUTOMATED_TESTING}
+        ? '[this report is from an automated smoke testing program\n and was not reviewed by a human for accuracy]'
+        : '[none provided]' ;
 
     my $tempd = _ok_clone_dist_dir( $case->{name} );
                 
@@ -509,6 +521,10 @@ sub test_report {
     
     like( $t::Helper::sent_report, '/' . quotemeta($msg_re) . '/ms',
         "$label correct intro paragraph"
+    );
+
+    like( $t::Helper::sent_report, '/' . quotemeta($default_comment) . '/ms',
+        "$label correct default comment"
     );
 
     like( $t::Helper::sent_report, '/' . quotemeta($prereq) . '/ms',

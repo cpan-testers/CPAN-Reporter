@@ -584,7 +584,9 @@ sub _env_report {
 
     my $report = "";
     for my $var ( sort @vars_found ) {
-        $report .= "    $var = $ENV{$var}\n";
+        my $value = $ENV{$var};
+        $value = '[undef]' if ! defined $value;
+        $report .= "    $var = $value\n";
     }
     return $report;
 }
@@ -859,27 +861,36 @@ All tests were successful.
 HERE
 
     'fail' => <<'HERE',
-Thank you for uploading your work to CPAN.  However, it appears that
-there were some problems with your distribution.  If these results are 
-not what you expect or if you would like to learn how to avoid FAIL 
-reports for missing dependencies, unsupported operating systems, etc.,
-please consult "Notes for CPAN Authors" on the CPAN Testers Wiki: 
-http://cpantest.grango.org
+Thank you for uploading your work to CPAN.  However, there was a problem
+testing your distribution.
+
+If you think this report is invalid, please consult the CPAN Testers Wiki
+for suggestions on how to avoid getting FAIL reports for missing library
+or binary dependencies, unsupported operating systems, and so on:
+
+http://cpantest.grango.org/wiki/CPANAuthorNotes
 HERE
 
     'unknown' => <<'HERE',
 Thank you for uploading your work to CPAN.  However, attempting to
-test your distribution gave an inconclusive result.  This could be because
-you did not define tests (or tests could not be found), because
-your tests were interrupted before they finished, or because
-the results of the tests could not be parsed by CPAN::Reporter.
+test your distribution gave an inconclusive result.  
+
+This could be because you did not define tests, tests could not be 
+found, because your tests were interrupted before they finished, or 
+because the results of the tests could not be parsed.  You may wish to 
+consult the CPAN Testers Wiki:
+
+http://cpantest.grango.org/wiki/CPANAuthorNotes
 HERE
 
     'na' => <<'HERE',
 Thank you for uploading your work to CPAN.  While attempting to build or test 
 this distribution, the distribution signaled that support is not available 
 either for this operating system or this version of Perl.  Nevertheless, any 
-diagnostic output produced is provided below for reference.
+diagnostic output produced is provided below for reference.  If this is not 
+what you expect, you may wish to consult the CPAN Testers Wiki:
+
+http://cpantest.grango.org/wiki/CPANAuthorNotes
 HERE
     
 );
@@ -892,18 +903,17 @@ sub _report_text {
         my $max_k = int(MAX_OUTPUT_LENGTH/1000) . "K";
         $test_log .= "\n[Output truncated after $max_k]\n\n";
     }
+    # Flag automated report
+    my $default_comment = $ENV{AUTOMATED_TESTING} 
+        ? "[this report is from an automated smoke testing program\n and was not reviewed by a human for accuracy]" 
+        : "[none provided]" ;
+        
     # generate report
     my $output = << "ENDREPORT";
 Dear $data->{author},
     
 This is a computer-generated report for $data->{dist_name}
-on $data->{perl_version}, created automatically by CPAN-Reporter-$CPAN::Reporter::VERSION 
-and sent to the CPAN Testers mailing list.  
-
-If you have received this email directly, it is because the person testing 
-your distribution chose to send a copy to your CPAN email address; there 
-may be a delay before the official report is received and processed 
-by CPAN Testers.
+on perl $data->{perl_version}, created by CPAN-Reporter-$CPAN::Reporter::VERSION\. 
 
 $intro_para{ $data->{grade} }
 Sections of this report:
@@ -919,7 +929,7 @@ TESTER COMMENTS
 
 Additional comments from tester: 
 
-[none provided]
+$default_comment
 
 ------------------------------
 PROGRAM OUTPUT
