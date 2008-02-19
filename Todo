@@ -4,6 +4,8 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
+- command_timeout should accept 0 as a way of disabling it
+
 - skipfiles patterns should match case-insensitive (Cantrell); also, 
   document lack of starting anchor
 
