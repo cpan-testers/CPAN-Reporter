@@ -1,5 +1,19 @@
 Revision history for Perl module CPAN::Reporter
 
+1.10 Mon Feb 25 10:07:28 EST 2008
+
+    I hereby dub 1.10 as the "I hate Windows" release
+
+    - Bug fix (sort of): On Win32, child processes were not timing out.
+      Changed from Win32::Process to Win32::Job to fix that.  However,
+      discovered that process termination on Win32 can deadlock in some 
+      cases, so timeout testing on Win32 will now skip unless
+      $ENV{PERL_AUTHOR_TESTING} is set. Added warning to documentation.
+
+    - Bug fix: On a Win32 virtual machine (VirtualBox), handles for output
+      capture were not inherited by child processes, which caused Test::Harness
+      to crash for some reason.
+    
 1.09 Mon Feb 18 22:10:55 EST 2008
     
     - Simplified and shortened boilerplate
