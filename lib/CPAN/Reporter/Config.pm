@@ -1,7 +1,7 @@
 package CPAN::Reporter::Config;
 use strict; 
 use vars qw/$VERSION/;
-$VERSION = '1.09'; 
+$VERSION = '1.10'; 
 $VERSION = eval $VERSION;
 
 use Config::Tiny ();

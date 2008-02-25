@@ -8,7 +8,7 @@ CPAN::Reporter::Config - Config file options for CPAN::Reporter
 
 =head1 VERSION
 
-This documentation refers to version 1.09
+This documentation refers to version 1.10
 
 =head1 SYNOPSIS
 
@@ -193,7 +193,9 @@ C<<< command_timeout >>> -- if set and the CPAN config C<<< inactivity_timeout >
 then any commands executed by CPAN::Reporter will be halted after this many 
 seconds; useful for unattended smoke testing to stop after some amount of time;
 generally, this should be large -- 900 seconds or more -- as some 
-distributions' tests take quite a long time to run
+distributions' tests take quite a long time to run.  On MSWin32, L<Win32::Job> 
+is a needed and trying to kill a processes may actually deadlock in some 
+situations -- so use at your own risk
 
 =item *
 
