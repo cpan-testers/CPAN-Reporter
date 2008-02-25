@@ -14,6 +14,8 @@ use File::Temp;
 #--------------------------------------------------------------------------#
 
 if ( $^O eq "MSWin32" ) {
+    plan skip_all => "\$ENV{PERL_AUTHOR_TESTING} required for Win32 timeout testing", 
+        unless $ENV{PERL_AUTHOR_TESTING};
     eval "use Win32::Job ()";
     plan skip_all => "Can't interrupt hung processes without Win32::Job"
         if $@;

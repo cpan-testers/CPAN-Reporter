@@ -122,8 +122,11 @@ SKIP: {
     skip "Couldn't run perl with relative path", $tests_per_case
         if $c->{relative} && system("perl -e 1") == -1;
     if ( $^O eq 'MSWin32' && $c->{timeout} ) {
-        eval "use Win32::Process 0.10 ()";
-        skip "Win32::Process 0.10 needed for timeout testing", $tests_per_case
+        skip "\$ENV{PERL_AUTHOR_TESTING} required for Win32 timeout testing", 
+            $tests_per_case
+            unless $ENV{PERL_AUTHOR_TESTING};
+        eval "use Win32::Job ()";
+        skip "Win32::Job needed for timeout testing", $tests_per_case
             if $@;
     }
 

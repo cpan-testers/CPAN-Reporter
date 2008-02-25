@@ -95,12 +95,14 @@ sub record_command {
 
     # XXX refactor this! 
     # Get configuration options
-    my $config_obj = CPAN::Reporter::Config::_open_config_file();
-    my $config;
-    $config = CPAN::Reporter::Config::_get_config_options( $config_obj ) 
-        if $config_obj;
+    if ( -r CPAN::Reporter::Config::_get_config_file() ) {
+        my $config_obj = CPAN::Reporter::Config::_open_config_file();
+        my $config;
+        $config = CPAN::Reporter::Config::_get_config_options( $config_obj ) 
+            if $config_obj;
 
-    $timeout ||= $config->{command_timeout}; # might still be undef
+        $timeout ||= $config->{command_timeout}; # might still be undef
+    }
 
     my ($cmd, $redirect) = _split_redirect($command);
 
@@ -164,7 +166,15 @@ HERE
         ($exit_value) = $cmd_output[-1] =~ m{exited with ([-0-9]+)};
         pop @cmd_output;
     }
-    if ( ! defined $exit_value || $exit_value == -1 ) {
+    
+    # bail out on some errors
+    if ( ! defined $exit_value ) {
+        $CPAN::Frontend->mywarn( 
+            "CPAN::Reporter: couldn't determine exit value for '$cmd'\n"
+        );
+        return;
+    }
+    elsif ( $exit_value == -1 ) {
         $CPAN::Frontend->mywarn( 
             "CPAN::Reporter: couldn't execute '$cmd'\n"
         );
@@ -624,8 +634,18 @@ sub _init_result {
     my ($phase, $dist, $system_command, $output, $exit_value) = @_;
     
     unless ( defined $output && defined $exit_value ) {
+        my $missing;
+        if ( ! defined $output && ! defined $exit_value ) {
+            $missing = "exit value and output"
+        }
+        elsif ( defined $output && !defined $exit_value ) {
+            $missing =  "exit value"
+        }
+        else {
+            $missing = "output";
+        }
         $CPAN::Frontend->mywarn(
-            "CPAN::Reporter: had errors capturing output. Tests abandoned"
+            "CPAN::Reporter: had errors capturing $missing. Tests abandoned"
         );
         return;
     }
@@ -1116,10 +1136,12 @@ HERE
 sub _timeout_wrapper_win32 {
     my ($cmd, $timeout) = @_;
 
-    eval "use Win32::Process 0.10 ();";
+    $timeout ||= 0;  # just in case upstream doesn't guarantee it
+
+    eval "use Win32::Job ();";
     if ($@) {
         $CPAN::Frontend->mywarn( << 'HERE' );
-CPAN::Reporter: you need Win32::Process 0.10 for inactivity_timeout support.
+CPAN::Reporter: you need Win32::Job for inactivity_timeout support.
 Continuing without timeout...
 HERE
         return;
@@ -1143,25 +1165,25 @@ HERE
     # protect shell quotes and other things
     $_ = quotemeta($_) for ($program, $cmd);
 
-    my $wrapper = sprintf << 'HERE', $program, $cmd, $cmd, $timeout, $cmd;
+    my $wrapper = sprintf << 'HERE', $program, $cmd, $timeout;
 use strict;
-use Win32::Process qw/STILL_ACTIVE NORMAL_PRIORITY_CLASS/;
-my ($process,$exitcode);
-Win32::Process::Create(
-    $process,
-    "%s",
-    "%s",
-    0,
-    NORMAL_PRIORITY_CLASS,
-    "."
-) or die "Could not spawn %s: $^E\n";
-$process->Wait(%s * 1000);
-$process->GetExitCode($exitcode);
-if ($exitcode == STILL_ACTIVE) {
-    $process->Kill(9);
-    $exitcode = 9;
+use Win32::Job;
+my $executable = "%s";
+my $cmd_line = "%s";
+my $timeout = %s;
+
+my $job = Win32::Job->new() or die $^E;
+my $ppid = $job->spawn($executable, $cmd_line);
+$job->run($timeout);
+my $status = $job->status;
+my $exitcode = $status->{$ppid}{exitcode};
+if ( $exitcode == 293 ) {
+    $exitcode = 9; # map Win32::Job kill (293) to SIGKILL (9)
 }
-print "(%s exited with $exitcode)\n";
+elsif ( $exitcode & 255 ) {
+    $exitcode = $exitcode << 8; # how perl expects it
+}
+print "($cmd_line exited with $exitcode)\n";
 HERE
     return $wrapper;
 }
