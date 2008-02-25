@@ -10,12 +10,12 @@ use Probe::Perl;
 use File::Temp;
 
 #--------------------------------------------------------------------------#
-# Skip on Win32 if we don't have Win32::Process
+# Skip on Win32 if we don't have Win32::Job
 #--------------------------------------------------------------------------#
 
 if ( $^O eq "MSWin32" ) {
-    eval "use Win32::Process 0.10 ()";
-    plan skip_all => "Can't interrupt hung processes without Win32::Process"
+    eval "use Win32::Job ()";
+    plan skip_all => "Can't interrupt hung processes without Win32::Job"
         if $@;
 }
 
@@ -35,6 +35,26 @@ my %mock_dist_options = (
 );
     
 my @cases = (
+    {
+        label => "t-Pass",
+        pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
+        name => "t-Pass",
+        version => 1.23,
+        grade => "pass",
+        phase => "test",
+        command => "$make test",
+        will_send => 1,
+    },
+    {
+        label => "t-Fail",
+        pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
+        name => "t-Fail",
+        version => 1.23,
+        grade => "fail",
+        phase => "test",
+        command => "$make test",
+        will_send => 1,
+    },
     {
         label => "PL-Hang",
         pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
@@ -71,7 +91,7 @@ for my $case ( @cases ) {
         pretty_id => $case->{pretty_id},
         %mock_dist_options,
     );
-    test_fake_config( command_timeout => 10 );
+    test_fake_config( command_timeout => 5 );
     test_dispatch( 
         $case, 
         will_send => $case->{will_send},
