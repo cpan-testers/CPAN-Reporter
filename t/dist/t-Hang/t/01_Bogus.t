@@ -5,11 +5,12 @@ use Test::More;
 
 plan tests =>  2 ;
 
-fail( "Failed this test" );
+pass( "Passed this test" );
 
 # just spin and be interrupted by command_timeout
-sleep 30;
-die "Fail, fail, fail!";
+my $now = time; 1 while ( time - $now < 40 );
+
+die "!!! TIMER DIDNT TIMEOUT -- SHOULDNT BE HERE !!!";
 
 pass( "Won't reach this test" );
 
