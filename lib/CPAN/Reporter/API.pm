@@ -51,7 +51,7 @@ applied to the execution of the wrapper script.  This is essential to
 capture the exit value of the command and should be otherwise transparent.
 
 If a non-zero {$secs} argument is provided, the command will be run with 
-a timeout of {$secs} (seconds).  On Win32, [Win32::Process] must be
+a timeout of {$secs} (seconds).  On Win32, [Win32::Job] must be
 available or code will fall-back to running without a timeout; also, the
 first space-separated element of the command must be absolute, or else
 ".exe" will be appended and the PATH searched for a matching command.
