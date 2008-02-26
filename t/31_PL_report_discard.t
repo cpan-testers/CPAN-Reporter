@@ -17,20 +17,24 @@ my @test_distros = (
         prereq => { 'Unavailable::Module' => 0 },
         eumm_success => 0,
         eumm_grade => "discard",
-        eumm_msg => "Prerequisite missing",
         mb_success => 0,
         mb_grade => "discard",
-        mb_msg => "Prerequisite missing",
+    },
+    {
+        name => 'PL-PrereqMissOK',
+        prereq => { 'Unavailable::Module' => 0 },
+        eumm_success => 1,
+        eumm_grade => "pass",
+        mb_success => 1,
+        mb_grade => "pass",
     },
     {
         name => 'PL-PrereqFail',
         prereq => { 'File::Spec' => 99999.9 },
         eumm_success => 0,
         eumm_grade => "discard",
-        eumm_msg => "Prerequisite version too low",
         mb_success => 0,
         mb_grade => "discard",
-        mb_msg => "Prerequisite version too low",
     },
 );
 

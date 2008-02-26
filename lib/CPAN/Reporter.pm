@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 use vars qw/$VERSION/;
-$VERSION = '1.10'; 
+$VERSION = '1.11'; 
 $VERSION = eval $VERSION;
 
 use Config;
@@ -379,7 +379,7 @@ END_BAD_DISTNAME
             # ignore comments
             next if substr($pattern,0,1) eq '#';
             # if it doesn't match, continue with next pattern
-            next if $dist_id !~ /$pattern/;
+            next if $dist_id !~ /$pattern/i;
             # if it matches, warn and return
             $CPAN::Frontend->myprint( << "END_SKIP_DIST" );
 CPAN::Reporter: '$dist_id' matched against the send_skipfile.  
@@ -523,11 +523,11 @@ sub _downgrade_known_causes {
         $msg = 'This platform is not supported';
     }
     # check the prereq report for missing or failure flag '!'
-    elsif ( $result->{prereq_pm} =~ m{n/a}ims ) {
+    elsif ( $grade ne 'pass' && $result->{prereq_pm} =~ m{n/a}ims ) {
         $grade = 'discard';
         $msg = 'Prerequisite missing';
     }
-    elsif ( $result->{prereq_pm} =~ m{^\s+!}ims ) {
+    elsif ( $grade ne 'pass' && $result->{prereq_pm} =~ m{^\s+!}ims ) {
         $grade = 'discard';
         $msg = 'Prerequisite version too low';
     }
@@ -925,8 +925,8 @@ sub _report_text {
     }
     # Flag automated report
     my $default_comment = $ENV{AUTOMATED_TESTING} 
-        ? "[this report is from an automated smoke testing program\n and was not reviewed by a human for accuracy]" 
-        : "[none provided]" ;
+        ? "this report is from an automated smoke testing program\nand was not reviewed by a human for accuracy" 
+        : "none provided" ;
         
     # generate report
     my $output = << "ENDREPORT";
@@ -1009,7 +1009,7 @@ sub _should_copy_author {
             # ignore comments
             next if substr($pattern,0,1) eq '#';
             # if it doesn't match, continue with next pattern
-            next if $dist_id !~ /$pattern/;
+            next if $dist_id !~ /$pattern/i;
             # if it matches, warn and return
             $CPAN::Frontend->myprint( << "END_SKIP_DIST" );
 CPAN::Reporter: '$dist_id' matched against the cc_skipfile.  Won't copy author.

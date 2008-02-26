@@ -1,5 +1,20 @@
 Revision history for Perl module CPAN::Reporter
 
+1.11 Mon Feb 25 18:47:03 EST 2008
+
+    - Bug fix: successful PL's where prereqs happen not to be satisfied were
+    mistakenly being marked as 'DISCARD' for the PL phase.  Fixed so that PL's
+    that PASS will stay that way regardless of prerequisites.  (This does not
+    prevent a later make or test failure from being downgraded, 
+      
+    - Bug fix: skipfiles patterns should match case-insensitive (Cantrell);
+    also, documented lack of starting anchor
+
+    - Bug fix: command_timeout option would not accept zero as valid; now zero
+    is a valid option and disables command_timeout
+
+    - more minor boilerplate tweaks
+
 1.10 Mon Feb 25 10:07:28 EST 2008
 
     I hereby dub 1.10 as the "I hate Windows" release

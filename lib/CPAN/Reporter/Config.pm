@@ -1,7 +1,7 @@
 package CPAN::Reporter::Config;
 use strict; 
 use vars qw/$VERSION/;
-$VERSION = '1.10'; 
+$VERSION = '1.11'; 
 $VERSION = eval $VERSION;
 
 use Config::Tiny ();
@@ -422,6 +422,18 @@ sub _open_config_file {
 }
 
 #--------------------------------------------------------------------------#
+# _validate
+#
+# anything is OK if there is no validation subroutine
+#--------------------------------------------------------------------------#
+
+sub _validate {
+    my ($name, $value) = @_;
+    return 1 if ! exists $option_specs{$name}{validate};
+    return $option_specs{$name}{validate}->($name, $value);
+}
+
+#--------------------------------------------------------------------------#
 # _validate_grade_action 
 # returns hash of grade => action 
 # returns undef
@@ -491,7 +503,8 @@ sub _validate_grade_action_pair {
 
 sub _validate_seconds {
     my ($name, $option) = @_;
-    return unless $option && ($option =~ /^\d/) && $option > 0;
+    return unless defined($option) && length($option) 
+        && ($option =~ /^\d/) && $option >= 0;
     return $option;
 }
 
@@ -648,14 +661,14 @@ copy of the test report at their {author@cpan.org} address?
 per line) to match against the distribution ID (e.g. 
 'AUTHOR/Dist-Name-0.01.tar.gz'); the author will not be copied if a match is 
 found regardless of cc_author; non-absolute filename must be in the .cpanreporter 
-config directory
-* {command_timeout} -- if set and the CPAN config {inactivity_timeout} is not, 
-then any commands executed by CPAN::Reporter will be halted after this many 
-seconds; useful for unattended smoke testing to stop after some amount of time;
-generally, this should be large -- 900 seconds or more -- as some 
-distributions' tests take quite a long time to run.  On MSWin32, [Win32::Job] 
-is a needed and trying to kill a processes may actually deadlock in some 
-situations -- so use at your own risk
+config directory;
+* {command_timeout} -- if greater than zero and the CPAN config is
+{inactivity_timeout} is not set, then any commands executed by CPAN::Reporter 
+will be halted after this many seconds; useful for unattended smoke testing 
+to stop after some amount of time; generally, this should be large -- 
+900 seconds or more -- as some distributions' tests take quite a long time to 
+run.  On MSWin32, [Win32::Job] is a needed and trying to kill a processes may 
+actually deadlock in some situations -- so use at your own risk
 * {editor = <editor>} -- editor to use to edit the test report; if not set,
 Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
 (in that order) to find an editor 
@@ -675,6 +688,29 @@ method of [Test::Reporter].  Valid options are 'Net::SMTP' or
 
 If these options are manually added to the configuration file, they will
 be included (and preserved) in subsequent interactive configuration.
+
+== Skipfile regular expressions
+
+Skip files are expected to have one regular expression per line and will be 
+matched against the distribution ID, composed of the author's CPAN ID and the 
+distribution tarball name.
+
+    DAGOLDEN/CPAN-Reporter-1.00.tar.gz
+
+Lines that begin with a sharp (#) are considered comments and will not be
+matched.  All regular expressionss will be matched case insensitive and will
+not be anchored unless you provide one. 
+
+As the format of a distribution ID is "AUTHOR/tarball", anchoring at the 
+start of the line with a caret (^) will match the author and with a slash (/)
+will match the distribution.  
+
+    # any distributions by JOHNDOE
+    ^JOHNDOE
+    # any distributions starting with Win32
+    /Win32
+    # a particular very specific distribution
+    ^JOHNDOE/Foo-Bar-3.14
 
 = CONFIGURATION OPTIONS FOR DEBUGGING
 

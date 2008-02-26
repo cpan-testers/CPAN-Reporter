@@ -4,24 +4,16 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
-- PL that passes but has missing prereqs shouldn't be graded discard
-  (have to check for downgrade despite pass in case of "OS unsupported" but
-  then need to limit prereq checks to failing PL's)
-
-- command_timeout should accept 0 as a way of disabling it
-
-- skipfiles patterns should match case-insensitive (Cantrell); also, 
-  document lack of starting anchor
-
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
 
 # High priority
 
-- check for how to confirm portability of setpgrp and kill
 
 # Medium priority 
+
+- check for how to confirm portability of setpgrp and kill
 
 - add support for a "comment.txt" file in the config directory to use
   in place of the default comment

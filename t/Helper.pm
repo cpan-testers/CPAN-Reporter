@@ -498,8 +498,8 @@ sub test_report {
     my $prereq = CPAN::Reporter::_prereq_report( $case->{dist} );
     my $msg_re = $report_para{ $expected_grade };
     my $default_comment = $ENV{AUTOMATED_TESTING}
-        ? "[this report is from an automated smoke testing program\n and was not reviewed by a human for accuracy]"
-        : "[none provided]" ;
+        ? "this report is from an automated smoke testing program\nand was not reviewed by a human for accuracy"
+        : "none provided" ;
 
     my $tempd = _ok_clone_dist_dir( $case->{name} );
                 

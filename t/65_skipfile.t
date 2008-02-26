@@ -80,6 +80,16 @@ my @cases = (
         command => "$perl Makefile.PL",
         will_send => 0,
     },
+    {
+        label => "dist name in - case insensitive",
+        pretty_id => "johnqp/bogus-skipmodule-1.23.tar.gz",
+        name => "t-Fail",
+        version => 1.23,
+        grade => "fail",
+        phase => "test",
+        command => "$perl Makefile.PL",
+        will_send => 0,
+    },
 );
 
 plan tests => 1 + @cases * (test_fake_config_plan() + test_dispatch_plan())
