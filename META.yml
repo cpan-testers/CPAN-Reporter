@@ -1,6 +1,6 @@
 ---
 name: CPAN-Reporter
-version: 1.10
+version: 1.11
 author:
   - 'David A. Golden <dagolden@cpan.org>'
 abstract: Adds CPAN Testers reporting to CPAN.pm
@@ -27,16 +27,16 @@ requires:
 provides:
   CPAN::Reporter:
     file: lib/CPAN/Reporter.pm
-    version: 1.10
+    version: 1.11
   CPAN::Reporter::Config:
     file: lib/CPAN/Reporter/Config.pm
-    version: 1.10
+    version: 1.11
   CPAN::Reporter::History:
     file: lib/CPAN/Reporter/History.pm
-    version: 1.10
+    version: 1.11
   CPAN::Reporter::PrereqCheck:
     file: lib/CPAN/Reporter/PrereqCheck.pm
-    version: 1.10
+    version: 1.11
 generated_by: Module::Build version 0.280801
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
