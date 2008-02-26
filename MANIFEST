@@ -30,6 +30,7 @@ t/11_env_config.t
 t/12_toolchain_versions.t
 t/13_record_command.t
 t/14_command_timeout.t
+t/15_option_validation.t
 t/20_report_output.t
 t/30_PL_report.t
 t/31_PL_report_discard.t
@@ -118,6 +119,10 @@ t/dist/PL-PrereqMiss/Build.PL
 t/dist/PL-PrereqMiss/lib/Bogus/Module.pm
 t/dist/PL-PrereqMiss/Makefile.PL
 t/dist/PL-PrereqMiss/t/01_Bogus.t
+t/dist/PL-PrereqMissOK/Build.PL
+t/dist/PL-PrereqMissOK/lib/Bogus/Module.pm
+t/dist/PL-PrereqMissOK/Makefile.PL
+t/dist/PL-PrereqMissOK/t/01_Bogus.t
 t/dist/PL-RequirePerl/Build.PL
 t/dist/PL-RequirePerl/lib/Bogus/Module.pm
 t/dist/PL-RequirePerl/Makefile.PL
