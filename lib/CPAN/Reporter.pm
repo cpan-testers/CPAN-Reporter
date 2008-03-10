@@ -1274,6 +1274,13 @@ sub _version_finder {
     my %result;
     for my $line ( split "\n", $prereq_result ) {
         my ($mod, $met, $have) = split " ", $line;
+        unless ( defined($mod) && defined($met) && defined($have) ) {
+            $CPAN::Frontend->mywarn(
+                "Error parsing output from CPAN::Reporter::PrereqCheck:\n" .
+                $line
+            );
+            next;
+        }
         $result{$mod}{have} = $have;
         $result{$mod}{met} = $met;
     }
