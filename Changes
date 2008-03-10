@@ -2,7 +2,9 @@ Revision history for Perl module CPAN::Reporter
 
 1.12
 
-    - Added diagnostic warning if PrereqCheck output can't be parsed
+    - Added: Win32::FsType() to special variables section of report
+    
+    - Added: diagnostic warning if PrereqCheck output can't be parsed
 
 1.11 Mon Feb 25 18:47:03 EST 2008
 

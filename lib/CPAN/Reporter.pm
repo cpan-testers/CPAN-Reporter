@@ -1046,6 +1046,7 @@ HERE
         my $getosversion = join(", ", @getosversion);
         $special_vars .= "    Win32::GetOSName = " . Win32::GetOSName() . "\n";
         $special_vars .= "    Win32::GetOSVersion = $getosversion\n";
+        $special_vars .= "    Win32::FsType = " . Win32::FsType() . "\n";
         $special_vars .= "    Win32::IsAdminUser = " . Win32::IsAdminUser() . "\n";
     }
     return $special_vars;
