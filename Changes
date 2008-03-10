@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-1.12
+1.12 Mon Mar 10 08:55:48 EDT 2008
 
     - Added: Win32::FsType() to special variables section of report
     
