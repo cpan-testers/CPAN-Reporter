@@ -12,10 +12,16 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
+- Add datestamps to history (ISO 8601: YYYY-MM-DD HH:MM:SS)
+    -   my @t=localtime; $t[4]++; $t[5]+=1900; 
+        my $iso = sprintf("%4d-%02d-%02d %02d:%02d:%02d", reverse @t[0..5]);
+
+- For failure in PL stage -- show configure_requires and an error message
+  that other requirements aren't available if PL fails
+
+- change report truncation to take first 25K and last 25K (summary) (?)
 
 # Medium priority 
-
-- check for how to confirm portability of setpgrp and kill
 
 - add support for a "comment.txt" file in the config directory to use
   in place of the default comment
@@ -23,7 +29,13 @@ TODO list for Perl module CPAN::Reporter
 - add support for an 'opt-in' file for authors that want CC and then set
   default cc to none -- possibly kept in author's CPAN directory?
 
+- add 'cc_self' option
+
 - 'force_prompt' config to locally unset PERL_MM_USE_DEFAULT (Rezic)
+
+- add results back to CPAN::Distribution object
+
+# Low priority
 
 - add earlier, successful phases to output in reverse order.  Probably have to
   bump up the test-length cutoff, though, to deal with lengthy make output
@@ -31,12 +43,7 @@ TODO list for Perl module CPAN::Reporter
     - make phase output
     - PL phase output
 
-- For failure in PL stage -- show configure_requires and an error message
-  that other requirements aren't available if PL fails
-
-- add results back to CPAN::Distribution object
-
-# Low priority
+- check for how to confirm portability of setpgrp and kill
 
 - refactor t/Helper.pm
 
@@ -55,8 +62,6 @@ TODO list for Perl module CPAN::Reporter
     - SREZIC:
         To add my 0.02EUR: maybe warnings::compat could/should be shown only
         if 5.5.x is used.
-
-- change report truncation to take first 25K and last 25K (summary) (?)
 
 - switch from a single flat file for history. e.g.
     - SDBM_File for history (key on subject line, with phase as value?
