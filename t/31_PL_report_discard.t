@@ -36,6 +36,14 @@ my @test_distros = (
         mb_success => 0,
         mb_grade => "discard",
     },
+    {
+        name => 'PL-NoMakefileOrBuild',
+        prereq => {},
+        eumm_success => 0,
+        eumm_grade => "discard",
+        mb_success => 0,
+        mb_grade => "discard",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() 

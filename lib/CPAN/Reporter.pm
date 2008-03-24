@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 use vars qw/$VERSION/;
-$VERSION = '1.12'; 
+$VERSION = '1.13'; 
 $VERSION = eval $VERSION;
 
 use Config;
@@ -482,7 +482,8 @@ sub _downgrade_known_causes {
     my $msg = $result->{grade_msg} || q{};
 
     # shortcut unless fail/unknown; but PL might look like pass but actually
-    # have "OS Unsupported" messages
+    # have "OS Unsupported" messages if someone printed message and then
+    # did "exit 0"
     return if $grade eq 'na';
     return if $grade eq 'pass' && $result->{phase} ne 'PL';
 
@@ -531,7 +532,15 @@ sub _downgrade_known_causes {
         $grade = 'discard';
         $msg = 'Prerequisite version too low';
     }
-
+    # in PL stage -- if pass but no Makefile or Build, then this should 
+    # be recorded as a discard
+    elsif ( $result->{phase} eq 'PL' && $grade eq 'pass' 
+         && ! -f 'Makefile' && ! -f 'Build' 
+    ) {
+        $grade = 'discard';
+        $msg = 'No Makefile or Build file found';
+    }
+    
     # store results
     $result->{grade} = $grade;
     $result->{grade_msg} = $msg;

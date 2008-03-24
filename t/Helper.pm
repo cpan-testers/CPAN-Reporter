@@ -158,7 +158,7 @@ sub test_grade_PL {
                 ( $stdout =~ /^CPAN::Reporter: ([^,]+), ([^\n]+)/ms );
             if ( $case_grade eq 'discard' ) {
                 is ($found_grade_result, "test results were not valid",
-                    "$case->{name}: '$tool_label' prerequisites not satisifed"
+                    "$case->{name}: '$tool_label' saw test results not valid message"
                 );
                     
                 like( $stdout, 
