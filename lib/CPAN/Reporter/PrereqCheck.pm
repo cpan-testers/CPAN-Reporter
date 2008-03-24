@@ -5,6 +5,7 @@ $VERSION = '1.12';
 $VERSION = eval $VERSION;
 
 use ExtUtils::MakeMaker;
+use File::Spec;
 use CPAN::Version;
 
 _run() if ! caller();
@@ -12,6 +13,8 @@ _run() if ! caller();
 sub _run {
     my %saw_mod;
     # read module and prereq string from STDIN
+    local *DEVNULL;
+    open DEVNULL, ">" . File::Spec->devnull;
     while ( <> ) {
         m/^(\S+)\s+([^\n]*)/;
         my ($mod, $need) = ($1, $2);
@@ -46,10 +49,13 @@ sub _run {
                 $have = MM->parse_version($inst_file);
                 $have = "0" if ! defined $have || $have eq 'undef';
                 # report broken if it can't be loaded
+                select DEVNULL; # try to suppress spurious newlines
                 if ( ! eval "require $mod" ) {
+                    select STDOUT;
                     print "$mod 0 broken\n";
                     next;
                 }
+                select STDOUT;
             }
             else {
                 print "$mod 0 n/a\n";

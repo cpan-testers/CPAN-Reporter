@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+1.13
+
+    - Fixed: Prereq check would be confused if loading modules also printed
+      anything to STDOUT; added "select DEVNULL" before requiring modules as
+      a workaround
+
 1.12 Mon Mar 10 08:55:48 EDT 2008
 
     - Added: Win32::FsType() to special variables section of report

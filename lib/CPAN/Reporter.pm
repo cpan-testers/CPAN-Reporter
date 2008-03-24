@@ -1274,6 +1274,7 @@ sub _version_finder {
 
     my %result;
     for my $line ( split "\n", $prereq_result ) {
+        next unless length $line;
         my ($mod, $met, $have) = split " ", $line;
         unless ( defined($mod) && defined($met) && defined($have) ) {
             $CPAN::Frontend->mywarn(
