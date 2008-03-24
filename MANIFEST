@@ -103,6 +103,10 @@ t/dist/PL-MIRequirePerl/Build.PL
 t/dist/PL-MIRequirePerl/lib/Bogus/Module.pm
 t/dist/PL-MIRequirePerl/Makefile.PL
 t/dist/PL-MIRequirePerl/t/01_Bogus.t
+t/dist/PL-NoMakefileOrBuild/Build.PL
+t/dist/PL-NoMakefileOrBuild/lib/Bogus/Module.pm
+t/dist/PL-NoMakefileOrBuild/Makefile.PL
+t/dist/PL-NoMakefileOrBuild/t/01_Bogus.t
 t/dist/PL-NoSupport/Build.PL
 t/dist/PL-NoSupport/lib/Bogus/Module.pm
 t/dist/PL-NoSupport/Makefile.PL
