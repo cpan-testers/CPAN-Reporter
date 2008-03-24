@@ -1,10 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
-1.13
+1.13 Mon Mar 24 09:22:44 EDT 2008
 
     - Changed: Build.PL or Makefile.PL that returns without error but
       does *not* create either 'Makefile' or 'Build' will be marked as
-      'DISCARD' for the PL phase.
+      'DISCARD' for the PL phase instead of 'PASS'.
 
     - Fixed: Prereq check would be confused if loading modules also
       printed anything to STDOUT (somehow CPAN.pm is a culprit); added
