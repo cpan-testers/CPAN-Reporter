@@ -37,6 +37,8 @@ TODO list for Perl module CPAN::Reporter
 
 # Low priority
 
+- document Windows ErrorMode registry hack to stop segfault dialog
+
 - add earlier, successful phases to output in reverse order.  Probably have to
   bump up the test-length cutoff, though, to deal with lengthy make output
     - Test phase output
