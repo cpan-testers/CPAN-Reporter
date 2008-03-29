@@ -6,6 +6,8 @@ TODO list for Perl module CPAN::Reporter
 
 - Check for failing configure_requires for downgrades
 
+- Check for makefile out of date strings and discard
+
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
