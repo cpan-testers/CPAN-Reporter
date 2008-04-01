@@ -37,6 +37,11 @@ TODO list for Perl module CPAN::Reporter
 
 - add results back to CPAN::Distribution object
 
+- Create a discards file that shows missing prerequisites for each discarded
+  report.  Could be interesting data to find highly requested.  Or, perhaps
+  track *all* prerequisites for all files tested.  Very interesting data
+  I suspect.  Probably not something that should be on by default
+
 # Low priority
 
 - document Windows ErrorMode registry hack to stop segfault dialog
@@ -104,17 +109,5 @@ TODO list for Perl module CPAN::Reporter
     - may not do this until we have the new CPAN::Testers::Report
       object and associated transports
 
-- Check if CPAN::Reporter is reporting under a "force X" command?  It
-  probably shouldn't.  Is that a CPAN.pm change?  Or can I get it from 
-  the dist object? ie. $dist->{force_update} (DAGOLDEN)  -- on reflection,
-  as long as we're checking prereqs and discarding, this may be OK
-
 - send duplicate report if using "report" (?) or "force" (?)
-
-- ability to turn on/off via an environment variable (David Cantrell)
-
-- ability to only report on what I asked to install, not on its dependencies
-  (David Cantrell)
-  - this is a CPAN issue -- it would need to be able to set test_report on
-    a per-distribution basis
 
