@@ -416,7 +416,8 @@ DUPLICATE_REPORT
 
     # Set debug and transport options, if supported
     $tr->debug( $config->{debug} ) if defined $config->{debug};
-    my @transport_args = split " ", $config->{transport} || 'Net::SMTP';
+    my $transport = $config->{transport} || 'Net::SMTP';
+    my @transport_args = split " ", $transport;
     eval { $tr->transport( @transport_args ) };
     if ($@) {
         $CPAN::Frontend->mywarn(
