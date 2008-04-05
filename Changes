@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+1.14
+
+    - Changed: if 'transport' configuration option is not valid according
+      to Test::Reporter, no report will be sent instead of falling back 
+      to Net::SMTP
+
 1.13 Mon Mar 24 09:22:44 EDT 2008
 
     - Changed: Build.PL or Makefile.PL that returns without error but

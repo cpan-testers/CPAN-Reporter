@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 use vars qw/$VERSION/;
-$VERSION = '1.13'; 
+$VERSION = '1.14'; 
 $VERSION = eval $VERSION;
 
 use Config;
@@ -417,14 +417,14 @@ DUPLICATE_REPORT
     # Set debug and transport options, if supported
     $tr->debug( $config->{debug} ) if defined $config->{debug};
     my $transport = $config->{transport} || 'Net::SMTP';
-    if (length $transport && ( $transport !~ /\ANet::SMTP|Mail::Send\z/ )) {
+    eval { $tr->transport( $transport ) };
+    if ($@) {
         $CPAN::Frontend->mywarn(
-            "CPAN::Reporter: '$config->{transport}' is not a valid transport option." .
-            " Falling back to Net::SMTP\n"
+            "CPAN::Reporter: '$transport' is not a valid transport option.\n" .
+            "Test report will not be sent\n"
         );
-        $transport = 'Net::SMTP';
+        return;
     }
-    $tr->transport( $transport );
 
     # prepare mail transport
     $tr->from( $config->{email_from} );
