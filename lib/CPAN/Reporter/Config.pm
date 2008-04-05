@@ -1,7 +1,7 @@
 package CPAN::Reporter::Config;
 use strict; 
 use vars qw/$VERSION/;
-$VERSION = '1.14'; 
+$VERSION = '1.14_01'; 
 $VERSION = eval $VERSION;
 
 use Config::Tiny ();
@@ -683,8 +683,9 @@ reports be sent, regardless of {send_report}? (default:no)
 * {send_skipfile = <skipfile>} -- like {cc_skipfile} but no report will be 
 sent at all if a match is found
 * {transport = <transport>} -- if defined, passed to the {transport()} 
-method of [Test::Reporter].  Valid options are 'Net::SMTP' or 
-'Mail::Send'.  (CPAN::Reporter uses Net::SMTP for this by default.)
+method of [Test::Reporter].  Valid options are 'Net::SMTP', 'Net::SMTP', 
+'Mail::Send' or 'HTTP'.  See [Test::Reporter] for more details.
+(CPAN::Reporter uses Net::SMTP for this by default.)
 
 If these options are manually added to the configuration file, they will
 be included (and preserved) in subsequent interactive configuration.

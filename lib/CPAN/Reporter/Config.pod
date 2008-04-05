@@ -8,7 +8,7 @@ CPAN::Reporter::Config - Config file options for CPAN::Reporter
 
 =head1 VERSION
 
-This documentation refers to version 1.14
+This documentation refers to version 1.14_01
 
 =head1 SYNOPSIS
 
@@ -231,8 +231,9 @@ sent at all if a match is found
 =item *
 
 C<<< transport = <transport> >>> -- if defined, passed to the C<<< transport() >>> 
-method of L<Test::Reporter>.  Valid options are 'Net::SMTP' or 
-'Mail::Send'.  (CPAN::Reporter uses Net::SMTP for this by default.)
+method of L<Test::Reporter>.  Valid options are 'Net::SMTP', 'Net::SMTP', 
+'Mail::Send' or 'HTTP'.  See L<Test::Reporter> for more details.
+(CPAN::Reporter uses Net::SMTP for this by default.)
 
 =back
 
