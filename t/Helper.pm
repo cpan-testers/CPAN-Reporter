@@ -792,6 +792,20 @@ sub subject {
 }
 
 my %mocked_data;
+
+my @valid_transport = qw/Mail::Send Net::SMTP Net::SMTP::Auth HTTP/;
+
+sub transport {
+    my ($self) = shift;
+    if (@_) {
+        my $t = shift;
+        die __PACKAGE__ . ":transport: '$t' is invalid\n"
+            unless grep { $t eq $_ } @valid_transport;
+        $mocked_data{transport} = $t;
+    }
+    return $mocked_data{transport};
+}
+    
 sub AUTOLOAD {
     my $self = shift;
     if ( @_ ) {

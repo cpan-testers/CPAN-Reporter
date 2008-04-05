@@ -40,7 +40,7 @@ my $case = {
     },
 };
 
-plan tests => 2 + 4 * (1 + test_fake_config_plan + test_dispatch_plan);
+plan tests => 1 + 4 * (1 + test_fake_config_plan + test_dispatch_plan);
 
 #--------------------------------------------------------------------------#
 # tests
@@ -90,11 +90,7 @@ test_fake_config( %{$case->{options}}, transport => 'LWP' );
 
 my ($stdout, $stderr) = test_dispatch( 
     $case, 
-    will_send => $case->{will_send},
-);
-
-is( Test::Reporter::Mocked->transport(), "Net::SMTP", 
-    "invalid transport falls back to Net::SMTP"
+    will_send => 0,
 );
 
 like( $stdout, "/'LWP' is not a valid transport option/",
