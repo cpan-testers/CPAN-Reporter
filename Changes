@@ -1,5 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+1.14_02 Sun Apr  6 09:45:39 EDT 2008
+
+    - Changed: improved diagnostics messages for 'transport' failures
+    
 1.14_01 Sat Apr  5 18:30:44 EDT 2008
 
     - Changed: if 'transport' configuration option is not valid according
