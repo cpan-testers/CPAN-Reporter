@@ -93,6 +93,6 @@ my ($stdout, $stderr) = test_dispatch(
     will_send => 0,
 );
 
-like( $stdout, "/'LWP' is not a valid transport option/",
+like( $stdout, "/'LWP' is invalid/",
     "saw invalid transport warnings"
 );
