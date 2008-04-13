@@ -6,6 +6,9 @@ TODO list for Perl module CPAN::Reporter
 
 - Check for failing configure_requires for downgrades
 
+- Check for configure_requires but no YAML module installed for CPAN for
+  downgrades
+
 - Check for makefile out of date strings and discard
 
 #--------------------------------------------------------------------------#
@@ -13,6 +16,10 @@ TODO list for Perl module CPAN::Reporter
 #--------------------------------------------------------------------------#
 
 # High priority
+
+- Add Oslo Accords environment variables
+
+- Add CPAN::PERL5INC details
 
 - Add datestamps to history (ISO 8601: YYYY-MM-DD HH:MM:SS)
     -   my @t=localtime; $t[4]++; $t[5]+=1900; 
