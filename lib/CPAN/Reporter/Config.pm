@@ -682,10 +682,9 @@ reports be sent, regardless of {send_report}? (default:no)
 {send_report} during the test phase
 * {send_skipfile = <skipfile>} -- like {cc_skipfile} but no report will be 
 sent at all if a match is found
-* {transport = <transport>} -- if defined, passed to the {transport()} 
-method of [Test::Reporter].  Valid options are 'Net::SMTP', 'Net::SMTP', 
-'Mail::Send' or 'HTTP'.  See [Test::Reporter] for more details.
-(CPAN::Reporter uses Net::SMTP for this by default.)
+* {transport = <transport> [transport args]} -- if defined, passed to the 
+{transport()} method of [Test::Reporter].  See below for 
+more details.  (CPAN::Reporter uses 'Net::SMTP' for this by default.)
 
 If these options are manually added to the configuration file, they will
 be included (and preserved) in subsequent interactive configuration.
@@ -712,6 +711,23 @@ will match the distribution.
     /Win32
     # a particular very specific distribution
     ^JOHNDOE/Foo-Bar-3.14
+
+== Transport options
+
+The [Test::Reporter] 1.39_XX development series added support for multiple
+transport modules, e.g. [Test::Reporter::Transport::Net::SMTP::TLS] or
+[Test::Reporter::Transport::HTTPGateway].  To use them with CPAN::Reporter,
+set the 'transport' config option to the name of the transport module 
+(without the 'Test::Reporter::Transport' prefix) and any required arguments,
+separated by white space. For example:
+
+  transport=Net::SMTP::TLS User jdoe@example.com Password 12345
+  transport=HTTPGateway http://example.com/cpantesters.cgi MyKey
+  transport=File ~/saved-reports-dir
+
+The transport module may be any Test::Reporter::Transport installed on your
+system.  As of Test::Reporter 1.39_05, transports included 'Net::SMTP', 
+'Net::SMTP::TLS', 'Mail::Send',  'HTTPGateway' and 'File'.
 
 = CONFIGURATION OPTIONS FOR DEBUGGING
 

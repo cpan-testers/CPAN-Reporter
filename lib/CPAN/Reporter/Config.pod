@@ -230,10 +230,9 @@ sent at all if a match is found
 
 =item *
 
-C<<< transport = <transport> >>> -- if defined, passed to the C<<< transport() >>> 
-method of L<Test::Reporter>.  Valid options are 'Net::SMTP', 'Net::SMTP', 
-'Mail::Send' or 'HTTP'.  See L<Test::Reporter> for more details.
-(CPAN::Reporter uses Net::SMTP for this by default.)
+C<<< transport = <transport> [transport args] >>> -- if defined, passed to the 
+C<<< transport() >>> method of L<Test::Reporter>.  See below for 
+more details.  (CPAN::Reporter uses 'Net::SMTP' for this by default.)
 
 =back
 
@@ -262,6 +261,23 @@ will match the distribution.
      /Win32
      # a particular very specific distribution
      ^JOHNDOE/Foo-Bar-3.14
+
+=head2 Transport options
+
+The L<Test::Reporter> 1.39_XX development series added support for multiple
+transport modules, e.g. L<Test::Reporter::Transport::Net::SMTP::TLS> or
+L<Test::Reporter::Transport::HTTPGateway>.  To use them with CPAN::Reporter,
+set the 'transport' config option to the name of the transport module 
+(without the 'Test::Reporter::Transport' prefix) and any required arguments,
+separated by white space. For example:
+
+   transport=Net::SMTP::TLS User jdoe@example.com Password 12345
+   transport=HTTPGateway http://example.com/cpantesters.cgi MyKey
+   transport=File ~/saved-reports-dir
+
+The transport module may be any Test::Reporter::Transport installed on your
+system.  As of Test::Reporter 1.39_05, transports included 'Net::SMTP', 
+'Net::SMTP::TLS', 'Mail::Send',  'HTTPGateway' and 'File'.
 
 =head1 CONFIGURATION OPTIONS FOR DEBUGGING
 
