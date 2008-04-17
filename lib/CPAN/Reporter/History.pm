@@ -1,7 +1,7 @@
 package CPAN::Reporter::History;
 use strict; 
 use vars qw/$VERSION @ISA @EXPORT_OK/;
-$VERSION = '1.14_03'; 
+$VERSION = '1.14_04'; 
 $VERSION = eval $VERSION;
 
 use Config;

@@ -1,8 +1,12 @@
 Revision history for Perl module CPAN::Reporter
 
-1.14_03
+1.14_04 Thu Apr 17 06:37:26 EDT 2008
 
-    - 
+    - Documented: added section on transport config option
+
+1.14_03 Thu Apr 17 06:37:26 EDT 2008
+
+    - Uploaded without Changes file updated
 
 1.14_02 Sun Apr  6 09:45:39 EDT 2008
 
