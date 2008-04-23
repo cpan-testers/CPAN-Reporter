@@ -10,6 +10,7 @@ TODO list for Perl module CPAN::Reporter
   downgrades
 
 - Check for makefile out of date strings and discard
+  -  m/Makefile out-of-date with respect to Makefile.PL/
 
 #--------------------------------------------------------------------------#
 # Features, etc
@@ -31,6 +32,8 @@ TODO list for Perl module CPAN::Reporter
 - change report truncation to take first 25K and last 25K (summary) (?)
 
 # Medium priority 
+
+- list installed versions of any modules in requires/recommends/etc
 
 - add support for a "comment.txt" file in the config directory to use
   in place of the default comment
