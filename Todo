@@ -31,6 +31,9 @@ TODO list for Perl module CPAN::Reporter
 
 - change report truncation to take first 25K and last 25K (summary) (?)
 
+- check for working signals regardless of platform and skip if not working --
+  maybe during *.PL (write a signaling file)
+
 # Medium priority 
 
 - list installed versions of any modules in requires/recommends/etc
