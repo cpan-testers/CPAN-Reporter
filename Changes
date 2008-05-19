@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+1.15 Mon May 19 11:21:47 EDT 2008
+
+    - Changed: now requires Test::Reporter 1.40
+
+    - No other changes from 1.14_xx series
+
 1.14_04 Thu Apr 17 06:37:26 EDT 2008
 
     - Documented: added section on transport config option

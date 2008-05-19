@@ -2,28 +2,28 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
+          'PL_FILES' => {},
+          'INSTALLDIRS' => 'site',
           'NAME' => 'CPAN::Reporter',
+          'EXE_FILES' => [],
           'VERSION_FROM' => 'lib/CPAN/Reporter.pm',
           'PREREQ_PM' => {
-                           'CPAN' => '1.9203',
-                           'Config::Tiny' => '2.08',
-                           'ExtUtils::MakeMaker' => '6.36',
-                           'File::Basename' => 0,
-                           'File::Copy::Recursive' => '0.35',
-                           'File::Find' => 0,
-                           'File::HomeDir' => '0.58',
-                           'File::Path' => 0,
-                           'File::Spec' => '3.19',
-                           'File::Temp' => '0.16',
-                           'File::pushd' => '0.32',
                            'IO::CaptureOutput' => '1.03',
+                           'File::Spec' => '3.19',
                            'Probe::Perl' => 0,
+                           'File::Find' => 0,
+                           'Test::Reporter' => '1.4',
+                           'File::Path' => 0,
+                           'File::HomeDir' => '0.58',
+                           'File::pushd' => '0.32',
+                           'ExtUtils::MakeMaker' => '6.36',
                            'Tee' => '0.13',
                            'Test::More' => '0.62',
-                           'Test::Reporter' => '1.34'
-                         },
-          'INSTALLDIRS' => 'site',
-          'EXE_FILES' => [],
-          'PL_FILES' => {}
+                           'File::Temp' => '0.16',
+                           'CPAN' => '1.9203',
+                           'File::Copy::Recursive' => '0.35',
+                           'File::Basename' => 0,
+                           'Config::Tiny' => '2.08'
+                         }
         )
 ;

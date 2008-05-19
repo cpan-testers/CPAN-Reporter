@@ -1,6 +1,6 @@
 ---
 name: CPAN-Reporter
-version: 1.14_04
+version: 1.15
 author:
   - 'David A. Golden <dagolden@cpan.org>'
 abstract: Adds CPAN Testers reporting to CPAN.pm
@@ -23,20 +23,20 @@ requires:
   Probe::Perl: 0
   Tee: 0.13
   Test::More: 0.62
-  Test::Reporter: 1.34
+  Test::Reporter: 1.4
 provides:
   CPAN::Reporter:
     file: lib/CPAN/Reporter.pm
-    version: 1.14_04
+    version: 1.15
   CPAN::Reporter::Config:
     file: lib/CPAN/Reporter/Config.pm
-    version: 1.14_04
+    version: 1.15
   CPAN::Reporter::History:
     file: lib/CPAN/Reporter/History.pm
-    version: 1.14_04
+    version: 1.15
   CPAN::Reporter::PrereqCheck:
     file: lib/CPAN/Reporter/PrereqCheck.pm
-    version: 1.14_04
+    version: 1.15
 generated_by: Module::Build version 0.280801
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
