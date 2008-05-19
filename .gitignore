@@ -1,2 +1,5 @@
 Build
 _build/*
+Makefile
+blib/*
+pm_to_blib

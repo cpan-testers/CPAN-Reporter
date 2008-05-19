@@ -6,6 +6,8 @@
 ^lib/CPAN/Reporter/FAQ.pm$
 
 # Version control files and dirs.
+.git/
+.gitignore
 \bRCS\b
 \bCVS\b
 ,v$
