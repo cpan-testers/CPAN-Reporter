@@ -1,0 +1,6 @@
+Build.PL
+lib/Bogus/Module.pm
+Makefile.PL
+MANIFEST			This list of files
+META.yml
+t/01_Bogus.t
