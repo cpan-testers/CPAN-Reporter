@@ -1,5 +1,7 @@
 Revision history for Perl module CPAN::Reporter
 
+1.15_50
+
     - Fixed: distributions with odd names wouldn't be recorded in history;
       now they are recorded as 'DISCARD'
 
