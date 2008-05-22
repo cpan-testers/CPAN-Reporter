@@ -2,6 +2,11 @@ Revision history for Perl module CPAN::Reporter
 
 1.15_50
 
+    - Fixed: some *.PL files prompt without autoflush, which works
+      normally, but appears to silently hang when piping to a tee.
+      CPAN::Reporter now uses Devel::Autoflush in PERL5OPT to always turn 
+      on autoflush
+      
     - Fixed: distributions with odd names wouldn't be recorded in history;
       now they are recorded as 'DISCARD'
 

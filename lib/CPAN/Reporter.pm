@@ -137,8 +137,13 @@ HERE
     # tee the command wrapper
     my $tee_input = Probe::Perl->find_perl_interpreter() .  " $wrapper_name";
     $tee_input .= " $redirect" if defined $redirect;
-    tee($tee_input, { stderr => 1 }, $temp_out);
-        
+    {
+      # ensure autoflush
+      local $ENV{PERL5OPT} = $ENV{PERL5OPT} || q{};
+      $ENV{PERL5OPT} .= ' -MDevel::Autoflush ';
+      tee($tee_input, { stderr => 1 }, $temp_out);
+    }
+
     # read back the output
     my $output_fh = IO::File->new($temp_out, "r");
     if ( !$output_fh ) {

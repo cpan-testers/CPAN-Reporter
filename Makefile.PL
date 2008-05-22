@@ -7,6 +7,7 @@ WriteMakefile
           'PREREQ_PM' => {
                            'CPAN' => '1.9203',
                            'Config::Tiny' => '2.08',
+                           'Devel::Autoflush' => 0,
                            'ExtUtils::MakeMaker' => '6.36',
                            'File::Basename' => 0,
                            'File::Copy::Recursive' => '0.35',
