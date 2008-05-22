@@ -31,12 +31,12 @@ my %standard_case_info = (
 my @cases = (
     {
         label => "proper distribution name (tar.gz)",
-        pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
+        pretty_id => "JOHNQP/Bogus-Module-1.21.tar.gz",
         will_send => 1,
     },
     {
         label => "proper distribution name (tar.bz2)",
-        pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
+        pretty_id => "JOHNQP/Bogus-Module-1.22.tar.gz",
         will_send => 1,
     },
     {
@@ -46,17 +46,17 @@ my @cases = (
     },
     {
         label => "proper distribution name (zip)",
-        pretty_id => "JOHNQP/Bogus-Module-1.23.zip",
+        pretty_id => "JOHNQP/Bogus-Module-1.24.zip",
         will_send => 1,
     },
     {
         label => "proper distribution name (ZIP)",
-        pretty_id => "JOHNQP/Bogus-Module-1.23.ZIP",
+        pretty_id => "JOHNQP/Bogus-Module-1.25.ZIP",
         will_send => 1,
     },
     {
         label => "proper distribution name (v1.23)",
-        pretty_id => "JOHNQP/Bogus-Module-v1.23.tgz",
+        pretty_id => "JOHNQP/Bogus-Module-v1.26.tgz",
         will_send => 1,
     },
     {
@@ -71,12 +71,12 @@ my @cases = (
     },
     {
         label => "proper distribution name (v1.2_01)",
-        pretty_id => "JOHNQP/Bogus-Module-v1.2_01.tgz",
+        pretty_id => "JOHNQP/Bogus-Module-v1.2_02.tgz",
         will_send => 1,
     },
     {
         label => "missing extension",
-        pretty_id => "JOHNQP/Bogus-Module-1.23",
+        pretty_id => "JOHNQP/Bogus-Module-1.31",
         will_send => 0,
     },
     {
@@ -92,14 +92,15 @@ my @cases = (
 );
 
 
-plan tests => 1 + test_fake_config_plan()
-                + test_dispatch_plan() * @cases;
+plan tests => 2 + test_fake_config_plan()
+                + (1 + test_dispatch_plan()) * @cases;
 
 #--------------------------------------------------------------------------#
 # tests
 #--------------------------------------------------------------------------#
 
 require_ok('CPAN::Reporter');
+require_ok('CPAN::Reporter::History');
 
 test_fake_config();
 
@@ -108,6 +109,13 @@ for my $case ( @cases ) {
     $case->{dist}{pretty_id} = $case->{pretty_id};
     $case->{$_} = $standard_case_info{$_} for keys %standard_case_info;
     test_dispatch( $case, will_send => $case->{will_send} );
+    my $hist_grade = $case->{will_send} ? 'FAIL' : 'DISCARD';
+    ok( scalar CPAN::Reporter::History::have_tested( 
+        dist => $case->{dist}->base_id,
+        grade => $hist_grade,
+      ),
+      $case->{dist}->pretty_id . " seen in history as $hist_grade"
+    );
 }
 
 

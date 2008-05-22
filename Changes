@@ -1,5 +1,8 @@
 Revision history for Perl module CPAN::Reporter
 
+    - Fixed: distributions with odd names wouldn't be recorded in history;
+      now they are recorded as 'DISCARD'
+
 1.15 Mon May 19 11:21:47 EDT 2008
 
     - Changed: now requires Test::Reporter 1.40

@@ -346,6 +346,9 @@ EMAIL_REQUIRED
         return;
     }
         
+    # Need to know if this is a duplicate
+    my $is_duplicate = CPAN::Reporter::History::_is_duplicate( $result );
+
     # Abort if the distribution name is not formatted according to 
     # CPAN Testers requirements: Dist-Name-version.suffix
     # Regex from CPAN-Testers should extract name, separator, version
@@ -364,6 +367,10 @@ Test report will not be sent.
 
 END_BAD_DISTNAME
 
+        # record this as a discard, instead
+        $result->{grade} = 'discard';
+        CPAN::Reporter::History::_record_history( $result ) 
+            if not $is_duplicate;
         return;
     }
 
@@ -398,7 +405,6 @@ END_SKIP_DIST
     $tr->distribution( $result->{dist_name}  );
 
     # Skip if duplicate and not sending duplicates
-    my $is_duplicate = CPAN::Reporter::History::_is_duplicate( $result );
     if ( $is_duplicate ) {
         if ( _prompt( $config, "send_duplicates", $tr->grade) =~ /^n/ ) {
             $CPAN::Frontend->myprint(<< "DUPLICATE_REPORT");
