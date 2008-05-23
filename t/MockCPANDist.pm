@@ -19,6 +19,7 @@ my %spec = (
     pretty_id => q{},
     author_id => q{},
     author_fullname => q{},
+    unsat_config => [],
 );
 
 sub new {
@@ -42,6 +43,7 @@ sub new {
 sub author { return $simulate_bad_author ? undef : shift } 
 
 sub prereq_pm { return shift->{prereq_pm} }
+sub unsat_prereq { return @{ shift->{unsat_config} } }
 sub pretty_id { return shift->{pretty_id} }
 sub id { return shift->{author_id} }
 sub fullname { return shift->{author_fullname} }
