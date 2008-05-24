@@ -25,6 +25,8 @@ use IO::CaptureOutput qw/capture/;
 use Probe::Perl ();
 use Test::More;
 
+use t::MockHomeDir;
+
 #--------------------------------------------------------------------------#
 # Fixtures
 #--------------------------------------------------------------------------#
@@ -34,10 +36,8 @@ my $make = $Config{make};
 
 my $temp_stdout = File::Temp->new() 
     or die "Couldn't make temporary file:$!\nIs your temp drive full?";
-my $temp_home = tempdir(
-        "CPAN-Reporter-testhome-XXXXXXXX", TMPDIR => 1, CLEANUP => 1
-) or die "Couldn't create temporary config dir: $!\nIs your temp drive full?";
-my $home_dir = File::Spec->rel2abs( $temp_home );
+
+my $home_dir = t::MockHomeDir::home_dir();
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 
@@ -72,7 +72,7 @@ sub test_fake_config {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my %overrides = @_;
 
-    is( File::HomeDir::my_documents(), $home_dir,
+    is( File::HomeDir::my_documents(), t::MockHomeDir::home_dir(),
         "home directory mocked"
     ); 
     mkpath $config_dir;
@@ -760,14 +760,8 @@ sub _short_name {
 #--------------------------------------------------------------------------#
 
 BEGIN {
-    $INC{"File/HomeDir.pm"} = 1; # fake load
     $INC{"Test/Reporter.pm"} = 1; # fake load
 }
-
-package File::HomeDir;
-sub my_documents { return $home_dir };
-sub my_home { return $home_dir };
-sub my_data { return $home_dir };
 
 package Test::Reporter;
 use vars qw/$AUTOLOAD/;

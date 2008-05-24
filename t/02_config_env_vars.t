@@ -8,6 +8,7 @@ use File::Basename qw/basename/;
 use File::Spec;
 use File::Temp qw/tempdir/;
 use t::Frontend;
+use t::MockHomeDir;
 
 plan tests => 10;
 #plan 'no_plan';
@@ -17,10 +18,7 @@ plan tests => 10;
 #--------------------------------------------------------------------------#
 
 # File::HomeDir will be mocked to return these
-my $default_home = tempdir( 
-    "CPAN-Reporter-testhome-XXXXXXXX", TMPDIR => 1, CLEANUP => 1 
-) or die "Couldn't create a temporary config directory: $!\nIs your temp drive full?";
-my $default_home_dir = File::Spec->rel2abs( $default_home );
+my $default_home_dir = t::MockHomeDir::home_dir;
 my $default_config_dir = File::Spec->catdir( $default_home_dir, ".cpanreporter" );
 my $default_config_file = File::Spec->catfile( $default_config_dir, "config.ini" );
 
@@ -37,26 +35,10 @@ my $default_dir_alt_file = File::Spec->catfile( $default_config_dir, "altconfig.
 my $alt_dir_alt_file = File::Spec->catfile( $alt_config_dir, "altconfig.ini" );
 
 #--------------------------------------------------------------------------#
-# Mocking -- override support/system functions
-#--------------------------------------------------------------------------#
-
-BEGIN {
-    $INC{"File/HomeDir.pm"} = 1; # fake load
-}
-
-package File::HomeDir;
-sub my_documents { return $default_home_dir };
-sub my_data { return $default_home_dir };
-sub my_home { return $default_home_dir };
-
-package main;
-
-#--------------------------------------------------------------------------#
 
 require_ok('CPAN::Reporter');
 require_ok('CPAN::Reporter::Config');
 
-# before ENV override
 is( CPAN::Reporter::Config::_get_config_dir(), $default_config_dir,
     "default config dir path"
 );

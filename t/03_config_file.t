@@ -12,6 +12,7 @@ use File::Basename qw/basename/;
 use File::Spec;
 use File::Temp qw/tempdir/;
 use t::Frontend;
+use t::MockHomeDir;
 
 plan tests => 56;
 #plan 'no_plan';
@@ -20,12 +21,7 @@ plan tests => 56;
 # Fixtures
 #--------------------------------------------------------------------------#
 
-my $temp_home = tempdir( 
-    "CPAN-Reporter-testhome-XXXXXXXX", TMPDIR => 1, CLEANUP => 1 
-) or die "Couldn't create a temporary config directory: $!\nIs your temp drive full?";
-
-my $home_dir = File::Spec->rel2abs( $temp_home );
-my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
+my $config_dir = File::Spec->catdir( t::MockHomeDir::home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 my $default_options = {
     email_from => '',
@@ -43,17 +39,6 @@ my ($rc, $stdout, $stderr);
 # Mocking -- override support/system functions
 #--------------------------------------------------------------------------#
     
-
-BEGIN {
-    $INC{"File/HomeDir.pm"} = 1; # fake load
-}
-
-package File::HomeDir;
-sub my_documents { return $home_dir };
-sub my_data { return $home_dir };
-sub my_home { return $home_dir };
-
-package main;
 
 #--------------------------------------------------------------------------#
 

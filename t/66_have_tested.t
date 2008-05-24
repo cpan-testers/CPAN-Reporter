@@ -8,6 +8,7 @@ use File::Path qw/mkpath/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
 use File::Temp qw/tempdir/;
 use t::Frontend;
+use t::MockHomeDir;
 
 #plan 'no_plan';
 plan tests => 21;
@@ -16,12 +17,7 @@ plan tests => 21;
 # Fixtures
 #--------------------------------------------------------------------------#
 
-my $temp_home = tempdir( 
-    "CPAN-Reporter-testhome-XXXXXXXX", TMPDIR => 1, CLEANUP => 1 
-) or die "Couldn't create a temporary config directory: $!";
-
-my $home_dir = rel2abs( $temp_home );
-my $config_dir = catdir( $home_dir, ".cpanreporter" );
+my $config_dir = catdir( t::MockHomeDir::home_dir, ".cpanreporter" );
 my $config_file = catfile( $config_dir, "config.ini" );
 
 my $history_file = catfile( $config_dir, "reports-sent.db" );
@@ -37,21 +33,6 @@ my @fake_results = (
     { dist_name => 'Inline-0.44',  phase => 'test',  grade => 'pass' },
     { dist_name => 'Crappy-0.01',  phase => 'PL',    grade => 'discard' },
 );
-
-#--------------------------------------------------------------------------#
-# Mocking -- override support/system functions
-#--------------------------------------------------------------------------#
-
-BEGIN {
-    $INC{"File/HomeDir.pm"} = 1; # fake load
-}
-
-package File::HomeDir;
-sub my_documents { return $home_dir };
-sub my_data { return $home_dir };
-sub my_home { return $home_dir };
-
-package main;
 
 #--------------------------------------------------------------------------##
 # begin testing
