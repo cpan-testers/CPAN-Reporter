@@ -24,6 +24,7 @@ $class->new(
         'File::Spec'            => 3.19,
         'File::Temp'            => 0.16,  # build_requires
         'IO::CaptureOutput'     => 1.03,  # build_requires
+        'Parse::CPAN::Meta'     => 0,
         'Probe::Perl'           => 0,
         'Tee'                   => 0.13,
         'Test::More'            => 0.62, # various features/fixes

@@ -18,6 +18,7 @@ WriteMakefile
                            'File::Temp' => '0.16',
                            'File::pushd' => '0.32',
                            'IO::CaptureOutput' => '1.03',
+                           'Parse::CPAN::Meta' => 0,
                            'Probe::Perl' => 0,
                            'Tee' => '0.13',
                            'Test::More' => '0.62',

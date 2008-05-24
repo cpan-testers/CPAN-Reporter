@@ -6,7 +6,7 @@ author:
 abstract: Bogus
 license: unknown
 configure_requires:
-  'Local::Config': 0
+  Local::Config: 0
 generated_by: Module::Build version 0.280801
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

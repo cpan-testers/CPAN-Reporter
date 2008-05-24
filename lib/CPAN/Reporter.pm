@@ -13,6 +13,7 @@ use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
 use File::Spec ();
 use IO::File ();
+use Parse::CPAN::Meta ();
 use Probe::Perl ();
 use Tee qw/tee/;
 use Test::Reporter ();
@@ -780,12 +781,14 @@ sub _parse_test_harness {
 # _prereq_report
 #--------------------------------------------------------------------------#
 
+my @prereq_sections = qw/requires build_requires configure_requires/;
+
 sub _prereq_report {
     my $dist = shift;
     my (%need, %have, %prereq_met, $report);
     
+    # Extract requires/build_requires from CPAN dist
     my $prereq_pm = $dist->prereq_pm;
-
     if ( ref $prereq_pm eq 'HASH' ) {
         # is it the new CPAN style with requires/build_requires?
         if (join(q{ }, sort keys %$prereq_pm) eq "build_requires requires") {
@@ -799,8 +802,21 @@ sub _prereq_report {
         }
     }
 
+    # Extract configure_requires from META.yml if it exists
+    if ( $dist->{build_dir} && -d $dist->{build_dir} ) {
+      my $meta_yml = File::Spec->catfile($dist->{build_dir}, 'META.yml');
+      if ( -f $meta_yml ) {
+        my @yaml = Parse::CPAN::Meta::LoadFile($meta_yml);
+        if (  ref $yaml[0] eq 'HASH' && 
+              ref $yaml[0]{configure_requires} eq 'HASH' 
+        ) {
+          $need{configure_requires} = $yaml[0]{configure_requires};
+        }
+      }
+    }
+
     # see what prereqs are satisfied in subprocess
-    for my $section ( qw/requires build_requires/ ) {
+    for my $section ( @prereq_sections ) {
         next unless ref $need{$section} eq 'HASH';
         my @prereq_list = %{ $need{$section} };
         next unless @prereq_list;
@@ -813,7 +829,7 @@ sub _prereq_report {
     
     # find formatting widths 
     my ($name_width, $need_width, $have_width) = (6, 4, 4);
-    for my $section ( qw/requires build_requires/ ) {
+    for my $section ( @prereq_sections ) {
         for my $module ( keys %{ $need{$section} } ) {
             my $name_length = length $module;
             my $need_length = length $need{$section}{$module};
@@ -828,7 +844,7 @@ sub _prereq_report {
         "  \%1s \%-${name_width}s \%-${need_width}s \%-${have_width}s\n";
 
     # generate the report
-    for my $section ( qw/requires build_requires/ ) {
+    for my $section ( @prereq_sections ) {
         if ( keys %{ $need{$section} } ) {
             $report .= "$section:\n\n";
             $report .= sprintf( $format_str, " ", qw/Module Need Have/ );
