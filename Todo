@@ -4,11 +4,6 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
-- Check for failing configure_requires for downgrades
-
-- Check for configure_requires but no YAML module installed for CPAN for
-  downgrades
-
 - Check for makefile out of date strings and discard
   -  m/Makefile out-of-date with respect to Makefile.PL/
 
