@@ -119,6 +119,7 @@ sub test_grade_PL {
                 if ! $have_tool;
             
             my $tempd = _ok_clone_dist_dir( $case->{name} );
+            local $dist->{build_dir} = "$tempd";
             
             $t::Helper::sent_report = undef;
             $t::Helper::comments = undef;
@@ -633,6 +634,7 @@ sub test_dispatch {
     my %opt = @_;
 
     my $tempd = _ok_clone_dist_dir( $case->{name} );
+    local $case->{dist}{build_dir} = "$tempd";
                 
     my ($stdout, $stderr, $err) = _run_report( $case );
 
