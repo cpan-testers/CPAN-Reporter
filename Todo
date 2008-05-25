@@ -33,6 +33,8 @@ TODO list for Perl module CPAN::Reporter
 
 - list installed versions of any modules in requires/recommends/etc
 
+- list path of requires/recommends/etc/
+
 - add support for a "comment.txt" file in the config directory to use
   in place of the default comment
 
