@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-1.15_50
+1.15_50 Tue Jun  3 12:13:12 EDT 2008
 
     - Added: on FAIL reports, now checks for missing configure_requires
       and discards the report if configure_requires is not satisfied. 

@@ -91,6 +91,13 @@ t/dist/NoTestFiles/Build.PL
 t/dist/NoTestFiles/lib/Bogus/Module.pm
 t/dist/NoTestFiles/Makefile.PL
 t/dist/NoTestFiles/t/README
+t/dist/PL-ConfigRequires/Build.PL
+t/dist/PL-ConfigRequires/lib/Bogus/Module.pm
+t/dist/PL-ConfigRequires/Makefile.PL
+t/dist/PL-ConfigRequires/MANIFEST
+t/dist/PL-ConfigRequires/MANIFEST.SKIP
+t/dist/PL-ConfigRequires/META.yml
+t/dist/PL-ConfigRequires/t/01_Bogus.t
 t/dist/PL-Fail/Build.PL
 t/dist/PL-Fail/lib/Bogus/Module.pm
 t/dist/PL-Fail/Makefile.PL
@@ -299,6 +306,7 @@ t/history/history.db
 t/history/reports-sent-longer.db
 t/history/reports-sent.db
 t/MockCPANDist.pm
+t/MockHomeDir.pm
 t/perl5lib-shadow/Bogus/Shadow.pm
 t/perl5lib/Bogus/Broken.pm
 t/perl5lib/Bogus/Complex.pm

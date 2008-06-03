@@ -3,3 +3,4 @@ _build/*
 Makefile
 blib/*
 pm_to_blib
+MANIFEST.bak
