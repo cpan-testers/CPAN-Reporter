@@ -89,24 +89,6 @@ my @cases = (
         exit_code => 0,
     },
     {
-        label => "Relative path command",
-        relative => 1,
-        program => 'print qq{foo\n}; exit 0',
-        args => '',
-        output => [ "foo\n" ],
-        exit_code => 0,
-    },
-    {
-        label => "Relative and timeout",
-        relative => 1,
-        program => '$now=time(); 1 while( time() - $now < 60); print qq{foo\n}; exit 0',
-        args => '',
-        output => [],
-        delay => 60,
-        timeout => 5,
-        exit_code => 9,
-    },
-    {
         label => "Autoflush",
         program => 'print $| ? 1 : 0, "\n"; exit 0',
         args => '',
@@ -126,8 +108,6 @@ require_ok( "CPAN::Reporter" );
 
 for my $c ( @cases ) {
 SKIP: {
-    skip "Couldn't run perl with relative path", $tests_per_case
-        if $c->{relative} && system("perl -e 1") == -1;
     if ( $^O eq 'MSWin32' && $c->{timeout} ) {
         skip "\$ENV{PERL_AUTHOR_TESTING} required for Win32 timeout testing", 
             $tests_per_case
@@ -144,7 +124,7 @@ SKIP: {
     my ($output, $exit);
     my ($stdout, $stderr);
     my $start_time = time();
-    my $cmd = $c->{relative} ? "perl" : $perl; 
+    my $cmd = $perl; 
     warn "# sleeping for timeout test\n" if $c->{timeout};
     eval {
         capture sub {
