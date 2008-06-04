@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+1.15_51 Wed Jun  4 17:57:42 EDT 2008
+
+    - Fixed: t/13_record_command.t relative path tests are incompatible
+      with Devel::Autoflush; removed the broken tests
+
 1.15_50 Tue Jun  3 12:13:12 EDT 2008
 
     - Added: on FAIL reports, now checks for missing configure_requires
