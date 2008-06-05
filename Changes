@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+1.15_53 Thu Jun  5 06:37:13 EDT 2008
+
+    - Fixed: PERL5OPT could was being set with a leading space, which can
+      break distributions being tested under Test::Harness
+    
 1.15_52 Wed Jun  4 22:23:39 EDT 2008
 
     - Fixed: t/11_env_config.t had a bug that would fail incorrectly if
