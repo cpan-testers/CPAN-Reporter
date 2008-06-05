@@ -97,7 +97,7 @@ test_fake_config();
 
 $got = CPAN::Reporter::_env_report();
 for my $var ( sort @env_vars_found ) {
-    my ($name, $value) = ( $got =~ m{^ +(\Q$var\E) += +([^\n]*?)$}ms );
+    my ($name, $value) = ( $got =~ m{^ +(\Q$var\E) = ([^\n]*?)$}ms );
     is( $name, $var,
         "found \$ENV{$var}"
     );

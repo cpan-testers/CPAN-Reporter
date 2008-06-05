@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+1.15_52 Wed Jun  4 22:23:39 EDT 2008
+
+    - Fixed: t/11_env_config.t had a bug that would fail incorrectly if
+      an environment variable had a leading space
+
 1.15_51 Wed Jun  4 17:57:42 EDT 2008
 
     - Fixed: t/13_record_command.t relative path tests are incompatible
