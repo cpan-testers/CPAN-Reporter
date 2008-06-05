@@ -8,7 +8,7 @@ CPAN::Reporter::History - Read or write a CPAN::Reporter history log
 
 =head1 VERSION
 
-This documentation refers to version 1.15_51
+This documentation refers to version 1.15_52
 
 =head1 SYNOPSIS
 
