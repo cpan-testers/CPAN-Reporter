@@ -1135,11 +1135,21 @@ sub _temp_filename {
 sub _timeout_wrapper {
     my ($cmd, $timeout) = @_;
     
+    eval "use Proc::Killfam ()";
+    if ($@) {
+        $CPAN::Frontend->mywarn( << 'HERE' );
+CPAN::Reporter: you need Proc::Killfam for inactivity_timeout support.
+Continuing without timeout...
+HERE
+        return;
+    }
+
     # protect shell quotes
     $cmd = quotemeta($cmd);
 
     my $wrapper = sprintf << 'HERE', $timeout, $cmd, $cmd;
 use strict;
+use Proc::Killfam 'killfam';
 my ($pid, $exitcode);
 eval {
     local $SIG{CHLD};
@@ -1156,10 +1166,7 @@ eval {
 };
 alarm 0;
 if ($pid && $@ =~ /Timeout/){
-    local $SIG{TERM} = 'IGNORE'; # protect ourself
-    kill -15, $$; # send SIGTERM to the rest of our group
-    sleep 1; # pause for them to die
-    kill 9, $pid if kill 0, $pid; # SIGKILL child if still alive
+    killfam 9, $pid;
     my $wstat = waitpid $pid, 0;
     $exitcode = $wstat == -1 ? -1 : $?;
 }
