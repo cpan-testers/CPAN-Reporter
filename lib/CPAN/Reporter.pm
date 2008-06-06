@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 use vars qw/$VERSION/;
-$VERSION = '1.15_53'; 
+$VERSION = '1.15_54'; 
 $VERSION = eval $VERSION;
 
 use Config;
@@ -1151,13 +1151,15 @@ eval {
         my $wstat = waitpid $pid, 0;
         $exitcode = $wstat == -1 ? -1 : $?;
     } else {    #child
-        setpgrp; # new process group for targeted kill
         exec "%s";
     }
 };
 alarm 0;
 if ($pid && $@ =~ /Timeout/){
-    kill -9, $pid;
+    local $SIG{TERM} = 'IGNORE'; # protect ourself
+    kill -15, $$; # send SIGTERM to the rest of our group
+    sleep 1; # pause for them to die
+    kill 9, $pid if kill 0, $pid; # SIGKILL child if still alive
     my $wstat = waitpid $pid, 0;
     $exitcode = $wstat == -1 ? -1 : $?;
 }

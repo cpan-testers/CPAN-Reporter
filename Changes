@@ -1,5 +1,12 @@
 Revision history for Perl module CPAN::Reporter
 
+1.15_54 Thu Jun  5 23:30:45 EDT 2008
+
+    - Fixed: on some systems, record_command() could wind up losing terminal
+      input due to different implementations of setpgrp(); changed to use
+      a more convoluted but hopefully more robust method of timing-out 
+      the tree of child processes (bug reported by Andy Armstrong)
+
 1.15_53 Thu Jun  5 06:37:13 EDT 2008
 
     - Fixed: PERL5OPT could was being set with a leading space, which can
