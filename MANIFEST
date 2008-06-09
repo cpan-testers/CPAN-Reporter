@@ -98,6 +98,13 @@ t/dist/PL-ConfigRequires/MANIFEST
 t/dist/PL-ConfigRequires/MANIFEST.SKIP
 t/dist/PL-ConfigRequires/META.yml
 t/dist/PL-ConfigRequires/t/01_Bogus.t
+t/dist/PL-ConfigRequiresError/Build.PL
+t/dist/PL-ConfigRequiresError/lib/Bogus/Module.pm
+t/dist/PL-ConfigRequiresError/Makefile.PL
+t/dist/PL-ConfigRequiresError/MANIFEST
+t/dist/PL-ConfigRequiresError/MANIFEST.SKIP
+t/dist/PL-ConfigRequiresError/META.yml
+t/dist/PL-ConfigRequiresError/t/01_Bogus.t
 t/dist/PL-Fail/Build.PL
 t/dist/PL-Fail/lib/Bogus/Module.pm
 t/dist/PL-Fail/Makefile.PL
