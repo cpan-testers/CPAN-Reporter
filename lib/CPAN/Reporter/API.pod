@@ -8,7 +8,7 @@ CPAN::Reporter::API - Programmer's interface to CPAN::Reporter
 
 =head1 VERSION
 
-This documentation refers to version 1.15_54
+This documentation refers to version 1.15_55
 
 =head1 FUNCTIONS
 
