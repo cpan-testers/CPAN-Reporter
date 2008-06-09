@@ -807,7 +807,12 @@ sub _prereq_report {
     if ( $dist->{build_dir} && -d $dist->{build_dir} ) {
       my $meta_yml = File::Spec->catfile($dist->{build_dir}, 'META.yml');
       if ( -f $meta_yml ) {
-        my @yaml = Parse::CPAN::Meta::LoadFile($meta_yml);
+        my @yaml = eval { Parse::CPAN::Meta::LoadFile($meta_yml) };
+        if ( $@ ) {
+          $CPAN::Frontend->mywarn( "
+            CPAN::Reporter: error parsing META.yml for configure_requires.\n"
+          );
+        }
         if (  ref $yaml[0] eq 'HASH' && 
               ref $yaml[0]{configure_requires} eq 'HASH' 
         ) {

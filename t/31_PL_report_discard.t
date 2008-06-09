@@ -52,6 +52,14 @@ my @test_distros = (
         mb_success => 0,
         mb_grade => "discard",
     },
+    {
+        name => 'PL-ConfigRequiresError',
+        prereq => {},
+        eumm_success => 0,
+        eumm_grade => "fail",
+        mb_success => 0,
+        mb_grade => "fail",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() 
