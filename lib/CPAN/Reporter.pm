@@ -809,8 +809,8 @@ sub _prereq_report {
       if ( -f $meta_yml ) {
         my @yaml = eval { Parse::CPAN::Meta::LoadFile($meta_yml) };
         if ( $@ ) {
-          $CPAN::Frontend->mywarn( "
-            CPAN::Reporter: error parsing META.yml for configure_requires.\n"
+          $CPAN::Frontend->mywarn( 
+            "CPAN::Reporter: error parsing META.yml\n"
           );
         }
         if (  ref $yaml[0] eq 'HASH' && 
