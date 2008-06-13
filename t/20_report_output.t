@@ -33,22 +33,27 @@ my @cases = (
     {
         expected_grade => "pass",
         name => "t-Pass",
+        automated => 0,
     },
     {
         expected_grade => "fail",
         name => "t-Fail",
+        automated => 0,
     },
     {
         expected_grade => "unknown",
         name => "NoTestFiles",
+        automated => 0,
     },
     {
         expected_grade => "na",
         name => "t-NoSupport",
+        automated => 0,
     },
     {
         expected_grade => "fail",
         name => "t-Fail-LongOutput",
+        automated => 0,
     },
     {
         expected_grade => "pass",
