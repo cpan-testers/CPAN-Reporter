@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+1.15_XX
+
+    - Documented: removed suggestion to subscribe to cpan-testers since
+      that no longer is necessary (noted by Jose Luis Martinez)
+    
 1.15_55 Mon Jun  9 08:11:01 EDT 2008
 
     - Fixed: catch META.yml parse failures from Parse::CPAN::Meta

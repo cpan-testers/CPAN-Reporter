@@ -1413,12 +1413,6 @@ Users will need to enter an email address in one of the following formats:
  John Doe <johndoe@example.com>
  "John Q. Public" <johnqpublic@example.com>
 
-Because {cpan-testers} uses a mailing list to collect test reports, it is
-helpful if the email address provided is subscribed to the list.  Otherwise,
-test reports will be held until manually reviewed and approved.  Subscribing an
-account to the cpan-testers list is as easy as sending a blank email to
-cpan-testers-subscribe@perl.org and replying to the confirmation email.
-
 Users will also be prompted to enter the name of an outbound email server.  It
 is recommended to use an email server provided by the user's ISP or company.
 Alternatively, leave this blank to attempt to send email directly to perl.org.
