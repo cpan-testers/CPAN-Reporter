@@ -140,9 +140,12 @@ HERE
     $tee_input .= " $redirect" if defined $redirect;
     {
       # ensure autoflush
+      require Devel::Autoflush;
+      my $inc_path = $INC{'Devel/Autoflush.pm'};
+      $inc_path =~ s{/Devel/Autoflush.pm$}{};
       local $ENV{PERL5OPT} = $ENV{PERL5OPT} || q{};
       $ENV{PERL5OPT} .= q{ } if length $ENV{PERL5OPT};
-      $ENV{PERL5OPT} .= '-MDevel::Autoflush';
+      $ENV{PERL5OPT} .= "-I$inc_path -MDevel::Autoflush";
       tee($tee_input, { stderr => 1 }, $temp_out);
     }
 
