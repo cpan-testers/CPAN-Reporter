@@ -15,9 +15,9 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
-- Add Oslo Accords environment variables
+- Add utility sub to invoke a tests (for C::R::S and PoCo::C::R)
 
-- Add CPAN::PERL5INC details
+- Add Oslo Accords environment variables
 
 - Add datestamps to history (ISO 8601: YYYY-MM-DD HH:MM:SS)
     -   my @t=localtime; $t[4]++; $t[5]+=1900; 
