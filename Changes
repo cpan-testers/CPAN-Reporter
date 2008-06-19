@@ -1,6 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
-1.15_XX
+1.15_56
+
+    - Fixed: distributions that call 'perl' instead of '$^X' could fail
+      trying to load Devel::Autoflush; added -I flag to PERL5OPT with 
+      path to Devel::Autoflush to ensure it can be found
 
     - Documented: removed suggestion to subscribe to cpan-testers since
       that no longer is necessary (noted by Jose Luis Martinez)
