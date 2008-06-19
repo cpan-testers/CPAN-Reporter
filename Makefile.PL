@@ -2,30 +2,30 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
-          'PL_FILES' => {},
-          'INSTALLDIRS' => 'site',
           'NAME' => 'CPAN::Reporter',
-          'EXE_FILES' => [],
           'VERSION_FROM' => 'lib/CPAN/Reporter.pm',
           'PREREQ_PM' => {
-                           'IO::CaptureOutput' => '1.03',
-                           'File::Spec' => '3.19',
-                           'Probe::Perl' => 0,
-                           'File::Find' => 0,
-                           'Test::Reporter' => '1.4',
-                           'File::Path' => 0,
-                           'Parse::CPAN::Meta' => 0,
-                           'File::pushd' => '0.32',
-                           'File::HomeDir' => '0.58',
-                           'ExtUtils::MakeMaker' => '6.36',
+                           'CPAN' => '1.9203',
+                           'Config::Tiny' => '2.08',
                            'Devel::Autoflush' => 0,
+                           'ExtUtils::MakeMaker' => '6.36',
+                           'File::Basename' => 0,
+                           'File::Copy::Recursive' => '0.35',
+                           'File::Find' => 0,
+                           'File::HomeDir' => '0.58',
+                           'File::Path' => 0,
+                           'File::Spec' => '3.19',
+                           'File::Temp' => '0.16',
+                           'File::pushd' => '0.32',
+                           'IO::CaptureOutput' => '1.03',
+                           'Parse::CPAN::Meta' => 0,
+                           'Probe::Perl' => 0,
                            'Tee' => '0.13',
                            'Test::More' => '0.62',
-                           'File::Temp' => '0.16',
-                           'File::Copy::Recursive' => '0.35',
-                           'CPAN' => '1.9203',
-                           'File::Basename' => 0,
-                           'Config::Tiny' => '2.08'
-                         }
+                           'Test::Reporter' => '1.4'
+                         },
+          'INSTALLDIRS' => 'site',
+          'EXE_FILES' => [],
+          'PL_FILES' => {}
         )
 ;
