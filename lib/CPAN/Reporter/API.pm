@@ -3,7 +3,7 @@ package CPAN::Reporter::API;
 # turned into .pod by the Build.PL
 use strict; # make CPANTS happy
 use vars qw/$VERSION/;
-$VERSION = '1.15_56'; 
+$VERSION = '1.16'; 
 $VERSION = eval $VERSION;
 1;
 __END__
@@ -50,11 +50,15 @@ command prior to the pipe will be wrapped and teed.  The pipe will be
 applied to the execution of the wrapper script.  This is essential to 
 capture the exit value of the command and should be otherwise transparent.
 
-If a non-zero {$secs} argument is provided, the command will be run with 
-a timeout of {$secs} (seconds).  On Win32, [Win32::Job] must be
-available or code will fall-back to running without a timeout; also, the
-first space-separated element of the command must be absolute, or else
-".exe" will be appended and the PATH searched for a matching command.
+If a non-zero {$secs} argument is provided, the command will be run with a
+timeout of {$secs} (seconds) if the appropriate process management modules are
+available.  On Win32, [Win32::Job] must be available; on Unix, [Proc::Killfam]
+must be available.  Otherwise, code will fall-back to running without a
+timeout.
+
+Also, on Win32, the first space-separated element of the command must be
+absolute, or else ".exe" will be appended and the PATH searched for a matching
+command.
 
 If the attempt to record fails, a warning will be issued and one or more of 
 {$output} or {$exit_value} will be undefined.
