@@ -2,6 +2,11 @@ Revision history for Perl module CPAN::Reporter
 
 1.1601
 
+    - Fixed: reverted 1.15_56 PERL5OPT changes; Devel::Autoflush INC path
+      no longer added with "-I" as it causes old modules to be found during
+      testing.  Testers will have to live with authors complaining about
+      Devel::Autoflush missing when calling 'perl' instead of $^X
+
 
 1.16 Fri Jul  4 09:14:52 EDT 2008
 
