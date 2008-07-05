@@ -1140,11 +1140,16 @@ sub _temp_filename {
 sub _timeout_wrapper {
     my ($cmd, $timeout) = @_;
     
-    eval "use Proc::Killfam ()";
+    # Check Proc::ProcessTable also in case an unauthorized Proc::Killfam is
+    # present, as from Tk-ExecuteCommand
+    {
+      local $SIG{__WARN__} = sub {};  # protect against v-string warning
+      eval "require Proc::ProcessTable; require Proc::Killfam";
+    }
     if ($@) {
         $CPAN::Frontend->mywarn( << 'HERE' );
-CPAN::Reporter: you need Proc::Killfam for inactivity_timeout support.
-Continuing without timeout...
+CPAN::Reporter: you need Proc::ProcessTable and Proc::Killfam for 
+inactivity_timeout support.  Continuing without timeout...
 HERE
         return;
     }

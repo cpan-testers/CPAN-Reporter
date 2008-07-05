@@ -1,13 +1,16 @@
 Revision history for Perl module CPAN::Reporter
 
-1.1601
+1.1601 Sat Jul  5 09:37:14 EDT 2008
 
     - Fixed: reverted 1.15_56 PERL5OPT changes; Devel::Autoflush INC path
       no longer added with "-I" as it causes old modules to be found during
       testing.  Testers will have to live with authors complaining about
-      Devel::Autoflush missing when calling 'perl' instead of $^X
+      Devel::Autoflush missing when authors call 'perl' instead of $^X
 
-
+    - Fixed: timeout support on *nix checks for *both* Proc::Killfam and
+      Proc::ProcessTable to protect against unauthorized copies of only
+      Proc::Killfam bundled in distributions like Tk-ExecuteCommand
+    
 1.16 Fri Jul  4 09:14:52 EDT 2008
 
     - No changes since 1.15_56

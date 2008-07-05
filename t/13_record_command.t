@@ -109,9 +109,12 @@ require_ok( "CPAN::Reporter" );
 for my $c ( @cases ) {
 SKIP: {
     if ( $^O ne 'MSWin32' && $c->{timeout} ) {
-        eval "use Proc::Killfam ()";
-        skip "Proc::Killfam needed for timeout testing", $tests_per_case
-            if $@;
+      {
+        local $SIG{__WARN__} = sub {}; # suppress v-string warnings
+        eval "require Proc::ProcessTable; require Proc::Killfam";
+      }
+      skip "requires Proc::ProcessTable and Proc::Killfam", $tests_per_case
+        if $@;
     }
     if ( $^O eq 'MSWin32' && $c->{timeout} ) {
         skip "\$ENV{PERL_AUTHOR_TESTING} required for Win32 timeout testing", 

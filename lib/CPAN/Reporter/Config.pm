@@ -673,7 +673,7 @@ to stop after some amount of time; generally, this should be large --
 900 seconds or more -- as some distributions' tests take quite a long time to 
 run.  On MSWin32, [Win32::Job] is a needed and trying to kill a processes may 
 actually deadlock in some situations -- so use at your own risk.  On other
-platforms, [Proc::Killfam] is required.
+platforms, [Proc::ProcessTable] and [Proc::Killfam] are required.
 * {editor = <editor>} -- editor to use to edit the test report; if not set,
 Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
 (in that order) to find an editor 

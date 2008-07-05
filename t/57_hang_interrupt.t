@@ -14,9 +14,12 @@ use File::Temp;
 #--------------------------------------------------------------------------#
 
 if ( $^O ne 'MSWin32' ) {
-    eval "use Proc::Killfam ()";
-    plan skip_all => "Can't interrupt hung processes without Proc::Killfam"
-        if $@;
+  {
+    local $SIG{__WARN__} = sub {}; # suppress v-string warnings
+    eval "require Proc::ProcessTable; require Proc::Killfam";
+  }
+  plan skip_all => "requires Proc::ProcessTable and Proc::Killfam"
+    if $@;
 }
 if ( $^O eq "MSWin32" ) {
     plan skip_all => "\$ENV{PERL_AUTHOR_TESTING} required for Win32 timeout testing", 
