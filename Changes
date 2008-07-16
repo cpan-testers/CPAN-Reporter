@@ -5,6 +5,9 @@ Revision history for Perl module CPAN::Reporter
     - Added: restored "-I" for PERL5OPT, but to a temporary lib
       directory containing a copy of Devel::Autoflush.  
 
+    - Fixed: enviroment variables section of report now reflects
+      PERL5OPT as used during build and testing
+
 1.1601 Sat Jul  5 09:37:14 EDT 2008
 
     - Fixed: reverted 1.15_56 PERL5OPT changes; Devel::Autoflush INC path

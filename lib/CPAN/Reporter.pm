@@ -157,11 +157,7 @@ HERE
     $tee_input .= " $redirect" if defined $redirect;
     {
       # ensure autoflush if we can
-      local $ENV{PERL5OPT} = $ENV{PERL5OPT} || q{};
-      if ( $Autoflush_Lib ) {
-        $ENV{PERL5OPT} .= q{ } if length $ENV{PERL5OPT};
-        $ENV{PERL5OPT} .= "-I$Autoflush_Lib -MDevel::Autoflush";
-      }
+      local $ENV{PERL5OPT} = _get_perl5opt();
       tee($tee_input, { stderr => 1 }, $temp_out);
     }
 
@@ -626,6 +622,8 @@ my @env_vars= qw(
 
 sub _env_report {
     my @vars_found;
+    # mirror PERL5OPT as in record_command
+    local $ENV{PERL5OPT} = _get_perl5opt();
     for my $var ( @env_vars ) {
         if ( $var =~ m{^/(.+)/$} ) {
             push @vars_found, grep { /$1/ } keys %ENV;
@@ -664,6 +662,18 @@ sub _file_copy_quiet {
   print FH $pm_guts;
   close FH;
   return 1;
+}
+
+#--------------------------------------------------------------------------#
+# _get_perl5opt
+#--------------------------------------------------------------------------#
+
+sub _get_perl5opt {
+  my $perl5opt = $ENV{PERL5OPT} || q{};
+  if ( $Autoflush_Lib ) {
+    $perl5opt .= q{ } if length $perl5opt;
+    $perl5opt .= "-I$Autoflush_Lib -MDevel::Autoflush";
+  }
 }
 
 #--------------------------------------------------------------------------#
@@ -1067,7 +1077,6 @@ ENDREPORT
 
     return $output;
 }
-
 
 #--------------------------------------------------------------------------#
 # _should_copy_author
