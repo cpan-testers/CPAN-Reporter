@@ -7,11 +7,12 @@ $VERSION = eval $VERSION;
 use Config;
 use CPAN ();
 use CPAN::Version ();
-use File::Basename qw/basename/;
+use File::Basename qw/basename dirname/;
 use File::Find ();
 use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
 use File::Spec ();
+use File::Temp qw/tempdir/;
 use IO::File ();
 use Parse::CPAN::Meta ();
 use Probe::Perl ();
@@ -22,6 +23,22 @@ use CPAN::Reporter::History ();
 use CPAN::Reporter::PrereqCheck ();
 
 use constant MAX_OUTPUT_LENGTH => 50_000;
+
+#--------------------------------------------------------------------------#
+# create temp lib dir for Devel::Autoflush
+# so that PERL5OPT=-MDevel::Autoflush is found by any perl
+#--------------------------------------------------------------------------#
+
+require Devel::Autoflush;
+# directory fixture
+my $Autoflush_Lib = tempdir( 
+  "CPAN-Reporter-lib-XXXX", TMPDIR => 1, CLEANUP => 1 
+);
+# copy Devel::Autoflush to directory or clear autoflush_lib variable
+_file_copy_quiet( 
+  $INC{'Devel/Autoflush.pm'}, 
+  File::Spec->catfile( $Autoflush_Lib, qw/Devel Autoflush.pm/ )
+) or undef $Autoflush_Lib;
 
 #--------------------------------------------------------------------------#
 # public API
@@ -139,10 +156,12 @@ HERE
     my $tee_input = Probe::Perl->find_perl_interpreter() .  " $wrapper_name";
     $tee_input .= " $redirect" if defined $redirect;
     {
-      # ensure autoflush
+      # ensure autoflush if we can
       local $ENV{PERL5OPT} = $ENV{PERL5OPT} || q{};
-      $ENV{PERL5OPT} .= q{ } if length $ENV{PERL5OPT};
-      $ENV{PERL5OPT} .= "-MDevel::Autoflush";
+      if ( $Autoflush_Lib ) {
+        $ENV{PERL5OPT} .= q{ } if length $ENV{PERL5OPT};
+        $ENV{PERL5OPT} .= "-I$Autoflush_Lib -MDevel::Autoflush";
+      }
       tee($tee_input, { stderr => 1 }, $temp_out);
     }
 
@@ -623,6 +642,28 @@ sub _env_report {
         $report .= "    $var = $value\n";
     }
     return $report;
+}
+
+#--------------------------------------------------------------------------#
+# _file_copy_quiet
+#
+# manual file copy -- quietly return undef on failure
+#--------------------------------------------------------------------------#
+
+sub _file_copy_quiet {
+  my ($source, $target) = @_;
+  # ensure we have a target directory
+  mkpath( dirname($target) ) or return;
+  # read source
+  local *FH;
+  open FH, "<$source" or return;
+  my $pm_guts = do { local $/; <FH> };
+  close FH;
+  # write target
+  open FH, ">$target" or return;
+  print FH $pm_guts;
+  close FH;
+  return 1;
 }
 
 #--------------------------------------------------------------------------#

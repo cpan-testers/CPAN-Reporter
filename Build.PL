@@ -22,7 +22,7 @@ $class->new(
         'File::Path'            => 0,
         'File::pushd'           => 0.32,
         'File::Spec'            => 3.19,
-        'File::Temp'            => 0.16,  # build_requires
+        'File::Temp'            => 0.16,  
         'IO::CaptureOutput'     => 1.03,  # build_requires
         'Parse::CPAN::Meta'     => 0,
         'Probe::Perl'           => 0,

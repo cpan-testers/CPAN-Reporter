@@ -1,8 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
-1.16_50
+1.16_50 
 
-    - in development
+    - Added: restored "-I" for PERL5OPT, but to a temporary lib
+      directory containing a copy of Devel::Autoflush.  
 
 1.1601 Sat Jul  5 09:37:14 EDT 2008
 
