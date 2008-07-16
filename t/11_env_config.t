@@ -96,14 +96,17 @@ test_fake_config();
 #--------------------------------------------------------------------------#
 
 $got = CPAN::Reporter::_env_report();
-for my $var ( sort @env_vars_found ) {
-    my ($name, $value) = ( $got =~ m{^ +(\Q$var\E) = ([^\n]*?)$}ms );
-    is( $name, $var,
-        "found \$ENV{$var}"
-    );
-    is( defined $value ? $value : '', defined $ENV{$var} ? $ENV{$var} : '',
-        "value of \$ENV{$var} is correct"
-    );
+{
+  local $ENV{PERL5OPT} = CPAN::Reporter::_get_perl5opt(); # as in _env_report
+  for my $var ( sort @env_vars_found ) {
+      my ($name, $value) = ( $got =~ m{^ +(\Q$var\E) = ([^\n]*?)$}ms );
+      is( $name, $var,
+          "found \$ENV{$var}"
+      );
+      is( defined $value ? $value : '', defined $ENV{$var} ? $ENV{$var} : '',
+          "value of \$ENV{$var} is correct"
+      );
+  }
 }
 
 #--------------------------------------------------------------------------#
