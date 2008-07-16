@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+1.16_51 Wed Jul 16 12:41:48 EDT 2008
+
+    - Fixed: t/11_env_config was failing when tested under
+      CPAN::Reporter due to PERL5OPT manipulations
+
 1.16_50 Wed Jul 16 09:41:20 EDT 2008
 
     - Added: restored "-I" for PERL5OPT, but to a temporary lib

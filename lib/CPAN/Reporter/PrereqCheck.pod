@@ -8,7 +8,7 @@ CPAN::Reporter::PrereqCheck - Modulino for prerequisite tests
 
 =head1 VERSION
 
-This documentation describes version 1.16_50.
+This documentation describes version 1.16_51.
 
 =head1 SYNOPSIS
 
