@@ -4,7 +4,7 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
-- Set path to Devel::Autoflush as a "-I" in PERL5OPT
+- make sure ENV report shows PERL5OPT for Devel::Autoflush
 
 - Check for makefile out of date strings and discard
   -  m/Makefile out-of-date with respect to Makefile.PL/

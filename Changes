@@ -1,5 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+1.16_50
+
+    - in development
+
 1.1601 Sat Jul  5 09:37:14 EDT 2008
 
     - Fixed: reverted 1.15_56 PERL5OPT changes; Devel::Autoflush INC path
