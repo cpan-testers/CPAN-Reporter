@@ -571,6 +571,13 @@ sub _downgrade_known_causes {
         $grade = 'discard';
         $msg = '-j is not a valid option for Module::Build (upgrade your CPAN.pm)';
     }
+    elsif ( 
+      $result->{is_make} && $result->{phase} eq 'make' && 
+      grep { /Makefile out-of-date with respect to Makefile.PL/ } @$output 
+    ) {
+        $grade = 'discard';
+        $msg = 'Makefile out-of-date';
+    }
     
     # store results
     $result->{grade} = $grade;

@@ -52,6 +52,20 @@ my @cases = (
       grade_msg => "-j is not a valid option for Module::Build (upgrade your CPAN.pm)"
     }
   },
+  {
+    label => "makefile out of date",
+    phase => "make",
+    command => "make",
+    output => "blah blah\nMakefile out-of-date with respect to Makefile.PL\nblah blah\n",
+    exit_value => 1 << 8,
+    result => {
+      grade => "unknown"
+    },
+    after => {
+      grade => "discard",
+      grade_msg => "Makefile out-of-date",
+    }
+  },
 );
 
 #--------------------------------------------------------------------------#

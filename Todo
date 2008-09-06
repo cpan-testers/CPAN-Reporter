@@ -4,9 +4,6 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
-- Check for makefile out of date strings and discard
-  -  m/Makefile out-of-date with respect to Makefile.PL/
-
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#
