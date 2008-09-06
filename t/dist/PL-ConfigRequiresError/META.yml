@@ -1,5 +1,5 @@
 ---
-name: Bogus-Module  # not a proper hash key
+name Bogus-Module  # XXX INTENTIONAL ERROR not a proper hash key
 version: 0.01
 author:
   - 'David A. Golden <dagolden@cpan.org>'
