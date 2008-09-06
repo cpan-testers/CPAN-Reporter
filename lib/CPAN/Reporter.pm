@@ -224,7 +224,7 @@ sub _compute_make_grade {
     my $result = shift;
     my ($grade,$msg);
     if ( $result->{exit_value} ) {
-        $result->{grade} = "fail";
+        $result->{grade} = "unknown";
         $result->{grade_msg} = "Stopped with an error"
     }
     else {
@@ -234,8 +234,7 @@ sub _compute_make_grade {
 
     _downgrade_known_causes( $result );
     
-    $result->{success} =  $result->{grade} eq 'pass'
-                       || $result->{grade} eq 'unknown';
+    $result->{success} =  $result->{grade} eq 'pass';
     return;
 }
 
@@ -247,7 +246,7 @@ sub _compute_PL_grade {
     my $result = shift;
     my ($grade,$msg);
     if ( $result->{exit_value} ) {
-        $result->{grade} = "fail";
+        $result->{grade} = "unknown";
         $result->{grade_msg} = "Stopped with an error"
     }
     else {
@@ -257,8 +256,7 @@ sub _compute_PL_grade {
 
     _downgrade_known_causes( $result );
     
-    $result->{success} =  $result->{grade} eq 'pass'
-                       || $result->{grade} eq 'unknown';
+    $result->{success} =  $result->{grade} eq 'pass';
     return;
 }
 
@@ -342,7 +340,7 @@ sub _compute_test_grade {
 #--------------------------------------------------------------------------#
 # _dispatch_report
 #
-# Set up Test::Reporter and prompt user for CC, edit, send
+# Set up Test::Reporter and prompt user for edit, send
 #--------------------------------------------------------------------------#
 
 sub _dispatch_report {
@@ -467,7 +465,6 @@ DUPLICATE_REPORT
     # Populate the test report
     $tr->comments( _report_text( $result ) );
     $tr->via( 'CPAN::Reporter ' . $CPAN::Reporter::VERSION );
-    my @cc = _should_copy_author( $result, $config );
 
     # prompt for editing report
     if ( _prompt( $config, "edit_report", $tr->grade ) =~ /^y/ ) {
@@ -482,8 +479,8 @@ DUPLICATE_REPORT
                     : "send_report" ;
     if ( _prompt( $config, $send_config, $tr->grade ) =~ /^y/ ) {
         $CPAN::Frontend->myprint( "CPAN::Reporter: sending test report with '" . $tr->grade . 
-              "' to " . join(q{, }, $tr->address, @cc) . "\n");
-        if ( $tr->send( @cc ) ) {
+              "' to " . $tr->address . "\n");
+        if ( $tr->send() ) {
             CPAN::Reporter::History::_record_history( $result ) 
                 if not $is_duplicate;
         }
@@ -990,10 +987,10 @@ HERE
 Thank you for uploading your work to CPAN.  However, attempting to
 test your distribution gave an inconclusive result.  
 
-This could be because you did not define tests, tests could not be 
-found, because your tests were interrupted before they finished, or 
-because the results of the tests could not be parsed.  You may wish to 
-consult the CPAN Testers Wiki:
+This could be because your distribution had an error during the make/build
+stage, did not define tests, tests could not be found, because your tests were
+interrupted before they finished, or because the results of the tests could not
+be parsed.  You may wish to consult the CPAN Testers Wiki:
 
 http://cpantest.grango.org/wiki/CPANAuthorNotes
 HERE
@@ -1076,52 +1073,6 @@ $data->{toolchain_versions}
 ENDREPORT
 
     return $output;
-}
-
-#--------------------------------------------------------------------------#
-# _should_copy_author
-#--------------------------------------------------------------------------#
-
-sub _should_copy_author {
-    my ($result, $config) = @_;
-
-    # User prompts for action
-    my $author_email = $result->{author_id} 
-                     ? "$result->{author_id}\@cpan.org"
-                     : q{};
-    if ( ! $author_email ) {
-        $CPAN::Frontend->mywarn( "CPAN::Reporter: couldn't determine author_id and won't cc author.\n");
-        return;
-    }
-
-    # Skip if distribution name matches the cc_skipfile
-    if ( $config->{cc_skipfile} && -r $config->{cc_skipfile} ) {
-        my $cc_skipfile = IO::File->new( $config->{cc_skipfile}, "r" );
-        my $dist_id = $result->{dist}->pretty_id;
-        while ( my $pattern = <$cc_skipfile> ) {
-            chomp($pattern);
-            # ignore comments
-            next if substr($pattern,0,1) eq '#';
-            # if it doesn't match, continue with next pattern
-            next if $dist_id !~ /$pattern/i;
-            # if it matches, warn and return
-            $CPAN::Frontend->myprint( << "END_SKIP_DIST" );
-CPAN::Reporter: '$dist_id' matched against the cc_skipfile.  Won't copy author.
-END_SKIP_DIST
-            return;
-        }
-    }
-
-    # Don't copy author on perls with patchlevels
-    return if $Config{perl_patchlevel};
-
-    # Finally, prompt user if necessary
-    if ( _prompt( $config, "cc_author", $result->{grade}, "($author_email)?") =~ /^y/ ) {
-        return $author_email;
-    }
-    else {
-        return;
-    }
 }
 
 #--------------------------------------------------------------------------#
@@ -1499,21 +1450,20 @@ addition information.
 
 CPAN::Reporter will assign one of the following grades to the report:
 
-* {pass} -- all tests were successful  
+* {pass} -- distribution built and tested correctly
+* {fail} --  distribution failed to test correctly
+* {unknown} -- distribution failed to build, had no test suite or outcome was 
+inconclusive
+* {na} --- distribution is not applicable to this platform and/or 
+version of Perl
 
-* {fail} -- one or more tests failed, one or more test files died during
-testing or no test output was seen
+In returning results of the test suite to CPAN.pm, "pass" and "unknown" are
+considered successful attempts to "make test" or "Build test" and will not
+prevent installation.  "fail" and "na" are considered to be failures and
+CPAN.pm will not install unless forced.
 
-* {na} -- tests could not be run on this platform or version of perl
-
-* {unknown} -- no test files could be found (either t/*.t or test.pl) or 
-a result could not be determined from test output (e.g tests may have hung 
-and been interrupted)
-
-In returning results to CPAN.pm, "pass" and "unknown" are considered successful
-attempts to "make test" or "Build test" and will not prevent installation.
-"fail" and "na" are considered to be failures and CPAN.pm will not install
-unless forced.
+An error from Makefile.PL/Build.PL or make/Build will also be graded as 
+"unknown" and a failure will be signaled to CPAN.pm.
 
 If prerequisites specified in {Makefile.PL} or {Build.PL} are not available,
 no report will be generated and a failure will be signaled to CPAN.pm.

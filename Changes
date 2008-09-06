@@ -2,7 +2,16 @@ Revision history for Perl module CPAN::Reporter
 
 1.17
 
-    
+   -  Changed: In line with changes to CPAN Testers grade definitions, 
+      failures during the PL or make/Build phase will now be reported as
+      UNKNOWN instead of FAIL
+      
+   -  Removed: In line with the CPAN Testers decision to no longer have
+      individual testers send reports to authors, the "cc_author" option
+      has been removed
+
+   -  Docs: updated FAQ
+
 1.16_51 Wed Jul 16 12:41:48 EDT 2008
 
     - Fixed: t/11_env_config was failing when tested under

@@ -241,16 +241,6 @@ reports if you need to (e.g. if you caused the failure).
 This option takes "grade:action" pairs.
 HERE
     },
-    cc_author => {
-        default => 'default:yes pass/na:no',
-        prompt => "Do you want to CC the module author ", # (author@cpan.org) added dynamically
-        validate => \&_validate_grade_action_pair,
-        info => <<'HERE',
-If you would like, CPAN::Reporter will copy the module author with
-the results of your tests.  By default, authors are copied only on 
-failed/unknown results. This option takes "grade:action" pairs.  
-HERE
-    },
     send_duplicates => {
         default => 'default:no',
         prompt => "This report is identical to a previous one.  Send it anyway?",
@@ -549,7 +539,7 @@ The configuration file is in "ini" format, with the option name and value
 separated by an "=" sign
 
   email_from = "John Doe" <johndoe@nowhere.org>
-  cc_author = no
+  edit_report = no
 
 Interactive configuration of email address, mail server and common
 action prompts may be repeated at any time from the CPAN shell.  
@@ -658,14 +648,6 @@ These additional options are only necessary in special cases, for example if
 the default editor cannot be found or if reports shouldn't be sent in 
 certain situations or for automated testing, and so on.
 
-* {cc_author = <grade:action> ...} -- should module authors should be sent a 
-copy of the test report at their {author@cpan.org} address? 
-(default:yes pass/na:no)
-* {cc_skipfile = <skipfile>} -- filename containing regular expressions (one
-per line) to match against the distribution ID (e.g. 
-'AUTHOR/Dist-Name-0.01.tar.gz'); the author will not be copied if a match is 
-found regardless of cc_author; non-absolute filename must be in the .cpanreporter 
-config directory;
 * {command_timeout} -- if greater than zero and the CPAN config is
 {inactivity_timeout} is not set, then any commands executed by CPAN::Reporter 
 will be halted after this many seconds; useful for unattended smoke testing 
@@ -685,8 +667,10 @@ reports be sent, regardless of {send_report}? (default:no)
 {send_report} during the make phase
 * {send_test_report = <grade:action> ...} -- if defined, used in place of 
 {send_report} during the test phase
-* {send_skipfile = <skipfile>} -- like {cc_skipfile} but no report will be 
-sent at all if a match is found
+* {send_skipfile = <skipfile>} -- filename containing regular expressions (one
+per line) to match against the distribution ID (e.g. 
+'AUTHOR/Dist-Name-0.01.tar.gz'); the report will not be sent if a match is 
+found; non-absolute filename must be in the .cpanreporter config directory;
 * {transport = <transport> [transport args]} -- if defined, passed to the 
 {transport()} method of [Test::Reporter].  See below for 
 more details.  (CPAN::Reporter uses 'Net::SMTP' for this by default.)

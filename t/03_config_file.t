@@ -25,7 +25,6 @@ my $config_dir = File::Spec->catdir( t::MockHomeDir::home_dir, ".cpanreporter" )
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 my $default_options = {
     email_from => '',
-#    cc_author => 'default:yes pass/na:no',
     edit_report => 'default:ask/no pass/na:no',
     send_report => 'default:ask/yes pass/na:yes',
 #    send_duplicates => 'default:no',
@@ -228,10 +227,10 @@ SKIP:
 
     my $tiny = Config::Tiny->read( $config_file );
     $tiny->{_}{email_from} = $bogus_email;
-    $tiny->{_}{cc_author} = "invalid:invalid";
+    $tiny->{_}{edit_report} = "invalid:invalid";
 
     ok( $tiny->write( $config_file ),
-        "updated config file with a bad cc_author setting"
+        "updated config file with a bad edit_report setting"
     );
 
     $tiny = Config::Tiny->read( $config_file );
@@ -240,19 +239,19 @@ SKIP:
         $parsed_config = CPAN::Reporter::Config::_get_config_options( $tiny );
     }, \$stdout, \$stderr;
 
-    like( $stdout, "/invalid option 'invalid:invalid' in 'cc_author'. Using default instead./",
+    like( $stdout, "/invalid option 'invalid:invalid' in 'edit_report'. Using default instead./",
         "bad option warning seen"
     );
 
-    is( $parsed_config->{cc_author}, "default:yes pass/na:no",
-        "cc_author default returned"
+    is( $parsed_config->{edit_report}, "default:ask/no pass/na:no",
+        "edit_report default returned"
     );
 
     $tiny = Config::Tiny->read( $config_file );
-    is( $tiny->{_}{cc_author}, "invalid:invalid",
-        "bad cc_author preserved in config.ini"
+    is( $tiny->{_}{edit_report}, "invalid:invalid",
+        "bad edit_report preserved in config.ini"
     );
-    delete $tiny->{_}{cc_author};
+    delete $tiny->{_}{edit_report};
     $tiny->write( $config_file );
 }
 

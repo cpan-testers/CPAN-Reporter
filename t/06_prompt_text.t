@@ -53,7 +53,6 @@ my $case = {
 };
 
 my %prompts = (
-    cc_author => "Do you want to CC the module author (JOHNQP\@cpan.org)?",
     edit_report => "Do you want to review or edit the test report?",
     send_report => "Do you want to send the report?",
     send_duplicates => "This report is identical to a previous one.  Send it anyway?",
@@ -89,7 +88,6 @@ require_ok('CPAN::Reporter');
 require_ok('CPAN::Reporter::History');
 
 test_fake_config( 
-        cc_author => "ask/yes",
         edit_report => "ask/no",
         send_report => "ask/yes",
         send_duplicates => "ask/yes",

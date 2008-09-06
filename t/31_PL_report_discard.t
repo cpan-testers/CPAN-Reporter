@@ -56,9 +56,9 @@ my @test_distros = (
         name => 'PL-ConfigRequiresError',
         prereq => {},
         eumm_success => 0,
-        eumm_grade => "fail",
+        eumm_grade => "unknown",
         mb_success => 0,
-        mb_grade => "fail",
+        mb_grade => "unknown",
     },
 );
 

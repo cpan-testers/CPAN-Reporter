@@ -84,7 +84,6 @@ sub test_fake_config {
     $tiny->{_}{email_from} = $bogus_email_from;
     $tiny->{_}{email_to} = $bogus_email_to; # failsafe
     $tiny->{_}{smtp_server} = $bogus_smtp;
-    $tiny->{_}{cc_author} = "yes";
     $tiny->{_}{send_report} = "yes";
     $tiny->{_}{send_duplicates} = "yes"; # tests often repeat same stuff
     for my $key ( keys %overrides ) {
@@ -123,7 +122,6 @@ sub test_grade_PL {
             
             $t::Helper::sent_report = undef;
             $t::Helper::comments = undef;
-            @t::Helper::cc_list = ();
 
             my ($stdout, $stderr, $build_rc, $test_build_rc, 
                 $output, $exit_value, $rc);
@@ -237,7 +235,6 @@ sub test_grade_make {
 
             $t::Helper::sent_report = undef;
             $t::Helper::comments = undef;
-            @t::Helper::cc_list = ();
 
             my ($stdout, $stderr, $build_err, $test_build_rc, 
                 $output, $exit_value, $rc);
@@ -362,7 +359,6 @@ sub test_grade_test {
                 
             $t::Helper::sent_report = undef;
             $t::Helper::comments = undef;
-            @t::Helper::cc_list = ();
 
             my ($stdout, $stderr, $build_err, $test_build_rc);
 
@@ -469,10 +465,10 @@ HERE
 Thank you for uploading your work to CPAN.  However, attempting to
 test your distribution gave an inconclusive result.  
 
-This could be because you did not define tests, tests could not be 
-found, because your tests were interrupted before they finished, or 
-because the results of the tests could not be parsed.  You may wish to 
-consult the CPAN Testers Wiki:
+This could be because your distribution had an error during the make/build
+stage, did not define tests, tests could not be found, because your tests were
+interrupted before they finished, or because the results of the tests could not
+be parsed.  You may wish to consult the CPAN Testers Wiki:
 
 http://cpantest.grango.org/wiki/CPANAuthorNotes
 HERE
@@ -489,7 +485,7 @@ HERE
     
 );
 
-sub test_report_plan() { 14 };
+sub test_report_plan() { 13 };
 sub test_report {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -604,15 +600,6 @@ sub test_report {
         "$label found output matches expected output"
     );
 
-    my @expected_cc;
-    my $author = $case->{dist}->author;
-    push @expected_cc, $author->id if defined $author && !$Config{perl_patchlevel};
-    is_deeply( 
-        [ @t::Helper::cc_list ], 
-        [ map { $_ . '@cpan.org' } @expected_cc ],
-        "$label cc list correct"
-    );
-
     return ($stdout, $stderr, $err, $test_output);
 };
 
@@ -714,7 +701,6 @@ sub _run_report {
     
     $t::Helper::sent_report = undef;
     $t::Helper::comments = undef;
-    @t::Helper::cc_list = ();
 
     eval {
         capture sub {
@@ -777,7 +763,6 @@ sub comments { shift; $t::Helper::comments = shift }
 sub send { 
     shift; 
     $t::Helper::sent_report = $t::Helper::comments; 
-    @t::Helper::cc_list = ( @_ ); 
     return 1 
 } 
 

@@ -20,12 +20,12 @@ This documentation refers to version %%VERSION%%
 
 = REPORT GRADES
 
-== Why did I receive a report?  The grade was PASS/FAIL/UNKNOWN/NA!
+== Why did I receive a report? 
 
-If you received a report, it's because the person using CPAN::Reporter
-chose to copy you on the report in addition to sending it to CPAN Testers.  
-CPAN::Reporter suggests that only FAIL and UNKNOWN reports be copied to 
-authors, but individual users may override that default.
+Historically, CPAN Testers was designed to have each tester send a copy of
+reports to authors.  This philosophy changed in September 2008 and CPAN Testers
+tools were updated to no longer copy authors, but some testers may still be
+using an older versions.
 
 == Why was a report sent if a prerequisite is missing?
 
@@ -77,20 +77,18 @@ ISP.  See the question above about errors sending reports.
 
 == Why don't you support sending reports via HTTP or authenticated SMTP?
 
-CPAN::Reporter uses [Test::Reporter] as its conduit to CPAN Testers.  
-As soon as Test::Reporter provides support for alternative transport 
-methods, support for them will be added to CPAN::Reporter.
+We do!  See the {transport} option in [CPAN::Reporter::Config].
 
 = CPAN TESTERS
 
 == Where can I find out more about CPAN Testers?
 
 A good place to start is the CPAN Testers Wiki: 
-[http://cpantest.grango.org/]
+[http://wiki.cpantesters.org/]
 
 == Where can I find statistics about reports sent to CPAN Testers?
 
-CPAN Testers statistics are compiled at [http://perl.grango.org/]
+CPAN Testers statistics are compiled at [http://stats.cpantesters.org/]
 
 == How do I make sure I get credit for my test reports?
 

@@ -92,8 +92,7 @@ my @cases = (
     },
 );
 
-plan tests => 1 + @cases * (test_fake_config_plan() + test_dispatch_plan())
-                + @cases * (1+test_fake_config_plan() + test_dispatch_plan());
+plan tests => 1 + @cases * (test_fake_config_plan() + test_dispatch_plan());
 
 #--------------------------------------------------------------------------#
 # tests
@@ -117,34 +116,5 @@ for my $case ( @cases ) {
         $case, 
         will_send => $case->{will_send},
     );
-}
-
-# test cc_skipfile
-for my $case ( @cases ) {
-    local $case->{label} = $case->{label} . " cc_skipfile";
-    $case->{dist} = t::MockCPANDist->new(
-        pretty_id => $case->{pretty_id},
-        %mock_dist_options,
-    );
-    test_fake_config( 
-        send_report => "yes",
-        send_duplicates => "yes",
-        cc_author => "yes",
-        cc_skipfile => "$skipfile", 
-    );
-    test_dispatch( 
-        $case, 
-        will_send => 1,
-    );
-    if ( $case->{will_send} ) {
-        ok( scalar @t::Helper::cc_list > 0,
-            "author copied on email"
-        );
-    }
-    else {
-        ok( scalar @t::Helper::cc_list == 0,
-            "author not copied on email"
-        );
-    }
 }
 
