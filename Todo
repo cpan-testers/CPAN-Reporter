@@ -18,10 +18,10 @@ TODO list for Perl module CPAN::Reporter
     -   my @t=localtime; $t[4]++; $t[5]+=1900; 
         my $iso = sprintf("%4d-%02d-%02d %02d:%02d:%02d", reverse @t[0..5]);
 
-- For failure in PL stage -- show configure_requires and an error message
-  that other requirements aren't available if PL fails
+- For failure in PL stage -- in report, show configure_requires and an error
+  message that other requirements aren't available if PL fails
 
-- change report truncation to take first 25K and last 25K (summary) (?)
+- change report truncation to take first 25K and last 25K (summary) (?!)
 
 - check for working signals regardless of platform and skip if not working --
   maybe during *.PL (write a signaling file)

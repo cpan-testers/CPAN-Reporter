@@ -44,6 +44,7 @@ t/54_test_report_split.t
 t/55_test_report_discard.t
 t/56_test_report_harness_versions.t
 t/57_hang_interrupt.t
+t/60_discard_triggers.t
 t/61_bad_dist_names.t
 t/62_duplicate_reports.t
 t/63_config_send_report.t

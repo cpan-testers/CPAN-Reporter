@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-1.17
+1.17 Sat Sep  6 19:35:44 EDT 2008
 
    -  Changed: In line with changes to CPAN Testers grade definitions, 
       failures during the PL or make/Build phase will now be reported as
@@ -9,6 +9,10 @@ Revision history for Perl module CPAN::Reporter
    -  Removed: In line with the CPAN Testers decision to no longer have
       individual testers send reports to authors, the "cc_author" option
       has been removed
+
+   -  Fixed: "Build -j3" type errors are detected and reports discarded
+
+   -  Fixed: Makefile out of date vs Makefile.PL errors detected and discarded
 
    -  Docs: updated FAQ
 
