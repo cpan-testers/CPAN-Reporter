@@ -7,9 +7,6 @@ TODO list for Perl module CPAN::Reporter
 - Check for makefile out of date strings and discard
   -  m/Makefile out-of-date with respect to Makefile.PL/
 
-- Check for 'Build -j2' errors and discard
-  - http://www.nntp.perl.org/group/perl.cpan.testers/2008/09/msg2127117.html
-
 #--------------------------------------------------------------------------#
 # Features, etc
 #--------------------------------------------------------------------------#

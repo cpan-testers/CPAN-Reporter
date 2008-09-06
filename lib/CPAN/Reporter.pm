@@ -567,6 +567,10 @@ sub _downgrade_known_causes {
         $grade = 'discard';
         $msg = 'No Makefile or Build file found';
     }
+    elsif ( $result->{command} =~ /Build.*?-j/ ) {
+        $grade = 'discard';
+        $msg = '-j is not a valid option for Module::Build (upgrade your CPAN.pm)';
+    }
     
     # store results
     $result->{grade} = $grade;
