@@ -4,8 +4,6 @@ TODO list for Perl module CPAN::Reporter
 # Bugs
 #--------------------------------------------------------------------------#
 
-- make sure ENV report shows PERL5OPT for Devel::Autoflush
-
 - Check for makefile out of date strings and discard
   -  m/Makefile out-of-date with respect to Makefile.PL/
 
@@ -18,7 +16,7 @@ TODO list for Perl module CPAN::Reporter
 
 # High priority
 
-- Add utility sub to invoke a tests (for C::R::S and PoCo::C::R)
+- Add utility sub to invoke a test (for C::R::S and PoCo::C::R)
 
 - Add Oslo Accords environment variables
 
@@ -43,11 +41,6 @@ TODO list for Perl module CPAN::Reporter
 - add support for a "comment.txt" file in the config directory to use
   in place of the default comment
 
-- add support for an 'opt-in' file for authors that want CC and then set
-  default cc to none -- possibly kept in author's CPAN directory?
-
-- add 'cc_self' option
-
 - 'force_prompt' config to locally unset PERL_MM_USE_DEFAULT (Rezic)
 
 - add results back to CPAN::Distribution object
@@ -66,8 +59,6 @@ TODO list for Perl module CPAN::Reporter
     - Test phase output
     - make phase output
     - PL phase output
-
-- check for how to confirm portability of setpgrp and kill
 
 - refactor t/Helper.pm
 
@@ -119,10 +110,6 @@ TODO list for Perl module CPAN::Reporter
 - add timeout to EU::MM prompts (RT#28034)
 
 - remove File::Temp as a build_requires dependency
-
-- Add config to save reports to a file (Jerry Hedden) (RT#24816)
-    - may not do this until we have the new CPAN::Testers::Report
-      object and associated transports
 
 - send duplicate report if using "report" (?) or "force" (?)
 

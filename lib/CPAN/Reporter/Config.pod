@@ -8,7 +8,7 @@ CPAN::Reporter::Config - Config file options for CPAN::Reporter
 
 =head1 VERSION
 
-This documentation refers to version 1.16_51
+This documentation refers to version 1.17
 
 =head1 SYNOPSIS
 
@@ -26,7 +26,7 @@ The configuration file is in "ini" format, with the option name and value
 separated by an "=" sign
 
    email_from = "John Doe" <johndoe@nowhere.org>
-   cc_author = no
+   edit_report = no
 
 Interactive configuration of email address, mail server and common
 action prompts may be repeated at any time from the CPAN shell.  
@@ -175,20 +175,6 @@ certain situations or for automated testing, and so on.
 
 =item *
 
-C<<< cc_author = <grade:action> ... >>> -- should module authors should be sent a 
-copy of the test report at their C<<< author@cpan.org >>> address? 
-(default:yes passE<sol>na:no)
-
-=item *
-
-C<<< cc_skipfile = <skipfile> >>> -- filename containing regular expressions (one
-per line) to match against the distribution ID (e.g. 
-'AUTHORE<sol>Dist-Name-0.01.tar.gz'); the author will not be copied if a match is 
-found regardless of cc_author; non-absolute filename must be in the .cpanreporter 
-config directory;
-
-=item *
-
 C<<< command_timeout >>> -- if greater than zero and the CPAN config is
 C<<< inactivity_timeout >>> is not set, then any commands executed by CPAN::Reporter 
 will be halted after this many seconds; useful for unattended smoke testing 
@@ -226,8 +212,10 @@ C<<< send_report >>> during the test phase
 
 =item *
 
-C<<< send_skipfile = <skipfile> >>> -- like C<<< cc_skipfile >>> but no report will be 
-sent at all if a match is found
+C<<< send_skipfile = <skipfile> >>> -- filename containing regular expressions (one
+per line) to match against the distribution ID (e.g. 
+'AUTHORE<sol>Dist-Name-0.01.tar.gz'); the report will not be sent if a match is 
+found; non-absolute filename must be in the .cpanreporter config directory;
 
 =item *
 

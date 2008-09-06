@@ -8,7 +8,7 @@ CPAN::Reporter - Adds CPAN Testers reporting to CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 1.16_51.
+This documentation describes version 1.17.
 
 =head1 SYNOPSIS
 
@@ -98,41 +98,31 @@ CPAN::Reporter will assign one of the following grades to the report:
 
 =item *
 
-C<<< pass >>> -- all tests were successful  
-
-=back
-
-=over
+C<<< pass >>> -- distribution built and tested correctly
 
 =item *
 
-C<<< fail >>> -- one or more tests failed, one or more test files died during
-testing or no test output was seen
-
-=back
-
-=over
+C<<< fail >>> --  distribution failed to test correctly
 
 =item *
 
-C<<< na >>> -- tests could not be run on this platform or version of perl
-
-=back
-
-=over
+C<<< unknown >>> -- distribution failed to build, had no test suite or outcome was 
+inconclusive
 
 =item *
 
-C<<< unknown >>> -- no test files could be found (either tE<sol>*.t or test.pl) or 
-a result could not be determined from test output (e.g tests may have hung 
-and been interrupted)
+C<<< na >>> --- distribution is not applicable to this platform andE<sol>or 
+version of Perl
 
 =back
 
-In returning results to CPAN.pm, "pass" and "unknown" are considered successful
-attempts to "make test" or "Build test" and will not prevent installation.
-"fail" and "na" are considered to be failures and CPAN.pm will not install
-unless forced.
+In returning results of the test suite to CPAN.pm, "pass" and "unknown" are
+considered successful attempts to "make test" or "Build test" and will not
+prevent installation.  "fail" and "na" are considered to be failures and
+CPAN.pm will not install unless forced.
+
+An error from Makefile.PLE<sol>Build.PL or makeE<sol>Build will also be graded as 
+"unknown" and a failure will be signaled to CPAN.pm.
 
 If prerequisites specified in C<<< Makefile.PL >>> or C<<< Build.PL >>> are not available,
 no report will be generated and a failure will be signaled to CPAN.pm.

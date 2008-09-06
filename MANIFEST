@@ -44,14 +44,12 @@ t/54_test_report_split.t
 t/55_test_report_discard.t
 t/56_test_report_harness_versions.t
 t/57_hang_interrupt.t
-t/60_bad_author.t
 t/61_bad_dist_names.t
 t/62_duplicate_reports.t
 t/63_config_send_report.t
 t/64_transport.t
 t/65_skipfile.t
 t/66_have_tested.t
-t/67_dont_cc_blead.t
 t/68_is_make.t
 t/70_darwin_move_config.t
 t/71_missing_config.t
