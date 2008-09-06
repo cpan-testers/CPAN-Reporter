@@ -4,7 +4,7 @@ package CPAN::Reporter::FAQ;
 use strict; # make CPANTS happy
 use vars qw/$VERSION/;
 $VERSION = '1.17'; 
-$VERSION = eval $VERSION;
+$VERSION = eval $VERSION; ## no critic
 1;
 __END__
 

@@ -1,5 +1,18 @@
 severity = 4
 verbose = 8
 
-exclude = ProhibitStringyEval RequireUseWarnings ProhibitConstantPragma 
-include = Lax::ProhibitStringyEvalExceptForRequire
+# include these
+[Lax::ProhibitStringyEval::ExceptForRequire]
+
+# disable these
+[-BuiltinFunctions::ProhibitStringyEval]
+
+[-TestingAndDebugging::RequireUseWarnings]
+
+[-ValuesAndExpressions::ProhibitConstantPragma]
+
+[-InputOutput::ProhibitBarewordFileHandles]
+
+[-InputOutput::ProhibitTwoArgOpen]
+
+[-InputOutput::RequireBriefOpen]

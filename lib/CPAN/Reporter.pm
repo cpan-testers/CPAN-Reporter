@@ -2,7 +2,7 @@ package CPAN::Reporter;
 use strict;
 use vars qw/$VERSION/;
 $VERSION = '1.17'; 
-$VERSION = eval $VERSION;
+$VERSION = eval $VERSION; ## no critic
 
 use Config;
 use CPAN ();
@@ -651,11 +651,11 @@ sub _file_copy_quiet {
   mkpath( dirname($target) ) or return;
   # read source
   local *FH;
-  open FH, "<$source" or return;
+  open FH, "<$source" or return; ## no critic
   my $pm_guts = do { local $/; <FH> };
   close FH;
   # write target
-  open FH, ">$target" or return;
+  open FH, ">$target" or return; ## no critic
   print FH $pm_guts;
   close FH;
   return 1;
@@ -671,6 +671,7 @@ sub _get_perl5opt {
     $perl5opt .= q{ } if length $perl5opt;
     $perl5opt .= "-I$Autoflush_Lib -MDevel::Autoflush";
   }
+  return $perl5opt;
 }
 
 #--------------------------------------------------------------------------#
@@ -1145,7 +1146,7 @@ sub _timeout_wrapper {
     # present, as from Tk-ExecuteCommand
     {
       local $SIG{__WARN__} = sub {};  # protect against v-string warning
-      eval "require Proc::ProcessTable; require Proc::Killfam";
+      eval "require Proc::ProcessTable; require Proc::Killfam"; ## no critic
     }
     if ($@) {
         $CPAN::Frontend->mywarn( << 'HERE' );

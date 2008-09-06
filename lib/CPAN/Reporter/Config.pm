@@ -2,7 +2,7 @@ package CPAN::Reporter::Config;
 use strict; 
 use vars qw/$VERSION/;
 $VERSION = '1.17'; 
-$VERSION = eval $VERSION;
+$VERSION = eval $VERSION; ## no critic
 
 use Config::Tiny ();
 use File::HomeDir (); 

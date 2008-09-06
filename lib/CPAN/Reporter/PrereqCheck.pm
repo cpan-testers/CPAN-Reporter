@@ -2,7 +2,7 @@ package CPAN::Reporter::PrereqCheck;
 use strict;
 use vars qw/$VERSION/;
 $VERSION = '1.17'; 
-$VERSION = eval $VERSION;
+$VERSION = eval $VERSION; ## no critic
 
 use ExtUtils::MakeMaker;
 use File::Spec;
@@ -14,7 +14,7 @@ sub _run {
     my %saw_mod;
     # read module and prereq string from STDIN
     local *DEVNULL;
-    open DEVNULL, ">" . File::Spec->devnull;
+    open DEVNULL, ">" . File::Spec->devnull; 
     while ( <> ) {
         m/^(\S+)\s+([^\n]*)/;
         my ($mod, $need) = ($1, $2);
@@ -49,13 +49,14 @@ sub _run {
                 $have = MM->parse_version($inst_file);
                 $have = "0" if ! defined $have || $have eq 'undef';
                 # report broken if it can't be loaded
-                select DEVNULL; # try to suppress spurious newlines
+                # "select" to try to suppress spurious newlines
+                select DEVNULL; ## no critic 
                 if ( ! eval "require $mod" ) {
-                    select STDOUT;
+                    select STDOUT; ## no critic
                     print "$mod 0 broken\n";
                     next;
                 }
-                select STDOUT;
+                select STDOUT; ## no critic
             }
             else {
                 print "$mod 0 n/a\n";
