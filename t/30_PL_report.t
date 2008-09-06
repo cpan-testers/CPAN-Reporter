@@ -25,10 +25,10 @@ my @test_distros = (
     {
         name => 'PL-Fail',
         eumm_success => 0,
-        eumm_grade => "fail",
+        eumm_grade => "unknown",
         eumm_msg => "Stopped with an error",
         mb_success => 0,
-        mb_grade => "fail",
+        mb_grade => "unknown",
         mb_msg => "Stopped with an error",
     },
     {
