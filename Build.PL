@@ -28,7 +28,7 @@ $class->new(
         'Probe::Perl'           => 0,
         'Tee'                   => 0.13,
         'Test::More'            => 0.62, # various features/fixes
-        'Test::Reporter'        => 1.40, # transport()
+        'Test::Reporter'        => 1.50, # no more author cc
     },
     meta_add            => { 
         no_index => { 

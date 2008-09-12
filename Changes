@@ -6,6 +6,8 @@ Revision history for Perl module CPAN::Reporter
       (since Perl 5.6.2 only supports a single flag); 5.6.2 testers may yet
       again see complaints about missing Devel::Autoflush when authors call
       'perl' instead of $^X in tests (oh, well...)
+
+    - Changed: bumped Test::Reporter prereq to 1.50
     
 1.17 Sat Sep  6 19:35:44 EDT 2008
 

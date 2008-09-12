@@ -25,7 +25,7 @@ requires:
   Probe::Perl: 0
   Tee: 0.13
   Test::More: 0.62
-  Test::Reporter: 1.4
+  Test::Reporter: 1.5
 provides:
   CPAN::Reporter:
     file: lib/CPAN/Reporter.pm
