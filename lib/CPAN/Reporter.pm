@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 use vars qw/$VERSION/;
-$VERSION = '1.17'; 
+$VERSION = '1.1701'; 
 $VERSION = eval $VERSION; ## no critic
 
 use Config;
@@ -680,7 +680,7 @@ sub _get_perl5opt {
   my $perl5opt = $ENV{PERL5OPT} || q{};
   if ( $Autoflush_Lib ) {
     $perl5opt .= q{ } if length $perl5opt;
-    $perl5opt .= "-I$Autoflush_Lib -MDevel::Autoflush";
+    $perl5opt .= "-MDevel::Autoflush -I$Autoflush_Lib";
   }
   return $perl5opt;
 }

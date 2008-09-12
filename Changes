@@ -1,20 +1,27 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1701 Thu Sep 11 23:56:41 EDT 2008
+
+    - Fixed: changed order of -I and -M flags in PERL5OPT to have -M first
+      (since Perl 5.6.2 only supports a single flag); 5.6.2 testers may yet
+      again see complaints about missing Devel::Autoflush when authors call
+      'perl' instead of $^X in tests (oh, well...)
+    
 1.17 Sat Sep  6 19:35:44 EDT 2008
 
-   -  Changed: In line with changes to CPAN Testers grade definitions, 
+    - Changed: In line with changes to CPAN Testers grade definitions, 
       failures during the PL or make/Build phase will now be reported as
       UNKNOWN instead of FAIL
       
-   -  Removed: In line with the CPAN Testers decision to no longer have
+    - Removed: In line with the CPAN Testers decision to no longer have
       individual testers send reports to authors, the "cc_author" option
       has been removed
 
-   -  Fixed: "Build -j3" type errors are detected and reports discarded
+    - Fixed: "Build -j3" type errors are detected and reports discarded
 
-   -  Fixed: Makefile out of date vs Makefile.PL errors detected and discarded
+    - Fixed: Makefile out of date vs Makefile.PL errors detected and discarded
 
-   -  Docs: updated FAQ
+    - Docs: updated FAQ
 
 1.16_51 Wed Jul 16 12:41:48 EDT 2008
 
