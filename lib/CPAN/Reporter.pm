@@ -680,7 +680,7 @@ sub _get_perl5opt {
   my $perl5opt = $ENV{PERL5OPT} || q{};
   if ( $Autoflush_Lib ) {
     $perl5opt .= q{ } if length $perl5opt;
-    $perl5opt .= "-I$Autoflush_Lib " if $] > 5.006;
+    $perl5opt .= "-I$Autoflush_Lib " if $] >= 5.008;
     $perl5opt .= "-MDevel::Autoflush";
   }
   return $perl5opt;
