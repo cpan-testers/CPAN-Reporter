@@ -1,5 +1,14 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1702 Sat Sep 13 07:20:04 EDT 2008
+
+    *** Emergency fix -- 1.1701 tickled a new Test::Harness bug ***
+
+    - Changed: reverted to old -I and -M flag order in PERL5OPT; -I flag 
+      only added on Perl 5.8+; this should still fix Perl < 5.8 that can
+      only take a single flag without provoking the T::H bug
+    
+
 1.1701 Thu Sep 11 23:56:41 EDT 2008
 
     - Fixed: changed order of -I and -M flags in PERL5OPT to have -M first
