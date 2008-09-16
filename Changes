@@ -1,5 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1703
+
+    - Prereq: bumped Devel::Autoflush to 0.03 for various fixes
+
 1.1702 Sat Sep 13 07:20:04 EDT 2008
 
     *** Emergency fix -- 1.1701 tickled a new Test::Harness bug ***

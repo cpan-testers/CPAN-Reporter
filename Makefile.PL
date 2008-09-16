@@ -18,7 +18,7 @@ WriteMakefile
                            'File::pushd' => '0.32',
                            'File::HomeDir' => '0.58',
                            'ExtUtils::MakeMaker' => '6.36',
-                           'Devel::Autoflush' => 0,
+                           'Devel::Autoflush' => '0.03',
                            'Tee' => '0.13',
                            'Test::More' => '0.62',
                            'File::Temp' => '0.16',
