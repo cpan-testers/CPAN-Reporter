@@ -912,21 +912,22 @@ sub _prereq_report {
 
     # generate the report
     for my $section ( @prereq_sections ) {
-        if ( keys %{ $need{$section} } ) {
-            $report .= "$section:\n\n";
-            $report .= sprintf( $format_str, " ", qw/Module Need Have/ );
-            $report .= sprintf( $format_str, " ", 
-                                 "-" x $name_width, 
-                                 "-" x $need_width,
-                                 "-" x $have_width );
+      if ( keys %{ $need{$section} } ) {
+        $report .= "$section:\n\n";
+        $report .= sprintf( $format_str, " ", qw/Module Need Have/ );
+        $report .= sprintf( $format_str, " ", 
+          "-" x $name_width, 
+          "-" x $need_width,
+          "-" x $have_width );
+        for my $module (sort {lc $a cmp lc $b} keys %{ $need{$section} } ) {
+          my $need = $need{$section}{$module};
+          my $have = $have{$section}{$module};
+          my $bad = $prereq_met{$section}{$module} ? " " : "!";
+          $report .= 
+          sprintf( $format_str, $bad, $module, $need, $have);
         }
-        for my $module ( sort { lc $a cmp lc $b } keys %{ $need{$section} } ) {
-            my $need = $need{$section}{$module};
-            my $have = $have{$section}{$module};
-            my $bad = $prereq_met{$section}{$module} ? " " : "!";
-            $report .= 
-                sprintf( $format_str, $bad, $module, $need, $have);
-        }
+        $report .= "\n"; 
+      }
     }
     
     return $report || "    No requirements found\n";
