@@ -28,6 +28,8 @@ TODO list for Perl module CPAN::Reporter
 
 # Medium priority 
 
+- search for recursive Makefile.PL only at depth 1
+
 - list installed versions of any modules in requires/recommends/etc
 
 - list path of requires/recommends/etc/
