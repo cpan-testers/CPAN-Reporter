@@ -88,13 +88,6 @@ my @cases = (
         timeout => 30,
         exit_code => 0,
     },
-    {
-        label => "Autoflush",
-        program => 'print $| ? 1 : 0, "\n"; exit 0',
-        args => '',
-        output => [ "1\n" ],
-        exit_code => 0,
-    },
 );
 
 my $tests_per_case = 4;

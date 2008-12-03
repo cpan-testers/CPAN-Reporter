@@ -157,7 +157,7 @@ HERE
     $tee_input .= " $redirect" if defined $redirect;
     {
       # ensure autoflush if we can
-      local $ENV{PERL5OPT} = _get_perl5opt();
+      local $ENV{PERL5OPT} = _get_perl5opt() if _is_PL($command);
       tee($tee_input, { stderr => 1 }, $temp_out);
     }
 
@@ -596,7 +596,11 @@ sub _expand_result {
     my $result = shift;
     return if $result->{expanded}++; # only do this once
     $result->{prereq_pm} = _prereq_report( $result->{dist} );
-    $result->{env_vars} = _env_report();
+    {
+      # mirror PERL5OPT as in record_command
+      local $ENV{PERL5OPT} = _get_perl5opt() if _is_PL($result->{command});
+      $result->{env_vars} = _env_report();
+    }
     $result->{special_vars} = _special_vars_report();
     $result->{toolchain_versions} = _toolchain_report( $result );
     $result->{perl_version} = CPAN::Reporter::History::_format_perl_version();
@@ -630,8 +634,6 @@ my @env_vars= qw(
 
 sub _env_report {
     my @vars_found;
-    # mirror PERL5OPT as in record_command
-    local $ENV{PERL5OPT} = _get_perl5opt();
     for my $var ( @env_vars ) {
         if ( $var =~ m{^/(.+)/$} ) {
             push @vars_found, grep { /$1/ } keys %ENV;
@@ -766,6 +768,15 @@ sub _init_result {
 sub _is_make {
     my $command = shift;
     return $command =~ m{\b(?:\S*make|Makefile.PL)\b}ims ? 1 : 0;
+}
+
+#--------------------------------------------------------------------------#
+# _is_PL
+#--------------------------------------------------------------------------#
+
+sub _is_PL {
+  my $command = shift;
+  return $command =~ m{\b(?:Makefile|Build)\.PL\b}ims ? 1 : 0;
 }
 
 #--------------------------------------------------------------------------#
