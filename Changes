@@ -1,9 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1703
+
     - Changed: Devel::Autoflush only added to PERL5OPT when capturing 
       output from Makefile.PL or Build.PL
-
-1.1703
 
     - Prereq: bumped Devel::Autoflush to 0.03 for various fixes
 
