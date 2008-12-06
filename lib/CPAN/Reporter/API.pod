@@ -37,6 +37,9 @@ STDERR) and the return value from system().  Note that this is C<<< $? >>>, so t
 actual exit value of the command will need to be extracted as described in
 L<perlvar>.
 
+If the command matches E<sol>\b(?:MakefileE<verbar>Build)\.PL\bE<sol>, then L<Devel::Autoflush>
+is added to C<<< PERL5OPT >>> to force autoflushing of user prompts.
+
 If the command includes a pipe character ('E<verbar>'), only the part of the 
 command prior to the pipe will be wrapped and teed.  The pipe will be
 applied to the execution of the wrapper script.  This is essential to 

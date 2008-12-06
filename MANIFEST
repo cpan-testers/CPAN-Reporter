@@ -55,6 +55,11 @@ t/68_is_make.t
 t/70_darwin_move_config.t
 t/71_missing_config.t
 t/72_rename_history.t
+t/73_autoflush.t
+t/bin/Build.PL
+t/bin/Makefile.PL
+t/bin/NotBuild.PL
+t/bin/NotMakefile.PL
 t/dist/custom-NoOutput-NOK/Build.PL
 t/dist/custom-NoOutput-NOK/lib/Bogus/Module.pm
 t/dist/custom-NoOutput-NOK/Makefile.PL

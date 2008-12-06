@@ -45,7 +45,7 @@ STDERR) and the return value from system().  Note that this is {$?}, so the
 actual exit value of the command will need to be extracted as described in
 [perlvar].
 
-If the command matches /\b(?:Makefile|Build)\.PL\b/, then [Devel::Autoflush]
+If the command matches /\\b(?:Makefile|Build)\\.PL\\b/, then [Devel::Autoflush]
 is added to {PERL5OPT} to force autoflushing of user prompts.
 
 If the command includes a pipe character ('|'), only the part of the 
