@@ -12,8 +12,8 @@ $class->new(
     requires        => {
         # module requirements here
         'Config::Tiny'          => 2.08,
-        'CPAN'                  => 1.9203,
-        'Devel::Autoflush'      => 0.03,
+        'CPAN'                  => 1.9301,
+        'Devel::Autoflush'      => 0.04,
         'ExtUtils::MakeMaker'   => 6.36, # many bug fixes
         'File::Basename'        => 0,
         'File::Copy::Recursive' => 0.35,

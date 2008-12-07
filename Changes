@@ -1,5 +1,11 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1704 Sun Dec  7 06:24:07 EST 2008
+
+    - Fixed: protect CPAN::Reporter tests from older versions of itself
+
+    - Prereq: bumped Devel::Autoflush to 0.04 and CPAN to 1.9301
+    
 1.1703 Fri Dec  5 23:06:20 EST 2008
 
     - Changed: Devel::Autoflush only added to PERL5OPT when capturing 

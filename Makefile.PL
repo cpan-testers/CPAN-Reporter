@@ -18,12 +18,12 @@ WriteMakefile
                            'File::pushd' => '0.32',
                            'File::HomeDir' => '0.58',
                            'ExtUtils::MakeMaker' => '6.36',
-                           'Devel::Autoflush' => '0.03',
+                           'Devel::Autoflush' => '0.04',
                            'Tee' => '0.13',
                            'Test::More' => '0.62',
                            'File::Temp' => '0.16',
                            'File::Copy::Recursive' => '0.35',
-                           'CPAN' => '1.9203',
+                           'CPAN' => '1.9301',
                            'File::Basename' => 0,
                            'Config::Tiny' => '2.08'
                          }
