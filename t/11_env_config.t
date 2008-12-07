@@ -11,6 +11,10 @@ use t::Helper;
 use t::Frontend;
 use Config;
 
+# protect CPAN::Reporter from itself
+local %ENV = %ENV;
+delete $ENV{PERL5OPT};
+
 # Entries bracketed with "/" are taken to be a regex; otherwise literal
 my @env_vars= qw(
     /PERL/
@@ -97,7 +101,6 @@ test_fake_config();
 
 $got = CPAN::Reporter::_env_report();
 {
-  local $ENV{PERL5OPT} = CPAN::Reporter::_get_perl5opt(); # as in _env_report
   for my $var ( sort @env_vars_found ) {
       my ($name, $value) = ( $got =~ m{^ +(\Q$var\E) = ([^\n]*?)$}ms );
       is( $name, $var,

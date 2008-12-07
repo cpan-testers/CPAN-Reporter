@@ -11,6 +11,10 @@ use t::Frontend;
 use t::MockHomeDir;
 use Probe::Perl ();
 
+# protect CPAN::Reporter from itself
+local %ENV = %ENV;
+delete $ENV{PERL5OPT};
+
 my @cases = (
   [ 'Makefile.PL'     , 1 ],
   [ 'NotMakefile.PL'  , 0 ],
@@ -31,6 +35,7 @@ my ($stdout, $stderr, $output, $exit, $line);
 #--------------------------------------------------------------------------#
 # tests
 #--------------------------------------------------------------------------#
+
 
 require_ok( "CPAN::Reporter" );
 
