@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 use vars qw/$VERSION/;
-$VERSION = '1.1704'; 
+$VERSION = '1.1705'; 
 $VERSION = eval $VERSION; ## no critic
 
 use Config;
@@ -1523,7 +1523,7 @@ existing test-file that illustrates the bug or desired feature.
 Information about CPAN::Testers:
 
 * [CPAN::Testers] -- overview of CPAN Testers architecture stack
-* [http://cpantesters.perl.org] -- project home with all reports
+* [http://www.cpantesters.org] -- project home with all reports
 * [http://cpantest.grango.org] -- documentation and wiki
 
 Additional Documentation: 

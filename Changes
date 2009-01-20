@@ -1,5 +1,10 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1705 Tue Jan 20 10:51:24 EST 2009
+
+    - Docs: CPAN Testers website updated to www.cpantesters.org
+      (David Westbrook)
+
 1.1704 Sun Dec  7 06:24:07 EST 2008
 
     - Fixed: protect CPAN::Reporter tests from older versions of itself

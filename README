@@ -2,7 +2,7 @@ NAME
     CPAN::Reporter - Adds CPAN Testers reporting to CPAN.pm
 
 VERSION
-    This documentation describes version 1.1704.
+    This documentation describes version 1.1705.
 
 SYNOPSIS
     From the CPAN shell:
@@ -26,6 +26,7 @@ DESCRIPTION
 
 GETTING STARTED
   Installation
+
     The first step in using CPAN::Reporter is to install it using whatever
     version of CPAN.pm is already installed. CPAN.pm will be upgraded as a
     dependency if necessary.
@@ -37,6 +38,7 @@ GETTING STARTED
       cpan> reload cpan
 
   Configuration
+
     If upgrading from a very old version of CPAN.pm, users may be prompted
     to renew their configuration settings, including the 'test_report'
     option to enable CPAN::Reporter.
@@ -71,6 +73,7 @@ GETTING STARTED
     See CPAN::Reporter::Config for advanced configuration settings.
 
   Using CPAN::Reporter
+
     Once CPAN::Reporter is enabled and configured, test or install modules
     with CPAN.pm as usual.
 
@@ -85,14 +88,14 @@ GETTING STARTED
 UNDERSTANDING TEST GRADES
     CPAN::Reporter will assign one of the following grades to the report:
 
-    *   "pass" -- distribution built and tested correctly
+    *   `pass' -- distribution built and tested correctly
 
-    *   "fail" -- distribution failed to test correctly
+    *   `fail' -- distribution failed to test correctly
 
-    *   "unknown" -- distribution failed to build, had no test suite or
+    *   `unknown' -- distribution failed to build, had no test suite or
         outcome was inconclusive
 
-    *   "na" --- distribution is not applicable to this platform and/or
+    *   `na' --- distribution is not applicable to this platform andE<sol>or
         version of Perl
 
     In returning results of the test suite to CPAN.pm, "pass" and "unknown"
@@ -100,10 +103,10 @@ UNDERSTANDING TEST GRADES
     will not prevent installation. "fail" and "na" are considered to be
     failures and CPAN.pm will not install unless forced.
 
-    An error from Makefile.PL/Build.PL or make/Build will also be graded as
-    "unknown" and a failure will be signaled to CPAN.pm.
+    An error from Makefile.PLE<sol>Build.PL or makeE<sol>Build will also be
+    graded as "unknown" and a failure will be signaled to CPAN.pm.
 
-    If prerequisites specified in "Makefile.PL" or "Build.PL" are not
+    If prerequisites specified in `Makefile.PL' or `Build.PL' are not
     available, no report will be generated and a failure will be signaled to
     CPAN.pm.
 
@@ -112,8 +115,8 @@ PRIVACY WARNING
     variables and special Perl variables that could be affecting test
     results in order to help module authors interpret the results of the
     tests. This includes information about paths, terminal, locale,
-    user/group ID, installed toolchain modules (e.g. ExtUtils::MakeMaker)
-    and so on.
+    userE<sol>group ID, installed toolchain modules (e.g.
+    ExtUtils::MakeMaker) and so on.
 
     These have been intentionally limited to items that should not cause
     harmful personal information to be revealed -- it does *not* include
@@ -127,7 +130,7 @@ PRIVACY WARNING
 BUGS
     Please report any bugs or feature using the CPAN Request Tracker. Bugs
     can be submitted through the web interface at
-    <http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter>
+    http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter
 
     When submitting a bug or request, please include a test-file or a patch
     to an existing test-file that illustrates the bug or desired feature.
@@ -137,9 +140,9 @@ SEE ALSO
 
     *   CPAN::Testers -- overview of CPAN Testers architecture stack
 
-    *   <http://cpantesters.perl.org> -- project home with all reports
+    *   http://www.cpantesters.org -- project home with all reports
 
-    *   <http://cpantest.grango.org> -- documentation and wiki
+    *   http://cpantest.grango.org -- documentation and wiki
 
     Additional Documentation:
 
@@ -155,7 +158,7 @@ COPYRIGHT AND LICENSE
 
     Licensed under the Apache License, Version 2.0 (the "License"); you may
     not use this file except in compliance with the License. You may obtain
-    a copy of the License at <http://www.apache.org/licenses/LICENSE-2.0>
+    a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
