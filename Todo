@@ -8,6 +8,13 @@ TODO list for Perl module CPAN::Reporter
 # Features, etc
 #--------------------------------------------------------------------------#
 
+# NOW NOW NOW NOW NOW
+
+- Add support for CPAN::Reporter singleton for CPANPLUS refactoring
+
+- Look for .cpanreporter in a known place for Strawberry preconfig
+  (e.g. in @INC where CPAN/Reporter.pm is found?)
+
 # High priority
 
 - Add utility sub to invoke a test (for C::R::S and PoCo::C::R)
