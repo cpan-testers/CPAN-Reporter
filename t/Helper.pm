@@ -786,7 +786,16 @@ sub transport {
     }
     return $mocked_data{transport};
 }
-    
+  
+# must do this one manually so ->can('distfile') is true
+sub distfile {
+  my $self = shift;
+  if ( @_ ) {
+    $mocked_data{ distfile } = shift;
+  }
+  return $mocked_data{ distfile };
+}
+
 sub AUTOLOAD {
     my $self = shift;
     if ( @_ ) {

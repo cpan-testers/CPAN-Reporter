@@ -60,6 +60,6 @@ test_dispatch(
 );
 
 is( Test::Reporter::Mocked->distfile(), $mock_dist->{pretty_id},
-    "CPAN::Reporters sets Test::Reporter->distfile"
+    "CPAN::Reporter sets Test::Reporter->distfile"
 );
 
