@@ -51,6 +51,7 @@ t/63_config_send_report.t
 t/64_transport.t
 t/65_skipfile.t
 t/66_have_tested.t
+t/67_distfile.t
 t/68_is_make.t
 t/70_darwin_move_config.t
 t/71_missing_config.t
