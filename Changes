@@ -1,5 +1,7 @@
 Revision history for Perl module CPAN::Reporter
 
+1.17_51
+
     - Added: support for setting 'distfile' parameter for test reports
       if supported by Test::Reporter (1.53_01+)
 
