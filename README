@@ -2,7 +2,7 @@ NAME
     CPAN::Reporter - Adds CPAN Testers reporting to CPAN.pm
 
 VERSION
-    This documentation describes version 1.17_51.
+    This documentation describes version 1.1706.
 
 SYNOPSIS
     From the CPAN shell:
@@ -139,7 +139,7 @@ SEE ALSO
 
     *   <http://www.cpantesters.org> -- project home with all reports
 
-    *   <http://cpantest.grango.org> -- documentation and wiki
+    *   <http://wiki.cpantesters.org> -- documentation and wiki
 
     Additional Documentation:
 

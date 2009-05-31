@@ -1,12 +1,12 @@
 ---
 name: CPAN-Reporter
-version: 1.17_51
+version: 1.1706
 author:
   - 'David A. Golden <dagolden@cpan.org>'
 abstract: Adds CPAN Testers reporting to CPAN.pm
 license: apache
 resources:
-  license: http://apache.org/licenses/LICENSE-2.0
+  license: http://www.apache.org/licenses/LICENSE-2.0.txt
 requires:
   CPAN: 1.9301
   Config::Tiny: 2.08
@@ -25,21 +25,21 @@ requires:
   Probe::Perl: 0
   Tee: 0.13
   Test::More: 0.62
-  Test::Reporter: 1.5
+  Test::Reporter: 1.53_01
 provides:
   CPAN::Reporter:
     file: lib/CPAN/Reporter.pm
-    version: 1.17_51
+    version: 1.1706
   CPAN::Reporter::Config:
     file: lib/CPAN/Reporter/Config.pm
-    version: 1.17_51
+    version: 1.1706
   CPAN::Reporter::History:
     file: lib/CPAN/Reporter/History.pm
-    version: 1.17_51
+    version: 1.1706
   CPAN::Reporter::PrereqCheck:
     file: lib/CPAN/Reporter/PrereqCheck.pm
-    version: 1.17_51
-generated_by: Module::Build version 0.3201
+    version: 1.1706
+generated_by: Module::Build version 0.33
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
