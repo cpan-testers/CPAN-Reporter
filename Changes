@@ -1,9 +1,8 @@
 Revision history for Perl module CPAN::Reporter
 
 1.1706 Sun May 31 14:00:43 EDT 2009
-    - Changed: URL of CPAN Testers wiki is now wiki.cpantesters.org
 
-1.17_51
+    - Changed: URL of CPAN Testers wiki is now wiki.cpantesters.org
 
     - Added: support for setting 'distfile' parameter for test reports
       if supported by Test::Reporter (1.53_01+)
