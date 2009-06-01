@@ -1,5 +1,9 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1707 Sun May 31 21:44:07 EDT 2009
+
+    - Prereq: bumped Test::Reporter to 1.54
+
 1.1706 Sun May 31 14:00:43 EDT 2009
 
     - Changed: URL of CPAN Testers wiki is now wiki.cpantesters.org
