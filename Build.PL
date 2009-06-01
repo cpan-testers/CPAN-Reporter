@@ -28,7 +28,7 @@ $class->new(
         'Probe::Perl'           => 0,
         'Tee'                   => 0.13,
         'Test::More'            => 0.62, # various features/fixes
-        'Test::Reporter'        => '1.53_01', # distfile parameter
+        'Test::Reporter'        => 1.54, # distfile parameter
     },
     meta_add            => { 
         no_index => { 

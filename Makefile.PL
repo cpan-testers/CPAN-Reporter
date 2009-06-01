@@ -12,7 +12,7 @@ WriteMakefile
                            'File::Spec' => '3.19',
                            'Probe::Perl' => 0,
                            'File::Find' => 0,
-                           'Test::Reporter' => '1.53_01',
+                           'Test::Reporter' => '1.54',
                            'File::Path' => 0,
                            'Parse::CPAN::Meta' => 0,
                            'File::pushd' => '0.32',
