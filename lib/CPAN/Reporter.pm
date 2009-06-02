@@ -423,7 +423,8 @@ END_SKIP_DIST
     my $tr = Test::Reporter->new;
     $tr->grade( $result->{grade} );
     $tr->distribution( $result->{dist_name}  );
-    $tr->distfile( $result->{dist}->pretty_id );
+    # older T::R might not handle the distfile() method
+    $tr->distfile( $result->{dist}->pretty_id ) if $tr->can('distfile');
 
     # Skip if duplicate and not sending duplicates
     if ( $is_duplicate ) {

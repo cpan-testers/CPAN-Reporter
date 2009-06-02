@@ -2,6 +2,17 @@ Revision history for Perl module CPAN::Reporter
 
 1.1708
 
+    *** Emergency fix -- 1.1706/1.1707 can prevent subsequent module  ***
+    *** installation if installed with an older Test::Reporter.       ***
+    *** Disable test reporting (From CPAN, 'o conf test_report 0')    ***
+    *** and install CPAN::Reporter 1.1708.  Then re-enable test       ***
+    *** reports.                                                      ***
+
+    - Fixed: in the case where an old Test::Reporter without the distfile()
+      method is installed, CPAN::Reporter would crash and prevent
+      installation of modules (including newer Test::Reporter); now checks
+      for a Test::Reporter
+
 
 1.1707 Sun May 31 21:44:07 EDT 2009
 
