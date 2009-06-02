@@ -1,5 +1,8 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1708
+
+
 1.1707 Sun May 31 21:44:07 EDT 2009
 
     - Prereq: bumped Test::Reporter to 1.54
