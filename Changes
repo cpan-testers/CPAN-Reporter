@@ -1,6 +1,6 @@
 Revision history for Perl module CPAN::Reporter
 
-1.1708
+1.1708 Mon Jun  1 23:31:58 EDT 2009
 
     *** Emergency fix -- 1.1706/1.1707 can prevent subsequent module  ***
     *** installation if installed with an older Test::Reporter.       ***
