@@ -1,5 +1,7 @@
 Revision history for Perl module CPAN::Reporter
 
+  - Docs: added 'Port' example for transport options
+
 1.1708 Mon Jun  1 23:31:58 EDT 2009
 
     *** Emergency fix -- 1.1706/1.1707 can prevent subsequent module  ***
