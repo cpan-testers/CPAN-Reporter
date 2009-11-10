@@ -1,12 +1,16 @@
 package CPAN::Reporter::PrereqCheck;
 use strict;
 use vars qw/$VERSION/;
-$VERSION = '1.1708'; 
+$VERSION = '1.1708';
 $VERSION = eval $VERSION; ## no critic
 
 use ExtUtils::MakeMaker;
 use File::Spec;
 use CPAN::Version;
+
+my %substitute = (
+  'Module::Install' => 'inc::Module::Install',
+);
 
 _run() if ! caller();
 
@@ -14,23 +18,26 @@ sub _run {
     my %saw_mod;
     # read module and prereq string from STDIN
     local *DEVNULL;
-    open DEVNULL, ">" . File::Spec->devnull; 
+    open DEVNULL, ">" . File::Spec->devnull;
     while ( <> ) {
         m/^(\S+)\s+([^\n]*)/;
         my ($mod, $need) = ($1, $2);
         die "Couldn't read module for '$_'" unless $mod;
         $need = 0 if not defined $need;
-        
+
+        # handle any odd cases
+        my $testmod = $substitute{$mod} || $mod;
+
         # only evaluate a module once
-        next if $saw_mod{$mod}++;
+        next if $saw_mod{$testmod}++;
 
         # get installed version from file with EU::MM
         my($have, $inst_file, $dir, @packpath);
-        if ( $mod eq "perl" ) { 
+        if ( $testmod eq "perl" ) {
             $have = $];
         }
         else {
-            @packpath = split( /::/, $mod );
+            @packpath = split( /::/, $testmod );
             $packpath[-1] .= ".pm";
             if (@packpath == 1 && $packpath[0] eq "readline.pm") {
                 unshift @packpath, "Term", "ReadLine"; # historical reasons
@@ -43,15 +50,15 @@ sub _run {
                     last INCDIR;
                 }
             }
-            
+
             # get version from file or else report missing
             if ( defined $inst_file ) {
                 $have = MM->parse_version($inst_file);
                 $have = "0" if ! defined $have || $have eq 'undef';
                 # report broken if it can't be loaded
                 # "select" to try to suppress spurious newlines
-                select DEVNULL; ## no critic 
-                if ( ! eval "require $mod" ) {
+                select DEVNULL; ## no critic
+                if ( ! eval "require $testmod; 1" ) {
                     select STDOUT; ## no critic
                     print "$mod 0 broken\n";
                     next;
@@ -68,7 +75,7 @@ sub _run {
         my ( @requirements ) = split /\s*,\s*/, $need;
 
         my $passes = 0;
-        RQ: 
+        RQ:
         for my $rq (@requirements) {
             if ($rq =~ s|>=\s*||) {
                 # no-op -- just trimmed string
@@ -78,7 +85,7 @@ sub _run {
                 }
                 next RQ;
             } elsif ($rq =~ s|!=\s*||) {
-                if (CPAN::Version->vcmp($have,$rq)) { 
+                if (CPAN::Version->vcmp($have,$rq)) {
                     $passes++; # didn't match
                 }
                 next RQ;
@@ -109,7 +116,7 @@ sub _run {
 __END__
 
 #--------------------------------------------------------------------------#
-# pod documentation 
+# pod documentation
 #--------------------------------------------------------------------------#
 
 =begin wikidoc
@@ -140,16 +147,16 @@ It reads a module name and prerequisite string pair from each line of input
 and prints out the module name, 0 or 1 depending on whether the prerequisite
 is satisifed, and the installed module version.  If the module is not
 available, it will print "n/a" for the version.  If the module is available
-but can't be loaded, it will print "broken" for the version.  Modules 
+but can't be loaded, it will print "broken" for the version.  Modules
 without a version will be treated as being of version "0".
 
-No user serviceable parts are inside.  This modulino is packaged for 
+No user serviceable parts are inside.  This modulino is packaged for
 internal use by CPAN::Reporter.
 
 = BUGS
 
-Please report any bugs or feature using the CPAN Request Tracker.  
-Bugs can be submitted through the web interface at 
+Please report any bugs or feature using the CPAN Request Tracker.
+Bugs can be submitted through the web interface at
 [http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter]
 
 When submitting a bug or request, please include a test-file or a patch to an
@@ -169,7 +176,7 @@ Copyright (c) 2006, 2007 by David A. Golden
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
+You may obtain a copy of the License at
 [http://www.apache.org/licenses/LICENSE-2.0]
 
 Unless required by applicable law or agreed to in writing, software

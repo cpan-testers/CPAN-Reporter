@@ -555,11 +555,11 @@ sub _downgrade_known_causes {
     # check the prereq report for missing or failure flag '!'
     elsif ( $grade ne 'pass' && $result->{prereq_pm} =~ m{n/a}ims ) {
         $grade = 'discard';
-        $msg = 'Prerequisite missing';
+        $msg = "Prerequisite missing:\n$result->{prereq_pm}";
     }
     elsif ( $grade ne 'pass' && $result->{prereq_pm} =~ m{^\s+!}ims ) {
         $grade = 'discard';
-        $msg = 'Prerequisite version too low';
+        $msg = "Prerequisite version too low:\n$result->{prereq_pm}";
     }
     # in PL stage -- if pass but no Makefile or Build, then this should 
     # be recorded as a discard
