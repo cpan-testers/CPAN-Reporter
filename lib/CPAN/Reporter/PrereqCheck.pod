@@ -8,7 +8,7 @@ CPAN::Reporter::PrereqCheck - Modulino for prerequisite tests
 
 =head1 VERSION
 
-This documentation describes version 1.1708.
+This documentation describes version 1.1710.
 
 =head1 SYNOPSIS
 
@@ -28,16 +28,16 @@ It reads a module name and prerequisite string pair from each line of input
 and prints out the module name, 0 or 1 depending on whether the prerequisite
 is satisifed, and the installed module version.  If the module is not
 available, it will print "nE<sol>a" for the version.  If the module is available
-but can't be loaded, it will print "broken" for the version.  Modules 
+but can't be loaded, it will print "broken" for the version.  Modules
 without a version will be treated as being of version "0".
 
-No user serviceable parts are inside.  This modulino is packaged for 
+No user serviceable parts are inside.  This modulino is packaged for
 internal use by CPAN::Reporter.
 
 =head1 BUGS
 
-Please report any bugs or feature using the CPAN Request Tracker.  
-Bugs can be submitted through the web interface at 
+Please report any bugs or feature using the CPAN Request Tracker.
+Bugs can be submitted through the web interface at
 L<http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter>
 
 When submitting a bug or request, please include a test-file or a patch to an
@@ -63,7 +63,7 @@ Copyright (c) 2006, 2007 by David A. Golden
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
+You may obtain a copy of the License at
 L<http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software

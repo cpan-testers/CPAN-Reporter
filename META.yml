@@ -1,12 +1,32 @@
 ---
-name: CPAN-Reporter
-version: 1.1708
+abstract: 'Adds CPAN Testers reporting to CPAN.pm'
 author:
   - 'David A. Golden <dagolden@cpan.org>'
-abstract: Adds CPAN Testers reporting to CPAN.pm
+configure_requires:
+  Module::Build: 0.35
+generated_by: 'Module::Build version 0.3515'
 license: apache
-resources:
-  license: http://www.apache.org/licenses/LICENSE-2.0.txt
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: CPAN-Reporter
+no_index:
+  directory:
+    - examples
+    - inc
+provides:
+  CPAN::Reporter:
+    file: lib/CPAN/Reporter.pm
+    version: 1.1710
+  CPAN::Reporter::Config:
+    file: lib/CPAN/Reporter/Config.pm
+    version: 1.1710
+  CPAN::Reporter::History:
+    file: lib/CPAN/Reporter/History.pm
+    version: 1.1710
+  CPAN::Reporter::PrereqCheck:
+    file: lib/CPAN/Reporter/PrereqCheck.pm
+    version: 1.1710
 requires:
   CPAN: 1.9301
   Config::Tiny: 2.08
@@ -26,24 +46,6 @@ requires:
   Tee: 0.13
   Test::More: 0.62
   Test::Reporter: 1.54
-provides:
-  CPAN::Reporter:
-    file: lib/CPAN/Reporter.pm
-    version: 1.1708
-  CPAN::Reporter::Config:
-    file: lib/CPAN/Reporter/Config.pm
-    version: 1.1708
-  CPAN::Reporter::History:
-    file: lib/CPAN/Reporter/History.pm
-    version: 1.1708
-  CPAN::Reporter::PrereqCheck:
-    file: lib/CPAN/Reporter/PrereqCheck.pm
-    version: 1.1708
-generated_by: Module::Build version 0.33
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
-no_index:
-  directory:
-    - examples
-    - inc
+resources:
+  license: http://www.apache.org/licenses/LICENSE-2.0.txt
+version: 1.1710

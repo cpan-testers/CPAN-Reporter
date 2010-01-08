@@ -8,7 +8,7 @@ CPAN::Reporter::Config - Config file options for CPAN::Reporter
 
 =head1 VERSION
 
-This documentation refers to version 1.1708
+This documentation refers to version 1.1710
 
 =head1 SYNOPSIS
 
@@ -260,6 +260,7 @@ set the 'transport' config option to the name of the transport module
 (without the 'Test::Reporter::Transport' prefix) and any required arguments,
 separated by white space. For example:
 
+   transport=Net::SMTP Port 587
    transport=Net::SMTP::TLS User jdoe@example.com Password 12345
    transport=HTTPGateway http://example.com/cpantesters.cgi MyKey
    transport=File ~/saved-reports-dir
