@@ -1,5 +1,12 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1710
+
+  Bugs fixed:
+
+  - Fixed PrereqCheck for modules like "if.pm" that could be confused
+    with Perl syntax (RT#53477 by Serguei Trouchelle)
+
 1.1709
 
   Bugs fixed:
