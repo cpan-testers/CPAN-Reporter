@@ -58,7 +58,7 @@ sub _run {
                 # report broken if it can't be loaded
                 # "select" to try to suppress spurious newlines
                 select DEVNULL; ## no critic
-                if ( ! eval "require $testmod; 1" ) {
+                if ( ! eval "use $testmod (); 1" ) {
                     select STDOUT; ## no critic
                     print "$mod 0 broken\n";
                     next;
