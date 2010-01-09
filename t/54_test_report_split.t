@@ -41,7 +41,7 @@ my @test_distros = (
     },
     {
         name => 'NoTestTarget',
-        eumm_success => 0,
+        eumm_success => 1,
         eumm_grade => "unknown",
         eumm_msg => "No make test target",
         mb_success => 1,

@@ -10,6 +10,9 @@ Revision history for Perl module CPAN::Reporter
   - Added PrereqCheck special-case for Module::Install and improved
     diagnostics when prereqs are missing or too low (RT#51257)
 
+  - Distributions with no 'make test' target should be UNKNOWN, 
+    not FAIL (RT#52139)
+
   Documentation changes:
   
   - Added 'Port' example for transport options

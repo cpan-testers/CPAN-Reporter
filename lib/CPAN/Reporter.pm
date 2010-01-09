@@ -552,6 +552,15 @@ sub _downgrade_known_causes {
         $grade = 'na';
         $msg = 'This platform is not supported';
     }
+    # check for Makefile without 'test' target
+    elsif ( grep { /No rule to make target .test/ims } @{$output} ) {
+        $grade = 'unknown';
+        $msg = 'No make test target';
+    }
+    elsif ( grep { /don't know how to make test/ims } @{$output} ) {
+        $grade = 'unknown';
+        $msg = 'No make test target';
+    }
     # check the prereq report for missing or failure flag '!'
     elsif ( $grade ne 'pass' && $result->{prereq_pm} =~ m{n/a}ims ) {
         $grade = 'discard';
