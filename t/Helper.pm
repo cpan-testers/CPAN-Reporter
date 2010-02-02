@@ -750,7 +750,8 @@ BEGIN {
 }
 
 package Test::Reporter;
-use vars qw/$AUTOLOAD/;
+use vars qw/$AUTOLOAD $VERSION/;
+$VERSION = 999; # more than 1.54 (e.g. distfile exists)
 
 sub new { return bless {}, 'Test::Reporter::Mocked' }
 
@@ -787,15 +788,6 @@ sub transport {
     return $mocked_data{transport};
 }
   
-# must do this one manually so ->can('distfile') is true
-sub distfile {
-  my $self = shift;
-  if ( @_ ) {
-    $mocked_data{ distfile } = shift;
-  }
-  return $mocked_data{ distfile };
-}
-
 sub AUTOLOAD {
     my $self = shift;
     if ( @_ ) {

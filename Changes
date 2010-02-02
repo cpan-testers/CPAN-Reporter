@@ -13,6 +13,9 @@ Revision history for Perl module CPAN::Reporter
   - Distributions with no 'make test' target should be UNKNOWN, 
     not FAIL (RT#52139)
 
+  - Improved detection of Test::Reporter capable of setting 'distfile'
+    parameter
+
   Documentation changes:
   
   - Added 'Port' example for transport options
