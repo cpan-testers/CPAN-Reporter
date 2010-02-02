@@ -423,8 +423,10 @@ END_SKIP_DIST
     my $tr = Test::Reporter->new;
     $tr->grade( $result->{grade} );
     $tr->distribution( $result->{dist_name}  );
-    # older T::R might not handle the distfile() method
-    $tr->distfile( $result->{dist}->pretty_id ) if $tr->can('distfile');
+    # Older Test::Reporter doesn't support distfile, but we need it for
+    # Metabase transport
+    $tr->distfile( $result->{dist}->pretty_id ) 
+      if $Test::Reporter::VERSION >= 1.54;
 
     # Skip if duplicate and not sending duplicates
     if ( $is_duplicate ) {
