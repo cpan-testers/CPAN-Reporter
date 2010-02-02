@@ -96,6 +96,9 @@ t/dist/NoTestFiles/Build.PL
 t/dist/NoTestFiles/lib/Bogus/Module.pm
 t/dist/NoTestFiles/Makefile.PL
 t/dist/NoTestFiles/t/README
+t/dist/NoTestTarget/Build.PL
+t/dist/NoTestTarget/lib/Bogus/Module.pm
+t/dist/NoTestTarget/Makefile.PL
 t/dist/PL-ConfigRequires/Build.PL
 t/dist/PL-ConfigRequires/lib/Bogus/Module.pm
 t/dist/PL-ConfigRequires/Makefile.PL
