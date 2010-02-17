@@ -8,7 +8,7 @@ CPAN::Reporter - Adds CPAN Testers reporting to CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 1.1710.
+This documentation describes version 1.1711.
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,7 @@ If CPAN.pm was upgraded, it needs to be reloaded.
 
 If upgrading from a very old version of CPAN.pm, users may be prompted to renew
 their configuration settings, including the 'test_report' option to enable
-CPAN::Reporter.  
+CPAN::Reporter.
 
 If not prompted automatically, users should manually initialize CPAN::Reporter
 support.  After enabling CPAN::Reporter, CPAN.pm will automatically continue
@@ -80,7 +80,7 @@ See L<CPAN::Reporter::Config> for advanced configuration settings.
 =head2 Using CPAN::Reporter
 
 Once CPAN::Reporter is enabled and configured, test or install modules with
-CPAN.pm as usual.  
+CPAN.pm as usual.
 
 For example, to force CPAN to repeat tests for CPAN::Reporter to see how it
 works:
@@ -106,12 +106,12 @@ C<<< fail >>> --  distribution failed to test correctly
 
 =item *
 
-C<<< unknown >>> -- distribution failed to build, had no test suite or outcome was 
+C<<< unknown >>> -- distribution failed to build, had no test suite or outcome was
 inconclusive
 
 =item *
 
-C<<< na >>> --- distribution is not applicable to this platform andE<sol>or 
+C<<< na >>> --- distribution is not applicable to this platform andE<sol>or
 version of Perl
 
 =back
@@ -121,7 +121,7 @@ considered successful attempts to "make test" or "Build test" and will not
 prevent installation.  "fail" and "na" are considered to be failures and
 CPAN.pm will not install unless forced.
 
-An error from Makefile.PLE<sol>Build.PL or makeE<sol>Build will also be graded as 
+An error from Makefile.PLE<sol>Build.PL or makeE<sol>Build will also be graded as
 "unknown" and a failure will be signaled to CPAN.pm.
 
 If prerequisites specified in C<<< Makefile.PL >>> or C<<< Build.PL >>> are not available,
@@ -133,20 +133,20 @@ CPAN::Reporter includes information in the test report about environment
 variables and special Perl variables that could be affecting test results in
 order to help module authors interpret the results of the tests.  This includes
 information about paths, terminal, locale, userE<sol>group ID, installed toolchain
-modules (e.g. ExtUtils::MakeMaker) and so on.  
+modules (e.g. ExtUtils::MakeMaker) and so on.
 
 These have been intentionally limited to items that should not cause harmful
 personal information to be revealed -- it does I<not> include your entire
 environment.  Nevertheless, please do not use CPAN::Reporter if you are
-concerned about the disclosure of this information as part of your test report.  
+concerned about the disclosure of this information as part of your test report.
 
-Users wishing to review this information may choose to edit the report 
+Users wishing to review this information may choose to edit the report
 prior to sending it.
 
 =head1 BUGS
 
-Please report any bugs or feature using the CPAN Request Tracker.  
-Bugs can be submitted through the web interface at 
+Please report any bugs or feature using the CPAN Request Tracker.
+Bugs can be submitted through the web interface at
 L<http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter>
 
 When submitting a bug or request, please include a test-file or a patch to an
@@ -172,7 +172,7 @@ L<http://wiki.cpantesters.org> -- documentation and wiki
 
 =back
 
-Additional Documentation: 
+Additional Documentation:
 
 =over
 
@@ -196,7 +196,7 @@ Copyright (c) 2006, 2007, 2008 by David A. Golden
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
+You may obtain a copy of the License at
 L<http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software
