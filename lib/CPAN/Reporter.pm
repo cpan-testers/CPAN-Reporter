@@ -557,11 +557,9 @@ sub _downgrade_known_causes {
     # check for Makefile without 'test' target; there are lots
     # of variations on the error message, e.g. "target test", "target 'test'",
     # "'test'", "`test'" and so on.
-    elsif ( grep { /No rule to make[^\n]+?test/ims } @{$output} ) {
-        $grade = 'unknown';
-        $msg = 'No make test target';
-    }
-    elsif ( grep { /don't know how to make[^\n]+?test/ims } @{$output} ) {
+    elsif (
+      $result->{is_make} && $result->{phase} eq 'test' && ! _has_test_target()
+    ) {
         $grade = 'unknown';
         $msg = 'No make test target';
     }
@@ -723,6 +721,15 @@ sub _has_recursive_make {
         File::Spec->curdir()
     );
     return $PL_count > 1;
+}
+
+#--------------------------------------------------------------------------#
+# _has_test_target
+#--------------------------------------------------------------------------#
+
+sub _has_test_target {
+  my $fh = IO::File->new("Makefile") or return;
+  return scalar grep { /^test[ ]*:/ } <$fh>;
 }
 
 #--------------------------------------------------------------------------#

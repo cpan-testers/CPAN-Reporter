@@ -34,7 +34,7 @@ use t::MockHomeDir;
 my $perl = Probe::Perl->find_perl_interpreter();
 my $make = $Config{make};
 
-my $temp_stdout = File::Temp->new() 
+my $temp_stdout = File::Temp->new()
     or die "Couldn't make temporary file:$!\nIs your temp drive full?";
 
 my $home_dir = t::MockHomeDir::home_dir();
@@ -74,7 +74,7 @@ sub test_fake_config {
 
     is( File::HomeDir::my_documents(), t::MockHomeDir::home_dir(),
         "home directory mocked"
-    ); 
+    );
     mkpath $config_dir;
     ok( -d $config_dir,
         "config directory created"
@@ -99,7 +99,7 @@ sub test_fake_config {
 #--------------------------------------------------------------------------#
 
 sub test_grade_PL_iter_plan() { 5 }
-sub test_grade_PL_plan() { test_grade_PL_iter_plan() * 2 } 
+sub test_grade_PL_plan() { test_grade_PL_iter_plan() * 2 }
 sub test_grade_PL {
     my ($case, $dist) = @_;
     local $Test::Builder::Level = $Test::Builder::Level + 1;
@@ -108,27 +108,27 @@ sub test_grade_PL {
 
     for my $tool ( qw/eumm mb/ ) {
         SKIP: {
-            my ($have_tool,$tool_mod,$tool_PL) = 
+            my ($have_tool,$tool_mod,$tool_PL) =
                 @{$tool_constants{$tool}}{qw/have module PL/};
-            my $tool_label = $tool eq 'eumm'  ? "Makefile.PL" 
+            my $tool_label = $tool eq 'eumm'  ? "Makefile.PL"
                                             : "Build.PL";
-            my $tool_cmd = "$perl $tool_label"; 
+            my $tool_cmd = "$perl $tool_label";
 
             skip "$tool_mod not installed or working", test_grade_PL_iter_plan()
                 if ! $have_tool;
-            
+
             my $tempd = _ok_clone_dist_dir( $case->{name} );
             local $dist->{build_dir} = "$tempd";
-            
+
             $t::Helper::sent_report = undef;
             $t::Helper::comments = undef;
 
-            my ($stdout, $stderr, $build_rc, $test_build_rc, 
+            my ($stdout, $stderr, $build_rc, $test_build_rc,
                 $output, $exit_value, $rc);
 
             eval {
                 capture sub {
-                    ($output, $exit_value) = 
+                    ($output, $exit_value) =
                         CPAN::Reporter::record_command($tool_cmd);
                     $rc = CPAN::Reporter::grade_PL(
                         $dist, $tool_cmd, $output, $exit_value
@@ -140,27 +140,27 @@ sub test_grade_PL {
                 _diag_output( $stdout, $stderr );
                 skip "died grading PL", test_grade_PL_iter_plan() - 1;
             }
-            
-            my $is_rc_correct = $case->{"$tool\_success"} 
+
+            my $is_rc_correct = $case->{"$tool\_success"}
                               ? $rc : ! $rc;
 
-            ok( $is_rc_correct, 
-                "$case->{name}: grade_PL() for $tool_PL returned " . 
+            ok( $is_rc_correct,
+                "$case->{name}: grade_PL() for $tool_PL returned " .
                 $case->{"$tool\_success"}
             );
-            
+
             my $case_grade = $case->{"$tool\_grade"};
             my $is_grade_correct;
 
             # Grade evaluation with special case if discarding
-            my ($found_grade_result, $found_msg) = 
+            my ($found_grade_result, $found_msg) =
                 ( $stdout =~ /^CPAN::Reporter: ([^,]+), ([^\n]+)/ms );
             if ( $case_grade eq 'discard' ) {
                 is ($found_grade_result, "test results were not valid",
                     "$case->{name}: '$tool_label' saw test results not valid message"
                 );
-                    
-                like( $stdout, 
+
+                like( $stdout,
                     "/Test report will not be sent/",
                     "$case->{name}: discard message correct"
                 ) and $is_grade_correct++;
@@ -171,12 +171,12 @@ sub test_grade_PL {
             }
             else {
                 my ($found_grade) = ( $found_grade_result =~ /$tool_label result is '([^']+)'/ );
-                is( $found_grade, $case_grade, 
+                is( $found_grade, $case_grade,
                     "$case->{name}: '$tool_label' grade reported as '$case_grade'"
                 ) or _diag_output( $stdout, $stderr );
-                
+
                 my $ctr_regex = "/preparing a CPAN Testers report for \Q$short_name\E/";
-                
+
                 if ( $case_grade eq 'pass' ) {
                     unlike( $stdout, $ctr_regex ,
                         "$case->{name}: report notification correct"
@@ -202,7 +202,7 @@ sub test_grade_PL {
                 }
             }
 
-            _diag_output( $stdout, $stderr ) 
+            _diag_output( $stdout, $stderr )
                 unless ( $is_rc_correct && $is_grade_correct );
         } # SKIP
     } # for
@@ -213,7 +213,7 @@ sub test_grade_PL {
 #--------------------------------------------------------------------------#
 
 sub test_grade_make_iter_plan() { 6 }
-sub test_grade_make_plan() { test_grade_make_iter_plan() * 2 } 
+sub test_grade_make_plan() { test_grade_make_iter_plan() * 2 }
 sub test_grade_make {
     my ($case, $dist) = @_;
     local $Test::Builder::Level = $Test::Builder::Level + 1;
@@ -222,21 +222,21 @@ sub test_grade_make {
 
     for my $tool ( qw/eumm mb/ ) {
         SKIP: {
-            my ($have_tool,$tool_mod,$tool_PL) = 
+            my ($have_tool,$tool_mod,$tool_PL) =
                 @{$tool_constants{$tool}}{qw/have module PL/};
             my $tool_cmd = $tool eq 'eumm' ? $Config{make} : "$perl Build";
             my $tool_label = $tool eq 'eumm' ? $Config{make} : "Build";
 
             skip "$tool_mod not installed or working", test_grade_make_iter_plan()
                 if ! $have_tool;
-            
+
             # Set up temporary directory for the case
             my $tempd = _ok_clone_dist_dir( $case->{name} );
 
             $t::Helper::sent_report = undef;
             $t::Helper::comments = undef;
 
-            my ($stdout, $stderr, $build_err, $test_build_rc, 
+            my ($stdout, $stderr, $build_err, $test_build_rc,
                 $output, $exit_value, $rc);
 
             capture sub {
@@ -250,7 +250,7 @@ sub test_grade_make {
                 };
             eval {
                 capture sub {
-                    ($output, $exit_value) = 
+                    ($output, $exit_value) =
                     CPAN::Reporter::record_command($tool_cmd);
                     $rc = CPAN::Reporter::grade_make(
                         $dist, $tool_cmd, $output, $exit_value
@@ -263,11 +263,11 @@ sub test_grade_make {
                 skip "died grading make", test_grade_make_iter_plan() - 1;
             }
 
-            my $is_rc_correct = $case->{"$tool\_success"} 
+            my $is_rc_correct = $case->{"$tool\_success"}
             ? $rc : ! $rc;
 
-            ok( $is_rc_correct, 
-                "$case->{name}: grade_make() for $tool_label returned " . 
+            ok( $is_rc_correct,
+                "$case->{name}: grade_make() for $tool_label returned " .
                 $case->{"$tool\_success"}
             );
 
@@ -275,14 +275,14 @@ sub test_grade_make {
             my $is_grade_correct;
 
             # Grade evaluation with special case if discarding
-            my ($found_grade_result, $found_msg) = 
+            my ($found_grade_result, $found_msg) =
                 ( $stdout =~ /^CPAN::Reporter: ([^,]+), ([^\n]+)/ms );
             if ( $case_grade eq 'discard' ) {
                 is ($found_grade_result, "test results were not valid",
                     "$case->{name}: '$tool_label' prerequisites not satisifed"
                 );
-                    
-                like( $stdout, 
+
+                like( $stdout,
                     "/Test report will not be sent/",
                     "$case->{name}: discard message correct"
                 ) and $is_grade_correct++;
@@ -293,12 +293,12 @@ sub test_grade_make {
             }
             else {
                 my ($found_grade) = ( $found_grade_result =~ /$tool_label result is '([^']+)'/ );
-                is( $found_grade, $case_grade, 
+                is( $found_grade, $case_grade,
                     "$case->{name}: '$tool_label' grade reported as '$case_grade'"
                 ) or _diag_output( $stdout, $stderr );
-                
+
                 my $ctr_regex = "/preparing a CPAN Testers report for \Q$short_name\E/";
-                
+
                 if ( $case_grade eq 'pass' ) {
                     unlike( $stdout, $ctr_regex ,
                         "$case->{name}: report notification correct"
@@ -328,7 +328,7 @@ sub test_grade_make {
                 unless ( $is_rc_correct && $is_grade_correct );
 
         } #SKIP
-    } #for   
+    } #for
 }
 
 #--------------------------------------------------------------------------#
@@ -345,7 +345,7 @@ sub test_grade_test {
 
     for my $tool ( qw/eumm mb/ ) {
         SKIP: {
-            my ($have_tool,$tool_mod,$tool_PL) = 
+            my ($have_tool,$tool_mod,$tool_PL) =
                 @{$tool_constants{$tool}}{qw/have module PL/};
             my $tool_cmd = $tool eq 'eumm'  ?  "$make test"
                                             :  "$perl Build test" ;
@@ -353,10 +353,10 @@ sub test_grade_test {
                                             :  "perl Build test" ;
 
             skip "$tool_mod not installed or working", test_grade_test_iter_plan()
-                if ! $have_tool; 
+                if ! $have_tool;
 
             my $tempd = _ok_clone_dist_dir( $case->{name} );
-                
+
             $t::Helper::sent_report = undef;
             $t::Helper::comments = undef;
 
@@ -383,22 +383,22 @@ sub test_grade_test {
                 skip "test() died", test_grade_test_iter_plan() - 1;
             }
 
-            my $is_rc_correct = $case->{"$tool\_success"} 
+            my $is_rc_correct = $case->{"$tool\_success"}
                               ? $test_build_rc : ! $test_build_rc;
-            ok( $is_rc_correct, 
-                "$case->{name}: '$tool_label' returned " . 
+            ok( $is_rc_correct,
+                "$case->{name}: '$tool_label' returned " .
                 $case->{"$tool\_success"}
             );
-            
+
             # Grade evaluation with special case if discarding
-            my ($found_grade_result, $found_msg) = 
+            my ($found_grade_result, $found_msg) =
                 ( $stdout =~ /^CPAN::Reporter: (Test result[^,]+), ([^\n]+)[.:]$/ims );
             if ( $case->{"$tool\_grade"} eq 'discard' ) {
                 is ($found_grade_result, "test results were not valid",
                     "$case->{name}: '$tool_label' prerequisites not satisifed"
                 );
-                    
-                like( $stdout, 
+
+                like( $stdout,
                     "/Test report will not be sent/",
                     "$case->{name}: discard message correct"
                 );
@@ -410,10 +410,10 @@ sub test_grade_test {
             else {
                 my $case_grade = $case->{"$tool\_grade"};
                 my ($found_grade) = ( $found_grade_result =~ /Test result is '([^']+)'/ );
-                is( $found_grade, $case_grade, 
+                is( $found_grade, $case_grade,
                     "$case->{name}: '$tool_label' grade reported as '$case_grade'"
                 ) or _diag_output( $stdout, $stderr );
-                
+
                 like( $stdout, "/preparing a CPAN Testers report for \Q$short_name\E/",
                     "$case->{name}: report notification correct"
                 );
@@ -429,9 +429,9 @@ sub test_grade_test {
                     );
                 }
             }
-            
+
             # Grade explanation message
-            is( $found_msg, 
+            is( $found_msg,
                 $case->{"$tool\_msg"} ? $case->{"$tool\_msg"} : q{},
                 "$case->{name}: '$tool_label' grade explanation correct"
             );
@@ -463,7 +463,7 @@ HERE
 
     'unknown' => << 'HERE',
 Thank you for uploading your work to CPAN.  However, attempting to
-test your distribution gave an inconclusive result.  
+test your distribution gave an inconclusive result.
 
 This could be because your distribution had an error during the make/build
 stage, did not define tests, tests could not be found, because your tests were
@@ -474,15 +474,15 @@ http://wiki.cpantesters.org/wiki/CPANAuthorNotes
 HERE
 
     'na' => << 'HERE',
-Thank you for uploading your work to CPAN.  While attempting to build or test 
-this distribution, the distribution signaled that support is not available 
-either for this operating system or this version of Perl.  Nevertheless, any 
-diagnostic output produced is provided below for reference.  If this is not 
+Thank you for uploading your work to CPAN.  While attempting to build or test
+this distribution, the distribution signaled that support is not available
+either for this operating system or this version of Perl.  Nevertheless, any
+diagnostic output produced is provided below for reference.  If this is not
 what you expect, you may wish to consult the CPAN Testers Wiki:
 
 http://wiki.cpantesters.org/wiki/CPANAuthorNotes
 HERE
-    
+
 );
 
 sub test_report_plan() { 13 };
@@ -499,23 +499,23 @@ sub test_report {
         : "none provided" ;
 
     my $tempd = _ok_clone_dist_dir( $case->{name} );
-                
+
     my ($stdout, $stderr, $err, $test_output) = _run_report( $case );
-    
-    is( $err, q{}, 
-        "$label report ran without error" 
+
+    is( $err, q{},
+        "$label report ran without error"
     );
 
     ok( defined $msg_re && length $msg_re,
         "$label found '$expected_grade' grade paragraph"
     );
-    
+
     # set PERL_MM_USE_DEFAULT to mirror _run_report
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
     my $env_vars = CPAN::Reporter::_env_report();
     my $special_vars = CPAN::Reporter::_special_vars_report();
     my $toolchain_versions = CPAN::Reporter::_toolchain_report();
-    
+
     like( $t::Helper::sent_report, '/' . quotemeta($msg_re) . '/ms',
         "$label correct intro paragraph"
     );
@@ -527,19 +527,19 @@ sub test_report {
     like( $t::Helper::sent_report, '/' . quotemeta($prereq) . '/ms',
         "$label found prereq report"
     );
-    
+
     like( $t::Helper::sent_report, '/' . quotemeta($env_vars) . '/ms',
         "$label found environment variables"
     );
-    
+
     like( $t::Helper::sent_report, '/' . quotemeta($special_vars) . '/ms',
         "$label found special variables"
     );
-    
+
     like( $t::Helper::sent_report, '/' . quotemeta($toolchain_versions) . '/ms',
         "$label found toolchain versions found"
     );
-    
+
     my $joined_output = join("", @$test_output);
 
     # extract just the test output
@@ -550,14 +550,14 @@ sub test_report {
         ^(.+) \n                            # test output ending in newline
         ^------------------------------ \n  # separator
         ^PREREQUISITES \n                   # next section
-        /xms ) 
+        /xms )
     {
         $found_test_output = $1;
     }
-    
+
     my $orig_found_length = length $found_test_output;
     ok( $orig_found_length, "$label located test output in report" );
-    
+
     # if output appears longer than max, the excess should only be the
     # error message, so look for it, strip it and check it
     my $length_error = q{};
@@ -586,7 +586,7 @@ sub test_report {
     # after extracting error, if any, the output should now be
     # less than the max length
     my $found_length = length $found_test_output;
-    ok( $found_length <= $max_report_length, 
+    ok( $found_length <= $max_report_length,
         "$label test_output less than or equal to maximum length"
     ) or diag "length $found_length > $max_report_length";
 
@@ -622,11 +622,11 @@ sub test_dispatch {
 
     my $tempd = _ok_clone_dist_dir( $case->{name} );
     local $case->{dist}{build_dir} = "$tempd";
-                
+
     my ($stdout, $stderr, $err) = _run_report( $case );
 
-    is( $err, q{}, 
-            "generate report for $case->{label}" 
+    is( $err, q{},
+            "generate report for $case->{label}"
     );
 
     if ( $opt{will_send} ) {
@@ -655,7 +655,7 @@ sub test_dispatch {
 
 sub _diag_output {
     my ( $stdout, $stderr ) = @_;
-    diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n"; 
+    diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n";
 }
 
 #--------------------------------------------------------------------------#
@@ -668,7 +668,7 @@ sub _ok_clone_dist_dir {
     my $dist_dir = File::Spec->rel2abs(
         File::Spec->catdir( qw/t dist /, $dist_name )
     );
-    my $work_dir = tempd() 
+    my $work_dir = tempd()
         or die "Couldn't create temporary distribution dir: $!\n";
 
     # workaround badly broken F::C::R 0.34 on Windows
@@ -696,9 +696,9 @@ sub _run_report {
 
     # automate CPAN::Reporter prompting
     local $ENV{PERL_MM_USE_DEFAULT} = 1;
-    
+
     my ($stdout, $stderr, $output, $exit_value);
-    
+
     $t::Helper::sent_report = undef;
     $t::Helper::comments = undef;
 
@@ -711,7 +711,7 @@ sub _run_report {
             if ( $phase eq 'test' ) {
                 system("$make");
             }
-            ($output, $exit_value) = 
+            ($output, $exit_value) =
                 CPAN::Reporter::record_command( $case->{command} );
             no strict 'refs';
             &{"CPAN::Reporter::grade_$phase"}(
@@ -721,7 +721,7 @@ sub _run_report {
                 $exit_value,
             );
         } => \$stdout, \$stderr;
-    }; 
+    };
     if ( $@ ) {
         diag "DIED WITH:\n$@";
         _diag_output( $stdout, $stderr );
@@ -761,11 +761,11 @@ use vars qw/$AUTOLOAD/;
 
 sub comments { shift; $t::Helper::comments = shift }
 
-sub send { 
-    shift; 
-    $t::Helper::sent_report = $t::Helper::comments; 
-    return 1 
-} 
+sub send {
+    shift;
+    $t::Helper::sent_report = $t::Helper::comments;
+    return 1
+}
 
 sub subject {
     my $self = shift;
@@ -787,7 +787,7 @@ sub transport {
     }
     return $mocked_data{transport};
 }
-  
+
 sub AUTOLOAD {
     my $self = shift;
     if ( @_ ) {
