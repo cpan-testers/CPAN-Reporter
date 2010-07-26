@@ -356,7 +356,7 @@ sub _dispatch_report {
     my $config;
     $config = CPAN::Reporter::Config::_get_config_options( $config_obj )
         if $config_obj;
-    if ( ! $config->{email_from} ) {
+    if ( ! $config->{email_from} && $config->{transport} !~ /\AMetabase/ ) {
         $CPAN::Frontend->mywarn( << "EMAIL_REQUIRED");
 
 CPAN::Reporter: required 'email_from' option missing an email address, so
