@@ -4,7 +4,7 @@ author:
   - 'David A. Golden <dagolden@cpan.org>'
 configure_requires:
   Module::Build: 0.36
-generated_by: 'Module::Build version 0.3603'
+generated_by: 'Module::Build version 0.3607'
 license: apache
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -17,16 +17,16 @@ no_index:
 provides:
   CPAN::Reporter:
     file: lib/CPAN/Reporter.pm
-    version: 1.1711
+    version: 1.1800
   CPAN::Reporter::Config:
     file: lib/CPAN/Reporter/Config.pm
-    version: 1.1711
+    version: 1.1800
   CPAN::Reporter::History:
     file: lib/CPAN/Reporter/History.pm
-    version: 1.1711
+    version: 1.1800
   CPAN::Reporter::PrereqCheck:
     file: lib/CPAN/Reporter/PrereqCheck.pm
-    version: 1.1711
+    version: 1.1800
 requires:
   CPAN: 1.9301
   Config::Tiny: 2.08
@@ -48,4 +48,4 @@ requires:
   Test::Reporter: 1.54
 resources:
   license: http://www.apache.org/licenses/LICENSE-2.0.txt
-version: 1.1711
+version: 1.1800
