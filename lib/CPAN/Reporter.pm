@@ -483,7 +483,7 @@ DUPLICATE_REPORT
                     : "send_report" ;
     if ( _prompt( $config, $send_config, $tr->grade ) =~ /^y/ ) {
         $CPAN::Frontend->myprint( "CPAN::Reporter: sending test report with '" . $tr->grade .
-              "' to " . $tr->address . "\n");
+              "' via " . $transport_args[0] . "\n");
         if ( $tr->send() ) {
             CPAN::Reporter::History::_record_history( $result )
                 if not $is_duplicate;
