@@ -356,11 +356,16 @@ sub _dispatch_report {
     my $config;
     $config = CPAN::Reporter::Config::_get_config_options( $config_obj )
         if $config_obj;
-    if ( ! $config->{email_from} && $config->{transport} !~ /\AMetabase/ ) {
+    if ( ! $config->{email_from} ) {
         $CPAN::Frontend->mywarn( << "EMAIL_REQUIRED");
 
 CPAN::Reporter: required 'email_from' option missing an email address, so
 test report will not be sent. See documentation for configuration details.
+
+Even for non-email transports (e.g. Metabase, File or Socket) this email
+address will show up in the report and help identify the tester.
+This is required for compatibility with tools that process legacy reports
+for analysis.
 
 EMAIL_REQUIRED
         return;

@@ -1,5 +1,16 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1800
+
+  Changed:
+
+  - "sending test report..." message now shows transport method, not
+    the old email list address for less confusion when using non-email
+    transports
+
+  - Enhances missing "email_from" prompt to clarify why an email is
+    still needed under non-email transports for legacy compatibililty
+
 1.1711 Wed Feb 17 13:52:14 EST 2010
 
   Bugs fixed:
