@@ -1,7 +1,7 @@
 package CPAN::Reporter::PrereqCheck;
 use strict;
 use vars qw/$VERSION/;
-$VERSION = '1.1800';
+$VERSION = '1.1801';
 $VERSION = eval $VERSION; ## no critic
 
 use ExtUtils::MakeMaker;
