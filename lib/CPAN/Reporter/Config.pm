@@ -536,8 +536,7 @@ From the CPAN shell:
 = DESCRIPTION
 
 Default options for CPAN::Reporter are read from a configuration file 
-{.cpanreporter/config.ini} in the user's home directory (Unix and OS X)
-or "My Documents" directory (Windows).
+{.cpanreporter/config.ini} in the user's home directory.
 
 The configuration file is in "ini" format, with the option name and value
 separated by an "=" sign
