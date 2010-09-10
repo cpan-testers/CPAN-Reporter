@@ -1,5 +1,13 @@
 Revision history for Perl module CPAN::Reporter
 
+1.1801
+
+  Changed:
+
+  - Default config directory now uses File::HomeDir->my_home on
+    windows instead of ->my_documents.  If that directory doesn't exist,
+    it will fall back to ->my_documents.
+
 1.1800 Mon Jul 26 16:02:06 EDT 2010
 
   Changed:

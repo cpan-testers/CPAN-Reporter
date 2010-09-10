@@ -311,8 +311,10 @@ sub _get_config_dir {
 
     my $conf_dir = File::Spec->catdir(File::HomeDir->my_home, ".cpanreporter");
 
-    $conf_dir = File::Spec->catdir(File::HomeDir->my_documents, ".cpanreporter")
-        if $^O eq 'MSWin32' and !-e $conf_dir;
+    if ($^O eq 'MSWin32') {
+      my $alt_dir = File::Spec->catdir(File::HomeDir->my_documents, ".cpanreporter");
+      $conf_dir = $alt_dir if -d $alt_dir && ! -d $conf_dir;
+    }
 
     return $conf_dir;
 }
