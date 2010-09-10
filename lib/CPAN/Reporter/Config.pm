@@ -308,11 +308,13 @@ sub _get_config_dir {
     ) {
         return $ENV{PERL_CPAN_REPORTER_DIR};
     }
-    else {
-        return ( $^O eq 'MSWin32' )
-            ? File::Spec->catdir(File::HomeDir->my_documents, ".cpanreporter")
-            : File::Spec->catdir(File::HomeDir->my_home, ".cpanreporter") ;
-    }
+
+    my $conf_dir = File::Spec->catdir(File::HomeDir->my_home, ".cpanreporter");
+
+    $conf_dir = File::Spec->catdir(File::HomeDir->my_documents, ".cpanreporter")
+        if $^O eq 'MSWin32' and !-e $conf_dir;
+
+    return $conf_dir;
 }
 
 #--------------------------------------------------------------------------#
