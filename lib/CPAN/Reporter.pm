@@ -22,7 +22,7 @@ use CPAN::Reporter::Config ();
 use CPAN::Reporter::History ();
 use CPAN::Reporter::PrereqCheck ();
 
-use constant MAX_OUTPUT_LENGTH => 50_000;
+use constant MAX_OUTPUT_LENGTH => 1_000_000;
 
 #--------------------------------------------------------------------------#
 # create temp lib dir for Devel::Autoflush
