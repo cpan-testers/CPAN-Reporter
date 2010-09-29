@@ -10,20 +10,12 @@ use Probe::Perl;
 use File::Temp;
 
 #--------------------------------------------------------------------------#
-# Skip on Win32 if except for author or without Proc::Killfam/Win32::Job
+# Skip on Win32 except for release testing
 #--------------------------------------------------------------------------#
 
-if ( $^O ne 'MSWin32' ) {
-  {
-    local $SIG{__WARN__} = sub {}; # suppress v-string warnings
-    eval "require Proc::ProcessTable; require Proc::Killfam";
-  }
-  plan skip_all => "requires Proc::ProcessTable and Proc::Killfam"
-    if $@;
-}
 if ( $^O eq "MSWin32" ) {
-    plan skip_all => "\$ENV{PERL_AUTHOR_TESTING} required for Win32 timeout testing", 
-        unless $ENV{PERL_AUTHOR_TESTING};
+    plan skip_all => "\$ENV{RELEASE_TESTING} required for Win32 timeout testing", 
+        unless $ENV{RELEASE_TESTING};
     eval "use Win32::Job ()";
     plan skip_all => "Can't interrupt hung processes without Win32::Job"
         if $@;

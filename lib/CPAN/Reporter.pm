@@ -173,7 +173,7 @@ HERE
     $output_fh->close;
 
     # cleanup
-    unlink $wrapper_name, $temp_out;
+    unlink $wrapper_name, $temp_out unless $ENV{PERL_CR_NO_CLEANUP};
 
     if ( ! @cmd_output ) {
         $CPAN::Frontend->mywarn(
@@ -1188,48 +1188,38 @@ sub _temp_filename {
 
 #--------------------------------------------------------------------------#
 # _timeout_wrapper
+# Timeout technique adapted from App::cpanminus (thank you Miyagawa!)
 #--------------------------------------------------------------------------#
 
 sub _timeout_wrapper {
     my ($cmd, $timeout) = @_;
-
-    # Check Proc::ProcessTable also in case an unauthorized Proc::Killfam is
-    # present, as from Tk-ExecuteCommand
-    {
-      local $SIG{__WARN__} = sub {};  # protect against v-string warning
-      eval "require Proc::ProcessTable; require Proc::Killfam"; ## no critic
-    }
-    if ($@) {
-        $CPAN::Frontend->mywarn( << 'HERE' );
-CPAN::Reporter: you need Proc::ProcessTable and Proc::Killfam for
-inactivity_timeout support.  Continuing without timeout...
-HERE
-        return;
-    }
 
     # protect shell quotes
     $cmd = quotemeta($cmd);
 
     my $wrapper = sprintf << 'HERE', $timeout, $cmd, $cmd;
 use strict;
-use Proc::Killfam 'killfam';
 my ($pid, $exitcode);
 eval {
-    local $SIG{CHLD};
-    local $SIG{ALRM} = sub {die 'Timeout'};
+    setpgrp(0,0); # new process group
     $pid = fork;
-    die "Cannot fork: $!\n" unless defined $pid;
-    if ($pid) { #parent
+    if ($pid) {
+        local $SIG{CHLD};
+        local $SIG{ALRM} = sub {die 'Timeout'};
         alarm %s;
         my $wstat = waitpid $pid, 0;
+        alarm 0;
         $exitcode = $wstat == -1 ? -1 : $?;
-    } else {    #child
+    } elsif ( $pid == 0 ) {
         exec "%s";
     }
+    else {
+      die "Cannot fork: $!\n" unless defined $pid;
+    }
 };
-alarm 0;
 if ($pid && $@ =~ /Timeout/){
-    killfam 9, $pid;
+    local $SIG{TERM} = 'IGNORE'; # ignore TERM
+    kill 'TERM' => 0; # and send to our whole process group
     my $wstat = waitpid $pid, 0;
     $exitcode = $wstat == -1 ? -1 : $?;
 }

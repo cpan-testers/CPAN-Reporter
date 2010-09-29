@@ -7,6 +7,9 @@ Revision history for Perl module CPAN::Reporter
   - Given the migration to CT2.0, the maximum report length before
     truncation has been increased from 50 to 1,000 kB.
 
+  - Removed dependency on Proc::ProcessTable for using a command timeout
+    on non-Win32 platforms.
+
 1.1801 Fri Sep 10 16:34:29 EDT 2010
 
   Changed:

@@ -13,20 +13,12 @@ use IO::CaptureOutput qw/capture/;
 use Probe::Perl ();
 
 #--------------------------------------------------------------------------#
-# Skip on Win32 if except for author or without Proc::Killfam/Win32::Job
+# Skip on Win32 except for release testing
 #--------------------------------------------------------------------------#
 
-if ( $^O ne 'MSWin32' ) {
-  {
-    local $SIG{__WARN__} = sub {}; # suppress v-string warnings
-    eval "require Proc::ProcessTable; require Proc::Killfam";
-  }
-  plan skip_all => "requires Proc::ProcessTable and Proc::Killfam"
-    if $@;
-}
 if ( $^O eq "MSWin32" ) {
-    plan skip_all => "\$ENV{PERL_AUTHOR_TESTING} required for Win32 timeout testing", 
-        unless $ENV{PERL_AUTHOR_TESTING};
+    plan skip_all => "\$ENV{RELEASE_TESTING} required for Win32 timeout testing", 
+        unless $ENV{RELEASE_TESTING};
     eval "use Win32::Job ()";
     plan skip_all => "Can't interrupt hung processes without Win32::Job"
         if $@;
@@ -46,39 +38,35 @@ my $quote = $^O eq 'MSWin32' || $^O eq 'MSDOS' ? q{"} : q{'};
 
 my @cases = (
     {
-        label => "regular < command < program",
+        label => "regular < global < delay",
         program => '$now=time(); 1 while( time() - $now < 60); print qq{foo\n}; exit 0',
-        args => '',
         output => [],
         timeout => 5,
         command_timeout => 30,
         delay => 60,
-        exit_code => 9,
+        exit_code => 15,
     },
     {
-        label => "regular < program < command",
+        label => "regular < delay < global",
         program => '$now=time(); 1 while( time() - $now < 30); print qq{foo\n}; exit 0',
-        args => '',
         output => [],
         timeout => 5,
         delay => 30,
         command_timeout => 60,
-        exit_code => 9,
+        exit_code => 15,
     },
     {
-        label => "command < regular < program",
+        label => "global < regular < delay",
         program => '$now=time(); 1 while( time() - $now < 60); print qq{foo\n}; exit 0',
-        args => '',
         output => [],
         command_timeout => 2,
         timeout => 5,
         delay => 60,
-        exit_code => 9,
+        exit_code => 15,
     },
     {
-        label => "command < program < regular",
+        label => "global < delay < regular",
         program => '$now=time(); 1 while( time() - $now < 5); print qq{foo\n}; exit 0',
-        args => '',
         output => ["foo\n"],
         command_timeout => 2,
         delay => 5,
@@ -86,9 +74,8 @@ my @cases = (
         exit_code => 0,
     },
     {
-        label => "program < regular < command",
+        label => "delay < regular < global",
         program => '$now=time(); 1 while( time() - $now < 2); print qq{foo\n}; exit 0',
-        args => '',
         output => ["foo\n"],
         delay => 2,
         timeout => 30,
@@ -96,9 +83,8 @@ my @cases = (
         exit_code => 0,
     },
     {
-        label => "program < command < regular",
+        label => "delay < global < regular",
         program => '$now=time(); 1 while( time() - $now < 2); print qq{foo\n}; exit 0',
-        args => '',
         output => ["foo\n"],
         delay => 2,
         command_timeout => 30,
@@ -106,18 +92,16 @@ my @cases = (
         exit_code => 0,
     },
     {
-        label => "command < program",
+        label => "global < delay",
         program => '$now=time(); 1 while( time() - $now < 30); print qq{foo\n}; exit 0',
-        args => '',
         output => [],
         command_timeout => 5,
         delay => 30,
-        exit_code => 9,
+        exit_code => 15,
     },
     {
-        label => "program < command",
+        label => "delay < global",
         program => '$now=time(); 1 while( time() - $now < 2); print qq{foo\n}; exit 0',
-        args => '',
         output => ["foo\n"],
         delay => 2,
         command_timeout => 30,
@@ -143,7 +127,7 @@ SKIP: {
                      ? ( command_timeout => $c->{command_timeout} ) : ();
     test_fake_config( @extra_config );
 
-    my $fh = File::Temp->new() 
+    my $fh = File::Temp->new( UNLINK => ! $ENV{PERL_CR_NO_CLEANUP} )
         or die "Couldn't create a temporary file: $!\nIs your temp drive full?";
     print {$fh} $c->{program}, "\n";
     $fh->flush;
@@ -151,11 +135,12 @@ SKIP: {
     my ($stdout, $stderr);
     my $start_time = time();
     my $cmd = $c->{relative} ? "perl" : $perl; 
+    $cmd .= " $fh";
     warn "# sleeping for timeout test\n" if $c->{delay};
     eval {
         capture sub {
             ($output, $exit) = CPAN::Reporter::record_command( 
-                "$cmd $fh $c->{args}", $c->{timeout}
+                $cmd, $c->{timeout}
             );
         }, \$stdout, \$stderr;
     };
@@ -220,7 +205,7 @@ SKIP: {
     }
 
     ok( $time_ok, "$c->{label}: $who timeout") or diag $diag;
-    like( $stdout, "/" . quotemeta(join(q{},@$output)) . "/", 
+    like( $stdout, "/" . quotemeta(join(q{},@{ $output || [] })) . "/", 
         "$c->{label}: captured stdout" 
     );
     is_deeply( $output, $c->{output},  "$c->{label}: output as expected" )
