@@ -1220,8 +1220,8 @@ eval {
 if ($pid && $@ =~ /Timeout/){
     local $SIG{TERM} = 'IGNORE'; # ignore TERM
     kill 'TERM' => 0; # and send to our whole process group
-    my $wstat = waitpid $pid, 0;
-    $exitcode = $wstat == -1 ? -1 : $?;
+    waitpid $pid, 0;
+    $exitcode = 15; # force result to look like SIGTERM
 }
 elsif ($@) {
     die $@;

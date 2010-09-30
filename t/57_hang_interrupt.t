@@ -93,7 +93,7 @@ for my $case ( @cases ) {
         pretty_id => $case->{pretty_id},
         %mock_dist_options,
     );
-    test_fake_config( command_timeout => 5 );
+    test_fake_config( command_timeout => 3 );
     test_dispatch( 
         $case, 
         will_send => $case->{will_send},
