@@ -1,6 +1,13 @@
 Revision history for Perl module CPAN::Reporter
 
-1.1803
+1.1803 Thu Sep 30 21:49:10 EDT 2010
+
+  Fixed:
+
+  - Fixed t/13_record_command.t to reflect removal of Proc::ProcessTable
+    as a conditional dependency and fixed a resulting bug in the test
+  
+  - Removed mention of Proc::ProcessTable in CPAN::Reporter::Config
 
 1.1802 Wed Sep 29 23:19:15 EDT 2010
 
