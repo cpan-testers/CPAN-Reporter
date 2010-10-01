@@ -8,7 +8,7 @@ CPAN::Reporter - Adds CPAN Testers reporting to CPAN.pm
 
 =head1 VERSION
 
-This documentation describes version 1.1802.
+This documentation describes version 1.1803.
 
 =head1 SYNOPSIS
 

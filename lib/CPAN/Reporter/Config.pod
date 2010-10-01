@@ -8,7 +8,7 @@ CPAN::Reporter::Config - Config file options for CPAN::Reporter
 
 =head1 VERSION
 
-This documentation refers to version 1.1802
+This documentation refers to version 1.1803
 
 =head1 SYNOPSIS
 
@@ -180,8 +180,7 @@ will be halted after this many seconds; useful for unattended smoke testing
 to stop after some amount of time; generally, this should be large -- 
 900 seconds or more -- as some distributions' tests take quite a long time to 
 run.  On MSWin32, L<Win32::Job> is a needed and trying to kill a processes may 
-actually deadlock in some situations -- so use at your own risk.  On other
-platforms, L<Proc::ProcessTable> and L<Proc::Killfam> are required.
+actually deadlock in some situations -- so use at your own risk.
 
 =item *
 
