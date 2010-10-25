@@ -1,7 +1,7 @@
 package CPAN::Reporter;
 use strict;
 use vars qw/$VERSION/;
-$VERSION = '1.1803';
+$VERSION = '1.18_04';
 $VERSION = eval $VERSION; ## no critic
 
 use Config;
