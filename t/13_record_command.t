@@ -68,7 +68,7 @@ my @cases = (
         output => [],
         delay => 60,
         timeout => 5,
-        exit_code => 15,
+        exit_code => 9,
     },
     {
         label => "Timeout not reached",
