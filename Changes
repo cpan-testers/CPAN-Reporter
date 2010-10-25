@@ -2,6 +2,11 @@ Revision history for Perl module CPAN::Reporter
 
 1.18_05
 
+  Fixed:
+
+  - Fixed error in calling prerequisite detection script when there
+    are spaces in the path [RURBAN]
+
 1.18_04 NOT RELEASED TO CPAN
 
   Changed:

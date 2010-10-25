@@ -1354,7 +1354,7 @@ sub _toolchain_report {
 #
 #--------------------------------------------------------------------------#
 
-my $version_finder = $INC{'CPAN/Reporter/PrereqCheck.pm'};
+my $version_finder = quotemeta($INC{'CPAN/Reporter/PrereqCheck.pm'});
 
 sub _version_finder {
     my %prereqs = @_;
