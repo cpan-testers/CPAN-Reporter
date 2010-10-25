@@ -1,5 +1,13 @@
 Revision history for Perl module CPAN::Reporter
 
+1.18_04
+
+  Changed:
+
+  - Executed processes are given their own process group and timeouts are
+    now handled by sending SIGKILL to the entire child process group.
+    This is an attempt to address RT#61912
+
 1.1803 Thu Sep 30 21:49:10 EDT 2010
 
   Fixed:

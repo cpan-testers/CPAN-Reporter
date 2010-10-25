@@ -44,7 +44,7 @@ my @cases = (
         timeout => 5,
         command_timeout => 30,
         delay => 60,
-        exit_code => 15,
+        exit_code => 9,
     },
     {
         label => "regular < delay < global",
@@ -53,7 +53,7 @@ my @cases = (
         timeout => 5,
         delay => 30,
         command_timeout => 60,
-        exit_code => 15,
+        exit_code => 9,
     },
     {
         label => "global < regular < delay",
@@ -62,7 +62,7 @@ my @cases = (
         command_timeout => 2,
         timeout => 5,
         delay => 60,
-        exit_code => 15,
+        exit_code => 9,
     },
     {
         label => "global < delay < regular",
@@ -97,7 +97,7 @@ my @cases = (
         output => [],
         command_timeout => 5,
         delay => 30,
-        exit_code => 15,
+        exit_code => 9,
     },
     {
         label => "delay < global",
