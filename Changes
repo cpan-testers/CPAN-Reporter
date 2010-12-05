@@ -1,5 +1,12 @@
 Revision history for Perl module CPAN::Reporter
 
+1.18_06
+
+  Fixed:
+
+  - Reports with a "can't spawn" error from TAP::Parser::Iterator::Process
+    are discarded instead of reporting FAIL
+
 1.18_05 Sun Oct 24 21:25:22 EDT 2010
 
   Fixed:

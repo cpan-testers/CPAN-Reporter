@@ -536,26 +536,41 @@ sub _downgrade_known_causes {
     # look for perl version error messages from various programs
     # "Error evaling..." type errors happen on Perl < 5.006 when modules
     # define their version with "our $VERSION = ..."
-    my $version_error;
+    my ($harness_error, $version_error, $unsupported) ;
     for my $line ( @$output ) {
-        if( $line =~ /Perl .*? required.*?--this is only/ims ||
-            $line =~ /ERROR: perl: Version .*? is installed, but we need version/ims ||
-            $line =~ /ERROR: perl \(.*?\) is installed, but we need version/ims ||
-            $line =~ /Error evaling version line 'BEGIN/ims ||
-            $line =~ /Could not eval '/ims
-        ) {
-            $version_error++;
-            last;
-        }
+      if ( $result->{phase} eq 'test'
+        && $line =~ m{open3: IO::Pipe: Can't spawn.*?TAP/Parser/Iterator/Process.pm}
+      ) {
+        $harness_error++;
+        last;
+      }
+      if( $line =~ /Perl .*? required.*?--this is only/ims ||
+        $line =~ /ERROR: perl: Version .*? is installed, but we need version/ims ||
+        $line =~ /ERROR: perl \(.*?\) is installed, but we need version/ims ||
+        $line =~ /Error evaling version line 'BEGIN/ims ||
+        $line =~ /Could not eval '/ims
+      ) {
+        $version_error++;
+        last;
+      }
+      if ( $line =~ /No support for OS|OS unsupported/ims ) {
+        $unsupported++;
+        last;
+      }
     }
 
+    # if the test harness had an error, discard the report
+    if ( $harness_error ) {
+      $grade = 'discard';
+      $msg = 'Test harness failure';
+    }
     # check for explicit version error or just a perl version prerequisite
-    if ( $version_error || $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ) {
+    elsif ( $version_error || $result->{prereq_pm} =~ m{^\s+!\s+perl\s}ims ) {
         $grade = 'na';
         $msg = 'Perl version too low';
     }
     # check again for unsupported OS in case we took 'fail' from exit value
-    elsif ( grep { /No support for OS|OS unsupported/ims } @{$output} ) {
+    elsif ( $unsupported  ) {
         $grade = 'na';
         $msg = 'This platform is not supported';
     }

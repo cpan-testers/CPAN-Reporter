@@ -61,6 +61,16 @@ my @test_distros = (
         mb_grade => "discard",
         mb_msg => "Prerequisite version too low",
     },
+    {
+        name => 't-Harness-Fail',
+        prereq => {},
+        eumm_success => 0,
+        eumm_grade => "discard",
+        eumm_msg => "Test harness failure",
+        mb_success => 0,
+        mb_grade => "discard",
+        mb_msg => "Test harness failure",
+    },
 );
 
 plan tests => 1 + test_fake_config_plan() 
