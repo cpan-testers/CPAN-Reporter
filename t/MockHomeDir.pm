@@ -20,6 +20,7 @@ my $home_dir = File::Spec->rel2abs( $temp_home );
 sub home_dir { $home_dir }
 
 package File::HomeDir;
+our $VERSION = 999;
 sub my_documents { return $home_dir };
 sub my_home { return $home_dir };
 sub my_data { return $home_dir };

@@ -45,6 +45,7 @@ BEGIN {
 }
 
 package File::HomeDir;
+our $VERSION = 999;
 sub my_documents { return $old_home };
 sub my_home { return $new_home };
 

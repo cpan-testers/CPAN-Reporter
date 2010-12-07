@@ -12,13 +12,15 @@ use vars qw/@EXPORT/;
     test_dispatch test_dispatch_plan
 /;
 
-use base 'Exporter';
+use Exporter ();
+our @ISA = 'Exporter';
 
 use Config;
+use Archive::Tar ();
 use File::Basename qw/basename/;
 use File::Copy::Recursive 0.35 qw/dircopy/;
 use File::Path qw/mkpath/;
-use File::pushd 0.32 qw/tempd/;
+use File::pushd 0.32 qw/pushd tempd/;
 use File::Spec 3.19 ();
 use File::Temp 0.16 qw/tempdir/;
 use IO::CaptureOutput 1.03 qw/capture/;
@@ -36,6 +38,14 @@ my $make = $Config{make};
 
 my $temp_stdout = File::Temp->new()
     or die "Couldn't make temporary file:$!\nIs your temp drive full?";
+
+my $temp_dist_dir = tempdir( 'CR-t-dist-XXXXXX', CLEANUP => 1, TMPDIR => 1);
+my $dist_archive = File::Spec->rel2abs("t/dist.tgz");
+{
+  my $wd = pushd($temp_dist_dir);
+  Archive::Tar->extract_archive($dist_archive, 1)
+    or die "Could not extract test distributions: " . Archive::Tar->error;
+}
 
 my $home_dir = t::MockHomeDir::home_dir();
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
@@ -665,9 +675,7 @@ sub _diag_output {
 sub _ok_clone_dist_dir {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my $dist_name = shift;
-    my $dist_dir = File::Spec->rel2abs(
-        File::Spec->catdir( qw/t dist /, $dist_name )
-    );
+    my $dist_dir = File::Spec->catdir( $temp_dist_dir, "dist", $dist_name );
     my $work_dir = tempd()
         or die "Couldn't create temporary distribution dir: $!\n";
 

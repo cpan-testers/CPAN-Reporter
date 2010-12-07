@@ -6,6 +6,7 @@ use ExtUtils::MakeMaker ();
 
 BEGIN {
     $INC{"CPAN.pm"} = 1; #fake load
+    $CPAN::VERSION = 999;
 }
 
 package CPAN::Shell;
