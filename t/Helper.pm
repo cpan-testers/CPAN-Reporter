@@ -16,7 +16,7 @@ use Exporter ();
 our @ISA = 'Exporter';
 
 use Config;
-use Archive::Tar ();
+use Archive::Tar 1.54 ();
 use File::Basename qw/basename/;
 use File::Copy::Recursive 0.35 qw/dircopy/;
 use File::Path qw/mkpath/;
