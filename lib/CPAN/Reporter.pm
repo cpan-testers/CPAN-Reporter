@@ -1406,9 +1406,13 @@ sub _version_finder {
 
 __END__
 
-#--------------------------------------------------------------------------#
-# pod documentation
-#--------------------------------------------------------------------------#
+=for Pod::Coverage
+configure
+grade_PL
+grade_make
+grade_test
+record_command
+test
 
 =begin wikidoc
 

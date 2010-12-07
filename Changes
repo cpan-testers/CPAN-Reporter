@@ -7,6 +7,12 @@ Revision history for Perl module CPAN::Reporter
   - Reports with a "can't spawn" error from TAP::Parser::Iterator::Process
     are discarded instead of reporting FAIL
 
+  Other:
+
+  - CPAN::Reporter is now released using Dist::Zilla.  This required
+    some changes to various files help dzil find/skip various bits of data.
+    It should have no runtime effect.
+
 1.18_05 Sun Oct 24 21:25:22 EDT 2010
 
   Fixed:
