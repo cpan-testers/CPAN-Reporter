@@ -4,12 +4,12 @@ use vars qw/$VERSION/;
 $VERSION = '1.18_06';
 $VERSION = eval $VERSION; ## no critic
 
-use Config::Tiny ();
-use File::HomeDir (); 
+use Config::Tiny 2.08 ();
+use File::HomeDir 0.58 (); 
 use File::Path (qw/mkpath/);
-use File::Spec ();
+use File::Spec 3.19 ();
 use IO::File ();
-use CPAN (); # for printing warnings
+use CPAN 1.9301 (); # for printing warnings
 
 #--------------------------------------------------------------------------#
 # Back-compatibility checks -- just once per load

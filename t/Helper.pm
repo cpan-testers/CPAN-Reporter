@@ -16,14 +16,14 @@ use base 'Exporter';
 
 use Config;
 use File::Basename qw/basename/;
-use File::Copy::Recursive qw/dircopy/;
+use File::Copy::Recursive 0.35 qw/dircopy/;
 use File::Path qw/mkpath/;
-use File::pushd qw/tempd/;
-use File::Spec ();
-use File::Temp qw/tempdir/;
-use IO::CaptureOutput qw/capture/;
+use File::pushd 0.32 qw/tempd/;
+use File::Spec 3.19 ();
+use File::Temp 0.16 qw/tempdir/;
+use IO::CaptureOutput 1.03 qw/capture/;
 use Probe::Perl ();
-use Test::More;
+use Test::More 0.62;
 
 use t::MockHomeDir;
 

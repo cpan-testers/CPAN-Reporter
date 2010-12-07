@@ -5,19 +5,19 @@ $VERSION = '1.18_06';
 $VERSION = eval $VERSION; ## no critic
 
 use Config;
-use CPAN ();
+use CPAN 1.9301 ();
 use CPAN::Version ();
 use File::Basename qw/basename dirname/;
 use File::Find ();
 use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
-use File::Spec ();
-use File::Temp qw/tempdir/;
+use File::Spec 3.19 ();
+use File::Temp 0.16 qw/tempdir/;
 use IO::File ();
 use Parse::CPAN::Meta ();
 use Probe::Perl ();
-use Tee qw/tee/;
-use Test::Reporter ();
+use Tee 0.13 qw/tee/;
+use Test::Reporter 1.54 ();
 use CPAN::Reporter::Config ();
 use CPAN::Reporter::History ();
 use CPAN::Reporter::PrereqCheck ();
@@ -29,7 +29,7 @@ use constant MAX_OUTPUT_LENGTH => 1_000_000;
 # so that PERL5OPT=-MDevel::Autoflush is found by any perl
 #--------------------------------------------------------------------------#
 
-require Devel::Autoflush;
+use Devel::Autoflush 0.04 ();
 # directory fixture
 my $Autoflush_Lib = tempdir(
   "CPAN-Reporter-lib-XXXX", TMPDIR => 1, CLEANUP => 1
