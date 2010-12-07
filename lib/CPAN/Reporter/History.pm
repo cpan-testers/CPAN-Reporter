@@ -1,8 +1,8 @@
-package CPAN::Reporter::History;
 use strict; 
-use vars qw/$VERSION @ISA @EXPORT_OK/;
-$VERSION = '1.18_06';
-$VERSION = eval $VERSION; ## no critic
+package CPAN::Reporter::History;
+# ABSTRACT: Read or write a CPAN::Reporter history log
+
+use vars qw/@ISA @EXPORT_OK/;
 
 use Config;
 use Carp;
@@ -308,14 +308,6 @@ __END__
 
 =begin wikidoc
 
-= NAME
-
-CPAN::Reporter::History - Read or write a CPAN::Reporter history log
-
-= VERSION
-
-This documentation refers to version %%VERSION%%
-
 = SYNOPSIS
 
     use CPAN::Reporter::History 'have_tested';
@@ -380,25 +372,6 @@ all of the fields listed above.
 
 * [CPAN::Reporter]
 * [CPAN::Reporter::FAQ]
-
-= AUTHOR
-
-David A. Golden (DAGOLDEN)
-
-= COPYRIGHT AND LICENSE
-
-Copyright (c) 2006, 2007, 2008 by David A. Golden
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-[http://www.apache.org/licenses/LICENSE-2.0]
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 
 =end wikidoc
 

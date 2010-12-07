@@ -1,8 +1,6 @@
-package CPAN::Reporter::Config;
 use strict; 
-use vars qw/$VERSION/;
-$VERSION = '1.18_06';
-$VERSION = eval $VERSION; ## no critic
+package CPAN::Reporter::Config;
+# ABSTRACT: Config file options for CPAN::Reporter
 
 use Config::Tiny 2.08 ();
 use File::HomeDir 0.58 (); 
@@ -518,14 +516,6 @@ sub _validate_skipfile {
 __END__
 
 =begin wikidoc
-
-= NAME
-
-CPAN::Reporter::Config - Config file options for CPAN::Reporter
-
-= VERSION
-
-This documentation refers to version %%VERSION%%
 
 = SYNOPSIS
 
