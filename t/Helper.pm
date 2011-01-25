@@ -302,7 +302,7 @@ sub test_grade_make {
                 );
             }
             else {
-                my ($found_grade) = ( $found_grade_result =~ /$tool_label result is '([^']+)'/ );
+                my ($found_grade) = ( $found_grade_result =~ /\Q$tool_label\E result is '([^']+)'/ );
                 is( $found_grade, $case_grade,
                     "$case->{name}: '$tool_label' grade reported as '$case_grade'"
                 ) or _diag_output( $stdout, $stderr );
