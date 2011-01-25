@@ -2,6 +2,8 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+1.1901    2011-01-24 20:23:23 EST5EDT
+
   - Fixes some space and backslash escaping for Windows [Christian Walde]
 
 1.1900    2011-01-21 10:55:28 EST5EDT
