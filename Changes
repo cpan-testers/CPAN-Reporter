@@ -2,6 +2,10 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [BUG FIXES]
+
+  - Updated Tee prereq to 0.14 to fix an instability on Windows
+
 1.1901    2011-01-24 20:23:23 EST5EDT
 
   - Fixes some space and backslash escaping for Windows [Christian Walde]

@@ -15,7 +15,7 @@ use File::Temp 0.16 qw/tempdir/;
 use IO::File ();
 use Parse::CPAN::Meta ();
 use Probe::Perl ();
-use Tee 0.13 qw/tee/;
+use Tee 0.14 qw/tee/;
 use Test::Reporter 1.54 ();
 use CPAN::Reporter::Config ();
 use CPAN::Reporter::History ();
