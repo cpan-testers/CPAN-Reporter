@@ -2,6 +2,8 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+1.1902    2011-01-28 15:22:35 EST5EDT
+
   [BUG FIXES]
 
   - Updated Tee prereq to 0.14 to fix an instability on Windows
