@@ -40,7 +40,7 @@ my $case = {
     },
 };
 
-plan tests => 1 + 4 * (1 + test_fake_config_plan + test_dispatch_plan);
+plan tests => 1 + 3 * (1 + test_fake_config_plan + test_dispatch_plan);
 
 #--------------------------------------------------------------------------#
 # tests
@@ -59,15 +59,15 @@ test_dispatch(
     will_send => $case->{will_send},
 );
 
-is( Test::Reporter::Mocked->transport(), 'Net::SMTP',
-    "by default, transport should be be set to Net::SMTP"
+is( Test::Reporter::Mocked->transport(), 'Metabase',
+    "by default, transport should be be set to Metabase"
 );
 
 #--------------------------------------------------------------------------#
 # transport set in config
 #--------------------------------------------------------------------------#
 
-for my $transport ( qw/Net::SMTP Mail::Send/ ) {
+for my $transport ( qw/Metabase/ ) {
 
     test_fake_config( %{$case->{options}}, transport => $transport );
 

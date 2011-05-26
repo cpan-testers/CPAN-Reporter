@@ -53,7 +53,6 @@ my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 
 my $bogus_email_from = 'johndoe@example.com';
 my $bogus_email_to = 'no_one@example.com';
-my $bogus_smtp = 'mail.mail.com';
 
 my %tool_constants = (
     'eumm'  => {
@@ -77,7 +76,7 @@ use vars qw/$sent_report @cc_list/;
 # test config file prep
 #--------------------------------------------------------------------------#
 
-sub test_fake_config_plan() { 3 }
+sub test_fake_config_plan() { 4 }
 sub test_fake_config {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my %overrides = @_;
@@ -89,13 +88,18 @@ sub test_fake_config {
     ok( -d $config_dir,
         "config directory created"
     );
+    my $metabase_file = File::Spec->catfile( $config_dir, 'metabase_id.json' );
+    # 2-args open with bare descriptor to work in older perls
+    open METABASE, ">$metabase_file";
+    close METABASE;
+    ok -r $metabase_file, 'created mock metabase file for testing';
 
     my $tiny = Config::Tiny->new();
     $tiny->{_}{email_from} = $bogus_email_from;
     $tiny->{_}{email_to} = $bogus_email_to; # failsafe
-    $tiny->{_}{smtp_server} = $bogus_smtp;
     $tiny->{_}{send_report} = "yes";
     $tiny->{_}{send_duplicates} = "yes"; # tests often repeat same stuff
+    $tiny->{_}{transport} = "Metabase uri https://metabase.cpantesters.org/api/v1/ id_file $metabase_file";
     for my $key ( keys %overrides ) {
         $tiny->{_}{$key} = $overrides{$key};
     }
@@ -783,7 +787,7 @@ sub subject {
 
 my %mocked_data;
 
-my @valid_transport = qw/Mail::Send Net::SMTP Net::SMTP::Auth HTTP/;
+my @valid_transport = qw/Metabase/;
 
 sub transport {
     my ($self) = shift;
