@@ -2,6 +2,12 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [BUG FIXES]
+  - updated CPAN::Reporter to go with Metabase by default, instead of
+    the deprecated SMTP transport system. This provides more up-to-date
+    information for new testers on how to setup their systems and
+    addresses RT#64316 (and maybe also RT#61735) [GARU]
+
 1.1902    2011-01-28 15:22:35 EST5EDT
 
   [BUG FIXES]
