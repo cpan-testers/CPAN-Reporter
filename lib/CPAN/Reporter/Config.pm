@@ -173,9 +173,9 @@ sub _configure {
 sub _config_order {
     return qw(  
         email_from 
-        smtp_server 
         edit_report 
         send_report
+        transport
     );
 }
 
@@ -193,7 +193,7 @@ sub _config_order {
 my %option_specs = (
     email_from => {
         default => '',
-        prompt => 'What email address will be used for sending reports?',
+        prompt => 'What email address will be used to reference your reports?',
         info => <<'HERE',
 CPAN::Reporter requires a valid email address as the return address
 for test reports sent to cpan-testers\@perl.org.  Either provide just
@@ -204,16 +204,8 @@ list, your test reports will not appear until manually reviewed.
 HERE
     },
     smtp_server => {
-        default => undef, # optional
-        info => <<'HERE',
-If your computer is behind a firewall or your ISP blocks
-outbound mail traffic, CPAN::Reporter will not be able to send
-test reports unless you provide an alternate outbound (SMTP) 
-email server.  Enter the full name of your outbound mail server
-(e.g. smtp.your-ISP.com) or leave this blank to send mail 
-directly to perl.org.  Use a space character to reset this value
-to sending to perl.org.
-HERE
+        default => undef, # (deprecated)
+        prompt  => "[DEPRECATED] It's safe to remove this from your config file.",
     },
     edit_report => {
         default => 'default:ask/no pass/na:no',
@@ -233,10 +225,10 @@ HERE
         validate => \&_validate_grade_action_pair,
         info => <<'HERE',
 By default, CPAN::Reporter will prompt you for confirmation that
-the test report should be sent before actually emailing the 
-report.  This gives the opportunity to bypass sending particular
-reports if you need to (e.g. if you caused the failure).
-This option takes "grade:action" pairs.
+the test report should be sent before actually doing it. This
+gives the opportunity to bypass sending particular reports if
+you need to (e.g. if you caused the failure). This option takes
+"grade:action" pairs.
 HERE
     },
     send_duplicates => {
@@ -287,7 +279,17 @@ HERE
         default => undef,
     },
     transport => {
-        default => undef,
+        default  => 'Metabase uri https://metabase.cpantesters.org/api/v1/ id_file '
+                  . File::Spec->catdir( _get_config_dir(), 'metabase_id.json' ),
+        prompt   => 'Which transport system will be used to transmit the reports?',
+        validate => \&_validate_transport,
+        info     => <<'HERE',
+CPAN::Reporter sends your reports over HTTPS using Metabase. This option lets
+you set a different uri, transport mechanism and metabase profile path. If you
+are receiving HTTPS errors, you may change the uri to use plain HTTP, though
+this is not recommended. Unless you know what you're doing, it is probably
+safe to leave this option with the default value.
+HERE
     },
     debug => {
         default => undef,
@@ -495,6 +497,47 @@ sub _validate_grade_action_pair {
     }
 
     return scalar(keys %ga_map) ? \%ga_map : undef;
+}
+
+sub _validate_transport {
+    my ($name, $option) = @_;
+    my $transport = '';
+
+    if ( $option =~ /^(\w+)\s?/ ) {
+        $transport = $1;
+        my $full_class = "Test::Reporter::Transport::$transport";
+        eval "use $full_class ()";
+        if ($@) {
+            $CPAN::Frontend->mywarn(
+                "\nCPAN::Reporter: error loading $full_class. Please install the missing module or choose a different transport mechanism.\n\n"
+            );
+        }
+    }
+    else {
+        $CPAN::Frontend->mywarn(
+            "\nCPAN::Reporter: Please provide a transport mechanism.\n\n"
+        );
+        return;
+    }
+
+    if ( $transport eq 'Metabase' ) {
+        unless ( $option =~ /\buri\s+\S+/ ) {
+            $CPAN::Frontend->mywarn(
+                "\nCPAN::Reporter: Please provide a target uri.\n\n"
+            );
+            return;
+        }
+
+        if ( $option =~ /\bid_file\s+(\S.+?)\s*$/ ) {
+            my $id_file = $1;
+            unless ( -r $id_file ) {
+                $CPAN::Frontend->mywarn(
+                    "\nCPAN::Reporter: Please create the '$id_file' file by typing 'metabase-profile' in your command prompt and moving it to the appropriate directory. You will need to do this before sending any reports.\n\n"
+                );
+            }
+        }
+    }
+    return 1;
 }
 
 sub _validate_seconds {
