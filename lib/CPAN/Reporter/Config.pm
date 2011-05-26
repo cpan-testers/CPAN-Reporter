@@ -577,7 +577,7 @@ separated by an "=" sign
   email_from = "John Doe" <johndoe@nowhere.org>
   edit_report = no
 
-Interactive configuration of email address, mail server and common
+Interactive configuration of email address and common
 action prompts may be repeated at any time from the CPAN shell.  
 
  cpan> o conf init test_report
@@ -610,20 +610,24 @@ Subscribing an account to the cpan-testers list is as easy as sending a blank
 email to cpan-testers-subscribe@perl.org and replying to the confirmation
 email.
 
-== Mail Server
+== Transport (required)
 
-By default, Test::Reporter attempts to send mail directly to perl.org mail 
-servers.  This may fail if a user's computer is behind a network firewall 
-that blocks outbound email.  In this case, the following option should
-be set to the outbound mail server (i.e., SMTP server) as provided by
-the user's Internet service provider (ISP):
+  transport = <transport> [transport args]
 
-* {smtp_server = <server list>} -- one or more alternate outbound mail servers
-if the default perl.org mail servers cannot be reached; multiple servers may be
-given, separated with a space (none by default)
+This sets the transport mechanism passed to the {transport()} method of
+[Test::Reporter]. By default, CPAN::Reporter uses 'Metabase' for this,
+and should provide you with sane defaults.
 
-In at least one reported case, an ISP's outbound mail servers also refused 
-to forward mail unless the {email_from} was from the ISP-given email address. 
+Note that, prior to sending reports, you MUST create a metabase profile
+and save it as {.cpanreporter/metabase_id.json} in the user's
+home directory. To create the file, simply run {metabase-profile} from
+your command prompt and fill the information appropriately.
+
+== Mail Server (DEPRECATED)
+
+CPAN::Reporter used to send mail directly to perl.org mail servers. This
+option is now deprecated and will be ignored, as the report is now sent
+via Metabase (see above).
 
 == Action Prompts
 
@@ -706,9 +710,6 @@ reports be sent, regardless of {send_report}? (default:no)
 per line) to match against the distribution ID (e.g. 
 'AUTHOR/Dist-Name-0.01.tar.gz'); the report will not be sent if a match is 
 found; non-absolute filename must be in the .cpanreporter config directory;
-* {transport = <transport> [transport args]} -- if defined, passed to the 
-{transport()} method of [Test::Reporter].  See below for 
-more details.  (CPAN::Reporter uses 'Net::SMTP' for this by default.)
 
 If these options are manually added to the configuration file, they will
 be included (and preserved) in subsequent interactive configuration.
@@ -739,9 +740,18 @@ will match the distribution.
 == Transport options
 
 The [Test::Reporter] 1.39_XX development series added support for multiple
-transport modules, e.g. [Test::Reporter::Transport::Net::SMTP::TLS] or
-[Test::Reporter::Transport::HTTPGateway].  To use them with CPAN::Reporter,
-set the 'transport' config option to the name of the transport module 
+transport modules, e.g. [Test::Reporter::Transport::Net::SMTP::TLS]
+or [Test::Reporter::Transport::HTTPGateway].
+
+A lot of things happened since then, and the whole CPAN Testers structure
+changed to a more advanced submission system using Metabase. This new
+method doesn't require sending email from the reporter's system, and offers
+a better experience for testers.
+
+Direct email submissions have since been disabled.
+
+In the event you are trying a new supported transport for CPAN::Reporter,
+you may set the 'transport' config option to the name of the transport module
 (without the 'Test::Reporter::Transport' prefix) and any required arguments,
 separated by white space. For example:
 
@@ -751,8 +761,7 @@ separated by white space. For example:
   transport=File ~/saved-reports-dir
 
 The transport module may be any Test::Reporter::Transport installed on your
-system.  As of Test::Reporter 1.39_05, transports included 'Net::SMTP', 
-'Net::SMTP::TLS', 'Mail::Send',  'HTTPGateway' and 'File'.
+system.
 
 = CONFIGURATION OPTIONS FOR DEBUGGING
 
