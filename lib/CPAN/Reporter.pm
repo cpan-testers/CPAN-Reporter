@@ -1470,10 +1470,6 @@ Users will need to enter an email address in one of the following formats:
  John Doe <johndoe@example.com>
  "John Q. Public" <johnqpublic@example.com>
 
-Users will also be prompted to enter the name of an outbound email server.  It
-is recommended to use an email server provided by the user's ISP or company.
-Alternatively, leave this blank to attempt to send email directly to perl.org.
-
 Users that are new to CPAN::Reporter should accept the recommended values
 for other configuration options.
 
@@ -1483,6 +1479,15 @@ configuration changes.
  cpan> o conf commit
 
 See [CPAN::Reporter::Config] for advanced configuration settings.
+
+=== The Metabase
+
+CPAN::Reporter uses Metabase to send test reports, which require an active
+Internet connection and a simple profile. To create the profile, simply
+run {metabase-profile} from your terminal and fill the information
+appropriately. This will create a file called {metabase_id.json} in your
+current directory. Move that file to the {.cpanreporter} directory inside
+the user's home dir and you're all set!
 
 == Using CPAN::Reporter
 

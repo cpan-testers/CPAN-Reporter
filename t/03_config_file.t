@@ -11,10 +11,11 @@ use IO::CaptureOutput qw/capture/;
 use File::Basename qw/basename/;
 use File::Spec;
 use File::Temp qw/tempdir/;
+use File::Path qw/mkpath/;
 use t::Frontend;
 use t::MockHomeDir;
 
-plan tests => 56;
+plan tests => 57;
 #plan 'no_plan';
 
 #--------------------------------------------------------------------------#
@@ -23,13 +24,15 @@ plan tests => 56;
 
 my $config_dir = File::Spec->catdir( t::MockHomeDir::home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
+my $metabase_file = File::Spec->catfile( $config_dir, 'metabase_id.json' );
 my $default_options = {
     email_from => '',
     edit_report => 'default:ask/no pass/na:no',
     send_report => 'default:ask/yes pass/na:yes',
+    transport   => "Metabase uri https://metabase.cpantesters.org/api/v1/ id_file $metabase_file",
 #    send_duplicates => 'default:no',
 };
-my @additional_prompts = qw/ smtp_server /;
+my @additional_prompts = ();
 
 my ($rc, $stdout, $stderr);
 
@@ -37,7 +40,14 @@ my ($rc, $stdout, $stderr);
 #--------------------------------------------------------------------------#
 # Mocking -- override support/system functions
 #--------------------------------------------------------------------------#
-    
+{
+    # touch our mock metabase_id.json file
+    mkpath $config_dir;
+    # 2-args open with bare descriptor to work in older perls
+    open METABASE, ">$metabase_file";
+    close METABASE;
+    ok -r $metabase_file, 'created mock metabase file for testing';
+}
 
 #--------------------------------------------------------------------------#
 
