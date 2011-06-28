@@ -437,7 +437,16 @@ DUPLICATE_REPORT
 
     # Set debug and transport options, if supported
     $tr->debug( $config->{debug} ) if defined $config->{debug};
-    my $transport = $config->{transport} || 'Net::SMTP';
+    my $transport = $config->{transport};
+    unless ( defined $transport && length $transport ) {
+        $CPAN::Frontend->mywarn( << "TRANSPORT_REQUIRED");
+
+CPAN::Reporter: required 'transport' option missing so the test report
+will not be sent. See documentation for configuration details.
+
+TRANSPORT_REQUIRED
+        return;
+    }
     my @transport_args = split " ", $transport;
     eval { $tr->transport( @transport_args ) };
     if ($@) {
