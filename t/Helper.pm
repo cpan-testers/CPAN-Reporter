@@ -99,7 +99,7 @@ sub test_fake_config {
     $tiny->{_}{email_to} = $bogus_email_to; # failsafe
     $tiny->{_}{send_report} = "yes";
     $tiny->{_}{send_duplicates} = "yes"; # tests often repeat same stuff
-    $tiny->{_}{transport} = "Metabase uri https://metabase.cpantesters.org/api/v1/ id_file $metabase_file";
+    $tiny->{_}{transport} = "Metabase uri https://metabase.cpantesters.org/api/v1/ id_file metabase_id.json";
     for my $key ( keys %overrides ) {
         $tiny->{_}{$key} = $overrides{$key};
     }

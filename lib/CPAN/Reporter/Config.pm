@@ -279,8 +279,7 @@ HERE
         default => undef,
     },
     transport => {
-        default  => 'Metabase uri https://metabase.cpantesters.org/api/v1/ id_file '
-                  . File::Spec->catdir( _get_config_dir(), 'metabase_id.json' ),
+        default  => 'Metabase uri https://metabase.cpantesters.org/api/v1/ id_file metabase_id.json',
         prompt   => 'Which transport system will be used to transmit the reports?',
         validate => \&_validate_transport,
         info     => <<'HERE',
@@ -530,10 +529,16 @@ sub _validate_transport {
 
         if ( $option =~ /\bid_file\s+(\S.+?)\s*$/ ) {
             my $id_file = $1;
-            unless ( -r $id_file ) {
-                $CPAN::Frontend->mywarn(
-                    "\nCPAN::Reporter: Please create the '$id_file' file by typing 'metabase-profile' in your command prompt and moving it to the appropriate directory. You will need to do this before sending any reports.\n\n"
-                );
+            unless ( -r $id_file
+                  || -r File::Spec->catdir( _get_config_dir(), $id_file )
+            ) {
+                $CPAN::Frontend->mywarn( <<"END_ID_FILE" );
+CPAN::Reporter: Please create the '$id_file' file by typing 'metabase-profile'
+in your command prompt and moving it to the appropriate directory.  If
+you did not specify an absolute path, put it in your .cpanreporter directory.
+You will need to do this before sending any reports.
+
+END_ID_FILE
             }
         }
     }

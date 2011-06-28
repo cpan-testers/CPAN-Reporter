@@ -29,7 +29,7 @@ my $default_options = {
     email_from => '',
     edit_report => 'default:ask/no pass/na:no',
     send_report => 'default:ask/yes pass/na:yes',
-    transport   => "Metabase uri https://metabase.cpantesters.org/api/v1/ id_file $metabase_file",
+    transport   => "Metabase uri https://metabase.cpantesters.org/api/v1/ id_file metabase_id.json",
 #    send_duplicates => 'default:no',
 };
 my @additional_prompts = ();

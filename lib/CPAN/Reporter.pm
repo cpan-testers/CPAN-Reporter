@@ -448,6 +448,16 @@ TRANSPORT_REQUIRED
         return;
     }
     my @transport_args = split " ", $transport;
+
+    # special hack for Metabase arguments
+    if ($transport_args[0] eq 'Metabase') {
+        @transport_args = _validate_metabase_args(@transport_args);
+        unless (@transport_args) {
+            $CPAN::Frontend->mywarn( "Test report will not be sent.\n\n" );
+            return;
+        }
+    }
+
     eval { $tr->transport( @transport_args ) };
     if ($@) {
         $CPAN::Frontend->mywarn(
@@ -1350,6 +1360,68 @@ sub _toolchain_report {
     return $report;
 }
 
+
+#--------------------------------------------------------------------------#
+# _validate_metabase_args
+#
+# This is a kludge to make metabase transport args a little less
+# clunky for novice users
+#--------------------------------------------------------------------------#
+
+sub _validate_metabase_args {
+    my @transport_args = @_;
+    shift @transport_args; # drop leading 'Metabase'
+    my (%args, $error);
+
+    if ( @transport_args % 2 != 0 ) {
+        $error = << "TRANSPORT_ARGS";
+
+CPAN::Reporter: Metabase 'transport' option had odd number of
+parameters in the config file. See documentation for proper
+configuration format.
+
+TRANSPORT_ARGS
+    }
+    else {
+        %args = @transport_args;
+
+        for my $key ( qw/uri id_file/ ) {
+            if ( ! $args{$key} ) {
+                $error = << "TRANSPORT_ARGS";
+
+CPAN::Reporter: Metabase 'transport' option did not have
+a '$key' parameter in the config file. See documentation for
+proper configuration format.
+
+TRANSPORT_ARGS
+            }
+        }
+    }
+
+    if ( $error ) {
+        $CPAN::Frontend->mywarn( $error );
+        return;
+    }
+
+    unless ( File::Spec->file_name_is_absolute( $args{id_file} ) ) {
+        $args{id_file} = File::Spec->catfile(
+            CPAN::Reporter::Config::_get_config_dir(), $args{id_file}
+        );
+    }
+
+    if ( ! -r $args{id_file} ) {
+        $CPAN::Frontend->mywarn( <<"TRANSPORT_ARGS" );
+
+CPAN::Reporter: Could not find Metabase tranport 'id_file' parameter
+located at '$args{id_file}'.
+See documentation for proper configuration of the 'transport' setting.
+
+TRANSPORT_ARGS
+        return;
+    }
+
+    return ('Metabase', %args);
+}
 
 
 #--------------------------------------------------------------------------#
