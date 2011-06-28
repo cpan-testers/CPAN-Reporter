@@ -3,7 +3,7 @@ package CPAN::Reporter;
 # ABSTRACT: Adds CPAN Testers reporting to CPAN.pm
 
 use Config;
-use Capture::Tiny 'capture';
+use Capture::Tiny qw/ capture tee_merged /;
 use CPAN 1.9301 ();
 use CPAN::Version ();
 use File::Basename qw/basename dirname/;
@@ -15,7 +15,6 @@ use File::Temp 0.16 qw/tempdir/;
 use IO::File ();
 use Parse::CPAN::Meta ();
 use Probe::Perl ();
-use Tee 0.14 qw/tee/;
 use Test::Reporter 1.54 ();
 use CPAN::Reporter::Config ();
 use CPAN::Reporter::History ();
@@ -123,8 +122,6 @@ sub record_command {
 
     my ($cmd, $redirect) = _split_redirect($command);
 
-    my $temp_out = _temp_filename( 'CPAN-Reporter-TO-' );
-
     # Teeing a command loses its exit value so we must wrap the command
     # and print the exit code so we can read it off of output
     my $wrap_code;
@@ -152,28 +149,19 @@ HERE
     $wrapper_fh->close;
 
     # tee the command wrapper
-    my $tee_input = Probe::Perl->find_perl_interpreter() .  " $wrapper_name";
-    $tee_input .= " $redirect" if defined $redirect;
+    my @tee_input = ( Probe::Perl->find_perl_interpreter, $wrapper_name );
+    push @tee_input, $redirect if defined $redirect;
+    my $tee_out;
     {
       # ensure autoflush if we can
       local $ENV{PERL5OPT} = _get_perl5opt() if _is_PL($command);
-      tee($tee_input, { stderr => 1 }, $temp_out);
+      $tee_out = tee_merged { system( @tee_input ) };
     }
-
-    # read back the output
-    my $output_fh = IO::File->new($temp_out, "r");
-    if ( !$output_fh ) {
-        $CPAN::Frontend->mywarn(
-            "CPAN::Reporter: couldn't read command results for '$cmd'\n"
-        );
-        return;
-    }
-    my @cmd_output = <$output_fh>;
-    $output_fh->close;
 
     # cleanup
-    unlink $wrapper_name, $temp_out unless $ENV{PERL_CR_NO_CLEANUP};
+    unlink $wrapper_name unless $ENV{PERL_CR_NO_CLEANUP};
 
+    my @cmd_output = split qr{(?<=$/)}, $tee_out;
     if ( ! @cmd_output ) {
         $CPAN::Frontend->mywarn(
             "CPAN::Reporter: didn't capture command results for '$cmd'\n"
