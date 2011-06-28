@@ -784,3 +784,4 @@ choice of configuration directory
 
 =end wikidoc
 
+# vim: ts=4 sts=4 sw=4 et:
