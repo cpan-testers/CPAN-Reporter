@@ -470,10 +470,6 @@ TRANSPORT_REQUIRED
 
     # prepare mail transport
     $tr->from( $config->{email_from} );
-    if ( $config->{smtp_server} ) {
-        my @mx = split " ", $config->{smtp_server};
-        $tr->mx( \@mx );
-    }
 
     # Populate the test report
     $tr->comments( _report_text( $result ) );
