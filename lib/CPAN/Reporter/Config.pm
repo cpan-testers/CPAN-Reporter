@@ -4,8 +4,9 @@ package CPAN::Reporter::Config;
 
 use Config::Tiny 2.08 ();
 use File::HomeDir 0.58 ();
-use File::Path (qw/mkpath/);
+use File::Path qw/mkpath/;
 use File::Spec 3.19 ();
+use IPC::Cmd 0.46 ();
 use IO::File ();
 use CPAN 1.9301 (); # for printing warnings
 
@@ -298,6 +299,27 @@ HERE
 sub _config_spec { return %option_specs }
 
 #--------------------------------------------------------------------------#
+# _generate_profile
+#
+# Run 'metabase-profile' in the .cpanreporter directory
+#--------------------------------------------------------------------------#
+
+sub _generate_profile {
+    my ($id_file) = @_;
+
+    my $cmd = IPC::Cmd::can_run('metabase-profile');
+    if ( $cmd ) {
+        return scalar IPC::Cmd::run(
+            command => [$cmd, "--output", $id_file],
+            verbose => 1,
+        );
+    }
+    else {
+        return 0;
+    }
+}
+
+#--------------------------------------------------------------------------#
 # _get_config_dir
 #--------------------------------------------------------------------------#
 
@@ -519,6 +541,7 @@ sub _validate_transport {
         return;
     }
 
+    # we do extra validation for Metabase and offer to create the profile
     if ( $transport eq 'Metabase' ) {
         unless ( $option =~ /\buri\s+\S+/ ) {
             $CPAN::Frontend->mywarn(
@@ -527,21 +550,49 @@ sub _validate_transport {
             return;
         }
 
-        if ( $option =~ /\bid_file\s+(\S.+?)\s*$/ ) {
-            my $id_file = $1;
-            unless ( -r $id_file
-                  || -r File::Spec->catdir( _get_config_dir(), $id_file )
-            ) {
-                $CPAN::Frontend->mywarn( <<"END_ID_FILE" );
-CPAN::Reporter: Please create the '$id_file' file by typing 'metabase-profile'
-in your command prompt and moving it to the appropriate directory.  If
-you did not specify an absolute path, put it in your .cpanreporter directory.
-You will need to do this before sending any reports.
+        unless ( $option =~ /\bid_file\s+(\S.+?)\s*$/ ) {
+            $CPAN::Frontend->mywarn(
+                "\nCPAN::Reporter: Please specify an id_file path.\n\n"
+            );
+            return;
+        }
 
+        my $id_file = $1;
+        unless ( File::Spec->file_name_is_absolute( $id_file ) ) {
+            $id_file = File::Spec->catfile(_get_config_dir(), $id_file);
+        }
+
+        # Offer to create if it doesn't exist
+        if ( ! -e $id_file )  {
+            my $answer = CPAN::Shell::colorable_makemaker_prompt(
+                "Would you like to run 'metabase-profile' now to create '$id_file'?", "y"
+            );
+            if ( $answer =~ /^y/i ) {
+                return _generate_profile( $id_file );
+            }
+            else {
+                $CPAN::Frontend->mywarn( <<"END_ID_FILE" );
+You can create a Metabase profile by typing 'metabase-profile' in your
+command prompt and moving the resulting file to the location you specified.
+If you did not specify an absolute path, put it in your .cpanreporter
+directory.  You will need to do this before continuing.
 END_ID_FILE
+                return;
             }
         }
-    }
+        # Warn and fail validation if there but not readable
+        elsif (
+            not (       -r $id_file
+                    or  -r File::Spec->catdir(_get_config_dir(), $id_file)
+                )
+        ) {
+            $CPAN::Frontend->mywarn(
+                "CPAN::Reporter: '$id_file' was not readable.\n\n"
+            );
+            return;
+        }
+    } # end Metabase
+
     return 1;
 }
 
@@ -631,8 +682,10 @@ directory).
 Prior to sending reports, a user must have a valid profile file at the path
 specified.  For Metabase transport, CPAN::Reporter will automatically rewrite a
 relative {id_file} path as an absolute path located in the {.cpanreporter}
-directory.  To create a profile file, run {metabase-profile} from the command
-prompt and fill in the information requested.
+directory.
+
+If the specified profile file does not exist, CPAN::Reporter will offer
+to run {metabase-profile} to create it.
 
 For other transport types, see the documentation that comes with your choice of
 Test::Reporter::Transport subclass for the proper way to set the {transport}
