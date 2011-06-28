@@ -1297,6 +1297,7 @@ HERE
 
 my @toolchain_mods= qw(
     CPAN
+    CPAN::Meta
     Cwd
     ExtUtils::CBuilder
     ExtUtils::Command
@@ -1305,13 +1306,16 @@ my @toolchain_mods= qw(
     ExtUtils::Manifest
     ExtUtils::ParseXS
     File::Spec
+    JSON
+    JSON::PP
     Module::Build
     Module::Signature
+    Parse::CPAN::Meta
     Test::Harness
     Test::More
-    version
     YAML
     YAML::Syck
+    version
 );
 
 sub _toolchain_report {
