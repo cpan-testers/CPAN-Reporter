@@ -2,6 +2,8 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+1.19_03   2011-06-28 14:44:19 America/New_York
+
   [NEW FEATURES]
   - During configuration, if 'Metabase' is the requested transport and
     a Metabase profile file is not found, configuration will offer to
