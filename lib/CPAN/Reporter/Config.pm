@@ -768,8 +768,6 @@ system.
 These options are useful for debugging only:
 
 * {debug = <boolean>} -- turns debugging on/off
-* {email_to = <email address>} -- alternate destination for reports instead of
-{cpan-testers@perl.org}; used for testing
 
 = ENVIRONMENT
 

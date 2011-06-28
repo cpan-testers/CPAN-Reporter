@@ -349,10 +349,9 @@ sub _dispatch_report {
 CPAN::Reporter: required 'email_from' option missing an email address, so
 test report will not be sent. See documentation for configuration details.
 
-Even for non-email transports (e.g. Metabase, File or Socket) this email
-address will show up in the report and help identify the tester.
-This is required for compatibility with tools that process legacy reports
-for analysis.
+Even though CPAN Testers no longer uses email, this email address will
+show up in the report and help identify the tester.  This is required
+for compatibility with tools that process legacy reports for analysis.
 
 EMAIL_REQUIRED
         return;
@@ -452,7 +451,6 @@ DUPLICATE_REPORT
 
     # prepare mail transport
     $tr->from( $config->{email_from} );
-    $tr->address( $config->{email_to} ) if $config->{email_to};
     if ( $config->{smtp_server} ) {
         my @mx = split " ", $config->{smtp_server};
         $tr->mx( \@mx );
