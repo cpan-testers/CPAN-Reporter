@@ -6,10 +6,15 @@ Revision history for Perl module CPAN::Reporter
   - updated CPAN::Reporter to go with Metabase by default, instead of
     the deprecated SMTP transport system. This provides more up-to-date
     information for new testers on how to setup their systems and
-    addresses RT#64316 (and maybe also RT#61735) [GARU]
+    addresses RT#64316 (and maybe also RT#61735) [Breno G. de Oliveira]
 
   - Replaced use of Tee.pm with Capture::Tiny as the two don't play
     well together on some systems. [Christian Walde]
+
+  [DOCUMENTATION]
+  - Docs have been substantially re-written to reflect the new HTTP-based
+    transport instead of email-based transport. [Breno G. de Oliveira and
+    David Golden]
 
 1.1902    2011-01-28 15:22:35 EST5EDT
 

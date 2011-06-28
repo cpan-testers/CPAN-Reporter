@@ -1540,6 +1540,9 @@ Users will need to enter an email address in one of the following formats:
 Users that are new to CPAN::Reporter should accept the recommended values
 for other configuration options.
 
+Users will be prompted to create a ~Metabase profile~ file that uniquely
+identifies their test reports. See [/"The Metabase"] below for details.
+
 After completing interactive configuration, be sure to commit (save) the CPAN
 configuration changes.
 
@@ -1549,25 +1552,29 @@ See [CPAN::Reporter::Config] for advanced configuration settings.
 
 === The Metabase
 
-CPAN::Reporter uses Metabase to send test reports, which require an active
-Internet connection and a simple profile. To create the profile, simply
-run {metabase-profile} from your terminal and fill the information
-appropriately. This will create a file called {metabase_id.json} in your
-current directory. Move that file to the {.cpanreporter} directory inside
-the user's home dir and you're all set!
+CPAN::Reporter sends test reports to a server known as the Metabase.  This
+requires an active Internet connection and a profile file.  To create the
+profile, users will need to run {metabase-profile} from a terminal window and
+fill the information at the prompts. This will create a file called
+{metabase_id.json} in the current directory. That file should be moved to the
+{.cpanreporter} directory inside the user's home dir.
+
+Users with an existing metabase profile file (e.g. from another machine),
+should copy it into the {.cpanreporter} directory instead of creating
+a new one.  Profile files may be located outside the {.cpanreporter}
+directory by following instructions in [CPAN::Reporter::Config].
 
 == Using CPAN::Reporter
 
 Once CPAN::Reporter is enabled and configured, test or install modules with
 CPAN.pm as usual.
 
-For example, to force CPAN to repeat tests for CPAN::Reporter to see how it
-works:
+For example, to test the File::Marker module:
 
- cpan> force test CPAN::Reporter
+ cpan> test File::Marker
 
-When distribution tests fail, users will be prompted to edit the report to add
-addition information.
+If a distribution's tests fail, users will be prompted to edit the report to
+add additional information that might help the author understand the failure.
 
 = UNDERSTANDING TEST GRADES
 

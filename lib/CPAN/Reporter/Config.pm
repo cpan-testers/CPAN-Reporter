@@ -1,9 +1,9 @@
-use strict; 
+use strict;
 package CPAN::Reporter::Config;
 # ABSTRACT: Config file options for CPAN::Reporter
 
 use Config::Tiny 2.08 ();
-use File::HomeDir 0.58 (); 
+use File::HomeDir 0.58 ();
 use File::Path (qw/mkpath/);
 use File::Spec 3.19 ();
 use IO::File ();
@@ -20,11 +20,11 @@ if ( $^O eq 'darwin' ) {
     my $new = File::Spec->catdir(File::HomeDir->my_home,".cpanreporter");
     if ( ( -d $old ) && (! -d $new ) ) {
         $CPAN::Frontend->mywarn( << "HERE");
-CPAN::Reporter: since CPAN::Reporter 0.28_51, the Mac OSX config directory 
-has changed. 
+CPAN::Reporter: since CPAN::Reporter 0.28_51, the Mac OSX config directory
+has changed.
 
   Old: $old
-  New: $new  
+  New: $new
 
 Your existing configuration file will be moved automatically.
 HERE
@@ -50,7 +50,7 @@ HERE
 sub _configure {
     my $config_dir = _get_config_dir();
     my $config_file = _get_config_file();
-    
+
     mkpath $config_dir if ! -d $config_dir;
     if ( ! -d $config_dir ) {
         $CPAN::Frontend->myprint(
@@ -61,10 +61,10 @@ sub _configure {
 
     my $config;
     my $existing_options;
-    
+
     # explain grade:action pairs
     $CPAN::Frontend->myprint( _grade_action_prompt() );
-    
+
     # read or create
     if ( -f $config_file ) {
         $CPAN::Frontend->myprint(
@@ -89,7 +89,7 @@ sub _configure {
         );
         $config = Config::Tiny->new();
     }
-    
+
     my %spec = _config_spec();
 
     for my $k ( _config_order() ) {
@@ -105,10 +105,10 @@ sub _configure {
             }
             # repeat until validated
             PROMPT:
-            while ( defined ( 
+            while ( defined (
                 my $answer = CPAN::Shell::colorable_makemaker_prompt(
-                    "$k?", 
-                    $existing_options->{$k} || $option_data->{default} 
+                    "$k?",
+                    $existing_options->{$k} || $option_data->{default}
                 )
             )) {
                 if  ( ! $option_data->{validate} ||
@@ -121,12 +121,12 @@ sub _configure {
         }
         else {
             # only initialize options without default if
-            # answer matches non white space and validates, 
+            # answer matches non white space and validates,
             # otherwise reset it
-            my $answer = CPAN::Shell::colorable_makemaker_prompt( 
-                "$k?", 
-                $existing_options->{$k} || q{} 
-            ); 
+            my $answer = CPAN::Shell::colorable_makemaker_prompt(
+                "$k?",
+                $existing_options->{$k} || q{}
+            );
             if ( $answer =~ /\S/ ) {
                 $config->{_}{$k} = $answer;
             }
@@ -143,19 +143,19 @@ sub _configure {
         "\nYour CPAN::Reporter config file also contains these advanced " .
           "options:\n\n") if keys %$existing_options;
     for my $k ( keys %$existing_options ) {
-        $config->{_}{$k} = CPAN::Shell::colorable_makemaker_prompt( 
-            "$k?", $existing_options->{$k} 
-        ); 
+        $config->{_}{$k} = CPAN::Shell::colorable_makemaker_prompt(
+            "$k?", $existing_options->{$k}
+        );
     }
 
-    $CPAN::Frontend->myprint( 
+    $CPAN::Frontend->myprint(
         "\nCPAN::Reporter: writing config file to '$config_file'.\n"
     );
     if ( $config->write( $config_file ) ) {
         return $config->{_};
     }
     else {
-        $CPAN::Frontend->mywarn( "\nCPAN::Reporter: error writing config file to '$config_file':\n" 
+        $CPAN::Frontend->mywarn( "\nCPAN::Reporter: error writing config file to '$config_file':\n"
             .  Config::Tiny->errstr(). "\n");
         return;
     }
@@ -166,14 +166,14 @@ sub _configure {
 #--------------------------------------------------------------------------#
 
 #--------------------------------------------------------------------------#
-# _config_order -- determines order of interactive config.  Only items 
+# _config_order -- determines order of interactive config.  Only items
 # in interactive config will be written to a starter config file
 #--------------------------------------------------------------------------#
 
 sub _config_order {
-    return qw(  
-        email_from 
-        edit_report 
+    return qw(
+        email_from
+        edit_report
         send_report
         transport
     );
@@ -197,7 +197,7 @@ my %option_specs = (
         info => <<'HERE',
 CPAN::Reporter requires a valid email address as the return address
 for test reports sent to cpan-testers\@perl.org.  Either provide just
-an email address, or put your real name in double-quote marks followed 
+an email address, or put your real name in double-quote marks followed
 by your email address in angle marks, e.g. "John Doe" <jdoe@nowhere.com>.
 Note: unless this email address is subscribed to the cpan-testers mailing
 list, your test reports will not appear until manually reviewed.
@@ -212,10 +212,10 @@ HERE
         prompt => "Do you want to review or edit the test report?",
         validate => \&_validate_grade_action_pair,
         info => <<'HERE',
-Before test reports are sent, you may want to review or edit the test 
-report and add additional comments about the result or about your system 
+Before test reports are sent, you may want to review or edit the test
+report and add additional comments about the result or about your system
 or Perl configuration.  By default, CPAN::Reporter will ask after
-each report is generated whether or not you would like to edit the 
+each report is generated whether or not you would like to edit the
 report. This option takes "grade:action" pairs.
 HERE
     },
@@ -238,13 +238,13 @@ HERE
         info => <<'HERE',
 CPAN::Reporter records tests grades for each distribution, version and
 platform.  By default, duplicates of previous results will not be sent at
-all, regardless of the value of the "send_report" option.  This option takes 
+all, regardless of the value of the "send_report" option.  This option takes
 "grade:action" pairs.
 HERE
     },
     send_PL_report => {
         prompt => "Do you want to send the PL report?",
-        default => undef, 
+        default => undef,
         validate => \&_validate_grade_action_pair,
     },
     send_make_report => {
@@ -302,8 +302,8 @@ sub _config_spec { return %option_specs }
 #--------------------------------------------------------------------------#
 
 sub _get_config_dir {
-    if ( defined $ENV{PERL_CPAN_REPORTER_DIR} && 
-         length  $ENV{PERL_CPAN_REPORTER_DIR} 
+    if ( defined $ENV{PERL_CPAN_REPORTER_DIR} &&
+         length  $ENV{PERL_CPAN_REPORTER_DIR}
     ) {
         return $ENV{PERL_CPAN_REPORTER_DIR};
     }
@@ -324,7 +324,7 @@ sub _get_config_dir {
 
 sub _get_config_file {
     if (  defined $ENV{PERL_CPAN_REPORTER_CONFIG} &&
-          length  $ENV{PERL_CPAN_REPORTER_CONFIG} 
+          length  $ENV{PERL_CPAN_REPORTER_CONFIG}
     ) {
         return $ENV{PERL_CPAN_REPORTER_CONFIG};
     }
@@ -375,12 +375,12 @@ pairs that determine what grade-specific action to take for that option.
 These pairs should be space-separated and are processed left-to-right. See
 CPAN::Reporter documentation for more details.
 
-    GRADE   :   ACTION  ======> EXAMPLES        
-    -------     -------         --------    
+    GRADE   :   ACTION  ======> EXAMPLES
+    -------     -------         --------
     pass        yes             default:no
     fail        no              default:yes pass:no
     unknown     ask/no          default:ask/no pass:yes fail:no
-    na          ask/yes         
+    na          ask/yes
     default
 
 HERE
@@ -415,7 +415,7 @@ sub _open_config_file {
     my $config = Config::Tiny->read( $config_file )
         or $CPAN::Frontend->mywarn("CPAN::Reporter: couldn't read configuration file " .
                 "'$config_file': \n" . Config::Tiny->errstr() . "\n");
-    return $config; 
+    return $config;
 }
 
 #--------------------------------------------------------------------------#
@@ -431,8 +431,8 @@ sub _validate {
 }
 
 #--------------------------------------------------------------------------#
-# _validate_grade_action 
-# returns hash of grade => action 
+# _validate_grade_action
+# returns hash of grade => action
 # returns undef
 #--------------------------------------------------------------------------#
 
@@ -441,7 +441,7 @@ sub _validate_grade_action_pair {
     $option ||= "no";
 
     my %ga_map; # grade => action
-    
+
     PAIR: for my $grade_action ( split q{ }, $option ) {
         my ($grade_list,$action);
 
@@ -466,27 +466,27 @@ sub _validate_grade_action_pair {
         }
         else {
             # something weird, so warn and skip
-            $CPAN::Frontend->mywarn( 
-                "\nCPAN::Reporter: ignoring invalid grade:action '$grade_action' for '$name'.\n\n" 
+            $CPAN::Frontend->mywarn(
+                "\nCPAN::Reporter: ignoring invalid grade:action '$grade_action' for '$name'.\n\n"
             );
             next PAIR;
         }
-        
+
         # check gradelist
         my %grades = map { ($_,1) } split( "/", $grade_list);
-        for my $g ( keys %grades ) { 
+        for my $g ( keys %grades ) {
             if ( ! _is_valid_grade($g) ) {
-                $CPAN::Frontend->mywarn( 
-                    "\nCPAN::Reporter: ignoring invalid grade '$g' in '$grade_action' for '$name'.\n\n" 
+                $CPAN::Frontend->mywarn(
+                    "\nCPAN::Reporter: ignoring invalid grade '$g' in '$grade_action' for '$name'.\n\n"
                 );
                 delete $grades{$g};
             }
         }
-        
+
         # check action
         if ( ! _is_valid_action($action) ) {
-            $CPAN::Frontend->mywarn( 
-                "\nCPAN::Reporter: ignoring invalid action '$action' in '$grade_action' for '$name'.\n\n" 
+            $CPAN::Frontend->mywarn(
+                "\nCPAN::Reporter: ignoring invalid action '$action' in '$grade_action' for '$name'.\n\n"
             );
             next PAIR;
         }
@@ -547,7 +547,7 @@ END_ID_FILE
 
 sub _validate_seconds {
     my ($name, $option) = @_;
-    return unless defined($option) && length($option) 
+    return unless defined($option) && length($option)
         && ($option =~ /^\d/) && $option >= 0;
     return $option;
 }
@@ -573,8 +573,11 @@ From the CPAN shell:
 
 = DESCRIPTION
 
-Default options for CPAN::Reporter are read from a configuration file 
-{.cpanreporter/config.ini} in the user's home directory.
+Default options for CPAN::Reporter are read from a configuration file
+{.cpanreporter/config.ini} in the user's home directory.  (On Win32 platforms,
+the directory will be located in the user's "Documents" directory.)
+The location of the configuration directory or file may be specified
+using environment variables instead.
 
 The configuration file is in "ini" format, with the option name and value
 separated by an "=" sign
@@ -583,7 +586,7 @@ separated by an "=" sign
   edit_report = no
 
 Interactive configuration of email address and common
-action prompts may be repeated at any time from the CPAN shell.  
+action prompts may be repeated at any time from the CPAN shell.
 
  cpan> o conf init test_report
 
@@ -597,49 +600,55 @@ options that have been added manually to the configuration file.
 
 == Email Address (required)
 
+  email_from = <email address>
+
 CPAN::Reporter requires users to provide an email address that will be used
-in the "From" header of the email to cpan-testers@perl.org.
+in the header of the report.
 
-* {email_from = <email address>} -- email address of the user sending the
-test report; it should be a valid address format, e.g.:
+The email address provided should be a valid address format, e.g.:
 
- user@domain
- John Doe <user@domain>
- "John Q. Public" <user@domain>
-
-Because {cpan-testers} uses a mailing list to collect test reports, it is
-helpful if the email address provided is subscribed to the list.  Otherwise,
-test reports will be held until manually reviewed and approved.  
-
-Subscribing an account to the cpan-testers list is as easy as sending a blank
-email to cpan-testers-subscribe@perl.org and replying to the confirmation
-email.
+ email_from = user@domain
+ email_from = John Doe <user@domain>
+ email_from = "John Q. Public" <user@domain>
 
 == Transport (required)
 
-  transport = <transport> [transport args]
+  transport = <transport class> [transport args]
 
 This sets the transport mechanism passed to the {transport()} method of
-[Test::Reporter]. By default, CPAN::Reporter uses 'Metabase' for this,
-and should provide you with sane defaults.
+[Test::Reporter]. Normally, CPAN::Reporter uses 'Metabase' for transport class
+(i.e. [Test::Reporter::Transport::Metabase]) and will provide a default set of
+transport arguments.
 
-Note that, prior to sending reports, you MUST create a metabase profile
-and save it as {.cpanreporter/metabase_id.json} in the user's
-home directory. To create the file, simply run {metabase-profile} from
-your command prompt and fill the information appropriately.
+Metabase transport arguments are two space-separated key/value pairs:
 
-== Mail Server (DEPRECATED)
+* {uri} -- URI for the Metabase API. Defaults to
+{https://metabase.cpantesters.org/api/v1/}
+* {id_file} -- path to the user's Metabase profile file.
+Defaults to {metabase_id.json}.  (Assumed to be in the {.cpanreporter}
+directory).
 
-CPAN::Reporter used to send mail directly to perl.org mail servers. This
-option is now deprecated and will be ignored, as the report is now sent
-via Metabase (see above).
+Prior to sending reports, a user must have a valid profile file at the path
+specified.  For Metabase transport, CPAN::Reporter will automatically rewrite a
+relative {id_file} path as an absolute path located in the {.cpanreporter}
+directory.  To create a profile file, run {metabase-profile} from the command
+prompt and fill in the information requested.
+
+For other transport types, see the documentation that comes with your choice of
+Test::Reporter::Transport subclass for the proper way to set the {transport}
+configuration option.
 
 == Action Prompts
 
 Several steps in the generation of a test report are optional.  Configuration
 options control whether an action should be taken automatically or whether
-CPAN::Reporter should prompt the user for the action to take.  The action
-to take may be different for each report grade.
+CPAN::Reporter should prompt the user for the action to take.  The action to
+take may be different for each report grade.  For example, users may wish to
+customize for which grades they wish to manually review a report before sending
+it.
+
+Most users should just accept the default settings until they have some
+experience as CPAN Testers.
 
 Valid actions, and their associated meaning, are as follows:
 
@@ -656,14 +665,14 @@ Action prompt options take one or more space-separated "grade:action" pairs,
 which are processed left to right.
 
  edit_report = fail:ask/yes pass:no
- 
+
 An action by itself is taken as a default to be used for any grade which does
 not have a grade-specific action.  A default action may also be set by using
-the word "default" in place of a grade.  
+the word "default" in place of a grade.
 
  edit_report = ask/no
  edit_report = default:ask/no
- 
+
 A grade by itself is taken to have the action "yes" for that grade.
 
  edit_report = default:no fail
@@ -674,7 +683,7 @@ Multiple grades may be specified together by separating them with a slash.
 
 The action prompt options included in interactive configuration are:
 
-* {edit_report = <grade:action> ...} -- edit the test report before sending? 
+* {edit_report = <grade:action> ...} -- edit the test report before sending?
 (default:ask/no pass/na:no)
 * {send_report = <grade:action> ...} -- should test reports be sent at all?
 (default:ask/yes pass/na:yes)
@@ -687,33 +696,38 @@ A better way to disable CPAN::Reporter temporarily is with the CPAN option
 
  cpan> o conf test_report 0
 
+== Mail Server (DEPRECATED)
+
+CPAN::Reporter used to send mail directly to perl.org mail servers. The
+{smtp_server} option is now deprecated and will be ignored if it exists.
+
 = ADVANCED CONFIGURATION OPTIONS
 
 These additional options are only necessary in special cases, for example if
-the default editor cannot be found or if reports shouldn't be sent in 
+the default editor cannot be found or if reports shouldn't be sent in
 certain situations or for automated testing, and so on.
 
 * {command_timeout} -- if greater than zero and the CPAN config is
-{inactivity_timeout} is not set, then any commands executed by CPAN::Reporter 
-will be halted after this many seconds; useful for unattended smoke testing 
-to stop after some amount of time; generally, this should be large -- 
-900 seconds or more -- as some distributions' tests take quite a long time to 
-run.  On MSWin32, [Win32::Job] is a needed and trying to kill a processes may 
+{inactivity_timeout} is not set, then any commands executed by CPAN::Reporter
+will be halted after this many seconds; useful for unattended smoke testing
+to stop after some amount of time; generally, this should be large --
+900 seconds or more -- as some distributions' tests take quite a long time to
+run.  On MSWin32, [Win32::Job] is a needed and trying to kill a processes may
 actually deadlock in some situations -- so use at your own risk.
 * {editor = <editor>} -- editor to use to edit the test report; if not set,
 Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
-(in that order) to find an editor 
-* {send_duplicates = <grade:action> ...} -- should duplicates of previous 
+(in that order) to find an editor
+* {send_duplicates = <grade:action> ...} -- should duplicates of previous
 reports be sent, regardless of {send_report}? (default:no)
-* {send_PL_report = <grade:action> ...} -- if defined, used in place of 
+* {send_PL_report = <grade:action> ...} -- if defined, used in place of
 {send_report} during the PL phase
-* {send_make_report = <grade:action> ...} -- if defined, used in place of 
+* {send_make_report = <grade:action> ...} -- if defined, used in place of
 {send_report} during the make phase
-* {send_test_report = <grade:action> ...} -- if defined, used in place of 
+* {send_test_report = <grade:action> ...} -- if defined, used in place of
 {send_report} during the test phase
 * {send_skipfile = <skipfile>} -- filename containing regular expressions (one
-per line) to match against the distribution ID (e.g. 
-'AUTHOR/Dist-Name-0.01.tar.gz'); the report will not be sent if a match is 
+per line) to match against the distribution ID (e.g.
+'AUTHOR/Dist-Name-0.01.tar.gz'); the report will not be sent if a match is
 found; non-absolute filename must be in the .cpanreporter config directory;
 
 If these options are manually added to the configuration file, they will
@@ -721,19 +735,19 @@ be included (and preserved) in subsequent interactive configuration.
 
 == Skipfile regular expressions
 
-Skip files are expected to have one regular expression per line and will be 
-matched against the distribution ID, composed of the author's CPAN ID and the 
+Skip files are expected to have one regular expression per line and will be
+matched against the distribution ID, composed of the author's CPAN ID and the
 distribution tarball name.
 
     DAGOLDEN/CPAN-Reporter-1.00.tar.gz
 
 Lines that begin with a sharp (#) are considered comments and will not be
 matched.  All regular expressionss will be matched case insensitive and will
-not be anchored unless you provide one. 
+not be anchored unless you provide one.
 
-As the format of a distribution ID is "AUTHOR/tarball", anchoring at the 
+As the format of a distribution ID is "AUTHOR/tarball", anchoring at the
 start of the line with a caret (^) will match the author and with a slash (/)
-will match the distribution.  
+will match the distribution.
 
     # any distributions by JOHNDOE
     ^JOHNDOE
@@ -741,32 +755,6 @@ will match the distribution.
     /Win32
     # a particular very specific distribution
     ^JOHNDOE/Foo-Bar-3.14
-
-== Transport options
-
-The [Test::Reporter] 1.39_XX development series added support for multiple
-transport modules, e.g. [Test::Reporter::Transport::Net::SMTP::TLS]
-or [Test::Reporter::Transport::HTTPGateway].
-
-A lot of things happened since then, and the whole CPAN Testers structure
-changed to a more advanced submission system using Metabase. This new
-method doesn't require sending email from the reporter's system, and offers
-a better experience for testers.
-
-Direct email submissions have since been disabled.
-
-In the event you are trying a new supported transport for CPAN::Reporter,
-you may set the 'transport' config option to the name of the transport module
-(without the 'Test::Reporter::Transport' prefix) and any required arguments,
-separated by white space. For example:
-
-  transport=Net::SMTP Port 587
-  transport=Net::SMTP::TLS User jdoe@example.com Password 12345
-  transport=HTTPGateway http://example.com/cpantesters.cgi MyKey
-  transport=File ~/saved-reports-dir
-
-The transport module may be any Test::Reporter::Transport installed on your
-system.
 
 = CONFIGURATION OPTIONS FOR DEBUGGING
 
@@ -776,16 +764,16 @@ These options are useful for debugging only:
 
 = ENVIRONMENT
 
-The following environment variables may be set to alter the default locations 
+The following environment variables may be set to alter the default locations
 for CPAN::Reporter files:
 
 * {PERL_CPAN_REPORTER_DIR} -- if set, this directory is used in place of
-the default .cpanreporter directory; this will affect not only the location
-of the default {config.ini}, but also the location of the 
+the default {.cpanreporter} directory; this will affect not only the location
+of the default {config.ini}, but also the location of the
 [CPAN::Reporter::History] database and any other files that live in that
 directory
-* {PERL_CPAN_REPORTER_CONFIG} -- if set, this file is used in place of 
-the default {config.ini} file; it may be in any directory, regardless of the 
+* {PERL_CPAN_REPORTER_CONFIG} -- if set, this file is used in place of
+the default {config.ini} file; it may be in any directory, regardless of the
 choice of configuration directory
 
 = SEE ALSO
@@ -793,26 +781,6 @@ choice of configuration directory
 * [CPAN::Reporter]
 * [CPAN::Reporter::History]
 * [CPAN::Reporter::FAQ]
-
-= AUTHOR
-
-David A. Golden (DAGOLDEN)
-
-= COPYRIGHT AND LICENSE
-
-Copyright (c) 2006, 2007, 2008 by David A. Golden
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-[http://www.apache.org/licenses/LICENSE-2.0]
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
 
 =end wikidoc
 
