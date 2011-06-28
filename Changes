@@ -8,6 +8,9 @@ Revision history for Perl module CPAN::Reporter
     information for new testers on how to setup their systems and
     addresses RT#64316 (and maybe also RT#61735) [GARU]
 
+  - Replaced use of Tee.pm with Capture::Tiny as the two don't play
+    well together on some systems. [Christian Walde]
+
 1.1902    2011-01-28 15:22:35 EST5EDT
 
   [BUG FIXES]
