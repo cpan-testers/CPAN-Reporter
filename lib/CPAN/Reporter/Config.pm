@@ -196,12 +196,9 @@ my %option_specs = (
         default => '',
         prompt => 'What email address will be used to reference your reports?',
         info => <<'HERE',
-CPAN::Reporter requires a valid email address as the return address
-for test reports sent to cpan-testers\@perl.org.  Either provide just
-an email address, or put your real name in double-quote marks followed
-by your email address in angle marks, e.g. "John Doe" <jdoe@nowhere.com>.
-Note: unless this email address is subscribed to the cpan-testers mailing
-list, your test reports will not appear until manually reviewed.
+CPAN::Reporter requires a valid email address to identify senders
+in the body of a test report.  Please use a standard email format
+like: "John Doe" <jdoe@example.com>
 HERE
     },
     smtp_server => {
@@ -227,9 +224,21 @@ HERE
         info => <<'HERE',
 By default, CPAN::Reporter will prompt you for confirmation that
 the test report should be sent before actually doing it. This
-gives the opportunity to bypass sending particular reports if
+gives the opportunity to skip sending particular reports if
 you need to (e.g. if you caused the failure). This option takes
 "grade:action" pairs.
+HERE
+    },
+    transport => {
+        default  => 'Metabase uri https://metabase.cpantesters.org/api/v1/ id_file metabase_id.json',
+        prompt   => 'Which transport system will be used to transmit the reports?',
+        validate => \&_validate_transport,
+        info     => <<'HERE',
+CPAN::Reporter sends your reports over HTTPS using Metabase. This option lets
+you set a different uri, transport mechanism and metabase profile path. If you
+are receiving HTTPS errors, you may change the uri to use plain HTTP, though
+this is not recommended. Unless you know what you're doing, just accept
+the default value.
 HERE
     },
     send_duplicates => {
@@ -278,18 +287,6 @@ HERE
     },
     editor => {
         default => undef,
-    },
-    transport => {
-        default  => 'Metabase uri https://metabase.cpantesters.org/api/v1/ id_file metabase_id.json',
-        prompt   => 'Which transport system will be used to transmit the reports?',
-        validate => \&_validate_transport,
-        info     => <<'HERE',
-CPAN::Reporter sends your reports over HTTPS using Metabase. This option lets
-you set a different uri, transport mechanism and metabase profile path. If you
-are receiving HTTPS errors, you may change the uri to use plain HTTP, though
-this is not recommended. Unless you know what you're doing, it is probably
-safe to leave this option with the default value.
-HERE
     },
     debug => {
         default => undef,
