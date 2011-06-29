@@ -7,10 +7,11 @@ Revision history for Perl module CPAN::Reporter
   [NEW FEATURES]
   - During configuration, if 'Metabase' is the requested transport and
     a Metabase profile file is not found, configuration will offer to
-    run metabase-profile to create it.
+    run metabase-profile to create it. [David Golden]
 
   - For Metabase transport (only), the 'id_file' may have a relative
     file path, treated as relative to the .cpanreporter directory.
+    [David Golden]
 
   [BUG FIXES]
   - updated CPAN::Reporter to go with Metabase by default, instead of
