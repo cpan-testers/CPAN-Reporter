@@ -11,6 +11,10 @@ Revision history for Perl module CPAN::Reporter
     generation is entirely automatic without additional prompts
     from metabase-profile [David Golden]
 
+  [DOCUMENTATION]
+
+  - Swapped in Task::CPAN::Reporter in the SYNOPSIS [David Golden]
+
   [BUG FIXES]
 
   - Expands "~" into user directory before attempting to locate

@@ -1484,9 +1484,12 @@ test
 
 From the CPAN shell:
 
- cpan> install CPAN::Reporter
+ cpan> install Task::CPAN::Reporter
  cpan> reload cpan
  cpan> o conf init test_report
+
+Installing [Task::CPAN::Reporter] will pull in additional dependencies
+that new CPAN Testers will need.
 
 = DESCRIPTION
 
