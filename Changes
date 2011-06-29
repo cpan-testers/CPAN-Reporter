@@ -2,6 +2,15 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [NEW FEATURES]
+
+  - Metabase profile generation will use as much of the provided
+    email_from parameter as possible and will generate a random
+    secret API key.  If user provides email_from in a standard form
+    like C<< "John Q. Public" <jqp@example.com> >> then profile
+    generation is entirely automatic without additional prompts
+    from metabase-profile [David Golden]
+
   [BUG FIXES]
 
   - Expands "~" into user directory before attempting to locate

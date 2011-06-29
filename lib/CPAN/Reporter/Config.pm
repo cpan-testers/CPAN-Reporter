@@ -114,7 +114,7 @@ sub _configure {
                 )
             )) {
                 if  ( ! $option_data->{validate} ||
-                        $option_data->{validate}->($k, $answer, $config)
+                        $option_data->{validate}->($k, $answer, $config->{_})
                     ) {
                     $config->{_}{$k} = $answer;
                     last PROMPT;
@@ -306,19 +306,33 @@ sub _generate_profile {
     my ($id_file, $config) = @_;
 
     my $cmd = IPC::Cmd::can_run('metabase-profile');
-    if ( $cmd ) {
-        return scalar IPC::Cmd::run(
-            command => [
-                $cmd,
-                "--output"  => $id_file,
-                "--email"   => $config->{email_from}
-            ],
-            verbose => 1,
-        );
+    return unless $cmd;
+
+    # XXX this is an evil assumption about email addresses, but
+    # might do for simple cases that users might actually provide
+
+    my @opts = ("--output" => $id_file);
+    my $email = $config->{email_from};
+
+    if ($email =~ /\A(.+)\s+<([^>]+)>\z/ ) {
+        push @opts, "--email"   => $2;
+        my $name = $1;
+        $name =~ s/\A["'](.*)["']\z/$1/;
+        push ( @opts, "--name"    => $1)
+            if length $name;
     }
     else {
-        return 0;
+        push @opts, "--email"   => $email;
     }
+
+    # XXX profile 'secret' is really just a generated API key, so we
+    # can create something fairly random for the user and use that
+    push @opts, "--secret"      => sprintf("%08x", rand(2**31));
+
+    return scalar IPC::Cmd::run(
+        command => [ $cmd, @opts ],
+        verbose => 1,
+    );
 }
 
 #--------------------------------------------------------------------------#
@@ -583,7 +597,7 @@ sub _validate_transport {
         # Offer to create if it doesn't exist
         if ( ! -e $id_file )  {
             my $answer = CPAN::Shell::colorable_makemaker_prompt(
-                "Would you like to run 'metabase-profile' now to create '$id_file'?", "y"
+                "\nWould you like to run 'metabase-profile' now to create '$id_file'?", "y"
             );
             if ( $answer =~ /^y/i ) {
                 return _generate_profile( $id_file, $config );
