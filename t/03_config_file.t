@@ -9,13 +9,14 @@ use Test::More;
 use Config::Tiny;
 use IO::CaptureOutput qw/capture/;
 use File::Basename qw/basename/;
+use File::Glob qw/bsd_glob/;
 use File::Spec;
 use File::Temp qw/tempdir/;
 use File::Path qw/mkpath/;
 use t::Frontend;
 use t::MockHomeDir;
 
-plan tests => 57;
+plan tests => 62;
 #plan 'no_plan';
 
 #--------------------------------------------------------------------------#
@@ -61,6 +62,21 @@ is( CPAN::Reporter::Config::_get_config_dir(), $config_dir,
 is( CPAN::Reporter::Config::_get_config_file(), $config_file,
     "get config file path"
 );
+
+# id_file normalizations
+my @id_file_cases = (
+  [ $metabase_file        => $metabase_file ],
+  [ 'metabase_id.json'    => $metabase_file ],
+  [ '/other/path.json'    => '/other/path.json' ],
+  [ 'other.json'          => File::Spec->catfile( $config_dir, 'other.json' )],
+  [ '~/other.json'        => File::Spec->catfile( bsd_glob('~'), 'other.json' )],
+);
+
+for my $c ( @id_file_cases ) {
+  is( CPAN::Reporter::Config::_normalize_id_file( $c->[0] ), $c->[1],
+    "normalize id_file: $c->[0]"
+  );
+}
 
 ok( ! -f $config_file,
     "no config file yet"

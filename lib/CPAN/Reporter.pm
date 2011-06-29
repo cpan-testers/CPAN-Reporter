@@ -1399,11 +1399,7 @@ TRANSPORT_ARGS
         return;
     }
 
-    unless ( File::Spec->file_name_is_absolute( $args{id_file} ) ) {
-        $args{id_file} = File::Spec->catfile(
-            CPAN::Reporter::Config::_get_config_dir(), $args{id_file}
-        );
-    }
+    $args{id_file} = CPAN::Reporter::Config::_normalize_id_file( $args{id_file} );
 
     if ( ! -r $args{id_file} ) {
         $CPAN::Frontend->mywarn( <<"TRANSPORT_ARGS" );

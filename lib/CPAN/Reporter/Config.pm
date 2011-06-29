@@ -3,6 +3,7 @@ package CPAN::Reporter::Config;
 # ABSTRACT: Config file options for CPAN::Reporter
 
 use Config::Tiny 2.08 ();
+use File::Glob ();
 use File::HomeDir 0.58 ();
 use File::Path qw/mkpath/;
 use File::Spec 3.19 ();
@@ -425,6 +426,25 @@ sub _is_valid_grade {
     return grep { $grade eq $_ } @valid_grades;
 }
 
+
+#--------------------------------------------------------------------------#
+# _normalize_id_file
+#--------------------------------------------------------------------------#
+
+sub _normalize_id_file {
+    my ($id_file) = @_;
+
+    if ( $id_file =~ /~/ ) {
+        $id_file = File::Glob::bsd_glob( $id_file );
+    }
+    unless ( File::Spec->file_name_is_absolute( $id_file ) ) {
+        $id_file = File::Spec->catfile(
+            CPAN::Reporter::Config::_get_config_dir(), $id_file
+        );
+    }
+    return $id_file;
+}
+
 #--------------------------------------------------------------------------#
 # _open_config_file
 #--------------------------------------------------------------------------#
@@ -554,10 +574,7 @@ sub _validate_transport {
             return;
         }
 
-        my $id_file = $1;
-        unless ( File::Spec->file_name_is_absolute( $id_file ) ) {
-            $id_file = File::Spec->catfile(_get_config_dir(), $id_file);
-        }
+        my $id_file = _normalize_id_file($1);
 
         # Offer to create if it doesn't exist
         if ( ! -e $id_file )  {

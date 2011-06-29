@@ -2,6 +2,11 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [BUG FIXES]
+
+  - Expands "~" into user directory before attempting to locate
+    'relative' pathname in .cpanreporter directory [David Golden]
+
 1.19_03   2011-06-28 14:44:19 America/New_York
 
   [NEW FEATURES]
