@@ -114,7 +114,7 @@ sub _configure {
                 )
             )) {
                 if  ( ! $option_data->{validate} ||
-                        $option_data->{validate}->($k, $answer)
+                        $option_data->{validate}->($k, $answer, $config)
                     ) {
                     $config->{_}{$k} = $answer;
                     last PROMPT;
@@ -303,12 +303,16 @@ sub _config_spec { return %option_specs }
 #--------------------------------------------------------------------------#
 
 sub _generate_profile {
-    my ($id_file) = @_;
+    my ($id_file, $config) = @_;
 
     my $cmd = IPC::Cmd::can_run('metabase-profile');
     if ( $cmd ) {
         return scalar IPC::Cmd::run(
-            command => [$cmd, "--output", $id_file],
+            command => [
+                $cmd,
+                "--output"  => $id_file,
+                "--email"   => $config->{email_from}
+            ],
             verbose => 1,
         );
     }
@@ -538,7 +542,7 @@ sub _validate_grade_action_pair {
 }
 
 sub _validate_transport {
-    my ($name, $option) = @_;
+    my ($name, $option, $config) = @_;
     my $transport = '';
 
     if ( $option =~ /^(\w+)\s?/ ) {
@@ -582,7 +586,7 @@ sub _validate_transport {
                 "Would you like to run 'metabase-profile' now to create '$id_file'?", "y"
             );
             if ( $answer =~ /^y/i ) {
-                return _generate_profile( $id_file );
+                return _generate_profile( $id_file, $config );
             }
             else {
                 $CPAN::Frontend->mywarn( <<"END_ID_FILE" );
