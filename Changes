@@ -2,6 +2,8 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+1.19_04   2011-06-29 17:39:25 America/New_York
+
   [NEW FEATURES]
 
   - Metabase profile generation will use as much of the provided
