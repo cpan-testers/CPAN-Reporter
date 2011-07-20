@@ -2,6 +2,12 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [BUG FIXES]
+
+  - Removed Test::Reporter::Transport::Metabase as a prerequisite.
+    New testers are recommended to install Task::CPAN::Reporter instead
+    of CPAN::Reporter.
+
 1.19_04   2011-06-29 17:39:25 America/New_York
 
   [NEW FEATURES]
