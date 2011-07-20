@@ -1,6 +1,6 @@
 use strict;
 package CPAN::Reporter::PrereqCheck;
-# ABSTRACT: Modulino for prerequisite tests
+# VERSION
 
 use ExtUtils::MakeMaker 6.36;
 use File::Spec;
@@ -115,6 +115,8 @@ sub _try_load {
 }
 
 1;
+
+# ABSTRACT: Modulino for prerequisite tests
 
 __END__
 

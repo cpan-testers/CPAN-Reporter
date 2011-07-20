@@ -1,10 +1,11 @@
 use strict; # make CPANTS happy
 package CPAN::Reporter::API;
+# VERSION
+
+1;
+
 # ABSTRACT: Programmer's interface to CPAN::Reporter
 
-# Not really a .pm file, but holds wikidoc which will be
-# turned into .pod by the Build.PL
-1;
 __END__
 
 =begin wikidoc

@@ -1,6 +1,6 @@
 use strict;
 package CPAN::Reporter::Config;
-# ABSTRACT: Config file options for CPAN::Reporter
+# VERSION
 
 use Config::Tiny 2.08 ();
 use File::Glob ();
@@ -644,6 +644,9 @@ sub _validate_skipfile {
 }
 
 1;
+
+# ABSTRACT: Config file options for CPAN::Reporter
+
 __END__
 
 =begin wikidoc

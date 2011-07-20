@@ -1,6 +1,6 @@
 use strict; 
 package CPAN::Reporter::History;
-# ABSTRACT: Read or write a CPAN::Reporter history log
+# VERSION
 
 use vars qw/@ISA @EXPORT_OK/;
 
@@ -304,6 +304,9 @@ sub _split_history {
 }
 
 1;
+
+# ABSTRACT: Read or write a CPAN::Reporter history log
+
 __END__
 
 =begin wikidoc

@@ -1,6 +1,6 @@
 use strict;
 package CPAN::Reporter;
-# ABSTRACT: Adds CPAN Testers reporting to CPAN.pm
+# VERSION
 
 use Config;
 use Capture::Tiny qw/ capture tee_merged /;
@@ -1466,7 +1466,9 @@ sub _version_finder {
     return \%result;
 }
 
-1; #this line is important and will help the module return a true value
+1;
+
+# ABSTRACT: Adds CPAN Testers reporting to CPAN.pm
 
 __END__
 
@@ -1490,6 +1492,9 @@ From the CPAN shell:
 
 Installing [Task::CPAN::Reporter] will pull in additional dependencies
 that new CPAN Testers will need.
+
+Advanced CPAN Testers with custom [Test::Reporter::Transport] setups
+may wish to install only CPAN::Reporter, which has fewer dependencies.
 
 = DESCRIPTION
 
