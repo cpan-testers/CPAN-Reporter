@@ -69,7 +69,7 @@ my @id_file_cases = (
   [ 'metabase_id.json'    => $metabase_file ],
   [ '/other/path.json'    => '/other/path.json' ],
   [ 'other.json'          => File::Spec->catfile( $config_dir, 'other.json' )],
-  [ '~/other.json'        => File::Spec->catfile( bsd_glob('~'), 'other.json' )],
+  [ '~/other.json'        => File::Spec::Unix->catfile( bsd_glob('~'), 'other.json' )],
 );
 
 for my $c ( @id_file_cases ) {
