@@ -6,7 +6,11 @@ use ExtUtils::MakeMaker ();
 
 BEGIN {
     $INC{"CPAN.pm"} = 1; #fake load
+    $INC{"Test/Reporter/Transport/Metabase.pm"} = 1; #fake load
     $CPAN::VERSION = 999;
+    $Test::Reporter::Transport::Metabase::VERSION = 999;
+    $CPAN::Reporter::VERSION ||= 999;
+    $CPAN::Reporter::History::VERSION ||= 999;
 }
 
 package CPAN::Shell;

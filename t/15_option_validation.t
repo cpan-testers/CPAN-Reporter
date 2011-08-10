@@ -15,8 +15,8 @@ my @cases = (
     {
         label   => "skipfile (exists)",
         option  => "cc_skipfile",
-        input   => File::Spec->rel2abs("README"),
-        output   => File::Spec->rel2abs("README"),
+        input   => File::Spec->rel2abs("Changes"),
+        output   => File::Spec->rel2abs("Changes"),
     },
     {
         label   => "skipfile (missing)",
