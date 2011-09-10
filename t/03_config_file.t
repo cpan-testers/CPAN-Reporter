@@ -9,7 +9,6 @@ use Test::More;
 use Config::Tiny;
 use IO::CaptureOutput qw/capture/;
 use File::Basename qw/basename/;
-use File::Glob qw/bsd_glob/;
 use File::Spec;
 use File::Temp qw/tempdir/;
 use File::Path qw/mkpath/;
@@ -67,9 +66,9 @@ is( CPAN::Reporter::Config::_get_config_file(), $config_file,
 my @id_file_cases = (
   [ $metabase_file        => $metabase_file ],
   [ 'metabase_id.json'    => $metabase_file ],
-  [ '/other/path.json'    => '/other/path.json' ],
+  [ '/other/path.json'    => File::Spec->catfile( '/other/', 'path.json' )],
   [ 'other.json'          => File::Spec->catfile( $config_dir, 'other.json' )],
-  [ '~/other.json'        => File::Spec::Unix->catfile( bsd_glob('~'), 'other.json' )],
+  [ '~/other.json'        => File::Spec->catfile( File::HomeDir->my_home, 'other.json' )],
 );
 
 for my $c ( @id_file_cases ) {
