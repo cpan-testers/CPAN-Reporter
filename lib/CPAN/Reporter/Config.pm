@@ -3,7 +3,6 @@ package CPAN::Reporter::Config;
 # VERSION
 
 use Config::Tiny 2.08 ();
-use File::Glob ();
 use File::HomeDir 0.58 ();
 use File::Path qw/mkpath/;
 use File::Spec 3.19 ();
@@ -451,10 +450,25 @@ sub _is_valid_grade {
 
 sub _normalize_id_file {
     my ($id_file) = @_;
+    my ($volume, $path, $file) = File::Spec->splitpath($id_file);
+    my @dirs = File::Spec->splitdir($path);
 
-    if ( $id_file =~ /~/ ) {
-        $id_file = File::Glob::bsd_glob( $id_file );
+    if ( @dirs > 0 && q{~} eq substr $dirs[0], 0, 1 ) {
+        # Expand home directory
+        if ( 1 == length $dirs[0] ) {
+            $dirs[0] = File::HomeDir->my_home;
+        }
+        else {
+            $dirs[0] = File::HomeDir->users_home(substr $dirs[0], 1);
+        }
     }
+
+    $id_file = File::Spec->catpath(
+        $volume,
+        File::Spec->catdir(@dirs),
+        $file,
+    );
+
     unless ( File::Spec->file_name_is_absolute( $id_file ) ) {
         $id_file = File::Spec->catfile(
             CPAN::Reporter::Config::_get_config_dir(), $id_file
