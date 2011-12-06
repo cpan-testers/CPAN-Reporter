@@ -40,7 +40,7 @@ my $case = {
     },
 };
 
-plan tests => 1 + 3 * (1 + test_fake_config_plan + test_dispatch_plan);
+plan tests => 1 + 4 * (1 + test_fake_config_plan + test_dispatch_plan);
 
 #--------------------------------------------------------------------------#
 # tests
@@ -67,7 +67,7 @@ is( Test::Reporter::Mocked->transport(), 'Metabase',
 # transport set in config
 #--------------------------------------------------------------------------#
 
-for my $transport ( qw/Metabase/ ) {
+for my $transport ( qw/Metabase Mail::Send/ ) {
 
     test_fake_config( %{$case->{options}}, transport => $transport );
 

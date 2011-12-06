@@ -559,7 +559,7 @@ sub _validate_transport {
     my ($name, $option, $config) = @_;
     my $transport = '';
 
-    if ( $option =~ /^(\w+)\s?/ ) {
+    if ( $option =~ /^(\w+(?:::\w+)*)\s?/ ) {
         $transport = $1;
         my $full_class = "Test::Reporter::Transport::$transport";
         eval "use $full_class ()";

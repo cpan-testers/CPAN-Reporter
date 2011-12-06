@@ -787,7 +787,7 @@ sub subject {
 
 my %mocked_data;
 
-my @valid_transport = qw/Metabase/;
+my @valid_transport = qw/Metabase Mail::Send/;
 
 sub transport {
     my ($self) = shift;
