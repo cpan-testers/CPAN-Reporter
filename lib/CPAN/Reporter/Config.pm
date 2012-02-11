@@ -452,7 +452,11 @@ sub _is_valid_grade {
 sub _normalize_id_file {
     my ($id_file) = @_;
 
-    if ( $id_file =~ /~/ ) {
+    # Windows does not use ~ to signify a home directory
+    if ( $^O eq 'MSWin32' && $id_file =~ /^~(.*)/ ) {
+        $id_file = File::Spec->catdir(File::HomeDir->my_home, $1);
+    }
+    elsif ( $id_file =~ /~/ ) {
         $id_file = File::Glob::bsd_glob( $id_file );
     }
     unless ( File::Spec->file_name_is_absolute( $id_file ) ) {
