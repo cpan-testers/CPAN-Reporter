@@ -12,7 +12,7 @@ sub _run {
     my %saw_mod;
     # read module and prereq string from STDIN
     local *DEVNULL;
-    open DEVNULL, ">" . File::Spec->devnull;
+    open DEVNULL, ">" . File::Spec->devnull; ## no critic
     while ( <> ) {
         m/^(\S+)\s+([^\n]*)/;
         my ($mod, $need) = ($1, $2);
@@ -111,7 +111,7 @@ sub _try_load {
     return 1;
   }
 
-  return eval q{require $file; 1};
+  return eval q{require $file; 1}; ## no critic
 }
 
 1;
