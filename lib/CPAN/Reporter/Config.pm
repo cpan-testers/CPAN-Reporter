@@ -453,7 +453,7 @@ sub _normalize_id_file {
     my ($id_file) = @_;
 
     # Windows does not use ~ to signify a home directory
-    if ( $^O eq 'MSWin32' && $id_file =~ /^~(.*)/ ) {
+    if ( $^O eq 'MSWin32' && $id_file =~ m{^~/(.*)} ) {
         $id_file = File::Spec->catdir(File::HomeDir->my_home, $1);
     }
     elsif ( $id_file =~ /~/ ) {
