@@ -6,7 +6,7 @@ CPAN::Reporter - Adds CPAN Testers reporting to CPAN.pm
 
 =head1 VERSION
 
-version 1.2003
+version 1.2004
 
 =head1 SYNOPSIS
 
@@ -215,9 +215,9 @@ L<CPAN::Reporter::FAQ> -- hints and tips
 
 =head2 Bugs / Feature Requests
 
-Please report any bugs or feature requests by email to C<bug-cpan-reporter at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/Public/Dist/Display.html?Name=CPAN-Reporter>. You will be automatically notified of any
-progress on the request by the system.
+Please report any bugs or feature requests through the issue tracker
+at L<http://rt.cpan.org/Public/Dist/Display.html?Name=CPAN-Reporter>.
+You will be notified automatically of any progress on your issue.
 
 =head2 Source Code
 
