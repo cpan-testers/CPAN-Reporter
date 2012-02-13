@@ -52,7 +52,7 @@ to set the {transport} option for Metabase.
 Other errors could be caused by the absence of the
 {.cpanreporter/metabase_id.json} file in the user's home directory. This file
 should be manually created prior to sending any reports, via the
-{metabase-profile} program. Simply run it and fill the informations
+{metabase-profile} program. Simply run it and fill in the information
 accordingly, and it will create the {metabase_id.json} file for you. Move that
 file to your {.cpanreporter} directory and you're all set.
 

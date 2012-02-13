@@ -138,7 +138,7 @@ and so on.
 
 It reads a module name and prerequisite string pair from each line of input
 and prints out the module name, 0 or 1 depending on whether the prerequisite
-is satisifed, and the installed module version.  If the module is not
+is satisfied, and the installed module version.  If the module is not
 available, it will print "n/a" for the version.  If the module is available
 but can't be loaded, it will print "broken" for the version.  Modules
 without a version will be treated as being of version "0".

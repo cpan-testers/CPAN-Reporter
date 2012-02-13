@@ -1498,7 +1498,7 @@ may wish to install only CPAN::Reporter, which has fewer dependencies.
 
 = DESCRIPTION
 
-The CPAN Testers project captures and analyses detailed results from building
+The CPAN Testers project captures and analyzes detailed results from building
 and testing CPAN distributions on multiple operating systems and multiple
 versions of Perl.  This provides valuable feedback to module authors and
 potential users to identify bugs or platform compatibility issues and improves
@@ -1561,7 +1561,7 @@ requires an active Internet connection and a profile file.  To create the
 profile, users will need to run {metabase-profile} from a terminal window and
 fill the information at the prompts. This will create a file called
 {metabase_id.json} in the current directory. That file should be moved to the
-{.cpanreporter} directory inside the user's home dir.
+{.cpanreporter} directory inside the user's home directory.
 
 Users with an existing metabase profile file (e.g. from another machine),
 should copy it into the {.cpanreporter} directory instead of creating

@@ -834,7 +834,7 @@ distribution tarball name.
     DAGOLDEN/CPAN-Reporter-1.00.tar.gz
 
 Lines that begin with a sharp (#) are considered comments and will not be
-matched.  All regular expressionss will be matched case insensitive and will
+matched.  All regular expressions will be matched case insensitive and will
 not be anchored unless you provide one.
 
 As the format of a distribution ID is "AUTHOR/tarball", anchoring at the
@@ -875,5 +875,7 @@ choice of configuration directory
 * [CPAN::Reporter::FAQ]
 
 =end wikidoc
+
+=cut
 
 # vim: ts=4 sts=4 sw=4 et:

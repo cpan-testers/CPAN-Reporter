@@ -350,7 +350,7 @@ Ordinary search criteria include:
 a {CPAN::Distribution} object, this is provided by the {base_id} method.
 * {phase} -- phase the report was generated during: either 'PL',
 'make' or 'test'
-* {grade} -- CPAN Testers grade: 'PASS', 'FAIL', 'NA' or'UNKNOWN'; Also may
+* {grade} -- CPAN Testers grade: 'PASS', 'FAIL', 'NA' or 'UNKNOWN'; Also may
 be 'DISCARD' for any failing reports not sent due to missing prerequisites
 
 Without additional criteria, a search will be limited to the current
