@@ -2,6 +2,11 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [BUG FIXES]
+
+  - Canonicalise the config path returned by bsd_glob [rt.cpan.org #70504]
+    [Kent Fredric]
+
 1.2004    2012-02-13 16:25:07 EST5EDT
 
   [BUG FIXES]
