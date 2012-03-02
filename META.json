@@ -4,7 +4,7 @@
       "David Golden <dagolden@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300005, CPAN::Meta::Converter version 2.112621",
+   "generated_by" : "Dist::Zilla version 4.300009, CPAN::Meta::Converter version 2.120351",
    "license" : [
       "apache_2_0"
    ],
@@ -33,70 +33,70 @@
       "runtime" : {
          "requires" : {
             "CPAN" : "1.9301",
-            "CPAN::Version" : 0,
-            "Capture::Tiny" : 0,
-            "Carp" : 0,
-            "Config" : 0,
+            "CPAN::Version" : "0",
+            "Capture::Tiny" : "0",
+            "Carp" : "0",
+            "Config" : "0",
             "Config::Tiny" : "2.08",
             "Devel::Autoflush" : "0.04",
-            "Exporter" : 0,
+            "Exporter" : "0",
             "ExtUtils::MakeMaker" : "6.36",
-            "Fcntl" : 0,
-            "File::Basename" : 0,
-            "File::Find" : 0,
-            "File::Glob" : 0,
+            "Fcntl" : "0",
+            "File::Basename" : "0",
+            "File::Find" : "0",
+            "File::Glob" : "0",
             "File::HomeDir" : "0.58",
-            "File::Path" : 0,
+            "File::Path" : "0",
             "File::Spec" : "3.19",
             "File::Temp" : "0.16",
-            "IO::File" : 0,
+            "IO::File" : "0",
             "IPC::Cmd" : "0.46",
-            "Parse::CPAN::Meta" : 0,
-            "Probe::Perl" : 0,
+            "Parse::CPAN::Meta" : "0",
+            "Probe::Perl" : "0",
             "Test::Reporter" : "1.54",
-            "constant" : 0,
+            "constant" : "0",
             "perl" : "5.006",
-            "strict" : 0,
-            "vars" : 0
+            "strict" : "0",
+            "vars" : "0"
          }
       },
       "test" : {
          "requires" : {
             "Archive::Tar" : "1.54",
             "File::Copy::Recursive" : "0.35",
-            "File::Spec::Functions" : 0,
+            "File::Spec::Functions" : "0",
             "File::pushd" : "0.32",
             "IO::CaptureOutput" : "1.03",
-            "Test::Harness" : 0,
+            "Test::Harness" : "0",
             "Test::More" : "0.62",
-            "warnings" : 0
+            "warnings" : "0"
          }
       }
    },
    "provides" : {
       "CPAN::Reporter" : {
          "file" : "lib/CPAN/Reporter.pm",
-         "version" : "1.2004"
+         "version" : "1.2005"
       },
       "CPAN::Reporter::API" : {
          "file" : "lib/CPAN/Reporter/API.pm",
-         "version" : "1.2004"
+         "version" : "1.2005"
       },
       "CPAN::Reporter::Config" : {
          "file" : "lib/CPAN/Reporter/Config.pm",
-         "version" : "1.2004"
+         "version" : "1.2005"
       },
       "CPAN::Reporter::FAQ" : {
          "file" : "lib/CPAN/Reporter/FAQ.pm",
-         "version" : "1.2004"
+         "version" : "1.2005"
       },
       "CPAN::Reporter::History" : {
          "file" : "lib/CPAN/Reporter/History.pm",
-         "version" : "1.2004"
+         "version" : "1.2005"
       },
       "CPAN::Reporter::PrereqCheck" : {
          "file" : "lib/CPAN/Reporter/PrereqCheck.pm",
-         "version" : "1.2004"
+         "version" : "1.2005"
       }
    },
    "release_status" : "stable",
@@ -112,6 +112,6 @@
          "web" : "https://github.com/dagolden/cpan-reporter"
       }
    },
-   "version" : "1.2004"
+   "version" : "1.2005"
 }
 
