@@ -7,7 +7,7 @@ use File::Glob ();
 use File::HomeDir 0.58 ();
 use File::Path qw/mkpath/;
 use File::Spec 3.19 ();
-use IPC::Cmd 0.46 ();
+use IPC::Cmd 0.76 ();
 use IO::File ();
 use CPAN 1.9301 (); # for printing warnings
 

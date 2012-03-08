@@ -2,6 +2,10 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [OTHER]
+
+  - Bumped IPC::Cmd prereq to 0.76 to avoid failures on some platforms
+
 1.2005    2012-03-02 13:21:36 EST5EDT
 
   [BUG FIXES]
