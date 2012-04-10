@@ -2,6 +2,8 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+1.2006    2012-04-10 18:44:20 America/New_York
+
   [BUG FIXES]
 
   - Changed how CPAN::Reporter::PrereqCheck attempts to load modules to
