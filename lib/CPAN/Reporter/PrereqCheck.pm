@@ -13,6 +13,8 @@ sub _run {
     # read module and prereq string from STDIN
     local *DEVNULL;
     open DEVNULL, ">" . File::Spec->devnull; ## no critic
+    # ensure actually installed, not ./inc/... or ./t/..., etc.
+    local @INC = grep { $_ ne '.' } @INC;
     while ( <> ) {
         m/^(\S+)\s+([^\n]*)/;
         my ($mod, $need) = ($1, $2);
@@ -49,7 +51,7 @@ sub _run {
                 # report broken if it can't be loaded
                 # "select" to try to suppress spurious newlines
                 select DEVNULL; ## no critic
-                if ( ! _try_load( $mod, $have, $inst_file ) ) {
+                if ( ! _try_load( $mod, $have ) ) {
                     select STDOUT; ## no critic
                     print "$mod 0 broken\n";
                     next;
@@ -103,7 +105,7 @@ sub _run {
 }
 
 sub _try_load {
-  my ($module, $have, $file) = @_;
+  my ($module, $have) = @_;
 
   # M::I < 0.95 dies in require, so we can't check if it loads
   # Instead we just pretend that it works
@@ -111,7 +113,10 @@ sub _try_load {
     return 1;
   }
 
-  return eval q{require $file; 1}; ## no critic
+  my $file = "$module.pm";
+  $file =~ s{::}{/}g;
+
+  return eval {require $file; 1}; ## no critic
 }
 
 1;

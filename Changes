@@ -2,6 +2,12 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [BUG FIXES]
+
+  - Changed how CPAN::Reporter::PrereqCheck attempts to load modules to
+    avoid module reloading, which caused some prereqs to show up as
+    'broken' [rt.cpan.org #76394 and #75559]
+
   [OTHER]
 
   - Bumped IPC::Cmd prereq to 0.76 to avoid failures on some platforms
