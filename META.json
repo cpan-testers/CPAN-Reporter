@@ -4,7 +4,7 @@
       "David Golden <dagolden@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300009, CPAN::Meta::Converter version 2.120630",
+   "generated_by" : "Dist::Zilla version 4.300028, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "apache_2_0"
    ],
@@ -28,6 +28,14 @@
       "configure" : {
          "requires" : {
             "ExtUtils::MakeMaker" : "6.30"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Pod::Coverage::TrustPod" : "0",
+            "Test::CPAN::Meta" : "0",
+            "Test::Pod" : "1.41",
+            "Test::Pod::Coverage" : "1.08"
          }
       },
       "runtime" : {
@@ -76,42 +84,42 @@
    "provides" : {
       "CPAN::Reporter" : {
          "file" : "lib/CPAN/Reporter.pm",
-         "version" : "1.2006"
+         "version" : "1.2007"
       },
       "CPAN::Reporter::API" : {
          "file" : "lib/CPAN/Reporter/API.pm",
-         "version" : "1.2006"
+         "version" : "1.2007"
       },
       "CPAN::Reporter::Config" : {
          "file" : "lib/CPAN/Reporter/Config.pm",
-         "version" : "1.2006"
+         "version" : "1.2007"
       },
       "CPAN::Reporter::FAQ" : {
          "file" : "lib/CPAN/Reporter/FAQ.pm",
-         "version" : "1.2006"
+         "version" : "1.2007"
       },
       "CPAN::Reporter::History" : {
          "file" : "lib/CPAN/Reporter/History.pm",
-         "version" : "1.2006"
+         "version" : "1.2007"
       },
       "CPAN::Reporter::PrereqCheck" : {
          "file" : "lib/CPAN/Reporter/PrereqCheck.pm",
-         "version" : "1.2006"
+         "version" : "1.2007"
       }
    },
    "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
-         "mailto" : "bug-cpan-reporter at rt.cpan.org",
-         "web" : "http://rt.cpan.org/Public/Dist/Display.html?Name=CPAN-Reporter"
+         "mailto" : "bug-CPAN-Reporter@rt.cpan.org",
+         "web" : "https://rt.cpan.org/Public/Dist/Display.html?Name=CPAN-Reporter"
       },
-      "homepage" : "https://github.com/dagolden/cpan-reporter",
+      "homepage" : "https://metacpan.org/release/CPAN-Reporter",
       "repository" : {
          "type" : "git",
-         "url" : "https://github.com/dagolden/cpan-reporter.git",
+         "url" : "git://github.com/dagolden/cpan-reporter.git",
          "web" : "https://github.com/dagolden/cpan-reporter"
       }
    },
-   "version" : "1.2006"
+   "version" : "1.2007"
 }
 
