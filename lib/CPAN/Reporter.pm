@@ -545,6 +545,7 @@ sub _downgrade_known_causes {
         last;
       }
       if( $line =~ /Perl .*? required.*?--this is only/ims ||
+        $line =~ /Perl version .*? or higher required\. We run/ims || #EU::MM
         $line =~ /ERROR: perl: Version .*? is installed, but we need version/ims ||
         $line =~ /ERROR: perl \(.*?\) is installed, but we need version/ims ||
         $line =~ /Error evaling version line 'BEGIN/ims ||
