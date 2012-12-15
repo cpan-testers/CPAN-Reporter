@@ -2,6 +2,11 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [BUG FIXES]
+
+  - Don't try to check if Acme::Bleach can be loaded if it's listed
+    as a prereq
+
 1.2007    2012-12-10 15:13:22 America/New_York
 
 

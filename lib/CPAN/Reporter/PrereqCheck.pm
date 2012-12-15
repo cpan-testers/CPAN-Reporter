@@ -112,6 +112,10 @@ sub _try_load {
   if ( $module eq 'Module::Install' && $have < 0.95 ) {
     return 1;
   }
+  # loading Acme::Bleach bleaches *us*, so skip
+  elsif( $module eq 'Acme::Bleach' ) {
+    return 1;
+  }
 
   my $file = "$module.pm";
   $file =~ s{::}{/}g;
