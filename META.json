@@ -84,27 +84,27 @@
    "provides" : {
       "CPAN::Reporter" : {
          "file" : "lib/CPAN/Reporter.pm",
-         "version" : "1.2007"
+         "version" : "1.2008"
       },
       "CPAN::Reporter::API" : {
          "file" : "lib/CPAN/Reporter/API.pm",
-         "version" : "1.2007"
+         "version" : "1.2008"
       },
       "CPAN::Reporter::Config" : {
          "file" : "lib/CPAN/Reporter/Config.pm",
-         "version" : "1.2007"
+         "version" : "1.2008"
       },
       "CPAN::Reporter::FAQ" : {
          "file" : "lib/CPAN/Reporter/FAQ.pm",
-         "version" : "1.2007"
+         "version" : "1.2008"
       },
       "CPAN::Reporter::History" : {
          "file" : "lib/CPAN/Reporter/History.pm",
-         "version" : "1.2007"
+         "version" : "1.2008"
       },
       "CPAN::Reporter::PrereqCheck" : {
          "file" : "lib/CPAN/Reporter/PrereqCheck.pm",
-         "version" : "1.2007"
+         "version" : "1.2008"
       }
    },
    "release_status" : "stable",
@@ -120,6 +120,6 @@
          "web" : "https://github.com/dagolden/cpan-reporter"
       }
    },
-   "version" : "1.2007"
+   "version" : "1.2008"
 }
 

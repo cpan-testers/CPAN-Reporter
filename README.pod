@@ -6,7 +6,7 @@ CPAN::Reporter - Adds CPAN Testers reporting to CPAN.pm
 
 =head1 VERSION
 
-version 1.2007
+version 1.2008
 
 =head1 SYNOPSIS
 
