@@ -112,8 +112,9 @@ sub _try_load {
   if ( $module eq 'Module::Install' && $have < 0.95 ) {
     return 1;
   }
-  # loading Acme::Bleach bleaches *us*, so skip
-  elsif( $module eq 'Acme::Bleach' ) {
+  # loading Acme modules like Acme::Bleach can do bad things,
+  # so never try to load them; just pretend that they work
+  elsif( $module =~ /^Acme::/ ) {
     return 1;
   }
 

@@ -2,6 +2,12 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [BUG FIXES]
+
+  - Expanded prerequisite load check skip to all Acme::* modules; prereqs
+    still need to be installed and of sufficient version, but we don't
+    check that Acme modules load without error to avoid side effects.
+
 1.2008    2012-12-15 07:26:11 America/New_York
 
   [BUG FIXES]
