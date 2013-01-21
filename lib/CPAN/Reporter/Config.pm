@@ -292,6 +292,9 @@ HERE
     debug => {
         default => undef,
     },
+    retry_submission => {
+        default => undef,
+    },
 );
 
 sub _config_spec { return %option_specs }
