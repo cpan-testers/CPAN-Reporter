@@ -2,6 +2,12 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [NEW FEATURES]
+
+  - new option 'retry_submission' tries to send the report one
+    extra time in case it fails. Defaults to undef (don't retry)
+    (Patch by Alexandr "chorny" Ciornii)
+
 1.2009    2012-12-18 16:08:37 America/New_York
 
   [BUG FIXES]
