@@ -812,6 +812,8 @@ actually deadlock in some situations -- so use at your own risk.
 * {editor = <editor>} -- editor to use to edit the test report; if not set,
 Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
 (in that order) to find an editor
+* {retry_submission} -- if greater than zero, CPAN::Reporter will try to
+resend the report after a few seconds in case the first attempt fails.
 * {send_duplicates = <grade:action> ...} -- should duplicates of previous
 reports be sent, regardless of {send_report}? (default:no)
 * {send_PL_report = <grade:action> ...} -- if defined, used in place of

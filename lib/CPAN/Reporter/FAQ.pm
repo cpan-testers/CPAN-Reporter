@@ -56,6 +56,11 @@ should be manually created prior to sending any reports, via the
 accordingly, and it will create the {metabase_id.json} file for you. Move that
 file to your {.cpanreporter} directory and you're all set.
 
+If you experience intermittent network issues, you can set the
+'retry_submission' option to make a second attempt at sending the report
+a few seconds later, in case the first one fails. This could be useful for
+extremely slow connections.
+
 Finally, lack of Internet connection or firewall filtering will prevent
 the report from reaching the CPAN Testers servers. If you are experiencing
 HTTPS issues or messages complaining about SSL modules, try installing
