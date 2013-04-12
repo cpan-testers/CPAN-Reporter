@@ -495,13 +495,13 @@ TRANSPORT_REQUIRED
         }
         else {
             $CPAN::Frontend->mywarn( "CPAN::Reporter: " . $tr->errstr . "\n");
-            
+
             if ( $config->{retry_submission} ) {
                 sleep(3);
-            
+
                 $CPAN::Frontend->mywarn( "CPAN::Reporter: second attempt\n");
                 $tr->errstr('');
-            
+
                 if ( $tr->send() ) {
                     CPAN::Reporter::History::_record_history( $result )
                         if not $is_duplicate;
