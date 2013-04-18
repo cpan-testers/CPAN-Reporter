@@ -112,6 +112,11 @@ sub _try_load {
   if ( $module eq 'Module::Install' && $have < 0.95 ) {
     return 1;
   }
+  # circular dependency with Catalyst::Runtime, so this module
+  # does not depends on it, but still does not work without it.
+  elsif ( $module eq 'Catalyst::DispatchType::Regex' && $have <= 5.90032 ) {
+    return 1;
+  }
   elsif ( $module eq 'Term::ReadLine::Perl' ) {
     return 1;
   }
