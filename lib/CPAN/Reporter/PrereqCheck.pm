@@ -112,6 +112,7 @@ sub _try_load {
     qw/Term::ReadLine::Perl Term::ReadLine::Gnu MooseX::HasDefaults Readonly::XS
        POE::Loop::Event SOAP::Constants
        Moose::Meta::TypeConstraint::Parameterizable Moose::Meta::TypeConstraint::Parameterized/,
+    'Devel::Trepan', #"require Enbugger; require Devel::Trepan;" starts debugging session
 
     #removed modules
     qw/Pegex::Mo YAML::LibYAML/,
