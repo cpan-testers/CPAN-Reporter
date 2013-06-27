@@ -66,9 +66,19 @@ sub grade_make {
     return $result->{success};
 }
 
+sub _copy_mymeta {
+    my $result = shift;
+    my $config_file = $result->{is_make} ? "Makefile" : "Build";
+    return unless -e $config_file;
+    my $dist = $result->{dist};
+}
+
 sub grade_PL {
     my @args = @_;
     my $result = _init_result( 'PL', @args ) or return;
+
+    _copy_mymeta($result);
+
     _compute_PL_grade($result);
     if ( $result->{grade} eq 'discard' ) {
         $CPAN::Frontend->myprint(
