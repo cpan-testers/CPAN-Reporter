@@ -107,9 +107,37 @@ sub _run {
 sub _try_load {
   my ($module, $have) = @_;
 
+  my @do_not_load = (
+    # should not be loaded directly
+    qw/Term::ReadLine::Perl Term::ReadLine::Gnu MooseX::HasDefaults Readonly::XS
+       POE::Loop::Event SOAP::Constants
+       Moose::Meta::TypeConstraint::Parameterizable Moose::Meta::TypeConstraint::Parameterized/,
+    'Devel::Trepan', #"require Enbugger; require Devel::Trepan;" starts debugging session
+
+    #removed modules
+    qw/Pegex::Mo YAML::LibYAML/,
+
+    #have additional prereqs
+    qw/Log::Dispatch::Email::MailSender RDF::NS::Trine Plack::Handler::FCGI Web::Scraper::LibXML/,
+
+    #require special conditions to run
+    qw/mylib/,
+
+    #do not return true value
+    qw/perlsecret/,
+  );
+
   # M::I < 0.95 dies in require, so we can't check if it loads
   # Instead we just pretend that it works
   if ( $module eq 'Module::Install' && $have < 0.95 ) {
+    return 1;
+  }
+  # circular dependency with Catalyst::Runtime, so this module
+  # does not depends on it, but still does not work without it.
+  elsif ( $module eq 'Catalyst::DispatchType::Regex' && $have <= 5.90032 ) {
+    return 1;
+  }
+  elsif (  grep { $_ eq $module } @do_not_load ) {
     return 1;
   }
   # loading Acme modules like Acme::Bleach can do bad things,
