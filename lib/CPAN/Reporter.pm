@@ -921,6 +921,10 @@ sub _prereq_report {
 
     # Extract requires/build_requires from CPAN dist
     my $prereq_pm = $dist->prereq_pm;
+
+    # XXX This all needs to get revised to deal with anticipated
+    # changes in which CPAN.pm could return opt_requires, opt_build_requires
+    # for recommends & suggests prereqs -- xdg, 2013-07-02
     if ( ref $prereq_pm eq 'HASH' ) {
         # is it the new CPAN style with requires/build_requires?
         if (join(q{ }, sort keys %$prereq_pm) eq "build_requires requires") {
