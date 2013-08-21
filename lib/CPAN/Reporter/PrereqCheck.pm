@@ -120,6 +120,10 @@ sub _try_load {
     #have additional prereqs
     qw/Log::Dispatch::Email::MailSender RDF::NS::Trine Plack::Handler::FCGI Web::Scraper::LibXML/,
 
+    #modify @INC. 'lib' appearing in @INC will prevent correct
+    #checking of modules with XS part, for ex. List::Util
+    qw/ExtUtils::ParseXS ExtUtils::ParseXS::Utilities/,
+    
     #require special conditions to run
     qw/mylib/,
 
