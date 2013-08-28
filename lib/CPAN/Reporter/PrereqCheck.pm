@@ -131,6 +131,13 @@ sub _try_load {
     qw/perlsecret/,
   );
 
+  my %loading_conflicts = (
+    'signatures' => ['Catalyst'],
+    'Dancer::Plugin::FlashMessage' => ['Dancer::Plugin::FlashNote'],
+    'Dancer::Plugin::Mongoose' => ['Dancer::Plugin::DBIC'],
+    'Dancer::Plugin::DBIC' => ['Dancer::Plugin::Mongoose'],
+  ); #modules that conflict with each other
+  
   # M::I < 0.95 dies in require, so we can't check if it loads
   # Instead we just pretend that it works
   if ( $module eq 'Module::Install' && $have < 0.95 ) {
@@ -148,6 +155,16 @@ sub _try_load {
   # so never try to load them; just pretend that they work
   elsif( $module =~ /^Acme::/ ) {
     return 1;
+  }
+
+  if ( exists $loading_conflicts{$module} ) {
+      foreach my $mod1 ( @{ $loading_conflicts{$module} } ) {
+         my $file = "$mod1.pm";
+         $file =~ s{::}{/}g;
+         if (exists $INC{$file}) {
+             return 1;
+         }
+      }
   }
 
   my $file = "$module.pm";
