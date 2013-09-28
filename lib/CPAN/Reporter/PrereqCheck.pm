@@ -138,6 +138,14 @@ sub _try_load {
     'Dancer::Plugin::DBIC' => ['Dancer::Plugin::Mongoose'],
   ); #modules that conflict with each other
   
+  my %load_before = (
+    'Tk::Font' => 'Tk',
+    'Tk::Widget' => 'Tk',
+    'Class::MOP::Class' => 'Class::MOP',
+    'Moose::Meta::TypeConstraint::Role' => 'Moose',
+    'Moose::Meta::TypeConstraint::Union' => 'Moose',
+  );
+
   # M::I < 0.95 dies in require, so we can't check if it loads
   # Instead we just pretend that it works
   if ( $module eq 'Module::Install' && $have < 0.95 ) {
@@ -165,6 +173,10 @@ sub _try_load {
              return 1;
          }
       }
+  }
+
+  if (exists $load_before{$module}) {
+      eval "require $load_before{$module};1;";
   }
 
   my $file = "$module.pm";
