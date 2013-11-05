@@ -1425,7 +1425,7 @@ TRANSPORT_ARGS
     if ( ! -r $args{id_file} ) {
         $CPAN::Frontend->mywarn( <<"TRANSPORT_ARGS" );
 
-CPAN::Reporter: Could not find Metabase tranport 'id_file' parameter
+CPAN::Reporter: Could not find Metabase transport 'id_file' parameter
 located at '$args{id_file}'.
 See documentation for proper configuration of the 'transport' setting.
 
