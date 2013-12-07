@@ -42,7 +42,7 @@ plan tests => 1 + test_fake_config_plan()
 my $mock_dist = t::MockCPANDist->new( 
     pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
     prereq_pm       => {
-        'File::Spec' => 0,
+        requires => { 'File::Spec' => 0 },
     },
     author_id       => "JOHNQP",
     author_fullname => "John Q. Public",

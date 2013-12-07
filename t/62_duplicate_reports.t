@@ -31,7 +31,7 @@ my $perl = Probe::Perl->find_perl_interpreter();
 
 my %mock_dist_info = ( 
     prereq_pm       => {
-        'File::Spec' => 0,
+        requires => { 'File::Spec' => 0 },
     },
     author_id       => "JOHNQP",
     author_fullname => "John Q. Public",
@@ -122,7 +122,7 @@ my @cases = (
         label => "first discard",
         name => 't-PrereqMiss',
         version => 9.11,
-        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
+        prereq => { 'requires' => { 'Bogus::Module::Doesnt::Exist' => 0 } },
         grade => "discard",
         phase => "test",
         command => "$make test",
@@ -143,7 +143,7 @@ my @cases = (
         label => "second discard",
         name => 't-PrereqMiss',
         version => 9.11,
-        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
+        prereq => { 'requires' => { 'Bogus::Module::Doesnt::Exist' => 0 } },
         grade => "discard",
         phase => "test",
         command => "$make test",

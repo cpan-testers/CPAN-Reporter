@@ -29,7 +29,7 @@ my @prereq_cases = (
 );
 
 my @scenarios = (
-    [ "old CPAN-style", undef ], # undef is signal and helps keep count
+    #[ "old CPAN-style", undef ], # undef is signal and helps keep count
     [ "only one", qw/requires/ ],
     [ "only one", qw/build_requires/ ],
     [ "both types", qw/requires build_requires/ ],

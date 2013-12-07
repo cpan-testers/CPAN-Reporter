@@ -14,7 +14,7 @@ my @test_distros = (
     # discards
     {
         name => 'make-PrereqMiss',
-        prereq => { 'Unavailable::Module' => 0 },
+        prereq => { 'requires' => {'Unavailable::Module' => 0} },
         eumm_success => 0,
         eumm_grade => "discard",
         eumm_msg => "Prerequisite missing",
@@ -24,7 +24,7 @@ my @test_distros = (
     },
     {
         name => 'make-PrereqFail',
-        prereq => { 'File::Spec' => 99999.9 },
+        prereq => { 'requires' => {'File::Spec' => 99999.9} },
         eumm_success => 0,
         eumm_grade => "discard",
         eumm_msg => "Prerequisite version too low",

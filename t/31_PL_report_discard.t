@@ -14,7 +14,7 @@ my @test_distros = (
     # discards
     {
         name => 'PL-PrereqMiss',
-        prereq => { 'Unavailable::Module' => 0 },
+        prereq => { 'requires' => {'Unavailable::Module' => 0} },
         eumm_success => 0,
         eumm_grade => "discard",
         mb_success => 0,
@@ -22,7 +22,7 @@ my @test_distros = (
     },
     {
         name => 'PL-PrereqMissOK',
-        prereq => { 'Unavailable::Module' => 0 },
+        prereq => { 'requires' => {'Unavailable::Module' => 0} },
         eumm_success => 1,
         eumm_grade => "pass",
         mb_success => 1,
@@ -30,7 +30,7 @@ my @test_distros = (
     },
     {
         name => 'PL-PrereqFail',
-        prereq => { 'File::Spec' => 99999.9 },
+        prereq => { 'requires' => { 'File::Spec' => 99999.9 } },
         eumm_success => 0,
         eumm_grade => "discard",
         mb_success => 0,

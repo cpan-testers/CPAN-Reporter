@@ -13,7 +13,7 @@ use t::Helper;
 my @test_distros = (
     {
         name => 't-PrereqMiss',
-        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
+        prereq => { 'requires' => { 'Bogus::Module::Doesnt::Exist' => 0 } },
         eumm_success => 0,
         eumm_grade => "discard",
         eumm_msg => "Prerequisite missing",
@@ -23,7 +23,7 @@ my @test_distros = (
     },
     {
         name => 't-NoTestsButPrereqMiss',
-        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
+        prereq => { 'requires' => { 'Bogus::Module::Doesnt::Exist' => 0 } },
         eumm_success => 0,
         eumm_grade => "discard",
         eumm_msg => "Prerequisite missing",
@@ -33,7 +33,7 @@ my @test_distros = (
     },
     {
         name => 'test.pl-PrereqMiss',
-        prereq => { 'Bogus::Module::Doesnt::Exist' => 0 },
+        prereq => { 'requires' => { 'Bogus::Module::Doesnt::Exist' => 0 } },
         eumm_success => 0,
         eumm_grade => "discard",
         eumm_msg => "Prerequisite missing",
@@ -43,7 +43,7 @@ my @test_distros = (
     },
     {
         name => 't-PrereqFail',
-        prereq => { 'File::Spec' => 99999.9 },
+        prereq => { 'requires' => { 'File::Spec' => 99999.9 } },
         eumm_success => 0,
         eumm_grade => "discard",
         eumm_msg => "Prerequisite version too low",
@@ -53,7 +53,7 @@ my @test_distros = (
     },
     {
         name => 'test.pl-PrereqFail',
-        prereq => { 'File::Spec' => 99999.9 },
+        prereq => { 'requires' => { 'File::Spec' => 99999.9 } },
         eumm_success => 0,
         eumm_grade => "discard",
         eumm_msg => "Prerequisite version too low",
