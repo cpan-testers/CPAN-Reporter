@@ -141,6 +141,7 @@ sub _try_load {
   my %load_before = (
     'Tk::Font' => 'Tk',
     'Tk::Widget' => 'Tk',
+    'Tk::Label' => 'Tk',
     'Class::MOP::Class' => 'Class::MOP',
     'Moose::Meta::TypeConstraint::Role' => 'Moose',
     'Moose::Meta::TypeConstraint::Union' => 'Moose',
