@@ -146,6 +146,7 @@ sub _try_load {
     'Moose::Meta::TypeConstraint::Role' => 'Moose',
     'Moose::Meta::TypeConstraint::Union' => 'Moose',
     'Moose::Meta::Attribute::Native' => 'Class::MOP',
+    'Test::More::Hooks' => 'Test::More',
   );
 
   # M::I < 0.95 dies in require, so we can't check if it loads
