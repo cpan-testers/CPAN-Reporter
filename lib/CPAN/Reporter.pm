@@ -915,7 +915,9 @@ sub _parse_test_harness {
 # _prereq_report
 #--------------------------------------------------------------------------#
 
-my @prereq_sections = qw/requires build_requires configure_requires/;
+my @prereq_sections = qw(
+  requires build_requires configure_requires opt_requires opt_build_requires
+);
 
 sub _prereq_report {
     my $dist = shift;
@@ -924,22 +926,20 @@ sub _prereq_report {
     # Extract requires/build_requires from CPAN dist
     my $prereq_pm = $dist->prereq_pm;
 
-    # XXX This all needs to get revised to deal with anticipated
-    # changes in which CPAN.pm could return opt_requires, opt_build_requires
-    # for recommends & suggests prereqs -- xdg, 2013-07-02
     if ( ref $prereq_pm eq 'HASH' ) {
-        # CPAN 1.94 returns hash with requires/build_requires
-        # so no need to support old style
+        # CPAN 1.94 returns hash with requires/build_requires # so no need to support old style
         foreach (values %$prereq_pm) {
           if (defined && ref ne 'HASH') {
-            die "Data error. Please report it to CPAN::Reporter bug tracker.";
+             require Data::Dumper;
+             warn "Data error detecting prerequisites. Please report it to CPAN::Reporter bug tracker:";
+             warn Data::Dumper::Dumper($prereq_pm);
+             die "Stopping";
           }
         }
 
-        $need{requires} = $prereq_pm->{requires}
-            if ref $prereq_pm->{requires} eq 'HASH';
-        $need{build_requires} = $prereq_pm->{build_requires}
-            if ref $prereq_pm->{build_requires} eq 'HASH';
+        for my $sec ( @prereq_sections ) {
+            $need{$sec} = $prereq_pm->{$sec} if keys %{ $prereq_pm->{$sec} };
+        }
     }
 
     # Extract configure_requires from META.yml if it exists
