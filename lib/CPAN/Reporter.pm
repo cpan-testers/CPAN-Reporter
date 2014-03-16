@@ -665,23 +665,23 @@ sub _expand_result {
 
 # Entries bracketed with "/" are taken to be a regex; otherwise literal
 my @env_vars= qw(
-    /PERL/
+    /HARNESS/
     /LC_/
+    /PERL/
+    /_TEST/
+    COMSPEC
+    INCLUDE
     LANG
     LANGUAGE
-    PATH
-    SHELL
-    COMSPEC
-    TERM
-    TEMP
-    TMPDIR
-    AUTOMATED_TESTING
-    /AUTHOR_TEST/
-    INCLUDE
-    LIB
     LD_LIBRARY_PATH
-    PROCESSOR_IDENTIFIER
+    LIB
     NUMBER_OF_PROCESSORS
+    PATH
+    PROCESSOR_IDENTIFIER
+    SHELL
+    TEMP
+    TERM
+    TMPDIR
 );
 
 sub _env_report {
