@@ -9,6 +9,9 @@ Revision history for Perl module CPAN::Reporter
 
   [CHANGED]
 
+  - Moved test distributions into corpus/ to avoid repetitive
+    tarball unpacking
+
   - Modernized distribution meta and support files
 
 1.2010    2013-04-12 15:35:38 Europe/London

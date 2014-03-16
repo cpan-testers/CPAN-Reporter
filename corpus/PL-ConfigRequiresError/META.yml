@@ -1,0 +1,13 @@
+---
+name Bogus-Module  # XXX INTENTIONAL ERROR not a proper hash key
+version: 0.01
+author:
+  - 'David A. Golden <dagolden@cpan.org>'
+abstract: Bogus
+license: unknown
+configure_requires:
+  Local::Config: 0
+generated_by: Module::Build version 0.280801
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
