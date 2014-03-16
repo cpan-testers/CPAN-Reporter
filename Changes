@@ -7,6 +7,10 @@ Revision history for Perl module CPAN::Reporter
   - Added support for future optional prerequisite reporting
     when CPAN.pm supports it
 
+  [CHANGED]
+
+  - Modernized distribution meta and support files
+
 1.2010    2013-04-12 15:35:38 Europe/London
 
   [NEW FEATURES]
