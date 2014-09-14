@@ -11,11 +11,16 @@ _run() if ! caller();
 sub _run {
     my %saw_mod;
     # read module and prereq string from STDIN
+    # do this as early as possible: https://github.com/cpan-testers/CPAN-Reporter/issues/20
+    my @modules;
+    while ( <> ) {
+        push @modules, $_;
+    }
     local *DEVNULL;
     open DEVNULL, ">" . File::Spec->devnull; ## no critic
     # ensure actually installed, not ./inc/... or ./t/..., etc.
     local @INC = grep { $_ ne '.' } @INC;
-    while ( <> ) {
+    for (@modules) {
         m/^(\S+)\s+([^\n]*)/;
         my ($mod, $need) = ($1, $2);
         die "Couldn't read module for '$_'" unless $mod;
