@@ -2,6 +2,10 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [CHANGED]
+
+  - C::R::PrereqCheck will read <> before checking modules
+
 1.2011    2014-03-16 22:27:56+01:00 Europe/Paris
 
   [ADDED]
