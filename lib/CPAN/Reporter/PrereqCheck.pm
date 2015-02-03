@@ -147,11 +147,17 @@ sub _try_load {
     'Tk::Font' => 'Tk',
     'Tk::Widget' => 'Tk',
     'Tk::Label' => 'Tk',
+    'Tk::Menubutton' => 'Tk',
+    'Tk::Entry' => 'Tk',
     'Class::MOP::Class' => 'Class::MOP',
     'Moose::Meta::TypeConstraint::Role' => 'Moose',
     'Moose::Meta::TypeConstraint::Union' => 'Moose',
     'Moose::Meta::Attribute::Native' => 'Class::MOP',
+    'Moose::Meta::Role::Attribute' => 'Class::MOP',
     'Test::More::Hooks' => 'Test::More',
+    'Net::HTTP::Spore::Middleware::DefaultParams' => 'Net::HTTP::Spore::Meta::Method',
+    'Log::Log4perl::Filter' => 'Log::Log4perl',
+    'RDF::DOAP::Project' => 'RDF::Trine', #or other modules that use RDF::Trine will fail
   );
 
   # M::I < 0.95 dies in require, so we can't check if it loads
