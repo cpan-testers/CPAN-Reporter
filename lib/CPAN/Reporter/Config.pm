@@ -295,6 +295,9 @@ HERE
     retry_submission => {
         default => undef,
     },
+    '_timeout_log' => {
+        default => undef,
+    },
 );
 
 sub _config_spec { return %option_specs }

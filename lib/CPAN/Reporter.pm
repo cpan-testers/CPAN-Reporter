@@ -68,9 +68,19 @@ sub grade_make {
     return $result->{success};
 }
 
+sub _copy_mymeta {
+    my $result = shift;
+    my $config_file = $result->{is_make} ? "Makefile" : "Build";
+    return unless -e $config_file;
+    my $dist = $result->{dist};
+}
+
 sub grade_PL {
     my @args = @_;
     my $result = _init_result( 'PL', @args ) or return;
+
+    _copy_mymeta($result);
+
     _compute_PL_grade($result);
     if ( $result->{grade} eq 'discard' ) {
         $CPAN::Frontend->myprint(
@@ -173,8 +183,10 @@ HERE
 
     # extract the exit value
     my $exit_value;
+    my $timeout_flag = 0;
     if ( $cmd_output[-1] =~ m{exited with} ) {
         ($exit_value) = $cmd_output[-1] =~ m{exited with ([-0-9]+)};
+        $timeout_flag = 1 if $cmd_output[-1] =~ m{timeout$};
         pop @cmd_output;
     }
 
@@ -192,12 +204,23 @@ HERE
         return;
     }
 
-    return \@cmd_output, $exit_value;
+    return \@cmd_output, $exit_value, $timeout_flag;
 }
 
 sub test {
     my ($dist, $system_command) = @_;
-    my ($output, $exit_value) = record_command( $system_command );
+    my ($output, $exit_value, $timeout) = record_command( $system_command );
+
+    my $config_obj = CPAN::Reporter::Config::_open_config_file();
+    my $config;
+    $config = CPAN::Reporter::Config::_get_config_options( $config_obj )
+        if $config_obj;
+
+    if ($timeout and $config->{_timeout_log}) {
+        open my $to_log_fh,'>>',$config->{_timeout_log};
+        print $to_log_fh $dist->base_id,"\n";
+    }
+
     return grade_test( $dist, $system_command, $output, $exit_value );
 }
 
@@ -1318,13 +1341,15 @@ my $ppid = $job->spawn($executable, $cmd_line);
 $job->run($timeout);
 my $status = $job->status;
 my $exitcode = $status->{$ppid}{exitcode};
+my $timeoutmessage='';
 if ( $exitcode == 293 ) {
     $exitcode = 9; # map Win32::Job kill (293) to SIGKILL (9)
+    $timeoutmessage = ' timeout';
 }
 elsif ( $exitcode & 255 ) {
     $exitcode = $exitcode << 8; # how perl expects it
 }
-print "($cmd_line exited with $exitcode)\n";
+print "($cmd_line exited with $exitcode)$timeoutmessage\n";
 HERE
     return $wrapper;
 }
