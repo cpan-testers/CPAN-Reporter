@@ -295,6 +295,9 @@ HERE
     retry_submission => {
         default => undef,
     },
+    '_store_problems_in_dir' => { #experimental
+        default => undef,
+    },
 );
 
 sub _config_spec { return %option_specs }
