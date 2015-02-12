@@ -522,6 +522,24 @@ TRANSPORT_REQUIRED
     return;
 }
 
+sub _report_timeout {
+    my $result = shift;
+    if ($result->{exit_value} == 9) {
+        my $config_obj = CPAN::Reporter::Config::_open_config_file();
+        my $config;
+        $config = CPAN::Reporter::Config::_get_config_options( $config_obj )
+            if $config_obj;
+
+        if ($config->{'_store_problems_in_dir'}) {
+            my $distribution = $result->{dist}->base_id;
+            my $file = "e9.$distribution.${\(time)}.$$.log";
+            open my $to_log_fh,'>>',$config->{'_store_problems_in_dir'}.'/'.$file;
+            print $to_log_fh $result->{phase},' ',$distribution,"\n";
+            print $to_log_fh _report_text( $result );
+        }
+    }
+}
+
 #--------------------------------------------------------------------------#
 # _downgrade_known_causes
 # Downgrade failure/unknown grade if we can determine a cause
@@ -543,6 +561,8 @@ sub _downgrade_known_causes {
 
     # get prereqs
     _expand_result( $result );
+
+    _report_timeout( $result );
 
     # if process was halted with a signal, just set for discard and return
     if ( $result->{exit_value} & 127 ) {
