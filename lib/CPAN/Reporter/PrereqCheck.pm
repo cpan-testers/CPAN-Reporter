@@ -139,6 +139,7 @@ sub _try_load {
   my %loading_conflicts = (
     'signatures' => ['Catalyst'],
     'Dancer::Plugin::FlashMessage' => ['Dancer::Plugin::FlashNote'],
+    'Dancer::Plugin::FlashNote' => ['Dancer::Plugin::FlashMessage'],
     'Dancer::Plugin::Mongoose' => ['Dancer::Plugin::DBIC'],
     'Dancer::Plugin::DBIC' => ['Dancer::Plugin::Mongoose'],
   ); #modules that conflict with each other
