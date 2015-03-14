@@ -533,9 +533,15 @@ sub _report_timeout {
         if ($config->{'_store_problems_in_dir'}) {
             my $distribution = $result->{dist}->base_id;
             my $file = "e9.$distribution.${\(time)}.$$.log";
-            open my $to_log_fh,'>>',$config->{'_store_problems_in_dir'}.'/'.$file;
-            print $to_log_fh $result->{phase},' ',$distribution,"\n";
-            print $to_log_fh _report_text( $result );
+            if (open my $to_log_fh, '>>', $config->{'_store_problems_in_dir'}.'/'.$file) {
+                print $to_log_fh $distribution,"\n";
+                print $to_log_fh "stage: ",$result->{phase},"\n";
+                print $to_log_fh $Config{archname},"\n";
+                print $to_log_fh _report_text( $result );
+            } else {
+                $CPAN::Frontend->mywarn( "CPAN::Reporter: writing ".
+                    $config->{'_store_problems_in_dir'}.'/'.$file. " failed\n");
+            }
         }
     }
 }
