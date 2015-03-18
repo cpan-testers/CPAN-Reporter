@@ -298,6 +298,9 @@ HERE
     '_store_problems_in_dir' => { #experimental
         default => undef,
     },
+    '_problem_log' => { #experimental
+        default => undef,
+    },
 );
 
 sub _config_spec { return %option_specs }

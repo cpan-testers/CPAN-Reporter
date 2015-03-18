@@ -4,7 +4,8 @@ Revision history for Perl module CPAN::Reporter
 
   [ADDED]
 
-  - Added option to save output of hanging modules [CHORNY]
+  - Added experimental option to save output of hanging modules [CHORNY]
+  - Added experimental option to save list of hanging modules [CHORNY]
 
   [CHANGED]
 

@@ -543,6 +543,15 @@ sub _report_timeout {
                     $config->{'_store_problems_in_dir'}.'/'.$file. " failed\n");
             }
         }
+        if ($config->{'_problem_log'}) {
+            my $distribution = $result->{dist}->base_id;
+            if (open my $to_log_fh, '>>', $config->{'_problem_log'}) {
+                print $to_log_fh "$result->{phase} $distribution $Config{archname}\n";
+            } else {
+                $CPAN::Frontend->mywarn( "CPAN::Reporter: writing ".
+                    $config->{'_store_problems_in_dir'}. " failed\n");
+            }
+        }
     }
 }
 
