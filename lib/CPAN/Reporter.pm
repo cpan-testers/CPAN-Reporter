@@ -597,7 +597,8 @@ sub _downgrade_known_causes {
         $harness_error++;
         last;
       }
-      if( $line =~ /Perl .*? required.*?--this is only/ims ||
+      if( $line =~ /(?<!skipped: )Perl .*? required.*?--this is only/ims ||
+           #?<! - quick hack for https://github.com/cpan-testers/CPAN-Reporter/issues/23
         $line =~ /Perl version .*? or higher required\. We run/ims || #EU::MM
         $line =~ /ERROR: perl: Version .*? is installed, but we need version/ims ||
         $line =~ /ERROR: perl \(.*?\) is installed, but we need version/ims ||
