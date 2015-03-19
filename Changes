@@ -6,11 +6,11 @@ Revision history for Perl module CPAN::Reporter
 
   - Added experimental option to save output of hanging modules [CHORNY]
   - Added experimental option to save list of hanging modules [CHORNY]
-  - Fixed issue#23 [CHORNY]
 
   [CHANGED]
 
   - C::R::PrereqCheck will read <> before checking modules
+  - Fixed issue#23 [CHORNY]
 
 1.2011    2014-03-16 22:27:56+01:00 Europe/Paris
 
