@@ -18,6 +18,7 @@ use Probe::Perl ();
 #--------------------------------------------------------------------------#
 
 my $perl = Probe::Perl->find_perl_interpreter();
+$perl = qq{"$perl"};
 
 my $quote = $^O eq 'MSWin32' || $^O eq 'MSDOS' ? q{"} : q{'};
 

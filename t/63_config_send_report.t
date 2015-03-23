@@ -18,6 +18,7 @@ use Probe::Perl;
 
 my $make = $Config{make};
 my $perl = Probe::Perl->find_perl_interpreter();
+$perl = qq{"$perl"};
 
 my $mock_dist = t::MockCPANDist->new( 
     pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",

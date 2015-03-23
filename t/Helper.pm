@@ -34,6 +34,7 @@ use t::MockHomeDir;
 #--------------------------------------------------------------------------#
 
 my $perl = Probe::Perl->find_perl_interpreter();
+$perl = qq{"$perl"}; # protect from shell
 my $make = $Config{make};
 
 my $temp_stdout = File::Temp->new()

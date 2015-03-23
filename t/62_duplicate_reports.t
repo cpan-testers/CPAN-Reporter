@@ -28,6 +28,7 @@ BEGIN {
 
 my $make = $Config{make};
 my $perl = Probe::Perl->find_perl_interpreter();
+$perl = qq{"$perl"};
 
 my %mock_dist_info = ( 
     prereq_pm       => {

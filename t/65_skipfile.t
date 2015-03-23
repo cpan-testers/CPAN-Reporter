@@ -32,6 +32,7 @@ local $Config{perl_patchlevel};
 
 my $make = $Config{make};
 my $perl = Probe::Perl->find_perl_interpreter();
+$perl = qq{"$perl"};
 my $skipfile = File::Temp->new();
 print {$skipfile} << 'SKIPFILE';
 # comments should be ok
