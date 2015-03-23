@@ -29,6 +29,7 @@ plan tests => 1 + @cases;
 #--------------------------------------------------------------------------#
 
 my $perl = Probe::Perl->find_perl_interpreter();
+$perl = qq{"$perl"};
 
 my ($stdout, $stderr, $output, $exit, $line);
 

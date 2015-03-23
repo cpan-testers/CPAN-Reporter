@@ -30,6 +30,7 @@ local $Config{perl_patchlevel};
 #--------------------------------------------------------------------------#
 
 my $perl = Probe::Perl->find_perl_interpreter();
+$perl = qq{"$perl"};
 my $make = $Config{make};
 
 my $mock_dist = t::MockCPANDist->new( 
