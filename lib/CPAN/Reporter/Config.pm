@@ -813,7 +813,7 @@ certain situations or for automated testing, and so on.
 will be halted after this many seconds; useful for unattended smoke testing
 to stop after some amount of time; generally, this should be large --
 900 seconds or more -- as some distributions' tests take quite a long time to
-run.  On MSWin32, [Win32::Job] is a needed and trying to kill a processes may
+run.  On MSWin32, [Win32::Job] is a needed and trying to kill a process may
 actually deadlock in some situations -- so use at your own risk.
 * {editor = <editor>} -- editor to use to edit the test report; if not set,
 Test::Reporter will use environment variables {VISUAL}, {EDITOR} or {EDIT}
