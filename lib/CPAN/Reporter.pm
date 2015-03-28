@@ -1681,6 +1681,9 @@ prior to sending it.
 
 = BUGS
 
+Using command_timeout on Linux may cause problems. See
+[https://rt.cpan.org/Ticket/Display.html?id=62310]
+
 Please report any bugs or feature using the CPAN Request Tracker.
 Bugs can be submitted through the web interface at
 [http://rt.cpan.org/Dist/Display.html?Queue=CPAN-Reporter]
