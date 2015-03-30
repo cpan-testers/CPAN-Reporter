@@ -1,6 +1,7 @@
 use strict; # make CPANTS happy
 package CPAN::Reporter::API;
-# VERSION
+
+our $VERSION = '1.2013';
 
 1;
 
