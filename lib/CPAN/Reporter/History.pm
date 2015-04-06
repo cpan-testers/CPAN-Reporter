@@ -1,7 +1,7 @@
 use strict;
 package CPAN::Reporter::History;
 
-our $VERSION = '1.2014'; # TRIAL
+our $VERSION = '1.2015';
 
 use vars qw/@ISA @EXPORT_OK/;
 
