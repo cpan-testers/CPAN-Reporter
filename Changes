@@ -2,6 +2,8 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  - no changes from 1.2013-TRIAL
+
 1.2013    2015-03-29 21:52:11-04:00 America/New_York (TRIAL RELEASE)
 
   [ADDED]
@@ -1312,4 +1314,4 @@ Revision history for Perl module CPAN::Reporter
     - first public release -- support not yet available in CPAN.pm
       main branch
 
-# vi:tw=75
+# vim: ts=2 sts=2 sw=2 et tw=75 :
