@@ -52,15 +52,27 @@ sub _run {
 
             # get version from file or else report missing
             if ( defined $inst_file ) {
-                $have = MM->parse_version($inst_file);
-                $have = "0" if ! defined $have || $have eq 'undef';
+                $have = my $preliminary_version = MM->parse_version($inst_file);
+                $preliminary_version = "0" if ! defined $preliminary_version || $preliminary_version eq 'undef';
                 # report broken if it can't be loaded
                 # "select" to try to suppress spurious newlines
                 select DEVNULL; ## no critic
-                if ( ! _try_load( $mod, $have ) ) {
+                if ( ! _try_load( $mod, $preliminary_version ) ) {
                     select STDOUT; ## no critic
                     print "$mod 0 broken\n";
                     next;
+                }
+                # Now the module is loaded: if MM->parse_version previously failed to
+                # get the version, then we can now look at the value of the $VERSION
+                # variable.
+                if (! defined $have || $have eq 'undef') {
+                    no strict 'refs';
+                    my $mod_version = ${$mod.'::VERSION'};
+                    if (defined $mod_version) {
+                        $have = $mod_version;
+                    } else {
+                        $have = 0; # fallback
+                    }
                 }
                 select STDOUT; ## no critic
             }
