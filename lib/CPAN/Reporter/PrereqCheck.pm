@@ -143,6 +143,8 @@ sub _try_load {
     'Dancer::Plugin::FlashNote' => ['Dancer::Plugin::FlashMessage'],
     'Dancer::Plugin::Mongoose' => ['Dancer::Plugin::DBIC'],
     'Dancer::Plugin::DBIC' => ['Dancer::Plugin::Mongoose'],
+    'Test::Mock::LWP::UserAgent' => ['HTTP::Response'],
+    'Test::TCP' => ['threads'], #dies if $INC{'threads.pm'}
   ); #modules that conflict with each other
   
   my %load_before = (
