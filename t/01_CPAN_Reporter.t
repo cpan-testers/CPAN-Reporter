@@ -2,8 +2,9 @@
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
-select(STDERR); $|=1;
-select(STDOUT); $|=1;
+use IO::Handle;
+STDERR->autoflush(1);
+STDOUT->autoflush(1);
 
 use Test::More;
 use t::Helper;
