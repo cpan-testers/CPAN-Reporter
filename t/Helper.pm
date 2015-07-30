@@ -773,7 +773,7 @@ sub comments { shift; $t::Helper::comments = shift }
 sub send {
     shift;
     $t::Helper::sent_report = $t::Helper::comments;
-    return 1
+    return 1;
 }
 
 sub subject {
