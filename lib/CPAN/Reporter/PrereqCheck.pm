@@ -134,7 +134,7 @@ sub _try_load {
     qw/mylib/,
 
     #do not return true value
-    qw/perlsecret/,
+    qw/perlsecret Alt::Crypt::RSA::BigInt/,
   );
 
   my %loading_conflicts = (
