@@ -1145,6 +1145,7 @@ sub _report_text {
         my $max_k = int(MAX_OUTPUT_LENGTH/1000) . "K";
         $test_log .= "\n[Output truncated after $max_k]\n\n";
     }
+
     my $default_comment;
 
     my $confdir = CPAN::Reporter::Config::_get_config_dir();
@@ -1164,6 +1165,16 @@ sub _report_text {
         $default_comment = $ENV{AUTOMATED_TESTING}
             ? "this report is from an automated smoke testing program\nand was not reviewed by a human for accuracy"
             : "none provided" ;
+    } else {
+        # We had a comment from a comment.txt file
+        if ($ENV{AUTOMATED_TESTING}) {
+
+            # In this case, we add the "smoke test" message to this - we
+            # don't really want people not including this.
+            $default_comment = "this report is from an automated smoke testing program\n"
+                . "and was not reviewed by a human for accuracy\n\n"
+                . $default_comment
+        }
     }
 
     # generate report
@@ -1650,7 +1661,7 @@ directory by following instructions in [CPAN::Reporter::Config].
 === Default Test Comments
 
 This module puts default text into the "TESTER COMMENTS" section, typically,
-"none provided" if doing interactive testing, or if doing smoke testing that
+"none provided" if doing interactive testing, or, if doing smoke testing that
 sets C<$ENV{AUTOMATED_TESTING}> to a true value, "this report is from an
 automated smoke testing program and was not reviewed by a human for
 accuracy."  If C<CPAN::Reporter> is configured to allow editing of the
@@ -1658,10 +1669,16 @@ report, this can be edited during submission.
 
 If you wish to override the default comment, you can create a file named
 C<comment.txt> in the configuration directory (typically {.cpanreporter}
-under the user's home directory), with the default comment you would like to
-appear.  If your test is an automated smoke test, you should include wording
-like the wording from the default comment for smoke testing, so that users
-know that you didn't review or validate the results yourself.
+under the user's home directory), with the default comment you would
+like to appear.
+
+Note that if your test is an automated smoke
+test (C<$ENV{AUTOMATED_TESTING}> is set to a true value), the smoke
+test notice ("this report is from an automated smoke testing program and
+was not reviewed by a human for accuracy") is included along with a blank
+line before your C<comment.txt>, so that it is always possible to
+distinguish automated tests from non-automated tests that use this
+module.
 
 == Using CPAN::Reporter
 
