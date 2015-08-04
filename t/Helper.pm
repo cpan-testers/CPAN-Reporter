@@ -22,6 +22,7 @@ use File::Copy::Recursive 0.35 qw/dircopy/;
 use File::Path qw/mkpath/;
 use File::pushd 0.32 qw/pushd tempd/;
 use File::Spec 3.19 ();
+use File::Slurper 0.006 ();
 use File::Temp 0.16 qw/tempdir/;
 use IO::CaptureOutput 1.03 qw/capture/;
 use Probe::Perl ();
@@ -494,7 +495,7 @@ HERE
 
 );
 
-sub test_report_plan() { 13 };
+sub test_report_plan() { 15 };
 sub test_report {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -509,7 +510,26 @@ sub test_report {
 
     my $tempd = _ok_clone_dist_dir( $case->{name} );
 
+    my $commentfile = File::Spec->catfile( $config_dir, 'comment.txt' );
+    if ( $case->{comment_txt} ) {
+        $default_comment = "TEST COMMENT IN\nCOMMENT FILE";
+        File::Slurper::write_text(
+            $commentfile,
+            $default_comment,
+            'utf8',
+            'auto'
+        );
+        ok (-e $commentfile, "$label created comment.txt file");
+    } else {
+        ok (! -e $commentfile, "$label comment.txt does not exist");
+    }
+
     my ($stdout, $stderr, $err, $test_output) = _run_report( $case );
+
+    if ( $case->{comment_txt} ) {
+        unlink($commentfile);
+    }
+    ok (! -e $commentfile, "$label comment.txt removed if needed");
 
     is( $err, q{},
         "$label report ran without error"

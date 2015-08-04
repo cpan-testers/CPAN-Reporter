@@ -13,6 +13,7 @@ use File::Basename qw/basename dirname/;
 use File::Find ();
 use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
+use File::Slurper 0.006;
 use File::Spec 3.19 ();
 use File::Temp 0.16 qw/tempdir/;
 use IO::File ();
@@ -1144,10 +1145,26 @@ sub _report_text {
         my $max_k = int(MAX_OUTPUT_LENGTH/1000) . "K";
         $test_log .= "\n[Output truncated after $max_k]\n\n";
     }
-    # Flag automated report
-    my $default_comment = $ENV{AUTOMATED_TESTING}
-        ? "this report is from an automated smoke testing program\nand was not reviewed by a human for accuracy"
-        : "none provided" ;
+    my $default_comment;
+
+    my $confdir = CPAN::Reporter::Config::_get_config_dir();
+    my $conffile = File::Spec->catfile($confdir, 'comment.txt');
+    if ( -d $confdir && -f $conffile && -r $conffile ) {
+        $default_comment = File::Slurper::read_text($conffile, 'utf8', 'auto');
+        if (defined($default_comment)) {
+            # Get rid of any linefeed/newline at the very end
+            chomp($default_comment);
+        }
+    };
+
+    # In case the slurp doesn't work, we don't combin ethis with the
+    # above if statement.
+    if (!defined($default_comment)) {
+        # Flag automated report
+        $default_comment = $ENV{AUTOMATED_TESTING}
+            ? "this report is from an automated smoke testing program\nand was not reviewed by a human for accuracy"
+            : "none provided" ;
+    }
 
     # generate report
     my $output = << "ENDREPORT";
@@ -1629,6 +1646,22 @@ Users with an existing metabase profile file (e.g. from another machine),
 should copy it into the {.cpanreporter} directory instead of creating
 a new one.  Profile files may be located outside the {.cpanreporter}
 directory by following instructions in [CPAN::Reporter::Config].
+
+=== Default Test Comments
+
+This module puts default text into the "TESTER COMMENTS" section, typically,
+"none provided" if doing interactive testing, or if doing smoke testing that
+sets C<$ENV{AUTOMATED_TESTING}> to a true value, "this report is from an
+automated smoke testing program and was not reviewed by a human for
+accuracy."  If C<CPAN::Reporter> is configured to allow editing of the
+report, this can be edited during submission.
+
+If you wish to override the default comment, you can create a file named
+C<comment.txt> in the configuration directory (typically {.cpanreporter}
+under the user's home directory), with the default comment you would like to
+appear.  If your test is an automated smoke test, you should include wording
+like the wording from the default comment for smoke testing, so that users
+know that you didn't review or validate the results yourself.
 
 == Using CPAN::Reporter
 

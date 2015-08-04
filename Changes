@@ -2,6 +2,9 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  - Allow custom comment strings to be used as the default comment, using
+    comment.txt in the config directory [JMASLAK]
+
 1.2014    2015-04-06 12:08:28-04:00 America/New_York
 
   - no changes from 1.2013-TRIAL
