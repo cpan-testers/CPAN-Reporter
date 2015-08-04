@@ -41,9 +41,6 @@ TODO list for Perl module CPAN::Reporter
 
 - list path of requires/recommends/etc/
 
-- add support for a "comment.txt" file in the config directory to use
-  in place of the default comment
-
 - 'force_prompt' config to locally unset PERL_MM_USE_DEFAULT (Rezic)
 
 - add results back to CPAN::Distribution object
