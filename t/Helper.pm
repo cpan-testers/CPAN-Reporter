@@ -22,7 +22,6 @@ use File::Copy::Recursive 0.35 qw/dircopy/;
 use File::Path qw/mkpath/;
 use File::pushd 0.32 qw/pushd tempd/;
 use File::Spec 3.19 ();
-use File::Slurper 0.006 ();
 use File::Temp 0.16 qw/tempdir/;
 use IO::CaptureOutput 1.03 qw/capture/;
 use Probe::Perl ();
@@ -519,12 +518,9 @@ sub test_report {
         }
 
         $default_comment .= "TEST COMMENT IN\nCOMMENT FILE";
-        File::Slurper::write_text(
-            $commentfile,
-            $default_comment,
-            'utf8',
-            'auto'
-        );
+        open my $fh, '>', $commentfile;
+        print $fh $default_comment;
+        close $fh;
         ok (-e $commentfile, "$label created comment.txt file");
     } else {
         ok (! -e $commentfile, "$label comment.txt does not exist");

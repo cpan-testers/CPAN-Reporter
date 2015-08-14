@@ -13,7 +13,6 @@ use File::Basename qw/basename dirname/;
 use File::Find ();
 use File::HomeDir ();
 use File::Path qw/mkpath rmtree/;
-use File::Slurper 0.006;
 use File::Spec 3.19 ();
 use File::Temp 0.16 qw/tempdir/;
 use IO::File ();
@@ -1137,6 +1136,43 @@ HERE
 
 );
 
+sub _comment_text {
+
+    # We assemble the completed comment as a series of "parts" which
+    # will get joined together
+    my @comment_parts;
+
+    # All automated testing gets a preamble
+    if ($ENV{AUTOMATED_TESTING}) {
+        push @comment_parts,
+            "this report is from an automated smoke testing program\n"
+            . "and was not reviewed by a human for accuracy"
+    }
+
+    # If a comment file is provided, read it and add it to the comment
+    my $confdir = CPAN::Reporter::Config::_get_config_dir();
+    my $comment_file = File::Spec->catfile($confdir, 'comment.txt');
+    if ( -d $confdir && -f $comment_file && -r $comment_file ) {
+        open my $fh, '<:utf8', $comment_file or die($!);
+        my $text;
+        do {
+            local $/ = undef; # No record (line) seperator on input
+            $text = <$fh> or die($!);
+        };
+        chomp($text);
+        push @comment_parts, $text;
+        close $fh;
+    }
+
+    # If we have an empty comment so far, add a default value
+    if (scalar(@comment_parts) == 0) {
+        push @comment_parts, 'none provided';
+    }
+
+    # Join the parts seperated by a blank line
+    return join "\n\n", @comment_parts;
+}
+
 sub _report_text {
     my $data = shift;
     my $test_log = join(q{},@{$data->{output}});
@@ -1146,36 +1182,7 @@ sub _report_text {
         $test_log .= "\n[Output truncated after $max_k]\n\n";
     }
 
-    my $default_comment;
-
-    my $confdir = CPAN::Reporter::Config::_get_config_dir();
-    my $conffile = File::Spec->catfile($confdir, 'comment.txt');
-    if ( -d $confdir && -f $conffile && -r $conffile ) {
-        $default_comment = File::Slurper::read_text($conffile, 'utf8', 'auto');
-        if (defined($default_comment)) {
-            # Get rid of any linefeed/newline at the very end
-            chomp($default_comment);
-        }
-    };
-
-    # In case the slurp doesn't work, we don't combin ethis with the
-    # above if statement.
-    if (!defined($default_comment)) {
-        # Flag automated report
-        $default_comment = $ENV{AUTOMATED_TESTING}
-            ? "this report is from an automated smoke testing program\nand was not reviewed by a human for accuracy"
-            : "none provided" ;
-    } else {
-        # We had a comment from a comment.txt file
-        if ($ENV{AUTOMATED_TESTING}) {
-
-            # In this case, we add the "smoke test" message to this - we
-            # don't really want people not including this.
-            $default_comment = "this report is from an automated smoke testing program\n"
-                . "and was not reviewed by a human for accuracy\n\n"
-                . $default_comment
-        }
-    }
+    my $comment_body = _comment_text();
 
     # generate report
     my $output = << "ENDREPORT";
@@ -1198,7 +1205,7 @@ TESTER COMMENTS
 
 Additional comments from tester:
 
-$default_comment
+$comment_body
 
 ------------------------------
 PROGRAM OUTPUT
