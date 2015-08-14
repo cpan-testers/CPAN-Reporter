@@ -1136,6 +1136,43 @@ HERE
 
 );
 
+sub _comment_text {
+
+    # We assemble the completed comment as a series of "parts" which
+    # will get joined together
+    my @comment_parts;
+
+    # All automated testing gets a preamble
+    if ($ENV{AUTOMATED_TESTING}) {
+        push @comment_parts,
+            "this report is from an automated smoke testing program\n"
+            . "and was not reviewed by a human for accuracy"
+    }
+
+    # If a comment file is provided, read it and add it to the comment
+    my $confdir = CPAN::Reporter::Config::_get_config_dir();
+    my $comment_file = File::Spec->catfile($confdir, 'comment.txt');
+    if ( -d $confdir && -f $comment_file && -r $comment_file ) {
+        open my $fh, '<:utf8', $comment_file or die($!);
+        my $text;
+        do {
+            local $/ = undef; # No record (line) seperator on input
+            $text = <$fh> or die($!);
+        };
+        chomp($text);
+        push @comment_parts, $text;
+        close $fh;
+    }
+
+    # If we have an empty comment so far, add a default value
+    if (scalar(@comment_parts) == 0) {
+        push @comment_parts, 'none provided';
+    }
+
+    # Join the parts seperated by a blank line
+    return join "\n\n", @comment_parts;
+}
+
 sub _report_text {
     my $data = shift;
     my $test_log = join(q{},@{$data->{output}});
@@ -1144,10 +1181,8 @@ sub _report_text {
         my $max_k = int(MAX_OUTPUT_LENGTH/1000) . "K";
         $test_log .= "\n[Output truncated after $max_k]\n\n";
     }
-    # Flag automated report
-    my $default_comment = $ENV{AUTOMATED_TESTING}
-        ? "this report is from an automated smoke testing program\nand was not reviewed by a human for accuracy"
-        : "none provided" ;
+
+    my $comment_body = _comment_text();
 
     # generate report
     my $output = << "ENDREPORT";
@@ -1170,7 +1205,7 @@ TESTER COMMENTS
 
 Additional comments from tester:
 
-$default_comment
+$comment_body
 
 ------------------------------
 PROGRAM OUTPUT
@@ -1629,6 +1664,28 @@ Users with an existing metabase profile file (e.g. from another machine),
 should copy it into the {.cpanreporter} directory instead of creating
 a new one.  Profile files may be located outside the {.cpanreporter}
 directory by following instructions in [CPAN::Reporter::Config].
+
+=== Default Test Comments
+
+This module puts default text into the "TESTER COMMENTS" section, typically,
+"none provided" if doing interactive testing, or, if doing smoke testing that
+sets C<$ENV{AUTOMATED_TESTING}> to a true value, "this report is from an
+automated smoke testing program and was not reviewed by a human for
+accuracy."  If C<CPAN::Reporter> is configured to allow editing of the
+report, this can be edited during submission.
+
+If you wish to override the default comment, you can create a file named
+C<comment.txt> in the configuration directory (typically {.cpanreporter}
+under the user's home directory), with the default comment you would
+like to appear.
+
+Note that if your test is an automated smoke
+test (C<$ENV{AUTOMATED_TESTING}> is set to a true value), the smoke
+test notice ("this report is from an automated smoke testing program and
+was not reviewed by a human for accuracy") is included along with a blank
+line before your C<comment.txt>, so that it is always possible to
+distinguish automated tests from non-automated tests that use this
+module.
 
 == Using CPAN::Reporter
 
