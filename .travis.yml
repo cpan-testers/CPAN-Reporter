@@ -1,4 +1,5 @@
 language: perl
+sudo: false
 script: prove -lr t
 install:
   - cpanm -n -q --skip-satisfied --installdeps .
