@@ -1153,7 +1153,7 @@ sub _comment_text {
     my $confdir = CPAN::Reporter::Config::_get_config_dir();
     my $comment_file = File::Spec->catfile($confdir, 'comment.txt');
     if ( -d $confdir && -f $comment_file && -r $comment_file ) {
-        open my $fh, '<:utf8', $comment_file or die($!);
+        open my $fh, '<:encoding(UTF-8)', $comment_file or die($!);
         my $text;
         do {
             local $/ = undef; # No record (line) seperator on input
