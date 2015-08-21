@@ -1,7 +1,7 @@
 use strict; # make CPANTS happy
 package CPAN::Reporter::FAQ;
 
-our $VERSION = '1.2015';
+our $VERSION = '1.2016';
 
 1;
 
