@@ -143,6 +143,7 @@ sub _try_load {
     'Dancer::Plugin::FlashNote' => ['Dancer::Plugin::FlashMessage'],
     'Dancer::Plugin::Mongoose' => ['Dancer::Plugin::DBIC'],
     'Dancer::Plugin::DBIC' => ['Dancer::Plugin::Mongoose'],
+    'Test::BDD::Cucumber::Loader' => ['Test::Exception', 'Test::MockObject'], #works in different order
     'Test::Mock::LWP::UserAgent' => ['HTTP::Response'],
     'Test::SharedFork' => ['threads'], #dies if $INC{'threads.pm'}
     'Test::TCP' => ['threads'], #loads Test::SharedFork
