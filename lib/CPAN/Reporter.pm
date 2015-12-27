@@ -1157,7 +1157,7 @@ sub _comment_text {
         my $text;
         do {
             local $/ = undef; # No record (line) seperator on input
-            $text = <$fh> or die($!);
+            defined( $text = <$fh> ) or die($!);
         };
         chomp($text);
         push @comment_parts, $text;
