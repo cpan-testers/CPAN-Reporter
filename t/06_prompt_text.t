@@ -8,23 +8,11 @@ use Test::More;
 use t::MockCPANDist;
 use t::Helper;
 use t::Frontend;
-use Config;
 use IO::CaptureOutput;
-
-#--------------------------------------------------------------------------#
-# We need Config to be writeable, so modify the tied hash
-#--------------------------------------------------------------------------#
-
 use Config;
-
-BEGIN {
-    BEGIN { if (not $] < 5.006 ) { warnings->unimport('redefine') } }
-    plan skip_all => "XSConfig is readonly" if $Config{usecperl} or exists &Config::KEYS;
-    *Config::STORE = sub { $_[0]->{$_[1]} = $_[2] };
-}
 
 # For these tests, hide perl_patchlevel so all prompts are tested
-local $Config{perl_patchlevel};
+use t::MockPatchlevel;
 
 #--------------------------------------------------------------------------#
 # Fixtures
