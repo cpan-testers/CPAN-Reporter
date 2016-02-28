@@ -20,6 +20,7 @@ use Config;
 
 BEGIN {
     BEGIN { if (not $] < 5.006 ) { warnings->unimport('redefine') } }
+    plan skip_all => "cperl Config is readonly" if $Config{usecperl};
     *Config::STORE = sub { $_[0]->{$_[1]} = $_[2] }
 }
 

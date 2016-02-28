@@ -19,7 +19,8 @@ use Config;
 
 BEGIN {
     BEGIN { if (not $] < 5.006 ) { warnings->unimport('redefine') } }
-    *Config::STORE = sub { $_[0]->{$_[1]} = $_[2] }
+    plan skip_all => "cperl Config is readonly" if $Config{usecperl};
+    *Config::STORE = sub { $_[0]->{$_[1]} = $_[2] };
 }
 
 # For these tests, hide perl_patchlevel so all prompts are tested
@@ -41,7 +42,7 @@ my $mock_dist = t::MockCPANDist->new(
     author_id       => "JOHNQP",
     author_fullname => "John Q. Public",
 );
-    
+
 my $case = {
     label => "t-Fail",
     name => "t-Fail",
@@ -88,7 +89,7 @@ plan tests => 2 + ( scalar keys %prompts ) + $config_plus_dispatch
 require_ok('CPAN::Reporter');
 require_ok('CPAN::Reporter::History');
 
-test_fake_config( 
+test_fake_config(
         edit_report => "ask/no",
         send_report => "ask/yes",
         send_duplicates => "ask/yes",
