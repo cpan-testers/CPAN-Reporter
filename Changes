@@ -2,6 +2,8 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+1.2016    2016-02-28 22:39:04-05:00 America/New_York
+
   [FIXED]
 
   - Improve prerequisite version detection for dynamic versions

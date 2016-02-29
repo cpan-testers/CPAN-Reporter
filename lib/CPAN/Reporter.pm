@@ -1,7 +1,7 @@
 use strict;
 package CPAN::Reporter;
 
-our $VERSION = '1.2016';
+our $VERSION = '1.2017';
 
 use Config;
 use Capture::Tiny qw/ capture tee_merged /;

@@ -1,7 +1,7 @@
 use strict;
 package CPAN::Reporter::PrereqCheck;
 
-our $VERSION = '1.2016';
+our $VERSION = '1.2017';
 
 use ExtUtils::MakeMaker 6.36;
 use File::Spec;
