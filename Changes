@@ -2,6 +2,12 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [FIXED]
+
+  - Improve prerequisite version detection for dynamic versions
+
+  - Add support for static Config like cperl and XSConfig
+
 1.2015    2015-08-21 17:53:31-04:00 America/New_York
 
   - Allow custom comment strings to be used as the default comment, using
