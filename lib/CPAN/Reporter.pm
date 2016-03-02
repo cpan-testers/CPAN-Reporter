@@ -835,6 +835,13 @@ sub _init_result {
         return;
     }
 
+    if ( $dist->pretty_id =~ m{\w+/Perl6/} ) {
+        $CPAN::Frontend->mywarn(
+            "CPAN::Reporter: Won't report a Perl6 distribution."
+        );
+        return;
+    }
+
     my $result = {
         phase => $phase,
         dist => $dist,

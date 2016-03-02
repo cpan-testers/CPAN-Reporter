@@ -9,6 +9,7 @@ use Test::More;
 use t::MockCPANDist;
 use t::Frontend;
 use t::Helper;
+use IO::CaptureOutput qw/capture/;
 
 my @test_distros = (
     {
@@ -73,7 +74,7 @@ my @test_distros = (
     },
 );
 
-plan tests => 1 + test_fake_config_plan() 
+plan tests => 4 + test_fake_config_plan() 
                 + test_grade_test_plan() * @test_distros;
 
 #--------------------------------------------------------------------------#
@@ -97,4 +98,22 @@ for my $case ( @test_distros ) {
     );
 
     test_grade_test( $case, $mock_dist ); 
-} 
+}
+
+# Perl6 should skip
+{
+    my $mock_dist = t::MockCPANDist->new(
+        pretty_id       => "JOHNQP/Perl6/Bogus-Module-1.23.tar.gz",
+        prereq_pm       => {},
+        author_id       => "JOHNQP",
+        author_fullname => "John Q. Public",
+    );
+
+    for my $name (qw/grade_PL grade_make grade_test/) {
+        my $fcn = CPAN::Reporter->can($name);
+        my $output; 
+        capture { $output = $fcn->( $mock_dist, 'command', ['some output'], 1 ) };
+        is( $output, undef, "$name skips Perl6" );
+    }
+}
+
