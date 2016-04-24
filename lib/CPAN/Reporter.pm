@@ -706,18 +706,23 @@ my @env_vars= qw(
     /LC_/
     /PERL/
     /_TEST/
+    CCFLAGS
     COMSPEC
     INCLUDE
+    INSTALL_BASE
     LANG
     LANGUAGE
     LD_LIBRARY_PATH
+    LDFLAGS
     LIB
+    NON_INTERACTIVE
     NUMBER_OF_PROCESSORS
     PATH
+    PREFIX
     PROCESSOR_IDENTIFIER
     SHELL
-    TEMP
     TERM
+    TEMP
     TMPDIR
 );
 
