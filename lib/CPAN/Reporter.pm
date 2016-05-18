@@ -1435,6 +1435,7 @@ my @toolchain_mods= qw(
     Parse::CPAN::Meta
     Test::Harness
     Test::More
+    Test2
     YAML
     YAML::Syck
     version
