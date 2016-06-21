@@ -1,7 +1,7 @@
 use strict;
 package CPAN::Reporter::Config;
 
-our $VERSION = '1.2018';
+our $VERSION = '1.2019';
 
 use Config::Tiny 2.08 ();
 use File::Glob ();
