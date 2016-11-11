@@ -136,7 +136,8 @@ sub _try_load {
     qw/Pegex::Mo YAML::LibYAML/,
 
     #have additional prereqs
-    qw/Log::Dispatch::Email::MailSender RDF::NS::Trine Plack::Handler::FCGI Web::Scraper::LibXML/,
+    qw/Log::Dispatch::Email::MailSender RDF::NS::Trine Plack::Handler::FCGI Web::Scraper::LibXML
+    DBIx::Class::EncodedColumn::Crypt::Eksblowfish::Bcrypt/,
 
     #modify @INC. 'lib' appearing in @INC will prevent correct
     #checking of modules with XS part, for ex. List::Util
