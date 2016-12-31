@@ -175,10 +175,14 @@ sub _try_load {
     'Moose::Meta::TypeConstraint::Union' => 'Moose',
     'Moose::Meta::Attribute::Native' => 'Class::MOP',
     'Moose::Meta::Role::Attribute' => 'Class::MOP',
+    'Moose::Util::TypeConstraints' => 'Moose',
     'Test::More::Hooks' => 'Test::More',
     'Net::HTTP::Spore::Middleware::DefaultParams' => 'Net::HTTP::Spore::Meta::Method',
     'Log::Log4perl::Filter' => 'Log::Log4perl',
     'RDF::DOAP::Project' => 'RDF::Trine', #or other modules that use RDF::Trine will fail
+    'Win32::API::Type' => 'Win32::API',
+    'Dancer2::Plugin::DBIC' => 'Dancer2', #or later Strehler::API will fail
+    'Wx::AUI' => 'Wx',
   );
 
   # M::I < 0.95 dies in require, so we can't check if it loads
