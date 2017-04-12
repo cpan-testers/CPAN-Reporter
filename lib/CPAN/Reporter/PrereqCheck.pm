@@ -131,6 +131,7 @@ sub _try_load {
        POE::Loop::Event SOAP::Constants
        Moose::Meta::TypeConstraint::Parameterizable Moose::Meta::TypeConstraint::Parameterized/,
     'Devel::Trepan', #"require Enbugger; require Devel::Trepan;" starts debugging session
+    'Test::BDD::Cucumber::Loader', #by doing something to Test::Builder breaks Test::SharedFork and any module that uses it
 
     #removed modules
     qw/Pegex::Mo YAML::LibYAML/,
