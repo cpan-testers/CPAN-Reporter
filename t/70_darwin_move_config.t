@@ -5,12 +5,13 @@ BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
-use Test::More;
 use Config::Tiny;
 use IO::CaptureOutput qw/capture/;
 use File::Spec;
 use File::Temp qw/tempdir/;
 use File::Path qw/mkpath rmtree/;
+use Test::More;
+use lib ".";
 use t::Frontend;
 
 plan tests => 9;

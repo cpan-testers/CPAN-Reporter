@@ -6,6 +6,7 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
+use lib ".";
 use t::Helper;
 use t::Frontend;
 use IO::CaptureOutput qw/capture/;

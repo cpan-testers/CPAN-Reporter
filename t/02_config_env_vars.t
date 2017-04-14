@@ -1,12 +1,13 @@
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
-use Test::More;
 use Config::Tiny;
 use IO::CaptureOutput qw/capture/;
 use File::Basename qw/basename/;
 use File::Spec;
 use File::Temp qw/tempdir/;
+use Test::More;
+use lib ".";
 use t::Frontend;
 use t::MockHomeDir;
 
