@@ -5,7 +5,6 @@ BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
-use Test::More;
 use Config::Tiny;
 use IO::CaptureOutput qw/capture/;
 use File::Basename qw/basename/;
@@ -13,6 +12,8 @@ use File::Glob qw/bsd_glob/;
 use File::Spec;
 use File::Temp qw/tempdir/;
 use File::Path qw/mkpath/;
+use Test::More;
+use lib ".";
 use t::Frontend;
 use t::MockHomeDir;
 

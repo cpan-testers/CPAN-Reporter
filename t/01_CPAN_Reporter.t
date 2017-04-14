@@ -7,6 +7,7 @@ STDERR->autoflush(1);
 STDOUT->autoflush(1);
 
 use Test::More;
+use lib ".";
 use t::Helper;
 use t::Frontend;
 

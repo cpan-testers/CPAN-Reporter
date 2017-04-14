@@ -1,12 +1,13 @@
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
-use Test::More;
 use Config;
 use File::Copy::Recursive qw/fcopy/;
 use File::Path qw/mkpath/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
 use File::Temp qw/tempdir/;
+use Test::More;
+use lib ".";
 use t::Frontend;
 use t::MockHomeDir;
 

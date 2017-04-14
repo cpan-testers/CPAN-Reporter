@@ -2,6 +2,7 @@ use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
 use Test::More;
+use lib ".";
 use t::Helper;
 use t::Frontend;
 

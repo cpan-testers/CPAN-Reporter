@@ -4,9 +4,10 @@ BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
-use Test::More;
 use IO::CaptureOutput qw/capture/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
+use Test::More;
+use lib ".";
 use t::Frontend;
 use t::MockHomeDir;
 use Probe::Perl ();
