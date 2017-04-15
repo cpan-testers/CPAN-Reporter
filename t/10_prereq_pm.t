@@ -6,9 +6,10 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use t::MockCPANDist;
-use t::Helper;
-use t::Frontend;
+use lib 't/lib';
+use MockCPANDist;
+use Helper;
+use Frontend;
 use Config;
 
 my @prereq_cases = (
@@ -93,7 +94,7 @@ test_fake_config();
 #--------------------------------------------------------------------------#
 
 {
-    my $mock_dist = t::MockCPANDist->new( 
+    my $mock_dist = MockCPANDist->new( 
         @mock_defaults,
         prereq_pm => { },
     );
@@ -133,7 +134,7 @@ for my $scene ( @scenarios ) {
         }
     }
     
-    my $mock_dist = t::MockCPANDist->new( 
+    my $mock_dist = MockCPANDist->new( 
         @mock_defaults,
         prereq_pm => { %scenario_prereq },
     );

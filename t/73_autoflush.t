@@ -7,8 +7,9 @@ select(STDOUT); $|=1;
 use Test::More;
 use IO::CaptureOutput qw/capture/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
-use t::Frontend;
-use t::MockHomeDir;
+use lib 't/lib';
+use Frontend;
+use MockHomeDir;
 use Probe::Perl ();
 
 # protect CPAN::Reporter from itself

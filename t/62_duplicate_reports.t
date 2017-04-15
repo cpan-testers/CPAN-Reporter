@@ -6,9 +6,10 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use t::MockCPANDist;
-use t::Helper;
-use t::Frontend;
+use lib 't/lib';
+use MockCPANDist;
+use Helper;
+use Frontend;
 use Probe::Perl;
 
 #--------------------------------------------------------------------------#
@@ -193,7 +194,7 @@ for my $case ( @cases ) {
     # and set it once localized 
 
     test_fake_config( send_duplicates => $case->{send_dup} );
-    $case->{dist} = t::MockCPANDist->new( 
+    $case->{dist} = MockCPANDist->new( 
         %mock_dist_info,
         pretty_id => "JOHNQP/Bogus-Module-$case->{version}.tar.gz",
     );

@@ -6,9 +6,10 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use t::MockCPANDist;
-use t::Frontend;
-use t::Helper;
+use lib 't/lib';
+use MockCPANDist;
+use Frontend;
+use Helper;
 use IO::CaptureOutput qw/capture/;
 
 my @test_distros = (
@@ -90,7 +91,7 @@ require_ok('CPAN::Reporter');
 test_fake_config();
 
 for my $case ( @test_distros ) {
-    my $mock_dist = t::MockCPANDist->new( 
+    my $mock_dist = MockCPANDist->new( 
         pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
         prereq_pm       => $case->{prereq},
         author_id       => "JOHNQP",
@@ -102,7 +103,7 @@ for my $case ( @test_distros ) {
 
 # Perl6 should skip
 {
-    my $mock_dist = t::MockCPANDist->new(
+    my $mock_dist = MockCPANDist->new(
         pretty_id       => "JOHNQP/Perl6/Bogus-Module-1.23.tar.gz",
         prereq_pm       => {},
         author_id       => "JOHNQP",

@@ -1,4 +1,4 @@
-package t::MockPatchlevel;
+package MockPatchlevel;
 
 # With XSConfig is readonly, so workaround that.
 

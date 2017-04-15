@@ -2,9 +2,10 @@ use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
 use Test::More;
-use t::MockCPANDist;
-use t::Helper;
-use t::Frontend;
+use lib 't/lib';
+use MockCPANDist;
+use Helper;
+use Frontend;
 use Config;
 use Probe::Perl;
 use File::Temp;
@@ -91,7 +92,7 @@ require_ok('CPAN::Reporter');
 
 # test send_skipfile
 for my $case ( @cases ) {
-    $case->{dist} = t::MockCPANDist->new(
+    $case->{dist} = MockCPANDist->new(
         pretty_id => $case->{pretty_id},
         %mock_dist_options,
     );

@@ -6,8 +6,9 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use t::Frontend;
-use t::Helper;
+use lib 't/lib';
+use Frontend;
+use Helper;
 use IO::CaptureOutput qw/capture/;
 use File::Spec;
 

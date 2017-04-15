@@ -5,16 +5,17 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use t::MockCPANDist;
-use t::Helper;
-use t::Frontend;
+use lib 't/lib';
+use MockCPANDist;
+use Helper;
+use Frontend;
 use IO::CaptureOutput;
 
 #--------------------------------------------------------------------------#
 # Fixtures
 #--------------------------------------------------------------------------#
 
-my $mock_dist = t::MockCPANDist->new( 
+my $mock_dist = MockCPANDist->new( 
     pretty_id => "JOHNQP/Bogus-Module-1.23.tar.gz",
     prereq_pm       => {
         requires => { 'File::Spec' => 0 },

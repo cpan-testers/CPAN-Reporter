@@ -5,15 +5,16 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use t::MockCPANDist;
-use t::Helper;
-use t::Frontend;
+use lib 't/lib';
+use MockCPANDist;
+use Helper;
+use Frontend;
 use Config;
 use Probe::Perl;
 use File::Temp;
 
 # Need to have bleadperls pretend to be normal for these tests
-use t::MockPatchlevel;
+use MockPatchlevel;
 
 my $make = $Config{make};
 my $perl = Probe::Perl->find_perl_interpreter();
@@ -89,7 +90,7 @@ require_ok('CPAN::Reporter');
 # test send_skipfile
 for my $case ( @cases ) {
     local $case->{label} = $case->{label} . " send_skipfile";
-    $case->{dist} = t::MockCPANDist->new(
+    $case->{dist} = MockCPANDist->new(
         pretty_id => $case->{pretty_id},
         %mock_dist_options,
     );
