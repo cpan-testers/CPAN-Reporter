@@ -1,4 +1,4 @@
-package t::MockHomeDir;
+package MockHomeDir;
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 use File::Spec;

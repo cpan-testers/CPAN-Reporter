@@ -6,9 +6,10 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use t::MockCPANDist;
-use t::Helper;
-use t::Frontend;
+use lib 't/lib';
+use MockCPANDist;
+use Helper;
+use Frontend;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -105,7 +106,7 @@ require_ok('CPAN::Reporter::History');
 test_fake_config();
 
 for my $case ( @cases ) {
-    $case->{dist} = t::MockCPANDist->new( %mock_dist_info );
+    $case->{dist} = MockCPANDist->new( %mock_dist_info );
     $case->{dist}{pretty_id} = $case->{pretty_id};
     $case->{$_} = $standard_case_info{$_} for keys %standard_case_info;
     test_dispatch( $case, will_send => $case->{will_send} );

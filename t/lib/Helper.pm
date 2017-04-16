@@ -1,4 +1,4 @@
-package t::Helper;
+package Helper;
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
@@ -27,7 +27,7 @@ use IO::CaptureOutput 1.03 qw/capture/;
 use Probe::Perl ();
 use Test::More 0.62;
 
-use t::MockHomeDir;
+use MockHomeDir;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -42,7 +42,7 @@ my $temp_stdout = File::Temp->new()
 
 my $corpus_dir = "./corpus";
 
-my $home_dir = t::MockHomeDir::home_dir();
+my $home_dir = MockHomeDir::home_dir();
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 
@@ -76,7 +76,7 @@ sub test_fake_config {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my %overrides = @_;
 
-    is( File::HomeDir::my_documents(), t::MockHomeDir::home_dir(),
+    is( File::HomeDir::my_documents(), MockHomeDir::home_dir(),
         "home directory mocked"
     );
     mkpath $config_dir;
@@ -129,8 +129,8 @@ sub test_grade_PL {
             my $tempd = _ok_clone_dist_dir( $case->{name} );
             local $dist->{build_dir} = "$tempd";
 
-            $t::Helper::sent_report = undef;
-            $t::Helper::comments = undef;
+            $Helper::sent_report = undef;
+            $Helper::comments = undef;
 
             my ($stdout, $stderr, $build_rc, $test_build_rc,
                 $output, $exit_value, $rc);
@@ -174,7 +174,7 @@ sub test_grade_PL {
                     "$case->{name}: discard message correct"
                 ) and $is_grade_correct++;
 
-                ok( ! defined $t::Helper::sent_report,
+                ok( ! defined $Helper::sent_report,
                     "$case->{name}: test results discarded"
                 );
             }
@@ -190,7 +190,7 @@ sub test_grade_PL {
                     unlike( $stdout, $ctr_regex ,
                         "$case->{name}: report notification correct"
                     ) and $is_grade_correct++;
-                    ok( ! defined $t::Helper::sent_report,
+                    ok( ! defined $Helper::sent_report,
                         "$case->{name}: results not sent"
                     );
                 }
@@ -199,12 +199,12 @@ sub test_grade_PL {
                         "$case->{name}: report notification correct"
                     ) and $is_grade_correct++;
                     if ( -r $config_file ) {
-                        ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+                        ok( defined $Helper::sent_report && length $Helper::sent_report,
                             "$case->{name}: report was mock sent"
                         );
                     }
                     else {
-                        ok( ! defined $t::Helper::sent_report,
+                        ok( ! defined $Helper::sent_report,
                             "$case->{name}: results not sent"
                         );
                     }
@@ -242,8 +242,8 @@ sub test_grade_make {
             # Set up temporary directory for the case
             my $tempd = _ok_clone_dist_dir( $case->{name} );
 
-            $t::Helper::sent_report = undef;
-            $t::Helper::comments = undef;
+            $Helper::sent_report = undef;
+            $Helper::comments = undef;
 
             my ($stdout, $stderr, $build_err, $test_build_rc,
                 $output, $exit_value, $rc);
@@ -296,7 +296,7 @@ sub test_grade_make {
                     "$case->{name}: discard message correct"
                 ) and $is_grade_correct++;
 
-                ok( ! defined $t::Helper::sent_report,
+                ok( ! defined $Helper::sent_report,
                     "$case->{name}: test results discarded"
                 );
             }
@@ -312,7 +312,7 @@ sub test_grade_make {
                     unlike( $stdout, $ctr_regex ,
                         "$case->{name}: report notification correct"
                     ) and $is_grade_correct++;
-                    ok( ! defined $t::Helper::sent_report,
+                    ok( ! defined $Helper::sent_report,
                         "$case->{name}: results not sent"
                     );
                 }
@@ -321,12 +321,12 @@ sub test_grade_make {
                         "$case->{name}: report notification correct"
                     ) and $is_grade_correct++;
                     if ( -r $config_file ) {
-                        ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+                        ok( defined $Helper::sent_report && length $Helper::sent_report,
                             "$case->{name}: report was mock sent"
                         );
                     }
                     else {
-                        ok( ! defined $t::Helper::sent_report,
+                        ok( ! defined $Helper::sent_report,
                             "$case->{name}: results not sent"
                         );
                     }
@@ -366,8 +366,8 @@ sub test_grade_test {
 
             my $tempd = _ok_clone_dist_dir( $case->{name} );
 
-            $t::Helper::sent_report = undef;
-            $t::Helper::comments = undef;
+            $Helper::sent_report = undef;
+            $Helper::comments = undef;
 
             my ($stdout, $stderr, $build_err, $test_build_rc);
 
@@ -412,7 +412,7 @@ sub test_grade_test {
                     "$case->{name}: discard message correct"
                 );
 
-                ok( ! defined $t::Helper::sent_report,
+                ok( ! defined $Helper::sent_report,
                     "$case->{name}: test results discarded"
                 );
             }
@@ -428,12 +428,12 @@ sub test_grade_test {
                 );
 
                 if ( -r $config_file ) {
-                    ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+                    ok( defined $Helper::sent_report && length $Helper::sent_report,
                         "$case->{name}: test report was mock sent"
                     );
                 }
                 else {
-                    ok( ! defined $t::Helper::sent_report,
+                    ok( ! defined $Helper::sent_report,
                         "$case->{name}: test results not sent"
                     );
                 }
@@ -547,11 +547,11 @@ sub test_report {
     my $special_vars = CPAN::Reporter::_special_vars_report();
     my $toolchain_versions = CPAN::Reporter::_toolchain_report();
 
-    like( $t::Helper::sent_report, '/' . quotemeta($msg_re) . '/ms',
+    like( $Helper::sent_report, '/' . quotemeta($msg_re) . '/ms',
         "$label correct intro paragraph"
     );
 
-    like( $t::Helper::sent_report, '/' . quotemeta($default_comment) . '/ms',
+    like( $Helper::sent_report, '/' . quotemeta($default_comment) . '/ms',
         "$label correct default comment"
     );
 
@@ -559,11 +559,11 @@ sub test_report {
     # tested with automation, we want to make sure this message is NOT
     # included when we aren't doing automated testing.
     if ( $ENV{AUTOMATED_TESTING} ) {
-        like( $t::Helper::sent_report, '/automated smoke testing/ms',
+        like( $Helper::sent_report, '/automated smoke testing/ms',
             "$label comment includes smoke testing notice"
         );
     } else {
-        unlike( $t::Helper::sent_report, '/automated smoke testing/ms',
+        unlike( $Helper::sent_report, '/automated smoke testing/ms',
             "$label comment does not include smoke testing notice"
         );
     }
@@ -571,34 +571,34 @@ sub test_report {
     # Because we don't append the standard default message if we have a
     # comment.txt, we want to make sure it is not there.
     if ( $ENV{AUTOMATED_TESTING} ) {
-        unlike( $t::Helper::sent_report, '/none provided/ms',
+        unlike( $Helper::sent_report, '/none provided/ms',
             "$label comment does not include 'none provided'"
         );
     } else {
         if ( $case->{comment_txt} ) {
-            unlike( $t::Helper::sent_report, '/none provided/ms',
+            unlike( $Helper::sent_report, '/none provided/ms',
                 "$label comment does not include 'none provided'"
             );
         } else {
-            like( $t::Helper::sent_report, '/none provided/ms',
+            like( $Helper::sent_report, '/none provided/ms',
                 "$label comment does include 'none provided'"
             );
         }
     }
 
-    like( $t::Helper::sent_report, '/' . quotemeta($prereq) . '/ms',
+    like( $Helper::sent_report, '/' . quotemeta($prereq) . '/ms',
         "$label found prereq report"
     );
 
-    like( $t::Helper::sent_report, '/' . quotemeta($env_vars) . '/ms',
+    like( $Helper::sent_report, '/' . quotemeta($env_vars) . '/ms',
         "$label found environment variables"
     );
 
-    like( $t::Helper::sent_report, '/' . quotemeta($special_vars) . '/ms',
+    like( $Helper::sent_report, '/' . quotemeta($special_vars) . '/ms',
         "$label found special variables"
     );
 
-    like( $t::Helper::sent_report, '/' . quotemeta($toolchain_versions) . '/ms',
+    like( $Helper::sent_report, '/' . quotemeta($toolchain_versions) . '/ms',
         "$label found toolchain versions found"
     );
 
@@ -606,7 +606,7 @@ sub test_report {
 
     # extract just the test output
     my $found_test_output = q{};
-    if ( $t::Helper::sent_report =~ m/
+    if ( $Helper::sent_report =~ m/
         ^Output\ from\ '[^\']+':\n          # lead-in to test output
         ^\n                                 # blank line
         ^(.+) \n                            # test output ending in newline
@@ -658,7 +658,7 @@ sub test_report {
         $joined_output = substr( $joined_output, 0, $max_report_length );
     }
 
-    like( $t::Helper::sent_report, '/' . quotemeta($joined_output) . '/ms',
+    like( $Helper::sent_report, '/' . quotemeta($joined_output) . '/ms',
         "$label found output matches expected output"
     );
 
@@ -692,7 +692,7 @@ sub test_dispatch {
     );
 
     if ( $opt{will_send} ) {
-        ok( defined $t::Helper::sent_report && length $t::Helper::sent_report,
+        ok( defined $Helper::sent_report && length $Helper::sent_report,
             "report was sent for $case->{label}"
         );
         like( $stdout, "/sending test report with/",
@@ -700,7 +700,7 @@ sub test_dispatch {
         );
     }
     else {
-        ok( ! defined $t::Helper::sent_report,
+        ok( ! defined $Helper::sent_report,
             "report not sent for $case->{label}"
         );
         like( $stdout, "/report will not be sent/",
@@ -761,8 +761,8 @@ sub _run_report {
 
     my ($stdout, $stderr, $output, $exit_value);
 
-    $t::Helper::sent_report = undef;
-    $t::Helper::comments = undef;
+    $Helper::sent_report = undef;
+    $Helper::comments = undef;
 
     eval {
         capture sub {
@@ -821,11 +821,11 @@ package Test::Reporter::Mocked;
 use Config;
 use vars qw/$AUTOLOAD/;
 
-sub comments { shift; $t::Helper::comments = shift }
+sub comments { shift; $Helper::comments = shift }
 
 sub send {
     shift;
-    $t::Helper::sent_report = $t::Helper::comments;
+    $Helper::sent_report = $Helper::comments;
     return 1;
 }
 

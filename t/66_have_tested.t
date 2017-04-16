@@ -7,8 +7,9 @@ use File::Copy::Recursive qw/fcopy/;
 use File::Path qw/mkpath/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
 use File::Temp qw/tempdir/;
-use t::Frontend;
-use t::MockHomeDir;
+use lib 't/lib';
+use Frontend;
+use MockHomeDir;
 
 #plan 'no_plan';
 plan tests => 21;
@@ -17,7 +18,7 @@ plan tests => 21;
 # Fixtures
 #--------------------------------------------------------------------------#
 
-my $config_dir = catdir( t::MockHomeDir::home_dir, ".cpanreporter" );
+my $config_dir = catdir( MockHomeDir::home_dir, ".cpanreporter" );
 my $config_file = catfile( $config_dir, "config.ini" );
 
 my $history_file = catfile( $config_dir, "reports-sent.db" );

@@ -2,8 +2,9 @@ use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
 use Test::More;
-use t::Helper;
-use t::Frontend;
+use lib 't/lib';
+use Helper;
+use Frontend;
 
 my @cases = (
     # Makefile.PL based stuff should be true

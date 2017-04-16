@@ -11,7 +11,8 @@ use IO::CaptureOutput qw/capture/;
 use File::Spec;
 use File::Temp qw/tempdir/;
 use File::Path qw/mkpath rmtree/;
-use t::Frontend;
+use lib 't/lib';
+use Frontend;
 
 plan tests => 9;
 

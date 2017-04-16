@@ -7,8 +7,9 @@ STDERR->autoflush(1);
 STDOUT->autoflush(1);
 
 use Test::More;
-use t::Helper;
-use t::Frontend;
+use lib 't/lib';
+use Helper;
+use Frontend;
 
 #--------------------------------------------------------------------------#
 # Bailout if we're on a broken dev version of Test::Harness

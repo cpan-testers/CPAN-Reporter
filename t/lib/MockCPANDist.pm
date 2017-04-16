@@ -1,4 +1,4 @@
-package t::MockCPANDist;
+package MockCPANDist;
 use strict;
 BEGIN { if ( not $] < 5.006 ) { require warnings; warnings->import } }
 use File::Basename;
@@ -23,7 +23,7 @@ my %spec = (
 
 sub new {
     my ($class) = shift;
-    die "Arguments to t::MockCPANDist::new() must be key => value pairs"
+    die "Arguments to MockCPANDist::new() must be key => value pairs"
         if (@_ % 2);
     my %args = @_;
     for my $key ( keys %spec ) {

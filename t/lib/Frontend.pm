@@ -1,4 +1,4 @@
-package t::Frontend;
+package Frontend;
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 

@@ -7,8 +7,9 @@ use IO::CaptureOutput qw/capture/;
 use File::Basename qw/basename/;
 use File::Spec;
 use File::Temp qw/tempdir/;
-use t::Frontend;
-use t::MockHomeDir;
+use lib 't/lib';
+use Frontend;
+use MockHomeDir;
 
 plan tests => 10;
 #plan 'no_plan';
@@ -18,7 +19,7 @@ plan tests => 10;
 #--------------------------------------------------------------------------#
 
 # File::HomeDir will be mocked to return these
-my $default_home_dir = t::MockHomeDir::home_dir;
+my $default_home_dir = MockHomeDir::home_dir;
 my $default_config_dir = File::Spec->catdir( $default_home_dir, ".cpanreporter" );
 my $default_config_file = File::Spec->catfile( $default_config_dir, "config.ini" );
 

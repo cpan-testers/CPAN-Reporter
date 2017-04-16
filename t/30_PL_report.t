@@ -6,9 +6,10 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use t::MockCPANDist;
-use t::Helper;
-use t::Frontend;
+use lib 't/lib';
+use MockCPANDist;
+use Helper;
+use Frontend;
 
 my $lt_5006 = $] < 5.006;
 
@@ -104,7 +105,7 @@ require_ok('CPAN::Reporter');
 test_fake_config();
 
 for my $case ( @test_distros ) {
-    my $mock_dist = t::MockCPANDist->new( 
+    my $mock_dist = MockCPANDist->new( 
         %mock_dist_args, %{$case->{prereq_pm}}
     );
     test_grade_PL( $case, $mock_dist ); 

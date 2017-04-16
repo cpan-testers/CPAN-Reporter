@@ -13,8 +13,9 @@ use File::Glob qw/bsd_glob/;
 use File::Spec;
 use File::Temp qw/tempdir/;
 use File::Path qw/mkpath/;
-use t::Frontend;
-use t::MockHomeDir;
+use lib 't/lib';
+use Frontend;
+use MockHomeDir;
 
 plan tests => 62;
 #plan 'no_plan';
@@ -23,7 +24,7 @@ plan tests => 62;
 # Fixtures
 #--------------------------------------------------------------------------#
 
-my $config_dir = File::Spec->catdir( t::MockHomeDir::home_dir, ".cpanreporter" );
+my $config_dir = File::Spec->catdir( MockHomeDir::home_dir, ".cpanreporter" );
 my $config_file = File::Spec->catfile( $config_dir, "config.ini" );
 my $metabase_file = File::Spec->catfile( $config_dir, 'metabase_id.json' );
 my $default_options = {
