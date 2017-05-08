@@ -133,8 +133,8 @@ sub _try_load {
     'Devel::Trepan', #"require Enbugger; require Devel::Trepan;" starts debugging session
     'Test::BDD::Cucumber::Loader', #by doing something to Test::Builder breaks Test::SharedFork and any module that uses it
 
-    #removed modules
-    qw/Pegex::Mo YAML::LibYAML/,
+    #removed modules, they still exist but die
+    qw/Pegex::Mo YAML::LibYAML Params::CheckCompiler/,
 
     #have additional prereqs
     qw/Log::Dispatch::Email::MailSender RDF::NS::Trine Plack::Handler::FCGI Web::Scraper::LibXML
