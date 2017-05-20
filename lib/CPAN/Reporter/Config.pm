@@ -12,6 +12,11 @@ use IPC::Cmd 0.76 ();
 use IO::File ();
 use CPAN 1.9301 (); # for printing warnings
 
+# see https://rt.perl.org/rt3/Public/Bug/Display.html?id=98812
+BEGIN{
+    $ENV{HOME} = $ENV{USERPROFILE} if $^O eq 'MSWin32' and !$ENV{HOME} and $ENV{USERPROFILE};
+}
+
 #--------------------------------------------------------------------------#
 # Back-compatibility checks -- just once per load
 #--------------------------------------------------------------------------#
