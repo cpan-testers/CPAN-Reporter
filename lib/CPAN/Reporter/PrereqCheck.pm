@@ -145,7 +145,7 @@ sub _try_load {
     qw/ExtUtils::ParseXS ExtUtils::ParseXS::Utilities/,
     
     #require special conditions to run
-    qw/mylib/,
+    qw/mylib Test::YAML Cache::Reddit/,
 
     #do not return true value
     qw/perlsecret Alt::Crypt::RSA::BigInt/,
