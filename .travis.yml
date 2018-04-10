@@ -4,9 +4,28 @@ script: prove -lr t
 install:
   - cpanm -n -q --skip-satisfied --installdeps .
 perl:
+  - "5.26"
+  - "5.24"
+  - "5.22"
   - "5.20"
   - "5.18"
   - "5.16"
   - "5.14"
   - "5.12"
   - "5.10"
+  - "5.24-shrplib"
+  - "5.22-shrplib"
+  - "5.20-shrplib"
+  - "5.18-shrplib"
+matrix:
+  allow_failures:
+    - perl: blead
+before_install:
+  - git clone git://github.com/travis-perl/helpers ~/travis-perl-helpers
+  - source ~/travis-perl-helpers/init --auto
+  - build-perl
+  - perl -V
+  - build-dist
+  - cd $BUILD_DIR
+install:
+  - cpan-install --deps
