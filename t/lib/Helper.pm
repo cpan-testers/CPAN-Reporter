@@ -42,7 +42,7 @@ my $make = $Config{make};
 my $temp_stdout = File::Temp->new()
     or die "Couldn't make temporary file:$!\nIs your temp drive full?";
 
-my $corpus_dir = "./corpus";
+my $corpus_dir = File::Spec->catdir('.', 'corpus');
 
 my $home_dir = MockHomeDir::home_dir();
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
