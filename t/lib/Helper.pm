@@ -2,7 +2,7 @@ package Helper;
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
-use vars qw/@EXPORT/;
+use vars qw/@EXPORT @EXPORT_OK/;
 @EXPORT = qw/
     test_grade_make test_grade_make_plan
     test_grade_PL test_grade_PL_plan
@@ -11,6 +11,7 @@ use vars qw/@EXPORT/;
     test_report test_report_plan
     test_dispatch test_dispatch_plan
 /;
+@EXPORT_OK = qw/ dircopy /;
 
 use Exporter ();
 our @ISA = 'Exporter';
@@ -18,7 +19,6 @@ our @ISA = 'Exporter';
 use Config;
 use Archive::Tar 1.54 ();
 use File::Basename qw/basename/;
-use File::Copy::Recursive 0.35 qw/dircopy/;
 use File::Path qw/mkpath/;
 use File::pushd 0.32 qw/pushd tempd/;
 use File::Spec 3.19 ();
@@ -28,6 +28,8 @@ use Probe::Perl ();
 use Test::More 0.62;
 
 use MockHomeDir;
+use File::Copy;
+use File::Find;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -720,6 +722,116 @@ sub _diag_output {
     diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n";
 }
 
+=pod
+
+dircopy(): A stripped-down replacement for C<File::Copy::Recursive::dircopy()>.
+
+=over 4
+
+=item * Purpose
+
+Given the path to the directory specified by the first argument,
+copy all of the files and directories beneath it to the directory specified
+by the second argument.
+
+=item * Arguments
+
+    my $count = dircopy($orig, $new);
+    warn "dircopy() returned undefined value" unless defined $count;
+
+=item * Return Value
+
+Upon completion, returns the count of directories and files created -- which
+might be C<0>.
+
+Should the function not complete (but not C<die>), an undefined value will be
+returned.  That generally indicates problems with argument validation and is
+done for consistency with C<File::Copy::Recursive::dircopy>.
+
+=item * Restrictions
+
+None of C<File::Copy::Recursive::dircopy>'s bells and whistles.
+No provision for special handling of symlinks.  No preservation of file or
+directory modes.  No restriction on maximum depth.  No nothing; this is
+fine-tuned to the needs of the F<CPAN::Reporter> test suite.
+
+=back
+
+=cut
+
+sub dircopy {
+    my ($orig, $new) = @_;
+    return unless _samecheck($orig, $new);
+    my $count = 0;
+    unless (-d $new) {
+        mkpath($new) or die "Unable to mkpath $new: $!";
+        $count++;
+    }
+
+    my %files_seen = ();
+    my %dirs_seen = ();
+    my @dirs_needed = ();
+    my $wanted = sub {
+
+        if (-d _) {
+            my $d = $File::Find::dir;
+            my $e = $d;
+            $e =~ s{^\Q$orig\E/(.*)}{$1};
+            unless ($dirs_seen{$d}) {
+                unless ($e eq $orig) {
+                    my $copy_dir = File::Spec->catdir($new, $e);
+                    unless ($dirs_seen{$e}) {
+                        $dirs_seen{$e} = $copy_dir;
+                        push @dirs_needed, $copy_dir;
+                    }
+                }
+            }
+        }
+        if (-f $_) {
+            my $f = $File::Find::name;
+            my $g = $f;
+            $g =~ s{^\Q$orig\E/(.*)}{$1};
+            #say "$f is a file";
+            my $copy_file = File::Spec->catfile($new, $g);
+            $files_seen{$f} = $copy_file
+                unless $files_seen{$g};
+        }
+    };
+
+    find($wanted, ($orig));
+
+    for my $d (@dirs_needed) {
+        mkpath $d or die "Unable to mkpath $d: $!";
+        $count++;
+    }
+    for my $f (sort keys %files_seen) {
+        copy($f => $files_seen{$f})
+            or die "Unable to copy $f to $files_seen{$f}: $!";
+        $count++;
+    }
+
+    return $count;
+}
+
+sub _samecheck {
+	# Adapted from File::Copy::Recursive
+    my ($from, $to) = @_;
+    return if !defined $from || !defined $to;
+    return if $from eq $to;
+
+    if ($^O ne 'MSWin32') {
+        # perldoc perlport: "(Win32) "dev" and "ino" are not meaningful."
+        # Will probably have to add restrictions for VMS and other OSes.
+        my $one = join( '-', ( stat $from )[ 0, 1 ] ) || '';
+        my $two = join( '-', ( stat $to   )[ 0, 1 ] ) || '';
+        if ( $one and $one eq $two ) {
+            warn "$from and $to are identical";
+            return;
+        }
+    }
+    return 1;
+}
+
 #--------------------------------------------------------------------------#
 # _ok_clone_dist_dir
 #--------------------------------------------------------------------------#
@@ -727,7 +839,6 @@ sub _diag_output {
 sub _ok_clone_dist_dir {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my $dist_name = shift;
-print STDERR "\nAAA: dist_name: <$dist_name>\n";
     my $dist_dir = File::Spec->rel2abs(
         File::Spec->catdir( $corpus_dir, $dist_name )
     );
@@ -735,21 +846,21 @@ print STDERR "\nAAA: dist_name: <$dist_name>\n";
     my $work_dir = tempd()
         or die "Couldn't create temporary distribution dir: $!\n";
 
-    # workaround badly broken F::C::R 0.34 on Windows
-    if ( File::Copy::Recursive->VERSION eq '0.34' && $^O eq 'MSWin32' ) {
-        ok( 0 == system("xcopy /q /e $dist_dir $work_dir"),
-            "Copying $dist_name to temp directory (XCOPY)"
-        ) or diag $!;
-    }
-    else {
-        ok( defined( dircopy($dist_dir, "$work_dir") ),
+#    # workaround badly broken F::C::R 0.34 on Windows
+#    if ( File::Copy::Recursive->VERSION eq '0.34' && $^O eq 'MSWin32' ) {
+#        ok( 0 == system("xcopy /q /e $dist_dir $work_dir"),
+#            "Copying $dist_name to temp directory (XCOPY)"
+#        ) or diag $!;
+#    }
+#    else {
+        ok( defined( Helper::dircopy($dist_dir, "$work_dir") ),
             "Copying $dist_name to temp directory $work_dir"
         ) or diag $!;
-    }
+#    }
 
-print STDERR "BBB: work_dir: <$work_dir>\n";
     return $work_dir;
 }
+
 
 #--------------------------------------------------------------------------#
 # _run_report
