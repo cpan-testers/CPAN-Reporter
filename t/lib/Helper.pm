@@ -788,10 +788,9 @@ sub dircopy {
             }
         }
         if (-f $_) {
-            my $f = $File::Find::name;
+            my $f = File::Spec->catfile($File::Find::name);
             my $g = $f;
             $g =~ s{^\Q$orig\E/(.*)}{$1};
-            #say "$f is a file";
             my $copy_file = File::Spec->catfile($new, $g);
             $files_seen{$f} = $copy_file
                 unless $files_seen{$g};
