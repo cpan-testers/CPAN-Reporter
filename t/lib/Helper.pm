@@ -107,7 +107,7 @@ sub test_fake_config {
 # Test grade_PL
 #--------------------------------------------------------------------------#
 
-sub test_grade_PL_iter_plan() { 5 }
+sub test_grade_PL_iter_plan() { 6 }
 sub test_grade_PL_plan() { test_grade_PL_iter_plan() * 2 }
 sub test_grade_PL {
     my ($case, $dist) = @_;
@@ -221,7 +221,7 @@ sub test_grade_PL {
 # Test grade_make
 #--------------------------------------------------------------------------#
 
-sub test_grade_make_iter_plan() { 6 }
+sub test_grade_make_iter_plan() { 7 }
 sub test_grade_make_plan() { test_grade_make_iter_plan() * 2 }
 sub test_grade_make {
     my ($case, $dist) = @_;
@@ -344,7 +344,7 @@ sub test_grade_make {
 # Test grade_test
 #--------------------------------------------------------------------------#
 
-sub test_grade_test_iter_plan() { 7 }
+sub test_grade_test_iter_plan() { 8 }
 sub test_grade_test_plan() { 2 * test_grade_test_iter_plan() }
 sub test_grade_test {
     my ($case, $dist) = @_;
@@ -494,7 +494,7 @@ HERE
 
 );
 
-sub test_report_plan() { 17 };
+sub test_report_plan() { 18 };
 sub test_report {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -676,7 +676,7 @@ sub test_report {
 #   phase -- phase of PL/make/test to pass command results to
 #--------------------------------------------------------------------------#
 
-sub test_dispatch_plan { 4 };
+sub test_dispatch_plan { 5 };
 sub test_dispatch {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my $case = shift;
@@ -727,9 +727,11 @@ sub _diag_output {
 sub _ok_clone_dist_dir {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my $dist_name = shift;
+print STDERR "\nAAA: dist_name: <$dist_name>\n";
     my $dist_dir = File::Spec->rel2abs(
         File::Spec->catdir( $corpus_dir, $dist_name )
     );
+    ok(-d $dist_dir, "Directory $dist_dir exists");
     my $work_dir = tempd()
         or die "Couldn't create temporary distribution dir: $!\n";
 
@@ -745,6 +747,7 @@ sub _ok_clone_dist_dir {
         ) or diag $!;
     }
 
+print STDERR "BBB: work_dir: <$work_dir>\n";
     return $work_dir;
 }
 
