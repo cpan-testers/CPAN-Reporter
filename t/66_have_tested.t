@@ -3,13 +3,13 @@ BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
 use Test::More;
 use Config;
-use File::Copy::Recursive qw/fcopy/;
 use File::Path qw/mkpath/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
 use File::Temp qw/tempdir/;
 use lib 't/lib';
 use Frontend;
 use MockHomeDir;
+use Helper qw/ fcopy /;
 
 #plan 'no_plan';
 plan tests => 21;

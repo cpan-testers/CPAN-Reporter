@@ -11,7 +11,7 @@ use vars qw/@EXPORT @EXPORT_OK/;
     test_report test_report_plan
     test_dispatch test_dispatch_plan
 /;
-@EXPORT_OK = qw/ dircopy /;
+@EXPORT_OK = qw/ dircopy fcopy /;
 
 use Exporter ();
 our @ISA = 'Exporter';
@@ -828,6 +828,89 @@ sub _samecheck {
             return;
         }
     }
+    return 1;
+}
+
+=pod
+
+fcopy(): A stripped-down replacement for C<File::Copy::Recursive::fcopy()>.
+
+=over 4
+
+=item * Purpose
+
+Copy a file to a new location, recursively creating directories as needed.
+Does not copy directories.  Unlike C<File::Copy::copy()>, C<fcopy()> attempts
+to preserve the mode of the original file.
+
+=item * Arguments
+
+    fcopy($orig, $new) or die $!;
+
+Two required arguments: the file to be copied and the location where it is to
+be copied.
+
+=item * Return Value
+
+Returns C<1> upon success; C<0> upon failure.  Returns an undefined value if,
+for example, function cannot validate arguments.
+
+=item * Comment
+
+Since C<fcopy()> internally uses C<File::Copy::copy()> to perform the copying,
+the arguments are subject to the same qualifications as that function.  Call
+F<perldoc File::Copy> for discussion of those arguments.
+
+Does not currently handle copying of symlinks.
+
+=back
+
+=cut
+
+sub fcopy {
+    return if @_ != 2;
+    my ($from, $to) = @_;
+    return unless _samecheck($from, $to);
+    my ( $volm, $path ) = File::Spec->splitpath($to);
+    if ( $path && !-d $path ) {
+        pathmk(File::Spec->catpath($volm, $path, ''));
+    }
+    if (-l $from) { return; }
+    elsif (-d $from && -f $to) { return; }
+    else {
+        copy($from, $to) or return;
+
+        my @base_file = File::Spec->splitpath( $from );
+        my $mode_trg = -d $to ? File::Spec->catfile( $to, $base_file[$#base_file] ) : $to;
+
+        #chmod scalar((stat($from))[2]), $mode_trg if $self->{KeepMode};
+        chmod scalar((stat($from))[2]), $mode_trg;
+    }
+    return 1;
+}
+
+sub pathmk {
+    my ( $vol, $dir, $file ) = File::Spec->splitpath( shift() );
+
+    if ( defined($dir) ) {
+        my (@dirs) = File::Spec->splitdir($dir);
+
+        for ( my $i = 0; $i < scalar(@dirs); $i++ ) {
+            my $newdir = File::Spec->catdir( @dirs[ 0 .. $i ] );
+            my $newpth = File::Spec->catpath( $vol, $newdir, "" );
+
+            mkdir( $newpth ) or return if !-d $newpth;
+            mkdir( $newpth ) if !-d $newpth;
+        }
+    }
+
+    if ( defined($file) ) {
+        my $newpth = File::Spec->catpath( $vol, $dir, $file );
+
+        mkdir( $newpth ) or return if !-d $newpth;
+        mkdir( $newpth ) if !-d $newpth;
+    }
+
     return 1;
 }
 
