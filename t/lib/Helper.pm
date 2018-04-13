@@ -20,7 +20,7 @@ use Archive::Tar 1.54 ();
 use File::Basename qw/basename/;
 use File::Copy::Recursive 0.35 qw/dircopy/;
 use File::Path qw/mkpath/;
-use File::pushd 0.32 qw/pushd tempd/;
+use File::pushd 0.32;
 use File::Spec 3.19 ();
 use File::Temp 0.16 qw/tempdir/;
 use IO::CaptureOutput 1.03 qw/capture/;
