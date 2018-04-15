@@ -129,7 +129,7 @@ sub test_grade_PL {
                 if ! $have_tool;
 
             my $tempd = _ok_clone_dist_dir( $case->{name} );
-            local $dist->{build_dir} = "$tempd";
+            local $dist->{build_dir} = $tempd;
 
             $Helper::sent_report = undef;
             $Helper::comments = undef;
@@ -768,6 +768,11 @@ sub dircopy {
         $count++;
     }
 
+    if ( !-d $orig  || ( -e $new && !-d $new ) ) {
+        $! = 20;
+        return;
+    }
+
     my %files_seen = ();
     my %dirs_seen = ();
     my @dirs_needed = ();
@@ -934,7 +939,7 @@ sub _ok_clone_dist_dir {
         ) or diag $!;
     }
     else {
-        ok( defined( Helper::dircopy($dist_dir, "$work_dir") ),
+        ok( defined( Helper::dircopy($dist_dir, $work_dir) ),
             "Copying $dist_name to temp directory $work_dir"
         ) or diag $!;
     }
