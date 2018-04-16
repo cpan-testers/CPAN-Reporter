@@ -2,7 +2,7 @@ package Helper;
 use strict;
 BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
-use vars qw/@EXPORT/;
+use vars qw/@EXPORT @EXPORT_OK/;
 @EXPORT = qw/
     test_grade_make test_grade_make_plan
     test_grade_PL test_grade_PL_plan
@@ -11,6 +11,7 @@ use vars qw/@EXPORT/;
     test_report test_report_plan
     test_dispatch test_dispatch_plan
 /;
+@EXPORT_OK = qw/ dircopy fcopy /;
 
 use Exporter ();
 our @ISA = 'Exporter';
@@ -18,7 +19,6 @@ our @ISA = 'Exporter';
 use Config;
 use Archive::Tar 1.54 ();
 use File::Basename qw/basename/;
-use File::Copy::Recursive 0.35 qw/dircopy/;
 use File::Path qw/mkpath/;
 use File::pushd 0.32 qw/pushd tempd/;
 use File::Spec 3.19 ();
@@ -28,6 +28,8 @@ use Probe::Perl ();
 use Test::More 0.62;
 
 use MockHomeDir;
+use File::Copy;
+use File::Find;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -40,7 +42,7 @@ my $make = $Config{make};
 my $temp_stdout = File::Temp->new()
     or die "Couldn't make temporary file:$!\nIs your temp drive full?";
 
-my $corpus_dir = "./corpus";
+my $corpus_dir = File::Spec->catdir('.', 'corpus');
 
 my $home_dir = MockHomeDir::home_dir();
 my $config_dir = File::Spec->catdir( $home_dir, ".cpanreporter" );
@@ -107,7 +109,7 @@ sub test_fake_config {
 # Test grade_PL
 #--------------------------------------------------------------------------#
 
-sub test_grade_PL_iter_plan() { 5 }
+sub test_grade_PL_iter_plan() { 6 }
 sub test_grade_PL_plan() { test_grade_PL_iter_plan() * 2 }
 sub test_grade_PL {
     my ($case, $dist) = @_;
@@ -127,7 +129,7 @@ sub test_grade_PL {
                 if ! $have_tool;
 
             my $tempd = _ok_clone_dist_dir( $case->{name} );
-            local $dist->{build_dir} = "$tempd";
+            local $dist->{build_dir} = $tempd;
 
             $Helper::sent_report = undef;
             $Helper::comments = undef;
@@ -221,7 +223,7 @@ sub test_grade_PL {
 # Test grade_make
 #--------------------------------------------------------------------------#
 
-sub test_grade_make_iter_plan() { 6 }
+sub test_grade_make_iter_plan() { 7 }
 sub test_grade_make_plan() { test_grade_make_iter_plan() * 2 }
 sub test_grade_make {
     my ($case, $dist) = @_;
@@ -344,7 +346,7 @@ sub test_grade_make {
 # Test grade_test
 #--------------------------------------------------------------------------#
 
-sub test_grade_test_iter_plan() { 7 }
+sub test_grade_test_iter_plan() { 8 }
 sub test_grade_test_plan() { 2 * test_grade_test_iter_plan() }
 sub test_grade_test {
     my ($case, $dist) = @_;
@@ -494,7 +496,7 @@ HERE
 
 );
 
-sub test_report_plan() { 17 };
+sub test_report_plan() { 18 };
 sub test_report {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
@@ -676,7 +678,7 @@ sub test_report {
 #   phase -- phase of PL/make/test to pass command results to
 #--------------------------------------------------------------------------#
 
-sub test_dispatch_plan { 4 };
+sub test_dispatch_plan { 5 };
 sub test_dispatch {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my $case = shift;
@@ -720,6 +722,203 @@ sub _diag_output {
     diag "STDOUT:\n$stdout\n\nSTDERR:\n$stderr\n";
 }
 
+=pod
+
+dircopy(): A stripped-down replacement for C<File::Copy::Recursive::dircopy()>.
+
+=over 4
+
+=item * Purpose
+
+Given the path to the directory specified by the first argument,
+copy all of the files and directories beneath it to the directory specified
+by the second argument.
+
+=item * Arguments
+
+    my $count = dircopy($orig, $new);
+    warn "dircopy() returned undefined value" unless defined $count;
+
+=item * Return Value
+
+Upon completion, returns the count of directories and files created -- which
+might be C<0>.
+
+Should the function not complete (but not C<die>), an undefined value will be
+returned.  That generally indicates problems with argument validation and is
+done for consistency with C<File::Copy::Recursive::dircopy>.
+
+=item * Restrictions
+
+None of C<File::Copy::Recursive::dircopy>'s bells and whistles.
+No provision for special handling of symlinks.  No preservation of file or
+directory modes.  No restriction on maximum depth.  No nothing; this is
+fine-tuned to the needs of the F<CPAN::Reporter> test suite.
+
+=back
+
+=cut
+
+sub dircopy {
+    my ($orig, $new) = @_;
+    return unless _samecheck($orig, $new);
+    my $count = 0;
+    unless (-d $new) {
+        mkpath($new) or die "Unable to mkpath $new: $!";
+        $count++;
+    }
+
+    if ( !-d $orig  || ( -e $new && !-d $new ) ) {
+        $! = 20;
+        return;
+    }
+
+    my %files_seen = ();
+    my %dirs_seen = ();
+    my @dirs_needed = ();
+    my $wanted = sub {
+
+        if (-d _) {
+            my $d = $File::Find::dir;
+            my $e = $d;
+            $e =~ s{^\Q$orig\E/(.*)}{$1};
+            unless ($dirs_seen{$d}) {
+                unless ($e eq $orig) {
+                    my $copy_dir = File::Spec->catdir($new, $e);
+                    unless ($dirs_seen{$e}) {
+                        $dirs_seen{$e} = $copy_dir;
+                        push @dirs_needed, $copy_dir;
+                    }
+                }
+            }
+        }
+        if (-f $_) {
+            my $f = File::Spec->catfile($File::Find::name);
+            my $g = $f;
+            $g =~ s{^\Q$orig\E/(.*)}{$1};
+            my $copy_file = File::Spec->catfile($new, $g);
+            $files_seen{$f} = $copy_file
+                unless $files_seen{$g};
+        }
+    };
+
+    find($wanted, ($orig));
+
+    for my $d (@dirs_needed) {
+        mkpath $d or die "Unable to mkpath $d: $!";
+        $count++;
+    }
+    for my $f (sort keys %files_seen) {
+        copy($f => $files_seen{$f})
+            or die "Unable to copy $f to $files_seen{$f}: $!";
+        $count++;
+    }
+
+    return $count;
+}
+
+sub _samecheck {
+	# Adapted from File::Copy::Recursive
+    my ($from, $to) = @_;
+    return if !defined $from || !defined $to;
+    return if $from eq $to;
+
+    if ($^O ne 'MSWin32') {
+        # perldoc perlport: "(Win32) "dev" and "ino" are not meaningful."
+        # Will probably have to add restrictions for VMS and other OSes.
+        my $one = join( '-', ( stat $from )[ 0, 1 ] ) || '';
+        my $two = join( '-', ( stat $to   )[ 0, 1 ] ) || '';
+        if ( $one and $one eq $two ) {
+            warn "$from and $to are identical";
+            return;
+        }
+    }
+    return 1;
+}
+
+=pod
+
+fcopy(): A stripped-down replacement for C<File::Copy::Recursive::fcopy()>.
+
+=over 4
+
+=item * Purpose
+
+Copy a file to a new location, recursively creating directories as needed.
+Does not copy directories.  Unlike C<File::Copy::copy()>, C<fcopy()> attempts
+to preserve the mode of the original file.
+
+=item * Arguments
+
+    fcopy($orig, $new) or die $!;
+
+Two required arguments: the file to be copied and the location where it is to
+be copied.
+
+=item * Return Value
+
+Returns C<1> upon success; C<0> upon failure.  Returns an undefined value if,
+for example, function cannot validate arguments.
+
+=item * Comment
+
+Since C<fcopy()> internally uses C<File::Copy::copy()> to perform the copying,
+the arguments are subject to the same qualifications as that function.  Call
+F<perldoc File::Copy> for discussion of those arguments.
+
+Does not currently handle copying of symlinks.
+
+=back
+
+=cut
+
+sub fcopy {
+    return if @_ != 2;
+    my ($from, $to) = @_;
+    return unless _samecheck($from, $to);
+    my ( $volm, $path ) = File::Spec->splitpath($to);
+    if ( $path && !-d $path ) {
+        pathmk(File::Spec->catpath($volm, $path, ''));
+    }
+    if (-l $from) { return; }
+    elsif (-d $from && -f $to) { return; }
+    else {
+        copy($from, $to) or return;
+
+        my @base_file = File::Spec->splitpath( $from );
+        my $mode_trg = -d $to ? File::Spec->catfile( $to, $base_file[$#base_file] ) : $to;
+
+        #chmod scalar((stat($from))[2]), $mode_trg if $self->{KeepMode};
+        chmod scalar((stat($from))[2]), $mode_trg;
+    }
+    return 1;
+}
+
+sub pathmk {
+    my ( $vol, $dir, $file ) = File::Spec->splitpath( shift() );
+
+    if ( defined($dir) ) {
+        my (@dirs) = File::Spec->splitdir($dir);
+
+        for ( my $i = 0; $i < scalar(@dirs); $i++ ) {
+            my $newdir = File::Spec->catdir( @dirs[ 0 .. $i ] );
+            my $newpth = File::Spec->catpath( $vol, $newdir, "" );
+
+            mkdir( $newpth ) or return if !-d $newpth;
+            mkdir( $newpth ) if !-d $newpth;
+        }
+    }
+
+    if ( defined($file) ) {
+        my $newpth = File::Spec->catpath( $vol, $dir, $file );
+
+        mkdir( $newpth ) or return if !-d $newpth;
+        mkdir( $newpth ) if !-d $newpth;
+    }
+
+    return 1;
+}
+
 #--------------------------------------------------------------------------#
 # _ok_clone_dist_dir
 #--------------------------------------------------------------------------#
@@ -730,23 +929,24 @@ sub _ok_clone_dist_dir {
     my $dist_dir = File::Spec->rel2abs(
         File::Spec->catdir( $corpus_dir, $dist_name )
     );
+    ok(-d $dist_dir, "Directory $dist_dir exists");
     my $work_dir = tempd()
         or die "Couldn't create temporary distribution dir: $!\n";
 
-    # workaround badly broken F::C::R 0.34 on Windows
-    if ( File::Copy::Recursive->VERSION eq '0.34' && $^O eq 'MSWin32' ) {
+    if (  $^O eq 'MSWin32' ) {
         ok( 0 == system("xcopy /q /e $dist_dir $work_dir"),
             "Copying $dist_name to temp directory (XCOPY)"
         ) or diag $!;
     }
     else {
-        ok( defined( dircopy($dist_dir, "$work_dir") ),
+        ok( defined( Helper::dircopy($dist_dir, $work_dir) ),
             "Copying $dist_name to temp directory $work_dir"
         ) or diag $!;
     }
 
     return $work_dir;
 }
+
 
 #--------------------------------------------------------------------------#
 # _run_report

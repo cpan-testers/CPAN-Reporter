@@ -7,13 +7,13 @@ select(STDOUT); $|=1;
 use Test::More;
 use Config::Tiny;
 use IO::CaptureOutput qw/capture/;
-use File::Copy::Recursive qw/fcopy/;
 use File::Path qw/mkpath/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
 use File::Temp qw/tempdir/;
 use lib 't/lib';
 use Frontend;
 use MockHomeDir;
+use Helper qw/ fcopy /;
 
 #plan 'no_plan';
 plan tests => 12;
