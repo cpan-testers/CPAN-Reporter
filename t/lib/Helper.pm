@@ -18,7 +18,8 @@ our @ISA = 'Exporter';
 use Config;
 use Archive::Tar 1.54 ();
 use File::Basename qw/basename/;
-use File::Copy::Recursive 0.35 qw/dircopy/;
+use File::Copy;
+use File::Find;
 use File::Path qw/mkpath/;
 use File::pushd 0.32 qw/pushd tempd/;
 use File::Spec 3.19 ();
@@ -721,6 +722,30 @@ sub _diag_output {
 }
 
 #--------------------------------------------------------------------------#
+# _dircopy
+#--------------------------------------------------------------------------#
+
+sub _dircopy {
+    my ($orig, $new) = @_;
+    my $count = 0;
+    File::Find::find({
+        no_chdir => 1,
+        wanted => sub {
+            my $orig_path = $_;
+            my $new_path = File::Spec->rel2abs(File::Spec->abs2rel($orig_path, $orig), $new);
+            if (-d $orig_path) {
+                mkdir $new_path;
+            }
+            elsif (-f _) {
+                copy($orig_path, $new_path) or die $!;
+            }
+            $count++;
+        },
+    }, $orig);
+    return $count;
+}
+
+#--------------------------------------------------------------------------#
 # _ok_clone_dist_dir
 #--------------------------------------------------------------------------#
 
@@ -733,17 +758,9 @@ sub _ok_clone_dist_dir {
     my $work_dir = tempd()
         or die "Couldn't create temporary distribution dir: $!\n";
 
-    # workaround badly broken F::C::R 0.34 on Windows
-    if ( File::Copy::Recursive->VERSION eq '0.34' && $^O eq 'MSWin32' ) {
-        ok( 0 == system("xcopy /q /e $dist_dir $work_dir"),
-            "Copying $dist_name to temp directory (XCOPY)"
-        ) or diag $!;
-    }
-    else {
-        ok( defined( dircopy($dist_dir, "$work_dir") ),
-            "Copying $dist_name to temp directory $work_dir"
-        ) or diag $!;
-    }
+    ok( defined( _dircopy($dist_dir, "$work_dir") ),
+        "Copying $dist_name to temp directory $work_dir"
+    ) or diag $!;
 
     return $work_dir;
 }
