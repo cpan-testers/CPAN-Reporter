@@ -149,6 +149,10 @@ sub _try_load {
 
     #do not return true value
     qw/perlsecret Alt::Crypt::RSA::BigInt/,
+
+    #Try::Tiny::Tiny and modules that use it conflict with several modules
+    'Try::Tiny::Tiny',
+    'Date::Lectionary::Time',
   );
 
   my %loading_conflicts = (
