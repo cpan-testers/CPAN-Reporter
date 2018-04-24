@@ -21,7 +21,7 @@ use File::Basename qw/basename/;
 use File::Copy;
 use File::Find;
 use File::Path qw/mkpath/;
-use File::pushd 0.32 qw/pushd tempd/;
+use File::pushd 0.32;
 use File::Spec 3.19 ();
 use File::Temp 0.16 qw/tempdir/;
 use IO::CaptureOutput 1.03 qw/capture/;
