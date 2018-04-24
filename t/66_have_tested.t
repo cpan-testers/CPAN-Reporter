@@ -3,7 +3,7 @@ BEGIN{ if (not $] < 5.006) { require warnings; warnings->import } }
 
 use Test::More;
 use Config;
-use File::Copy::Recursive qw/fcopy/;
+use File::Copy qw/copy/;
 use File::Path qw/mkpath/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
 use File::Temp qw/tempdir/;
@@ -44,7 +44,7 @@ mkpath( $config_dir );
 ok( -d $config_dir, "temporary config dir created" );
 
 # If old history exists, convert it
-fcopy( $sample_history_file, $history_file);
+copy( $sample_history_file, $history_file);
 ok( -f $history_file, "copied sample old history file to config directory");
 
 # make it writeable
