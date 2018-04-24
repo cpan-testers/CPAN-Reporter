@@ -18,7 +18,7 @@ our @ISA = 'Exporter';
 use Config;
 use Archive::Tar 1.54 ();
 use File::Basename qw/basename/;
-use File::Copy::Recursive 0.35 qw/dircopy/;
+use File::Copy::Recursive::Reduced 0.002 qw/dircopy/;
 use File::Path qw/mkpath/;
 use File::pushd 0.32 qw/pushd tempd/;
 use File::Spec 3.19 ();
@@ -733,8 +733,7 @@ sub _ok_clone_dist_dir {
     my $work_dir = tempd()
         or die "Couldn't create temporary distribution dir: $!\n";
 
-    # workaround badly broken F::C::R 0.34 on Windows
-    if ( File::Copy::Recursive->VERSION eq '0.34' && $^O eq 'MSWin32' ) {
+    if ( $^O eq 'MSWin32' ) {
         ok( 0 == system("xcopy /q /e $dist_dir $work_dir"),
             "Copying $dist_name to temp directory (XCOPY)"
         ) or diag $!;

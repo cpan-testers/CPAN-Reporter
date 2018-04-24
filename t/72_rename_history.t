@@ -7,7 +7,7 @@ select(STDOUT); $|=1;
 use Test::More;
 use Config::Tiny;
 use IO::CaptureOutput qw/capture/;
-use File::Copy::Recursive qw/fcopy/;
+use File::Copy::Recursive::Reduced 0.002 qw/fcopy/;
 use File::Path qw/mkpath/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
 use File::Temp qw/tempdir/;
