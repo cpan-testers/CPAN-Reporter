@@ -147,6 +147,9 @@ sub _try_load {
     #require special conditions to run
     qw/mylib Test::YAML Cache::Reddit/,
 
+    #print text to STDOUT which C::R::PC cannot intercept
+    qw/Test::Sys::Info Test::Subs/,
+
     #do not return true value
     qw/perlsecret Alt::Crypt::RSA::BigInt/,
 
