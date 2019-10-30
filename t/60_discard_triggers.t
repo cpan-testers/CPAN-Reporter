@@ -9,7 +9,6 @@ use lib 't/lib';
 use MockCPANDist;
 use Helper;
 use Frontend;
-use IO::CaptureOutput;
 
 #--------------------------------------------------------------------------#
 # Fixtures

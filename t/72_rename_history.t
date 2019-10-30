@@ -6,7 +6,7 @@ select(STDOUT); $|=1;
 
 use Test::More;
 use Config::Tiny;
-use IO::CaptureOutput qw/capture/;
+use Capture::Tiny qw/capture/;
 use File::Copy qw/copy/;
 use File::Path qw/mkpath/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
@@ -39,9 +39,9 @@ my ($rc, $stdout, $stderr);
 sub re_require {
     delete $INC{'CPAN/Reporter/History.pm'};
     eval {
-        capture sub {
+        ($stdout, $stderr) = capture {
             require_ok( "CPAN::Reporter::History" );
-        } => \$stdout, \$stderr;
+        };
     };
     die $@ if $@;
     return 1;

@@ -5,7 +5,7 @@ select(STDERR); $|=1;
 select(STDOUT); $|=1;
 
 use Test::More;
-use IO::CaptureOutput qw/capture/;
+use Capture::Tiny qw/capture/;
 use File::Spec::Functions qw/catdir catfile rel2abs/;
 use lib 't/lib';
 use Frontend;
@@ -46,9 +46,9 @@ for my $c ( @cases ) {
   my $bin = catfile( qw/t bin /, $name );
 
   eval {
-    capture sub {
+    ($stdout, $stderr) = capture {
       ($output, $exit) = CPAN::Reporter::record_command( "$perl $bin" );
-    }, \$stdout, \$stderr;
+    };
   };
 
   chomp( $line = $output->[0] );
