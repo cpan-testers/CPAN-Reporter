@@ -145,7 +145,7 @@ sub _try_load {
     qw/ExtUtils::ParseXS ExtUtils::ParseXS::Utilities/,
     
     #require special conditions to run
-    qw/mylib Test::YAML Cache::Reddit/,
+    qw/mylib Test::YAML Cache::Reddit Dist::Zilla::Plugin::TestMLIncluder/,
 
     #print text to STDOUT which C::R::PC cannot intercept
     qw/Test::Sys::Info Test::Subs/,
