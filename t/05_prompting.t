@@ -9,7 +9,7 @@ use Test::More;
 use lib 't/lib';
 use Helper;
 use Frontend;
-use IO::CaptureOutput qw/capture/;
+use Capture::Tiny qw/capture/;
 
 my @cases = (
     "default:yes",

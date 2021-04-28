@@ -10,7 +10,7 @@ use lib 't/lib';
 use MockCPANDist;
 use Frontend;
 use Helper;
-use IO::CaptureOutput qw/capture/;
+use Capture::Tiny qw/capture/;
 
 my @test_distros = (
     {

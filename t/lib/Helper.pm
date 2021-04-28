@@ -24,7 +24,7 @@ use File::Path qw/mkpath/;
 use File::pushd 0.32;
 use File::Spec 3.19 ();
 use File::Temp 0.16 qw/tempdir/;
-use IO::CaptureOutput 1.03 qw/capture/;
+use Capture::Tiny qw/capture/;
 use Probe::Perl ();
 use Test::More 0.62;
 
@@ -137,13 +137,13 @@ sub test_grade_PL {
                 $output, $exit_value, $rc);
 
             eval {
-                capture sub {
+                ($stdout, $stderr) = capture {
                     ($output, $exit_value) =
                         CPAN::Reporter::record_command($tool_cmd);
                     $rc = CPAN::Reporter::grade_PL(
                         $dist, $tool_cmd, $output, $exit_value
                     );
-                }, \$stdout, \$stderr;
+                };
             };
             if ( $@ ) {
                 diag "DIED WITH:\n$@";
@@ -249,9 +249,9 @@ sub test_grade_make {
             my ($stdout, $stderr, $build_err, $test_build_rc,
                 $output, $exit_value, $rc);
 
-            capture sub {
+            ($stdout, $stderr) = capture {
                 $build_err = system("$perl $tool_PL");
-            }, \$stdout, \$stderr;
+            };
 
             ok( ! $build_err, "$case->{name}: $tool_PL successful" )
                 or do {
@@ -259,13 +259,13 @@ sub test_grade_make {
                     skip "$tool_PL failed", test_grade_make_iter_plan() - 1;
                 };
             eval {
-                capture sub {
+                ($stdout, $stderr) = capture {
                     ($output, $exit_value) =
                     CPAN::Reporter::record_command($tool_cmd);
                     $rc = CPAN::Reporter::grade_make(
                         $dist, $tool_cmd, $output, $exit_value
                     );
-                }, \$stdout, \$stderr;
+                };
             };
             if ( $@ ) {
                 diag "DIED WITH:\n$@";
@@ -372,9 +372,9 @@ sub test_grade_test {
 
             my ($stdout, $stderr, $build_err, $test_build_rc);
 
-            capture sub {
+            ($stdout, $stderr) = capture {
                 $build_err = system("$perl $tool_PL");
-            }, \$stdout, \$stderr;
+            };
 
             ok( ! $build_err, "$case->{name}: $tool_PL successful" )
                 or do {
@@ -383,9 +383,9 @@ sub test_grade_test {
                 };
 
             eval {
-                capture sub {
+                ($stdout, $stderr) = capture {
                     $test_build_rc = CPAN::Reporter::test( $dist, $tool_cmd )
-                }, \$stdout, \$stderr;
+                };
             };
             if ( $@ ) {
                 diag "DIED WITH:\n$@";
@@ -782,7 +782,7 @@ sub _run_report {
     $Helper::comments = undef;
 
     eval {
-        capture sub {
+        ($stdout, $stderr) = capture {
             # run any preliminaries to the command we want to record
             if ( $phase eq 'make' || $phase eq 'test' ) {
                 system("$perl Makefile.PL");
@@ -799,7 +799,7 @@ sub _run_report {
                 $output,
                 $exit_value,
             );
-        } => \$stdout, \$stderr;
+        };
     };
     if ( $@ ) {
         diag "DIED WITH:\n$@";

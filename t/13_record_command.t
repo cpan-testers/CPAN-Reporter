@@ -11,7 +11,7 @@ use Helper;
 use Frontend;
 use Config;
 use File::Temp ();
-use IO::CaptureOutput qw/capture/;
+use Capture::Tiny qw/capture/;
 use Probe::Perl ();
 
 #--------------------------------------------------------------------------#
@@ -122,11 +122,11 @@ SKIP: {
     my $cmd = $perl; 
     warn "# sleeping for timeout test\n" if $c->{timeout};
     eval {
-        capture sub {
-            ($output, $exit) = CPAN::Reporter::record_command( 
+        ($stdout, $stderr) = capture {
+            ($output, $exit) = CPAN::Reporter::record_command(
                 "$cmd $fh $c->{args}", $c->{timeout}
             );
-        }, \$stdout, \$stderr;
+        };
     };
     sleep 1; # pad the run time into the next second
     my $run_time = time() - $start_time;

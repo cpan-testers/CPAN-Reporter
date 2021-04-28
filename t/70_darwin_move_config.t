@@ -7,7 +7,7 @@ select(STDOUT); $|=1;
 
 use Test::More;
 use Config::Tiny;
-use IO::CaptureOutput qw/capture/;
+use Capture::Tiny qw/capture/;
 use File::Spec;
 use File::Temp qw/tempdir/;
 use File::Path qw/mkpath rmtree/;
@@ -73,7 +73,7 @@ delete ${*CPAN::Reporter::Config}{$_} for ( keys %{*CPAN::Reporter::Config} );
 
 {
     local $^O = 'darwin';
-    capture sub {
+    capture {
         require_ok( "CPAN::Reporter::Config" );
     };
     ok( $INC{'CPAN/Reporter/Config.pm'},

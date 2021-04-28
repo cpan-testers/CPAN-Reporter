@@ -10,7 +10,7 @@ use lib 't/lib';
 use MockCPANDist;
 use Helper;
 use Frontend;
-use IO::CaptureOutput qw/capture/;
+use Capture::Tiny qw/capture/;
 
 my @test_distros = (
     # pass
@@ -63,10 +63,9 @@ for my $case ( @test_distros ) {
 
 # Test warning messages
 
-my ($stdout, $stderr);
-capture sub {
+my ($stdout, $stderr) = capture {
     CPAN::Reporter::_dispatch_report( {} );
-}, \$stdout, \$stderr;
+};
 
 like( $stdout, "/couldn't read configuration file/",
     "config file not found warnings"
