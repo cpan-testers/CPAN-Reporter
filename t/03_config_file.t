@@ -11,7 +11,7 @@ use IO::CaptureOutput qw/capture/;
 use File::Basename qw/basename/;
 use File::Glob qw/bsd_glob/;
 use File::Spec;
-use File::Temp qw/tempdir/;
+use File::Temp;
 use File::Path qw/mkpath/;
 use lib 't/lib';
 use Frontend;
