@@ -1189,9 +1189,10 @@ sub _report_text {
     my $data = shift;
     my $test_log = join(q{},@{$data->{output}});
     if ( length $test_log > MAX_OUTPUT_LENGTH ) {
-        $test_log = substr( $test_log, 0, MAX_OUTPUT_LENGTH) . "\n";
         my $max_k = int(MAX_OUTPUT_LENGTH/1000) . "K";
-        $test_log .= "\n[Output truncated after $max_k]\n\n";
+        $test_log = substr( $test_log, 0, MAX_OUTPUT_LENGTH/2 ) . "\n\n"
+	    . "[Output truncated because it exceeded $max_k]\n\n"
+	    . substr( $test_log, -(MAX_OUTPUT_LENGTH/2) );
     }
 
     my $comment_body = _comment_text();
