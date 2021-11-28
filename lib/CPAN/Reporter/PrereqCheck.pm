@@ -194,6 +194,7 @@ sub _try_load {
     'Dancer2::Plugin::DBIC' => 'Dancer2', #or later Strehler::API will fail
     'Wx::AUI' => 'Wx',
     'Dist::Zilla::Role::Tempdir' => 'Dist::Zilla', # or it would not be possible to check Dist::Zilla
+    'Pod::Perldoc::ToMan' => 'Pod::Perldoc',
   );
 
   # M::I < 0.95 dies in require, so we can't check if it loads
