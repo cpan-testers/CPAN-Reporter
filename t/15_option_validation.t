@@ -9,7 +9,6 @@ use Test::More;
 use lib 't/lib';
 use Frontend;
 use Helper;
-use IO::CaptureOutput qw/capture/;
 use File::Spec;
 
 my @cases = (
