@@ -115,7 +115,7 @@ sub have_tested { ## no critic RequireArgUnpacking
 
     # default to current platform
     $args->{perl} = _format_perl_version() unless defined $args->{perl};
-    $args->{archname} = $Config{archname} unless defined $args->{archname};
+    $args->{archname} = _format_archname() unless defined $args->{archname};
     $args->{osvers} = $Config{osvers} unless defined $args->{osvers};
 
     my @found;
@@ -146,8 +146,31 @@ sub _format_history {
     my $grade = uc $result->{grade};
     my $dist_name = $result->{dist_name};
     my $perlver = "perl-" . _format_perl_version();
-    my $platform = "$Config{archname} $Config{osvers}";
-    return "$phase $grade $dist_name ($perlver) $platform\n";
+    my $osvers = $Config{osvers};
+    my $archname = _format_archname();
+    return "$phase $grade $dist_name ($perlver) $archname $osvers\n";
+}
+
+#--------------------------------------------------------------------------#
+# _format_archname --
+#
+# appends info about taint being disabled to Config.pm's archname
+#--------------------------------------------------------------------------#
+
+sub _format_archname {
+    my $archname = $Config{archname};
+    # `taint_disabled` is correctly set as of perl-blead@da791ecc, which will
+    # be in 5.37.12 and later. Before then it is always false (indeed,
+    # non-existent) and the only way to check whether taint is disabled is to
+    # check the ccflags. Before that and its related commits (see
+    # https://github.com/Perl/perl5/pull/20983) were merged it was impossible
+    # to build a clean perl with taint support disabled that passed all its own
+    # tests.
+    if($Config{taint_disabled}) {
+        $archname .= '-silent' if($Config{taint_disabled} eq 'silent');
+        $archname .= '-no-taint-support';
+    }
+    return $archname;
 }
 
 #--------------------------------------------------------------------------#
