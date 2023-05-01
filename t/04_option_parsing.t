@@ -9,7 +9,7 @@ use Test::More;
 use lib 't/lib';
 use Frontend;
 use Helper;
-use IO::CaptureOutput qw/capture/;
+use Capture::Tiny qw/capture/;
 
 my @good_cases = (
     {
@@ -128,12 +128,12 @@ plan tests => 1 + 2 * ( @good_cases + @bad_cases );
 require_ok( "CPAN::Reporter::Config" );
 
 for my $case ( @good_cases, @bad_cases ) {
-    my ($got, $stdout, $stderr);
-    capture sub { 
-        $got = CPAN::Reporter::Config::_validate_grade_action_pair( 
-            $case->{option}, $case->{input} 
+    my $got;
+    my ($stdout, $stderr) = capture {
+        $got = CPAN::Reporter::Config::_validate_grade_action_pair(
+            $case->{option}, $case->{input}
         );
-    }, \$stdout, \$stderr;
+    };
     is_deeply( $got, $case->{output}, $case->{label} );
     if ( $case->{msg} ) {
         like( $stdout, $case->{msg}, $case->{label} );

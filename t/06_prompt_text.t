@@ -9,7 +9,6 @@ use lib 't/lib';
 use MockCPANDist;
 use Helper;
 use Frontend;
-use IO::CaptureOutput;
 use Config;
 
 # For these tests, hide perl_patchlevel so all prompts are tested

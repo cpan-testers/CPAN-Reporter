@@ -10,7 +10,6 @@ use MockCPANDist;
 use Helper;
 use Frontend;
 use Config;
-use IO::CaptureOutput;
 
 #--------------------------------------------------------------------------#
 # Fixtures
