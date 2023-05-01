@@ -12,7 +12,7 @@ use Frontend;
 use MockHomeDir;
 
 #plan 'no_plan';
-plan tests => 21;
+plan tests => $Config{taint_disabled} ? 23 : 22;
 
 #--------------------------------------------------------------------------#
 # Fixtures
@@ -82,17 +82,34 @@ is( ref $aoh[0], 'HASH',
     "returned an AoH"
 );
 
+# we don't use _format_archname here because the test is checking both that
+# _format_archname is used correctly in the code and that it *works* correctly
+my $expected_archname =
+    !$Config{taint_disabled}            ? $Config{archname} :
+    $Config{taint_disabled} eq 'silent' ? "$Config{archname}-silent-no-taint-support" :
+                                          "$Config{archname}-no-taint-support";
 is_deeply( $aoh[0], 
     {
         phase => 'test',
         grade => 'PASS',
         dist => 'Wibble-42', 
         perl => CPAN::Reporter::History::_format_perl_version(),
-        archname => $Config{archname},
+        archname => $expected_archname,
         osvers => $Config{osvers},
     },
     "hash fields as expected"
 );
+
+if($Config{taint_disabled}) {
+    like($aoh[0]->{archname}, qr/no-taint-support/, "taint is unsupported, and the history file agrees");
+    if($Config{taint_disabled} eq 'silent') {
+        like($aoh[0]->{archname}, qr/silent-no-taint-support/, "... silently!");
+    } else {
+        unlike($aoh[0]->{archname}, qr/silent-no-taint-support/, "... noisily!");
+    }
+} else {
+    unlike($aoh[0]->{archname}, qr/no-taint-support/, "taint is supported, and the history file agrees");
+}
 
 # just dist returns all reports for that dist on current platform
 @aoh = have_tested( dist => 'Foo-Bar-1.23' );

@@ -174,9 +174,10 @@ sub history_format {
     $grade = uc $grade;
     my $perl_ver = "perl-" . CPAN::Reporter::History::_perl_version(); 
     $perl_ver .= " patch $Config{perl_patchlevel}" if $Config{perl_patchlevel};
-    my $arch = "$Config{archname} $Config{osvers}";
+    my $arch = CPAN::Reporter::History::_format_archname();
+    my $os = $Config{osvers};
     my $dist_name = $dist->base_id;
-    return "$phase $grade $dist_name ($perl_ver) $arch\n";
+    return "$phase $grade $dist_name ($perl_ver) $arch $os\n";
 }
 
 #--------------------------------------------------------------------------#
