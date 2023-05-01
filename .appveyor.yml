@@ -21,9 +21,9 @@ build_script:
 test_script:
   - gmake test TEST_VERBOSE=1
 
-#notifications:
-#  - provider: Email
-#    to:
-#    - jkeenan@cpan.org
-#    on_build_status_changed: true
+notifications:
+  - provider: Email
+    to:
+    - garu@cpan.org
+    on_build_status_changed: true
 
