@@ -2,6 +2,16 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+  [ADDED]
+  - Record whether perl was built with taint support enabled or not
+  - Include Test2 version in toolchain report
+  - snip in the middle of the log, not a the end, so you get
+    potentially more interesting data
+
+  [CHANGED]
+  - replaced IO::CaptureOutput with Capture::Tiny
+  - Eliminate dependency on File::Copy::Recursive.
+
 1.2018    2016-06-21 15:05:12-04:00 America/New_York
 
   [CHANGED]
