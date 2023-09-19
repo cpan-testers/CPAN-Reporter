@@ -154,7 +154,7 @@ sub _configure {
     $CPAN::Frontend->myprint(
         "\nCPAN::Reporter: writing config file to '$config_file'.\n"
     );
-    if ( $config->write( $config_file ) ) {
+    if ( $config->write( $config_file, "utf8" ) ) {
         return $config->{_};
     }
     else {
@@ -483,7 +483,7 @@ sub _normalize_id_file {
 
 sub _open_config_file {
     my $config_file = _get_config_file();
-    my $config = Config::Tiny->read( $config_file )
+    my $config = Config::Tiny->read( $config_file, "utf8" )
         or $CPAN::Frontend->mywarn("CPAN::Reporter: couldn't read configuration file " .
                 "'$config_file': \n" . Config::Tiny->errstr() . "\n");
     return $config;
