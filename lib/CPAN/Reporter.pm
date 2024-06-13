@@ -927,6 +927,9 @@ sub _parse_tap_harness {
     elsif ( $line =~ m{Bailout called\.\s+Further testing stopped}ms ) {
         return ( 'fail', 'Bailed out of tests');
     }
+    elsif ( $line =~ m{FAILED--Further testing stopped}ms ) { # TAP::Harness 3.49+
+        return ( 'fail', 'Bailed out of tests');
+    }
     return;
 }
 
