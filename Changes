@@ -2,6 +2,14 @@ Revision history for Perl module CPAN::Reporter
 
 {{$NEXT}}
 
+1.2020    2024-08-13 01:44:56-03:00 America/Sao_Paulo
+
+  [ADDED]
+  - Add support for UTF-8 in config file
+  - Adapt to new bailout output in TAP::Harness 3.49
+
+1.2019    2023-05-01 03:14:19+02:00 Europe/Paris
+
   [ADDED]
   - Record whether perl was built with taint support enabled or not
   - Include Test2 version in toolchain report

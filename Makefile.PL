@@ -56,7 +56,7 @@ my %WriteMakefileArgs = (
     "lib" => 0,
     "warnings" => 0
   },
-  "VERSION" => "1.2019",
+  "VERSION" => "1.2020",
   "test" => {
     "TESTS" => "t/*.t"
   }
